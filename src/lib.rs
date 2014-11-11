@@ -122,20 +122,22 @@ fn read_client(input: Json) -> Result<Client, SensuError> {
 
 #[cfg(test)]
 mod build_objects {
-    use super::read_event;
+    use serialize::json;
+    use super::read_client;
 
     #[test]
     fn can_build_client() {
-        let client = read_event(r#"{
+        let event = json::from_str(r#"{
             "client": {
                 "name": "hello",
                 "address": "192.168.1.1",
                 "subscriptions": ["one", "two"],
                 "timestamp": 127897
             }
-        }"#);
+        }"#).unwrap();
+        let client = read_client(event);
         match client {
-            Ok(cl) => println!("{}", cl),
+            Ok(cl) => println!("Parsed: {}", cl),
             Err(e) => panic!("ERROR: {}", e)
         }
     }
