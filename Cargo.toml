@@ -1,0 +1,8 @@
+[package]
+
+name = "iron-fan"
+version = "0.0.1"
+authors = ["Brandon W Maister <quodlibetor@gmail.com>"]
+
+[dependencies.chrono]
+git = "https://github.com/lifthrasiir/rust-chrono.git"
