@@ -98,21 +98,22 @@ fn read_client(input: Json) -> Result<Client, SensuError> {
             _ => return Err(EventError(format!("Invalid subscription type {}", sub)))
         }
     }
+    let ts = match event.find("timestamp") {
+        Some(value) => match value {
+            &I64(ref v) => v.clone(),
+            &U64(ref v) => v.clone() as i64,
+            &F64(ref v) => v.clone() as i64,
+            _ => return Err(EventError(format!("Wrong type for key: {}", value)))
+        },
+        None => return Err(EventError("couldn't find timestamp in event".into_string()))
+    };
+    let ts = NaiveDateTime::from_num_seconds_from_unix_epoch(ts, 0);
 
     let client = Client {
         name: jk!(event->"name" String),
         address: jk!(event->"address" String),
         subscriptions: subs,
-        timestamp: NaiveDateTime::from_num_seconds_from_unix_epoch(
-            match event.find("timestamp") {
-                Some(value) => match value {
-                    &I64(ref v) => v.clone(),
-                    &U64(ref v) => v.clone() as i64,
-                    &F64(ref v) => v.clone() as i64,
-                    _ => return Err(EventError(format!("Wrong type for key: {}", value)))
-                },
-                None => return Err(EventError("couldn't find timestamp in event".into_string()))
-            }, 0),
+        timestamp: ts,
         additional: Null
     };
     Ok(client)
