@@ -1,6 +1,5 @@
 [package]
-
-name = "iron-fan"
+name = "iron_fan"
 version = "0.0.1"
 authors = ["Brandon W Maister <quodlibetor@gmail.com>"]
 

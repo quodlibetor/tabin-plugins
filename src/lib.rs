@@ -13,8 +13,13 @@
 //! extern crate iron_fan;
 //!
 //! fn main() {
-//!     let event = try!(iron_fan::init());
-//!     let settings = try!(iron_fan::settings());
+//!     // parse stdin into an iron_fan::Event
+//!     let event = iron_fan::init();
+//!     match event {
+//!         Ok(event) => { /* do_stuff_with(event) */ },
+//!         Err(iron_fan::InitError(msg)) => println!("{}", msg),
+//!         _ => { /* handle other errors */ }
+//!     };
 //! }
 //! ```
 //!
@@ -28,7 +33,6 @@
 extern crate serialize;
 extern crate chrono;
 
-//use std::collections::HashMap;
 use serialize::json;
 use serialize::json::{
     Boolean,
@@ -41,14 +45,15 @@ use serialize::json::{
     U64,
 };
 use std::io;
+use std::from_str::from_str;
 use chrono::NaiveDateTime;
 
 #[deriving(Show, PartialEq)]
 pub struct Event {
     client: Client,
     check: Check,
-    occurences: Vec<i32>,
-    action: String,
+    occurrences: u64,
+    action: Option<String>,
 }
 
 #[deriving(Show, PartialEq)]
@@ -102,25 +107,25 @@ macro_rules! jk(
 macro_rules! jki {
     ($event:ident, $field:expr) => {
         match $event.find($field) {
-        Some(value) => match value {
-            &I64(ref v) => v.clone(),
-            &U64(ref v) => v.clone() as i64,
-            &F64(ref v) => v.clone() as i64,
-            _ => return Err(EventError(format!("Wrong type for '{}': {}", $field, value)))
-        },
-        None => return Err(EventError(format!("couldn't find '{}' in event", $field)))
-    };
+            Some(value) => match value {
+                &I64(ref v) => v.clone(),
+                &U64(ref v) => v.clone() as i64,
+                &F64(ref v) => v.clone() as i64,
+                _ => return Err(EventError(format!("Wrong type for '{}': {}", $field, value)))
+            },
+            None => return Err(EventError(format!("couldn't find '{}' in event", $field)))
+        };
     }
 }
 
-pub fn read_stdin() -> SensuResult<String> {
+pub fn init() -> SensuResult<Event> {
     match io::stdin().read_to_end() {
-        Ok(input) => Ok(input.to_string()),
-        Err(e) => return Err(InitError(format!("couldn't read stdin: {}", e)))
+        Ok(input) => read_event(input.to_string().as_slice()),
+        Err(e) => Err(InitError(format!("couldn't read stdin: {}", e)))
     }
 }
 
-pub fn read_event(input: &str) -> SensuResult<(Client, Check)> {
+pub fn read_event(input: &str) -> SensuResult<Event> {
     let event = match json::from_str(input) {
         Ok(v) => v,
         Err(e) => return Err(InitError(format!("couldn't parse json: {}", e)))
@@ -128,7 +133,30 @@ pub fn read_event(input: &str) -> SensuResult<(Client, Check)> {
 
     let client = try!(read_client(&event));
     let check = try!(read_check(&event));
-    Ok((client, check))
+    let action = match event.find("action") {
+        Some(action) => match *action {
+            String(ref a) => Some(a.clone()),
+            _ => return Err(InitError(format!("Wrong type for action: {}", action)))
+        },
+        None => None
+    };
+    let occurrences = match event.find("occurrences") {
+        Some(occurrences) => match *occurrences {
+            U64(o) => o,
+            I64(o) => o as u64,
+            F64(o) => o as u64,
+            String(ref o) => try!(from_str::<u64>(o.as_slice()).ok_or(
+                InitError(format!("Unable to parse number from occurrences: {}", occurrences)))),
+            _ => return Err(InitError(format!("Wrong type for occurrences: {}", occurrences)))
+        },
+        None => return Err(InitError(format!("No occurrences in event data")))
+    };
+    Ok(Event{
+        client: client,
+        check: check,
+        action: action,
+        occurrences: occurrences,
+    })
 }
 
 /// Get a timestamp out and format it as a NaiveDateTime
@@ -193,7 +221,7 @@ fn read_client(input: &Json) -> SensuResult<Client> {
     Ok(client)
 }
 
-pub fn read_check(event: &Json) -> SensuResult<Check> {
+fn read_check(event: &Json) -> SensuResult<Check> {
     let check = match event.find("check") {
         Some(check) => check,
         None => return Err(InitError("No check in event".into_string()))
@@ -231,7 +259,38 @@ pub fn read_check(event: &Json) -> SensuResult<Check> {
 mod build_objects {
     use serialize::json;
     use chrono::NaiveDateTime;
-    use super::{read_client, read_check, Check};
+    use super::{read_event, read_client, read_check, Check};
+
+    #[test]
+    fn can_build_event() {
+        let event = r#"{
+            "occurrences": 1,
+            "action": "create",
+            "client": {
+                "name": "hello",
+                "address": "192.168.1.1",
+                "subscriptions": ["one", "two"],
+                "timestamp": 127897
+            },
+            "check": {
+                "name": "test-check",
+                "issued": 1416069607,
+                "output": "we have output",
+                "status": 0,
+                "command": "echo 'we have output'",
+                "subscribers": ["examples", "tests"],
+                "interval": 60,
+                "handler": "default",
+                "history": ["0", "0", "0"],
+                "flapping": false,
+                "additional": null
+            }
+        }"#;
+        match read_event(event) {
+            Ok(e) => println!("Parsed event: {}", e),
+            Err(e) => panic!("ERROR: {}", e)
+        };
+    }
 
     #[test]
     fn can_build_client() {
