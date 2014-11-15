@@ -1,3 +1,29 @@
+//! Iron Fan: strongly typed Sensu handlers
+//!
+//! The goal is to make it easy to transplant the majority of the
+//! [`sensu-community-plugins`](https://github.com/sensu/sensu-community-plugins)
+//! repo over to Rust, supporting the idioms provided there but strongly typed
+//! and fast to execute, because your monitoring system shouldn't go down
+//! because you mistyped `do_alret('critical')`.
+//!
+//! Expected use: write a bin that uses iron_fan::init(), which will populate
+//! an `Event` and run filters on it:
+//!
+//! ```rust
+//! extern crate iron_fan;
+//!
+//! fn main() {
+//!     let event = try!(iron_fan::init());
+//!     let settings = try!(iron_fan::settings());
+//! }
+//! ```
+//!
+//! This is my first serious experimentation with Rust, comments apprectiated.
+//! Implementation issues that I would like to fix:
+//!
+//! * `Event`s, `Client`s and `Check`s are manually parsed, insted of being
+//!   decoded in some way
+
 #![feature(macro_rules)]
 extern crate serialize;
 extern crate chrono;
