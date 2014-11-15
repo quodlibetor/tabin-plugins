@@ -5,18 +5,19 @@ extern crate chrono;
 //use std::collections::HashMap;
 use serialize::json;
 use serialize::json::{
-    Json,
-    String,
+    Boolean,
     F64,
-    U64,
     I64,
+    Json,
     List,
     Null,
+    String,
+    U64,
 };
 use std::io;
 use chrono::NaiveDateTime;
 
-#[deriving(Show)]
+#[deriving(Show, PartialEq)]
 pub struct Event {
     client: Client,
     check: Check,
@@ -24,7 +25,7 @@ pub struct Event {
     action: String,
 }
 
-#[deriving(Show)]
+#[deriving(Show, PartialEq)]
 pub struct Client {
     name: String,
     address: String,
@@ -33,7 +34,7 @@ pub struct Client {
     additional: Json
 }
 
-#[deriving(Show)]
+#[deriving(Show, PartialEq)]
 pub struct Check {
     name: String,
     issued: NaiveDateTime,
@@ -41,50 +42,106 @@ pub struct Check {
     status: i8,
     command: String,
     subscribers: Vec<String>,
-    interval: i32,
+    interval: i64,
     handler: Option<String>,
     handlers: Option<Vec<String>>,
-    history: Vec<i8>,
+    history: Vec<String>,
     flapping: bool,
-    additional: Json
+    additional: Option<Json>
 }
 
-#[deriving(Show)]
+#[deriving(Show, PartialEq)]
 pub enum SensuError {
     InitError(String),
     EventError(String)
 }
 
+pub type SensuResult<T> = Result<T, SensuError>;
+
+/// Extract a generic JS object, given a type
+/// Early return an error if it can't be extracted
 macro_rules! jk(
     ($j:ident->$k:expr $p:ident) => (
         match $j.find($k) {
             Some(value) => match value {
                 &$p(ref v) => v.clone(),
-                _ => return Err(EventError(format!("Wrong type for key: {}", value)))
+                _ => return Err(EventError(format!("Wrong type for '{}': {}", $k, value)))
             },
             None => return Err(EventError(format!("couldn't find {} in event", $k)))
         }
     )
 )
+/// Extract any kind of number as an i64
+/// Early return an error if it can't be extracted
+macro_rules! jki {
+    ($event:ident, $field:expr) => {
+        match $event.find($field) {
+        Some(value) => match value {
+            &I64(ref v) => v.clone(),
+            &U64(ref v) => v.clone() as i64,
+            &F64(ref v) => v.clone() as i64,
+            _ => return Err(EventError(format!("Wrong type for '{}': {}", $field, value)))
+        },
+        None => return Err(EventError(format!("couldn't find '{}' in event", $field)))
+    };
+    }
+}
 
-pub fn read_stdin() -> Result<String, SensuError> {
+pub fn read_stdin() -> SensuResult<String> {
     match io::stdin().read_to_end() {
         Ok(input) => Ok(input.to_string()),
         Err(e) => return Err(InitError(format!("couldn't read stdin: {}", e)))
     }
 }
 
-pub fn read_event(input: &str) -> Result<Client, SensuError> {
+pub fn read_event(input: &str) -> SensuResult<(Client, Check)> {
     let event = match json::from_str(input) {
         Ok(v) => v,
         Err(e) => return Err(InitError(format!("couldn't parse json: {}", e)))
     };
 
-    let client = try!(read_client(event));
-    Ok(client)
+    let client = try!(read_client(&event));
+    let check = try!(read_check(&event));
+    Ok((client, check))
 }
 
-fn read_client(input: Json) -> Result<Client, SensuError> {
+/// Get a timestamp out and format it as a NaiveDateTime
+fn pull_timestamp(event: &Json, field: &str) -> SensuResult<NaiveDateTime> {
+    let ts = jki!(event, field);
+    Ok(NaiveDateTime::from_num_seconds_from_unix_epoch(ts, 0))
+}
+
+
+fn extract_list_of_strings(list: &Json, field_name: &str) -> SensuResult<Vec<String>> {
+    match *list {
+        List(ref subs) => {
+            let mut result = Vec::new();
+            for sub in subs.iter() {
+                match *sub {
+                    String(ref s) => result.push(s.clone()),
+                    _ => return Err(InitError(format!("Wrong type in {}: {}",
+                                                      field_name, sub)))
+                }
+            }
+            Ok(result)
+        },
+        _ => return Err(InitError(format!("{} is not a list ({})", field_name, list)))
+    }
+}
+
+fn find_list_of_strings(obj: &Json, field_name: &str) -> SensuResult<Vec<String>> {
+    let contained = obj.find(field_name);
+    println!("{} is {}", field_name, contained)
+    let result = match contained {
+        Some(subs) => {
+            try!(extract_list_of_strings(subs, field_name))
+        },
+        None => return Err(InitError(format!("Couldn't build {} for check", field_name)))
+    };
+    Ok(result)
+}
+
+fn read_client(input: &Json) -> SensuResult<Client> {
     let event = match input.find("client") {
         Some(client) => client,
         None => return Err(InitError("No client in event".into_string()))
@@ -98,16 +155,7 @@ fn read_client(input: Json) -> Result<Client, SensuError> {
             _ => return Err(EventError(format!("Invalid subscription type {}", sub)))
         }
     }
-    let ts = match event.find("timestamp") {
-        Some(value) => match value {
-            &I64(ref v) => v.clone(),
-            &U64(ref v) => v.clone() as i64,
-            &F64(ref v) => v.clone() as i64,
-            _ => return Err(EventError(format!("Wrong type for key: {}", value)))
-        },
-        None => return Err(EventError("couldn't find timestamp in event".into_string()))
-    };
-    let ts = NaiveDateTime::from_num_seconds_from_unix_epoch(ts, 0);
+    let ts = try!(pull_timestamp(event, "timestamp"));
 
     let client = Client {
         name: jk!(event->"name" String),
@@ -119,12 +167,45 @@ fn read_client(input: Json) -> Result<Client, SensuError> {
     Ok(client)
 }
 
+pub fn read_check(event: &Json) -> SensuResult<Check> {
+    let check = match event.find("check") {
+        Some(check) => check,
+        None => return Err(InitError("No check in event".into_string()))
+    };
+
+    let subscribers = try!(find_list_of_strings(check, "subscribers"));
+
+    Ok(Check {
+        name: jk!(check->"name" String),
+        issued: try!(pull_timestamp(check, "issued")),
+        output: jk!(check->"output" String),
+        status: jki!(check, "status") as i8,
+        command: jk!(check->"command" String),
+        subscribers: subscribers,
+        interval: jki!(check, "interval"),
+        handler: match check.find("handler") {
+            Some(handler) => match *handler {
+                String(ref h) => Some(h.clone()),
+                _ => return Err(InitError(format!("Wrong type for handler ({})", handler)))
+            },
+            None => None
+        },
+        handlers: match check.find("handlers") {
+            Some(handlers) => Some(try!(extract_list_of_strings(handlers, "handlers"))),
+            None => None
+        },
+        history: try!(find_list_of_strings(check, "history")),
+        flapping: jk!(check->"flapping" Boolean),
+        additional: None
+    })
+}
 
 
 #[cfg(test)]
 mod build_objects {
     use serialize::json;
-    use super::read_client;
+    use chrono::NaiveDateTime;
+    use super::{read_client, read_check, Check};
 
     #[test]
     fn can_build_client() {
@@ -136,8 +217,70 @@ mod build_objects {
                 "timestamp": 127897
             }
         }"#).unwrap();
-        let client = read_client(event);
+        let client = read_client(&event);
         match client {
+            Ok(cl) => println!("Parsed: {}", cl),
+            Err(e) => panic!("ERROR: {}", e)
+        }
+    }
+
+    #[test]
+    fn can_build_check() {
+        let event = json::from_str(r#"{
+            "check": {
+                "name": "test-check",
+                "issued": 1416069607,
+                "output": "we have output",
+                "status": 0,
+                "command": "echo 'we have output'",
+                "subscribers": ["examples", "tests"],
+                "interval": 60,
+                "handler": "default",
+                "history": ["0", "0", "0"],
+                "flapping": false,
+                "additional": null
+            }
+        }"#).unwrap();
+        match read_check(&event) {
+            Ok(check) => {
+                println!("Parsed: {}", check);
+                assert_eq!(check, Check {
+                    name: "test-check".into_string(),
+                    issued: NaiveDateTime::from_num_seconds_from_unix_epoch(1416069607, 0),
+                    output: "we have output".into_string(),
+                    status: 0,
+                    command: "echo 'we have output'".into_string(),
+                    subscribers: vec!("examples".into_string(),
+                                      "tests".into_string()),
+                    interval: 60,
+                    handler: Some("default".into_string()),
+                    handlers: None,
+                    history: Vec::from_fn(3, |_| "0".into_string()),
+                    flapping: false,
+                    additional: None });
+            },
+            Err(e) => panic!("ERROR: {}", e)
+        }
+    }
+
+    #[test]
+    fn can_build_check_with_handlers() {
+        let event = json::from_str(r#"{
+            "check": {
+                "name": "test-check",
+                "issued": 1416069607,
+                "output": "we have output",
+                "status": 0,
+                "command": "echo 'we have output'",
+                "subscribers": ["examples", "tests"],
+                "interval": 60,
+                "handlers": ["default", "pagerduty"],
+                "history": ["0", "0", "0"],
+                "flapping": false,
+                "additional": null
+            }
+        }"#).unwrap();
+        match read_check(&event) {
             Ok(cl) => println!("Parsed: {}", cl),
             Err(e) => panic!("ERROR: {}", e)
         }
