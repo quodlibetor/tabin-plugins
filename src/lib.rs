@@ -48,6 +48,8 @@ use std::io;
 use std::from_str::from_str;
 use chrono::NaiveDateTime;
 
+/// An Event: [The event data](http://sensuapp.org/docs/latest/event_data)
+/// formatted as a struct.
 #[deriving(Show, PartialEq)]
 pub struct Event {
     client: Client,
@@ -56,6 +58,7 @@ pub struct Event {
     action: Option<String>,
 }
 
+/// The configuration of the client that sent this event
 #[deriving(Show, PartialEq)]
 pub struct Client {
     name: String,
@@ -65,20 +68,25 @@ pub struct Client {
     additional: Json
 }
 
+/// The client-side definition of the check plus some extra status. See the
+/// [check documentation](http://sensuapp.org/docs/latest/checks) for details.
 #[deriving(Show, PartialEq)]
 pub struct Check {
+    // client-configured things
     name: String,
-    issued: NaiveDateTime,
-    output: String,
-    status: i8,
     command: String,
     subscribers: Vec<String>,
     interval: i64,
-    handler: Option<String>,
+    additional: Option<Json>,
+
+    // Results, added by Sensu
     handlers: Option<Vec<String>>,
+    handler: Option<String>,
+    issued: NaiveDateTime,
+    output: String,
+    status: i8,
     history: Vec<String>,
     flapping: bool,
-    additional: Option<Json>
 }
 
 #[deriving(Show, PartialEq)]
@@ -118,6 +126,7 @@ macro_rules! jki {
     }
 }
 
+/// Read stdin, and parse it into an Event
 pub fn init() -> SensuResult<Event> {
     match io::stdin().read_to_end() {
         Ok(input) => read_event(input.to_string().as_slice()),
@@ -125,6 +134,7 @@ pub fn init() -> SensuResult<Event> {
     }
 }
 
+/// Parse an &str into an Event, making sure that all the types match up
 pub fn read_event(input: &str) -> SensuResult<Event> {
     let event = match json::from_str(input) {
         Ok(v) => v,
