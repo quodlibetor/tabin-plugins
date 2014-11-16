@@ -31,7 +31,6 @@
 
 #![feature(macro_rules)]
 extern crate serialize;
-extern crate chrono;
 
 use serialize::json;
 use serialize::json::{
@@ -46,7 +45,6 @@ use serialize::json::{
 };
 use std::io;
 use std::from_str::from_str;
-use chrono::NaiveDateTime;
 
 /// An Event: [The event data](http://sensuapp.org/docs/latest/event_data)
 /// formatted as a struct.
@@ -64,7 +62,7 @@ pub struct Client {
     name: String,
     address: String,
     subscriptions: Vec<String>,
-    timestamp: NaiveDateTime,
+    timestamp: i64,
     additional: Json
 }
 
@@ -82,7 +80,7 @@ pub struct Check {
     // Results, added by Sensu
     handlers: Option<Vec<String>>,
     handler: Option<String>,
-    issued: NaiveDateTime,
+    issued: i64,
     output: String,
     status: i8,
     history: Vec<String>,
@@ -169,12 +167,6 @@ pub fn read_event(input: &str) -> SensuResult<Event> {
     })
 }
 
-/// Get a timestamp out and format it as a NaiveDateTime
-fn pull_timestamp(event: &Json, field: &str) -> SensuResult<NaiveDateTime> {
-    let ts = jki!(event, field);
-    Ok(NaiveDateTime::from_num_seconds_from_unix_epoch(ts, 0))
-}
-
 
 fn extract_list_of_strings(list: &Json, field_name: &str) -> SensuResult<Vec<String>> {
     match *list {
@@ -219,13 +211,12 @@ fn read_client(input: &Json) -> SensuResult<Client> {
             _ => return Err(EventError(format!("Invalid subscription type {}", sub)))
         }
     }
-    let ts = try!(pull_timestamp(event, "timestamp"));
 
     let client = Client {
         name: jk!(event->"name" String),
         address: jk!(event->"address" String),
         subscriptions: subs,
-        timestamp: ts,
+        timestamp: jki!(event, "timestamp"),
         additional: Null
     };
     Ok(client)
@@ -241,7 +232,7 @@ fn read_check(event: &Json) -> SensuResult<Check> {
 
     Ok(Check {
         name: jk!(check->"name" String),
-        issued: try!(pull_timestamp(check, "issued")),
+        issued: jki!(check, "issued"),
         output: jk!(check->"output" String),
         status: jki!(check, "status") as i8,
         command: jk!(check->"command" String),
@@ -268,7 +259,6 @@ fn read_check(event: &Json) -> SensuResult<Check> {
 #[cfg(test)]
 mod build_objects {
     use serialize::json;
-    use chrono::NaiveDateTime;
     use super::{read_event, read_client, read_check, Check};
 
     #[test]
@@ -341,7 +331,7 @@ mod build_objects {
                 println!("Parsed: {}", check);
                 assert_eq!(check, Check {
                     name: "test-check".into_string(),
-                    issued: NaiveDateTime::from_num_seconds_from_unix_epoch(1416069607, 0),
+                    issued: 1416069607i64,
                     output: "we have output".into_string(),
                     status: 0,
                     command: "echo 'we have output'".into_string(),
