@@ -1,6 +1,7 @@
 //! Functions related to determining if the current Event should be Handled
 
 use Event;
+use Filter::{Disabled, NotRefresh, Active};
 
 pub enum Filter<'a> {
     Disabled,

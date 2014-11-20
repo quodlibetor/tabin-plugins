@@ -39,15 +39,10 @@ pub use self::init::{
     Client,
     Check,
     SensuError,
-    InitError,
-    EventError
 };
 
 pub use filter::{
     Filter,
-    Disabled,
-    TooSoon,
-    Active,
     run_filters,
 };
 

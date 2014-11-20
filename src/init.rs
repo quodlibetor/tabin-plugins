@@ -11,7 +11,8 @@ use serialize::json::{
     U64,
 };
 use std::io;
-use std::from_str::from_str;
+use std::str::from_str;
+use SensuError::{InitError, EventError};
 
 struct Defaults {
     refresh: u64,
