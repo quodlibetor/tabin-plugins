@@ -27,41 +27,70 @@ static DEFAULTS: Defaults = Defaults {
 /// formatted as a struct.
 #[deriving(Show, PartialEq)]
 pub struct Event {
-    client: Client,
-    check: Check,
-    occurrences: u64,
-    action: Option<String>,
+    /// Client configuration
+    pub client: Client,
+    /// Check Configuration
+    pub check: Check,
+    /// Count of the number of times this event has been going continuosly
+    pub occurrences: u64,
+    /// One of "create", "resolve"
+    pub action: Option<String>,
 }
 
 /// The configuration of the client that sent this event
 #[deriving(Show, PartialEq)]
 pub struct Client {
-    name: String,
-    address: String,
-    subscriptions: Vec<String>,
-    timestamp: i64,
-    additional: Json
+    /// The name the client registered as
+    pub name: String,
+    /// The address registered by the client
+    pub address: String,
+    /// The subscriptions the client registered for
+    pub subscriptions: Vec<String>,
+    pub timestamp: i64,
+    /// **Everything else**
+    pub additional: Json
 }
 
 /// The client-side definition of the check plus some extra status. See the
 /// [check documentation](http://sensuapp.org/docs/latest/checks) for details.
 #[deriving(Show, PartialEq)]
 pub struct Check {
-    // client-configured things
-    name: String,
-    command: String,
-    subscribers: Vec<String>,
-    interval: i64,
-    additional: Option<Json>,
+    /* ====(  client-configured things  )==== */
+    /// Name of the check (from check definition)
+    pub name: String,
+    /// Command being executed (from check definition)
+    pub command: String,
+    /// Subscription channel for the check (from check definition)
+    pub subscribers: Vec<String>,
+    /// How often to run the check (from check definition)
+    pub interval: u64,
+    /// List of handlers to run when check results in an event (from check definition)
+    pub handlers: Option<Vec<String>>,
+    /// Single handler to run when check results in an event (from check definition)
+    pub handler: Option<String>,
 
-    // Results, added by Sensu
-    handlers: Option<Vec<String>>,
-    handler: Option<String>,
-    issued: i64,
-    output: String,
-    status: i8,
-    history: Vec<String>,
-    flapping: bool,
+    /* ====(  Semi-standard client configs  )==== */
+    /// Whether or not to alert (custom for sensu-handler)
+    pub alert: Option<bool>,
+    /// Minimum number of occurrences required to alert (custom for sensu-handler)
+    pub occurrences: Option<u64>,
+    /// Interval to run handlers (custom for sensu-handler)
+    pub refresh: u64,
+
+    /* ====(  Results, added by Sensu  )==== */
+    /// When the check was issued (added by Sensu daemon)
+    pub issued: i64,
+    /// Check command output (added by Sensu daemon)
+    pub output: String,
+    /// Check exit status (added by Sensu daemon)
+    pub status: i8,
+    /// History of exit statuses (added by Sensu server)
+    pub history: Vec<String>,
+    /// Whether the check is currently flapping (added by Sensu server)
+    pub flapping: bool,
+
+    /// **Everything else**
+    pub additional: Option<Json>,
 }
 
 #[deriving(Show, PartialEq)]
@@ -71,6 +100,7 @@ pub enum SensuError {
 }
 
 pub type SensuResult<T> = Result<T, SensuError>;
+
 
 /// Extract a generic JS object, given a type
 /// Early return an error if it can't be extracted
