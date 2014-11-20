@@ -1,5 +1,6 @@
 //! Functions related to determining if the current Event should be Handled
 
+use libc;
 use Event;
 use Filter::{Disabled, NotRefresh, Active};
 
@@ -49,6 +50,17 @@ macro_rules! iron_filter{
         match $f {
             Active(event) => event,
             _ => return $f
+        }
+    }
+}
+
+pub fn run_filters_or_die<'a>(event: &'a Event) {
+    let result = run_filters(event);
+    match result {
+        Active(_) => {},
+        _ => {
+            result.display();
+            unsafe { libc::exit(1 as libc::c_int); }
         }
     }
 }

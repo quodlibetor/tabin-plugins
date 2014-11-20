@@ -31,6 +31,7 @@
 
 #![feature(macro_rules)]
 extern crate serialize;
+extern crate libc;
 
 pub use self::init::{
     init,
@@ -44,6 +45,7 @@ pub use self::init::{
 pub use filter::{
     Filter,
     run_filters,
+    run_filters_or_die,
 };
 
 mod init;
