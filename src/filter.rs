@@ -12,6 +12,38 @@ pub enum Filter<'a> {
     Active(&'a Event),
 }
 
+trait DisplayError<'a> {
+    fn display(&'a self);
+}
+
+trait ErrorParts<'a> {
+    fn lib(&'a self) -> String;
+    fn msg(&'a self) -> String;
+}
+
+impl<'a, T:ErrorParts<'a>> DisplayError<'a> for T {
+    fn display(&'a self) {
+        println!("[{}] {}", self.lib(), self.msg());
+    }
+}
+
+impl<'a> ErrorParts<'a> for Filter<'a> {
+    fn lib(&'a self) -> String { "iron_fan".into_string() }
+    fn msg(&'a self) -> String {
+        match *self {
+            Filter::Disabled => format!("check is disabled"),
+            Filter::TooSoon(current, required) =>
+                format!("not enough occurrences ({} < {})",
+                         current, required),
+            Filter::NotRefresh(interval, next) =>
+                format!("only handling every {} occurrences (next in {})",
+                         interval, next),
+            Filter::Active(_) =>
+                format!("safe to handle event")
+        }
+    }
+}
+
 macro_rules! iron_filter{
     ($f:expr) => {
         match $f {
