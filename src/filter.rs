@@ -7,7 +7,8 @@ pub enum Filter<'a> {
     Disabled,
     TooSoon(u64,  // current
             u64), // required
-    NotRefresh(u64), // checks until next
+    NotRefresh(u64, // interval
+               u64), // checks until next
     Active(&'a Event),
 }
 
@@ -74,7 +75,7 @@ pub fn filter_repeated<'a>(event: &'a Event) -> Filter<'a> {
         let intervals = refresh / interval;
         let next = event.occurrences % intervals;
         if intervals != 0 && next != 0 {
-            return NotRefresh(next);
+            return NotRefresh(interval, next);
         }
     }
 
