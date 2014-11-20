@@ -43,4 +43,13 @@ pub use self::init::{
     EventError
 };
 
+pub use filter::{
+    Filter,
+    Disabled,
+    TooSoon,
+    Active,
+    run_filters,
+};
+
 mod init;
+pub mod filter;
