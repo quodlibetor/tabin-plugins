@@ -13,6 +13,16 @@ use serialize::json::{
 use std::io;
 use std::from_str::from_str;
 
+struct Defaults {
+    refresh: u64,
+    interval: u64
+}
+
+static DEFAULTS: Defaults = Defaults {
+    refresh: 1800,
+    interval: 60
+};
+
 /// An Event: [The event data](http://sensuapp.org/docs/latest/event_data)
 /// formatted as a struct.
 #[deriving(Show, PartialEq)]
@@ -75,6 +85,19 @@ macro_rules! jk(
         }
     )
 )
+
+macro_rules! find_default(
+    ($j:ident, $p:ident($k:expr), $default:expr) => (
+        match $j.find($k) {
+            Some(value) => match value {
+                &$p(ref v) => v.clone(),
+                _ => return Err(EventError(format!("Wrong type for '{}': {}", $k, value)))
+            },
+            None => $default
+        }
+    )
+)
+
 /// Extract any kind of number as an i64
 /// Early return an error if it can't be extracted
 macro_rules! jki {
@@ -89,6 +112,18 @@ macro_rules! jki {
             None => return Err(EventError(format!("couldn't find '{}' in event", $field)))
         };
     }
+}
+
+macro_rules! find {
+    ($event:ident, $pat:ident($field:expr)) => (
+        match $event.find($field) {
+            Some(value) => match *value {
+                $pat(v) => Some(v),
+                _ => return Err(EventError(format!("Wrong type for '{}': '{}'", $field, value)))
+            },
+            None => None
+        }
+    )
 }
 
 /// Read stdin, and parse it into an Event
@@ -204,7 +239,13 @@ fn read_check(event: &Json) -> SensuResult<Check> {
         status: jki!(check, "status") as i8,
         command: jk!(check->"command" String),
         subscribers: subscribers,
-        interval: jki!(check, "interval"),
+
+        alert: find!(check, Boolean("alert")),
+        occurrences: find!(check, U64("occurrences")),
+
+        interval: find_default!(check, U64("interval"), DEFAULTS.interval),
+        refresh: find_default!(check, U64("refresh"), DEFAULTS.refresh),
+
         handler: match check.find("handler") {
             Some(handler) => match *handler {
                 String(ref h) => Some(h.clone()),
@@ -287,6 +328,7 @@ mod build_objects {
                 "command": "echo 'we have output'",
                 "subscribers": ["examples", "tests"],
                 "interval": 60,
+                "refresh": 1800,
                 "handler": "default",
                 "history": ["0", "0", "0"],
                 "flapping": false,
@@ -304,6 +346,56 @@ mod build_objects {
                     command: "echo 'we have output'".into_string(),
                     subscribers: vec!("examples".into_string(),
                                       "tests".into_string()),
+                    alert: None,
+                    occurrences: None,
+                    interval: 60,
+                    refresh: 1800,
+                    handler: Some("default".into_string()),
+                    handlers: None,
+                    history: Vec::from_fn(3, |_| "0".into_string()),
+                    flapping: false,
+                    additional: None });
+            },
+            Err(e) => panic!("ERROR: {}", e)
+        }
+    }
+
+        #[test]
+    fn can_build_check_with_alert() {
+        let event = json::from_str(r#"{
+            "check": {
+                "name": "test-check",
+                "issued": 1416069607,
+                "output": "we have output",
+                "status": 0,
+                "command": "echo 'we have output'",
+                "subscribers": ["examples", "tests"],
+                "interval": 60,
+                "refresh": 1800,
+                "alert": false,
+                "occurrences": 5,
+                "handler": "default",
+                "history": ["0", "0", "0"],
+                "flapping": false,
+                "additional": null
+            }
+        }"#).unwrap();
+        match read_check(&event) {
+            Ok(check) => {
+                println!("Parsed: {}", check);
+                assert_eq!(check, Check {
+                    name: "test-check".into_string(),
+                    issued: 1416069607i64,
+                    output: "we have output".into_string(),
+                    status: 0,
+                    command: "echo 'we have output'".into_string(),
+                    subscribers: vec!("examples".into_string(),
+                                      "tests".into_string()),
+
+                    alert: Some(false),
+                    occurrences: Some(5),
+
+                    refresh: 1800,
                     interval: 60,
                     handler: Some("default".into_string()),
                     handlers: None,
