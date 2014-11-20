@@ -70,6 +70,9 @@ pub fn filter_repeated<'a>(event: &'a Event) -> Filter<'a> {
     let interval = event.check.interval;
     let refresh = event.check.refresh;
 
+    if event.occurrences < min_occurrences {
+        return Filter::TooSoon(event.occurrences, min_occurrences);
+    }
     if event.occurrences > min_occurrences {
         // number of checks required to hit "refresh" duration
         let intervals = refresh / interval;
