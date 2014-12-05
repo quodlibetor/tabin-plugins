@@ -1,28 +1,21 @@
-
+use hyper;
 use serialize::json;
-use serialize::json::{
+use serialize::json::Json;
+use serialize::json::Json::{
     Boolean,
     F64,
     I64,
-    Json,
-    List,
+    Array,
     Null,
     String,
     U64,
 };
 use std::io;
 use std::str::from_str;
+use std::error;
+
 use SensuError::{InitError, EventError};
-
-struct Defaults {
-    refresh: u64,
-    interval: u64
-}
-
-static DEFAULTS: Defaults = Defaults {
-    refresh: 1800,
-    interval: 60
-};
+use defaults;
 
 /// An Event: [The event data](http://sensuapp.org/docs/latest/event_data)
 /// formatted as a struct.
@@ -65,7 +58,7 @@ pub struct Check {
     pub subscribers: Vec<String>,
     /// How often to run the check (from check definition)
     pub interval: u64,
-    /// List of handlers to run when check results in an event (from check definition)
+    /// Array of handlers to run when check results in an event (from check definition)
     pub handlers: Option<Vec<String>>,
     /// Single handler to run when check results in an event (from check definition)
     pub handler: Option<String>,
@@ -97,10 +90,18 @@ pub struct Check {
 #[deriving(Show, PartialEq)]
 pub enum SensuError {
     InitError(String),
-    EventError(String)
+    EventError(String),
+    ParseError(String),
+    HttpError(hyper::HttpError)
 }
 
 pub type SensuResult<T> = Result<T, SensuError>;
+
+impl<E: error::Error> error::FromError<E> for SensuError {
+    fn from_error(_: E) -> SensuError {
+        super::init::SensuError::ParseError("bad".into_string())
+    }
+}
 
 
 /// Extract a generic JS object, given a type
@@ -135,9 +136,9 @@ macro_rules! jki {
     ($event:ident, $field:expr) => {
         match $event.find($field) {
             Some(value) => match value {
-                &I64(ref v) => v.clone(),
-                &U64(ref v) => v.clone() as i64,
-                &F64(ref v) => v.clone() as i64,
+                &Json::I64(ref v) => v.clone(),
+                &Json::U64(ref v) => v.clone() as i64,
+                &Json::F64(ref v) => v.clone() as i64,
                 _ => return Err(EventError(format!("Wrong type for '{}': {}", $field, value)))
             },
             None => return Err(EventError(format!("couldn't find '{}' in event", $field)))
@@ -176,17 +177,17 @@ pub fn read_event(input: &str) -> SensuResult<Event> {
     let check = try!(read_check(&event));
     let action = match event.find("action") {
         Some(action) => match *action {
-            String(ref a) => Some(a.clone()),
+            Json::String(ref a) => Some(a.clone()),
             _ => return Err(InitError(format!("Wrong type for action: {}", action)))
         },
         None => None
     };
     let occurrences = match event.find("occurrences") {
         Some(occurrences) => match *occurrences {
-            U64(o) => o,
-            I64(o) => o as u64,
-            F64(o) => o as u64,
-            String(ref o) => try!(from_str::<u64>(o.as_slice()).ok_or(
+            Json::U64(o) => o,
+            Json::I64(o) => o as u64,
+            Json::F64(o) => o as u64,
+            Json::String(ref o) => try!(from_str::<u64>(o.as_slice()).ok_or(
                 InitError(format!("Unable to parse number from occurrences: {}", occurrences)))),
             _ => return Err(InitError(format!("Wrong type for occurrences: {}", occurrences)))
         },
@@ -203,11 +204,11 @@ pub fn read_event(input: &str) -> SensuResult<Event> {
 
 fn extract_list_of_strings(list: &Json, field_name: &str) -> SensuResult<Vec<String>> {
     match *list {
-        List(ref subs) => {
+        Json::Array(ref subs) => {
             let mut result = Vec::new();
             for sub in subs.iter() {
                 match *sub {
-                    String(ref s) => result.push(s.clone()),
+                    Json::String(ref s) => result.push(s.clone()),
                     _ => return Err(InitError(format!("Wrong type in {}: {}",
                                                       field_name, sub)))
                 }
@@ -236,11 +237,11 @@ fn read_client(input: &Json) -> SensuResult<Client> {
         None => return Err(InitError("No client in event".into_string()))
     };
 
-    let unverified_subs = jk!(event->"subscriptions" List);
+    let unverified_subs = jk!(event->"subscriptions" Array);
     let mut subs: Vec<String> = Vec::new();
     for sub in unverified_subs.iter() {
         match *sub {
-            json::String(ref s) => subs.push(s.clone()),
+            Json::String(ref s) => subs.push(s.clone()),
             _ => return Err(EventError(format!("Invalid subscription type {}", sub)))
         }
     }
@@ -250,7 +251,7 @@ fn read_client(input: &Json) -> SensuResult<Client> {
         address: jk!(event->"address" String),
         subscriptions: subs,
         timestamp: jki!(event, "timestamp"),
-        additional: Null
+        additional: Json::Null
     };
     Ok(client)
 }
@@ -274,12 +275,12 @@ fn read_check(event: &Json) -> SensuResult<Check> {
         alert: find!(check, Boolean("alert")),
         occurrences: find!(check, U64("occurrences")),
 
-        interval: find_default!(check, U64("interval"), DEFAULTS.interval),
-        refresh: find_default!(check, U64("refresh"), DEFAULTS.refresh),
+        interval: find_default!(check, U64("interval"), defaults().interval),
+        refresh: find_default!(check, U64("refresh"), defaults().refresh),
 
         handler: match check.find("handler") {
             Some(handler) => match *handler {
-                String(ref h) => Some(h.clone()),
+                Json::String(ref h) => Some(h.clone()),
                 _ => return Err(InitError(format!("Wrong type for handler ({})", handler)))
             },
             None => None

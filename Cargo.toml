@@ -2,3 +2,12 @@
 name = "iron_fan"
 version = "0.0.1"
 authors = ["Brandon W Maister <quodlibetor@gmail.com>"]
+
+[dependencies.hyper]
+git = "https://github.com/hyperium/hyper"
+
+[dependencies.url]
+git = "https://github.com/servo/rust-url"
+
+[dependencies.docopt]
+git = "git://github.com/docopt/docopt.rs"

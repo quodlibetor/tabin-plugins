@@ -32,6 +32,8 @@
 #![feature(macro_rules)]
 extern crate serialize;
 extern crate libc;
+extern crate url;
+extern crate hyper;
 
 pub use self::init::{
     init,
@@ -50,3 +52,18 @@ pub use filter::{
 
 mod init;
 pub mod filter;
+pub mod utils;
+
+// XXX: these will be gotten from settings, when that's implemented
+struct Defaults<'a> {
+    refresh: u64,
+    interval: u64,
+}
+
+fn defaults<'a>() -> Defaults<'a> {
+    Defaults {
+        refresh: 1800,
+        interval: 60,
+    }
+}
+
