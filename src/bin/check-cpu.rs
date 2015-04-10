@@ -1,15 +1,16 @@
 //! This is a documentation.
 
-extern crate serialize;
+#![feature(exit_status)]
+
+extern crate rustc_serialize;
 
 extern crate docopt;
 
 use docopt::Docopt;
 
-use std::io::File;
+use std::fs::File;
+use std::io::{BufReader,Read};
 use std::path::Path;
-use std::str::from_str;
-use std::time::duration::Duration;
 
 static USAGE: &'static str = "
 Usage: check-cpu [options] [--type=<work-source>]
@@ -30,24 +31,24 @@ CPU Work Types:
                        iowait irq softirq steal guest [default: total]
 ";
 
-#[deriving(Decodable, Show)]
+#[derive(RustcDecodable, Debug)]
 enum WorkSource {
     Total, User, Nice, System, Idle, IoWait, Irq, SoftIrq, Steal, Guest, GuestNice
 }
 
-#[deriving(Decodable, Show)]
+#[derive(RustcDecodable, Debug)]
 struct Args {
     flag_help: bool,
-    flag_sleep: i64,
-    flag_warn:  int,
-    flag_crit:  int,
+    flag_sleep: i32,
+    flag_warn:  isize,
+    flag_crit:  isize,
 
     flag_type: WorkSource,
 }
 
 /// The number of calculations that have occured on this computer since it
 /// started
-#[deriving(Show)]
+#[derive(Debug)]
 pub struct Calculations {
     pub user: f64,
     pub nice: f64,
@@ -87,8 +88,8 @@ impl Calculations {
     }
 }
 
-fn percent_util(kind: WorkSource, start: &Calculations, end: &Calculations) -> f64 {
-    let (start_val, end_val) = match kind {
+fn percent_util(kind: &WorkSource, start: &Calculations, end: &Calculations) -> f64 {
+    let (start_val, end_val) = match *kind {
         WorkSource::Total => ((start.user + start.nice + start.system + start.iowait + start.irq + start.steal),
                               (end.user + end.nice + end.system + end.iowait + end.irq + end.steal)),
         WorkSource::User => (start.user, end.user),
@@ -109,19 +110,22 @@ fn percent_util(kind: WorkSource, start: &Calculations, end: &Calculations) -> f
 
 pub fn read_cpu() -> Calculations {
     let contents = match File::open(&Path::new("/proc/stat")) {
-        Ok(ref mut content) => content.read_to_end().unwrap(),
-        Err(e) => panic!("Unable to read /proc/stat: {}", e)
+        Ok(ref mut content) => {
+            let mut s = String::new();
+            let _ = BufReader::new(content).read_to_string(&mut s);
+            s
+        },
+        Err(e) => panic!("Unable to read /proc/stat: {:?}", e)
     };
-    let contents = String::from_utf8(contents).unwrap();
     let mut word = String::new();
     let mut usages = Vec::new();
-    for chr in contents.to_string().chars() {
+    for chr in contents.chars() {
         match chr {
             ' ' => {
-                if word.as_slice() != "" && word.as_slice() != "cpu" {
-                    let usage = match from_str::<f64>(word.as_slice()) {
-                        Some(num) => num,
-                        None => panic!("Unable to parse '{}' as f64", word)
+                if word != "" && word != "cpu" {
+                    let usage = match word.parse() {
+                        Ok(num) => num,
+                        Err(e) => panic!("Unable to parse '{}' as f64: {:?}", word, e)
                     };
                     usages.push(usage)
                 };
@@ -159,18 +163,17 @@ fn main() {
     }
 
     let start = read_cpu();
-    let duration = Duration::seconds(args.flag_sleep);
-    std::io::timer::sleep(duration);
+    std::thread::sleep_ms((args.flag_sleep * 1000) as u32);
     let end = read_cpu();
-    let total = percent_util(args.flag_type, &start, &end);
+    let total = percent_util(&args.flag_type, &start, &end);
     if total > args.flag_crit as f64 {
-        std::os::set_exit_status(2);
-        println!("check-cpu critical: {} > {}", total, args.flag_crit);
+        std::env::set_exit_status(2);
+        println!("check-cpu critical: {:?} > {}", total, args.flag_crit);
     } else if total > args.flag_warn as f64 {
-        std::os::set_exit_status(1);
+        std::env::set_exit_status(1);
         println!("check-cpu warning: {} > {}", total, args.flag_warn);
     } else {
         println!("check-cpu ok");
     }
-    println!("{}={} ({})", args.flag_type, total, end.sub(&start))
+    println!("{:?}={:?} ({:?})", args.flag_type, total, end.sub(&start))
 }

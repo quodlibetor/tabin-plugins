@@ -1,7 +1,6 @@
 use hyper;
-use serialize::json;
-use serialize::json::Json;
-use serialize::json::Json::{
+use rustc_serialize::json::Json;
+use rustc_serialize::json::Json::{
     Boolean,
     F64,
     I64,
@@ -11,7 +10,7 @@ use serialize::json::Json::{
     U64,
 };
 use std::io;
-use std::str::from_str;
+use std::io::Read;
 use std::error;
 
 use SensuError::{InitError, EventError};
@@ -19,7 +18,7 @@ use defaults;
 
 /// An Event: [The event data](http://sensuapp.org/docs/latest/event_data)
 /// formatted as a struct.
-#[deriving(Show, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Event {
     /// Client configuration
     pub client: Client,
@@ -32,7 +31,7 @@ pub struct Event {
 }
 
 /// The configuration of the client that sent this event
-#[deriving(Show, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Client {
     /// The name the client registered as
     pub name: String,
@@ -47,7 +46,7 @@ pub struct Client {
 
 /// The client-side definition of the check plus some extra status. See the
 /// [check documentation](http://sensuapp.org/docs/latest/checks) for details.
-#[deriving(Show, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Check {
     /* ====(  client-configured things  )==== */
     /// Name of the check (from check definition)
@@ -87,7 +86,7 @@ pub struct Check {
     pub additional: Option<Json>,
 }
 
-#[deriving(Show, PartialEq)]
+#[derive(Debug)]
 pub enum SensuError {
     InitError(String),
     EventError(String),
@@ -97,17 +96,17 @@ pub enum SensuError {
 
 pub type SensuResult<T> = Result<T, SensuError>;
 
-impl<E: error::Error> error::FromError<E> for SensuError {
-    fn from_error(_: E) -> SensuError {
-        super::init::SensuError::ParseError("bad".into_string())
+impl<E: error::Error> From<E> for SensuError {
+    fn from(_: E) -> SensuError {
+        super::init::SensuError::ParseError(String::from_str("bad"))
     }
 }
 
 
 /// Extract a generic JS object, given a type
 /// Early return an error if it can't be extracted
-macro_rules! jk(
-    ($j:ident->$k:expr $p:ident) => (
+macro_rules! jk{
+    ($j:ident -> $k:expr => $p:ident) => (
         match $j.find($k) {
             Some(value) => match value {
                 &$p(ref v) => v.clone(),
@@ -116,9 +115,9 @@ macro_rules! jk(
             None => return Err(EventError(format!("couldn't find {} in event", $k)))
         }
     )
-)
+}
 
-macro_rules! find_default(
+macro_rules! find_default{
     ($j:ident, $p:ident($k:expr), $default:expr) => (
         match $j.find($k) {
             Some(value) => match value {
@@ -128,7 +127,7 @@ macro_rules! find_default(
             None => $default
         }
     )
-)
+}
 
 /// Extract any kind of number as an i64
 /// Early return an error if it can't be extracted
@@ -160,17 +159,18 @@ macro_rules! find {
 
 /// Read stdin, and parse it into an Event
 pub fn init() -> SensuResult<Event> {
-    match io::stdin().read_to_end() {
-        Ok(input) => read_event(input.to_string().as_slice()),
+    let mut s = String::new();
+    match io::stdin().read_to_string(&mut s) {
+        Ok(_bytes) => read_event(&s),
         Err(e) => Err(InitError(format!("couldn't read stdin: {}", e)))
     }
 }
 
 /// Parse an &str into an Event, making sure that all the types match up
 pub fn read_event(input: &str) -> SensuResult<Event> {
-    let event = match json::from_str(input) {
+    let event: Json = match Json::from_str(input) {
         Ok(v) => v,
-        Err(e) => return Err(InitError(format!("couldn't parse json: {}", e)))
+        Err(e) => return Err(InitError(format!("couldn't parse json: {:?}", e)))
     };
 
     let client = try!(read_client(&event));
@@ -187,8 +187,6 @@ pub fn read_event(input: &str) -> SensuResult<Event> {
             Json::U64(o) => o,
             Json::I64(o) => o as u64,
             Json::F64(o) => o as u64,
-            Json::String(ref o) => try!(from_str::<u64>(o.as_slice()).ok_or(
-                InitError(format!("Unable to parse number from occurrences: {}", occurrences)))),
             _ => return Err(InitError(format!("Wrong type for occurrences: {}", occurrences)))
         },
         None => return Err(InitError(format!("No occurrences in event data")))
@@ -221,7 +219,7 @@ fn extract_list_of_strings(list: &Json, field_name: &str) -> SensuResult<Vec<Str
 
 fn find_list_of_strings(obj: &Json, field_name: &str) -> SensuResult<Vec<String>> {
     let contained = obj.find(field_name);
-    println!("{} is {}", field_name, contained)
+    println!("{} is {:?}", field_name, contained);
     let result = match contained {
         Some(subs) => {
             try!(extract_list_of_strings(subs, field_name))
@@ -234,10 +232,10 @@ fn find_list_of_strings(obj: &Json, field_name: &str) -> SensuResult<Vec<String>
 fn read_client(input: &Json) -> SensuResult<Client> {
     let event = match input.find("client") {
         Some(client) => client,
-        None => return Err(InitError("No client in event".into_string()))
+        None => return Err(InitError("No client in event".to_string()))
     };
 
-    let unverified_subs = jk!(event->"subscriptions" Array);
+    let unverified_subs = jk!(event->"subscriptions" => Array);
     let mut subs: Vec<String> = Vec::new();
     for sub in unverified_subs.iter() {
         match *sub {
@@ -247,8 +245,8 @@ fn read_client(input: &Json) -> SensuResult<Client> {
     }
 
     let client = Client {
-        name: jk!(event->"name" String),
-        address: jk!(event->"address" String),
+        name: jk!(event->"name" => String),
+        address: jk!(event->"address" => String),
         subscriptions: subs,
         timestamp: jki!(event, "timestamp"),
         additional: Json::Null
@@ -259,17 +257,17 @@ fn read_client(input: &Json) -> SensuResult<Client> {
 fn read_check(event: &Json) -> SensuResult<Check> {
     let check = match event.find("check") {
         Some(check) => check,
-        None => return Err(InitError("No check in event".into_string()))
+        None => return Err(InitError("No check in event".to_string()))
     };
 
     let subscribers = try!(find_list_of_strings(check, "subscribers"));
 
     Ok(Check {
-        name: jk!(check->"name" String),
+        name: jk!(check->"name" => String),
         issued: jki!(check, "issued"),
-        output: jk!(check->"output" String),
+        output: jk!(check->"output" => String),
         status: jki!(check, "status") as i8,
-        command: jk!(check->"command" String),
+        command: jk!(check->"command" => String),
         subscribers: subscribers,
 
         alert: find!(check, Boolean("alert")),
@@ -290,7 +288,7 @@ fn read_check(event: &Json) -> SensuResult<Check> {
             None => None
         },
         history: try!(find_list_of_strings(check, "history")),
-        flapping: jk!(check->"flapping" Boolean),
+        flapping: jk!(check->"flapping" => Boolean),
         additional: None
     })
 }
@@ -334,7 +332,7 @@ mod build_objects {
 
     #[test]
     fn can_build_client() {
-        let event = json::from_str(r#"{
+        let event = Json::from_str(r#"{
             "client": {
                 "name": "hello",
                 "address": "192.168.1.1",
@@ -351,7 +349,7 @@ mod build_objects {
 
     #[test]
     fn can_build_check() {
-        let event = json::from_str(r#"{
+        let event = Json::from_str(r#"{
             "check": {
                 "name": "test-check",
                 "issued": 1416069607,
@@ -394,7 +392,7 @@ mod build_objects {
 
         #[test]
     fn can_build_check_with_alert() {
-        let event = json::from_str(r#"{
+        let event = Json::from_str(r#"{
             "check": {
                 "name": "test-check",
                 "issued": 1416069607,
@@ -441,7 +439,7 @@ mod build_objects {
 
     #[test]
     fn can_build_check_with_handlers() {
-        let event = json::from_str(r#"{
+        let event = Json::from_str(r#"{
             "check": {
                 "name": "test-check",
                 "issued": 1416069607,

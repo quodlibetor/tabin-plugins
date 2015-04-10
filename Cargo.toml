@@ -11,3 +11,6 @@ git = "https://github.com/servo/rust-url"
 
 [dependencies.docopt]
 git = "git://github.com/docopt/docopt.rs"
+
+[dependencies]
+rustc-serialize = "0.3"

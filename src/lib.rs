@@ -10,7 +10,7 @@
 //! an `Event` and run filters on it:
 //!
 //! ```rust
-//! extern crate iron_fan;
+//! extern crate turbine;
 //!
 //! fn main() {
 //!     // parse stdin into an iron_fan::Event
@@ -29,8 +29,8 @@
 //! * `Event`s, `Client`s and `Check`s are manually parsed, insted of being
 //!   decoded in some way
 
-#![feature(macro_rules)]
-extern crate serialize;
+#![feature(libc,collections)]
+extern crate rustc_serialize;
 extern crate libc;
 extern crate url;
 extern crate hyper;
@@ -55,12 +55,12 @@ pub mod filter;
 pub mod utils;
 
 // XXX: these will be gotten from settings, when that's implemented
-struct Defaults<'a> {
+struct Defaults {
     refresh: u64,
     interval: u64,
 }
 
-fn defaults<'a>() -> Defaults<'a> {
+fn defaults() -> Defaults {
     Defaults {
         refresh: 1800,
         interval: 60,

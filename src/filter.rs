@@ -22,14 +22,14 @@ trait ErrorParts<'a> {
     fn msg(&'a self) -> String;
 }
 
-impl<'a, T:ErrorParts<'a>> DisplayError<'a> for T {
+impl<'a, T: ErrorParts<'a>> DisplayError<'a> for T {
     fn display(&'a self) {
         println!("[{}] {}", self.lib(), self.msg());
     }
 }
 
 impl<'a> ErrorParts<'a> for Filter<'a> {
-    fn lib(&'a self) -> String { "iron_fan".into_string() }
+    fn lib(&'a self) -> String { "iron_fan".to_string() }
     fn msg(&'a self) -> String {
         match *self {
             Filter::Disabled => format!("check is disabled"),
@@ -100,7 +100,7 @@ pub fn filter_disabled<'a>(event: &'a Event) -> Filter<'a> {
 /// Filter everything else.
 pub fn filter_repeated<'a>(event: &'a Event) -> Filter<'a> {
     match event.action {
-        Some(ref action) => if action.as_slice() != "create" {
+        Some(ref action) => if action != "create" {
             return Active(event)
         },
         None => {}
@@ -126,5 +126,16 @@ pub fn filter_repeated<'a>(event: &'a Event) -> Filter<'a> {
         }
     }
 
+    Active(event)
+}
+
+/// Check for each of the following stashes:
+///
+///   * /silence/:client_name
+///   * /silence/:client_name/:check_name
+///   * /silence/all/:check_name
+///
+/// Only returning Active if none of them exist
+pub fn filter_silenced(event: &Event) -> Filter {
     Active(event)
 }

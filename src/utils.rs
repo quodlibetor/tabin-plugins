@@ -1,6 +1,8 @@
 use url;
-use hyper::client::{request,response};
-use init::{SensuResult, SensuError};
+use hyper;
+use hyper::Client;
+use hyper::client::response;
+use init::SensuError;
 
 pub fn api_url(path: &str) -> Result<url::Url, SensuError> {
     let base = url::Url::parse("http://localhost:4567").unwrap();
@@ -10,13 +12,29 @@ pub fn api_url(path: &str) -> Result<url::Url, SensuError> {
     }
 }
 
-pub fn api_get(path: &str) -> SensuResult<response::Response> {
-    let path = api_url(path);
-    let req = match path {
-        Ok(path) => request::Request::get(path),
-        Err(ref e) => return Err(SensuError::ParseError(
-            format!("{} is not a valid url part {}", path, e)))
-    };
-    let result = try!(try!(req).start()).send();
-    result.or_else(|e| Err(SensuError::HttpError(e)))
+pub fn api_get(path: &str) -> response::Response {//SensuResult<Result<A,B>> {
+    //let path = api_url(path);
+    let req = Client::new().get(path).send().unwrap();
+    // let req = match path {
+    //     Ok(path) => Client::new().get(path).send().unwrap(),
+    //     Err(ref e) => return Err(SensuError::ParseError(
+    //         format!("{:?} is not a valid url part {:?}", path, e)))
+    // };
+    //let result = try!(try!(req).start()).send();
+    req
+}
+
+pub fn stash_exists(stash: &str) -> bool {
+    let path = "/stash/".to_string() + stash;
+    match api_get(path.as_ref()).status {
+            hyper::status::StatusCode::Ok => true,
+            _ => false
+    }
+    // match api_get(path.as_slice()) {
+    //     Ok(result) => match result.status {
+    //         hyper::status::StatusCode::Ok => true,
+    //         _ => false
+    //     },
+    //     Err(_) => false
+    // }
 }
