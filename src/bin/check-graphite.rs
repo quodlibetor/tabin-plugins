@@ -83,7 +83,7 @@ impl GraphiteData {
         let dl = obj
             .find("datapoints").expect("Could not find datapoints in obj")
             .as_array().expect("Graphite did not return an array").into_iter()
-            .map(|point| DataPoint::from(point))
+            .map(DataPoint::from)
             .collect();
         GraphiteData {
             points: dl,
