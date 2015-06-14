@@ -3,8 +3,10 @@ name = "turbine"
 version = "0.0.1"
 authors = ["Brandon W Maister <quodlibetor@gmail.com>"]
 
-[dependencies.hyper]
-git = "https://github.com/hyperium/hyper"
+[dependencies]
+hyper = "0.5.0"
+clap = "*"
+chrono = "0.2"
 
 [dependencies.url]
 git = "https://github.com/servo/rust-url"
