@@ -178,9 +178,9 @@ fn window_to_absolute_time(history_window: i64) -> NaiveDateTime {
 fn operator_string_to_func(op: &str, val: f64) -> Box<Fn(f64) -> bool> {
     let val = val.clone();
     match op {
-        "<" => Box::new(move |i: f64| !(i < val)),
+        "<"  => Box::new(move |i: f64| !(i < val)),
         "<=" => Box::new(move |i: f64| !(i <= val)),
-        ">" => Box::new(move |i: f64| !(i > val)),
+        ">"  => Box::new(move |i: f64| !(i > val)),
         ">=" => Box::new(move |i: f64| !(i >= val)),
         "==" => Box::new(move |i: f64| !(i == val)),
         "!=" => Box::new(move |i: f64| !(i != val)),
