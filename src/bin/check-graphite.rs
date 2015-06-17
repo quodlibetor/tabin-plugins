@@ -274,13 +274,12 @@ impl NoDataStatus {
 struct Args {
     url: String,
     path: String,
-    operator: String,
-    threshold: f64,
+    assertion: Assertion,
     window: i64,
     no_data: NoDataStatus
 }
 
-fn parse_args() -> Args {
+fn parse_args<'a>() -> Args {
     let allowed_no_data = NoDataStatus::str_values(); // block-local var for borrowck
     let args = clap::App::new("check-graphite")
         .version("0.1.0")
@@ -289,8 +288,7 @@ fn parse_args() -> Args {
         .args_from_usage(
             "<URL>                'The domain to query graphite.'
              <PATH>               'The graphite path to query.'
-             <OPERATOR>           'All values in window must compare OPERATOR to THRESHOLD.'
-             <THRESHOLD>          'The value to compare against.'
+             <ASSERTION>          'The assertion to make against the PATH'
              -w --window=[WINDOW] 'How many minutes of data to test. Default 10.'")
         .arg(clap::Arg::with_name("NO_DATA_STATUS")
                        .long("--no-data")
@@ -300,14 +298,151 @@ fn parse_args() -> Args {
              )
         .get_matches();
 
+    let assertion_str = args.value_of("ASSERTION").unwrap();
     Args {
         url: args.value_of("URL").unwrap().to_owned(),
         path: args.value_of("PATH").unwrap().to_owned(),
-        operator: args.value_of("OPERATOR").unwrap().to_owned(),
-        threshold: value_t!(args.value_of("THRESHOLD"), f64).unwrap(),
+        assertion: parse_assertion(assertion_str).unwrap(),
         window: value_t!(args.value_of("WINDOW"), i64).unwrap_or(10),
         no_data: NoDataStatus::from_str(args.value_of("NO_DATA_STATUS").unwrap_or("warning"))
     }
+}
+
+pub struct Assertion {
+    pub operator: String,
+    pub threshold: f64,
+    pub point_ratio: f64,
+    pub series_ratio: f64
+}
+
+enum AssertionState {
+    Points,
+    Series,
+    Operator,
+    Threshold,
+    /// Unknown state
+    Open
+}
+
+#[derive(Debug)]
+enum ParseError {
+    NoPointSpecifier(String),
+    NoSeriesSpecifier(String),
+    InvalidOperator(String),
+    InvalidThreshold(String),
+    NoRatioSpecifier(String),
+    SyntaxError(String)
+}
+
+fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
+    where I: Iterator<Item=&'a str>
+{
+    let mut ratio;
+
+    // chew through
+    //   all
+    //   at least NN% of
+
+    if word == "all" {
+        ratio = Ok(1_f64);
+    } else if word == "at" {
+        let mut rat = None;
+        while let Some(word) = it.next() {
+            if word == "least" { /* stop words */ }
+            else if word.find('%') == Some(word.len() - 1) {
+                rat = word[..word.len() - 1].parse::<f64>().ok();
+                break;
+            } else if word == "points" {
+                return Err(ParseError::NoPointSpecifier(
+                    format!("Expected ratio specifier before '{}'", word)));
+            } else if word == "series" {
+                return Err(ParseError::NoSeriesSpecifier(
+                    format!("Expected ratio specifier before '{}'", word)));
+            } else {
+                return Err(ParseError::NoRatioSpecifier(
+                    format!("This shouldn't happen: {}, word.find('%'): {:?}, len: {}",
+                            word, word.find('%'), word.len())))
+            }
+        }
+        ratio = Ok(rat.expect("Couldn't find ratio for blah") / 100f64)
+    } else {
+        ratio = Err(ParseError::SyntaxError(
+            format!("Expected 'all' or 'at least', found '{}'", word)))
+    }
+
+    if ratio.is_ok() {
+        // chew stop words
+        while let Some(word) = it.next() {
+            // chew through terminators
+            if word == "of" { continue; }
+            else if word == "points" { break; }
+            else if word == "series" { break; }
+            else {
+                return Err(ParseError::SyntaxError(
+                    format!("Expected 'of points|series', found '{}'", word)))
+            }
+        }
+    }
+
+    return ratio;
+}
+
+fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
+    let mut state = AssertionState::Points;
+    let mut operator: Option<&str> = None;
+    let mut threshold: Option<f64> = None;
+    let mut point_ratio = None;
+    let mut series_ratio = 1_f64;
+    let mut it = assertion.split(' ');
+    while let Some(word) = it.next() {
+        match state {
+            AssertionState::Points => {
+                point_ratio = Some(try!(parse_ratio(&mut it, word)));
+                state = AssertionState::Open;
+            },
+            AssertionState::Open => {
+                if word == "in" {
+                    state = AssertionState::Series
+                } else if word == "must" {
+                    state = AssertionState::Operator
+                } else {
+                    return Err(ParseError::SyntaxError(
+                        format!("Expected 'in' or 'must', found '{}'", word)))
+                }
+            },
+            AssertionState::Series => {
+                series_ratio = try!(parse_ratio(&mut it, word));
+                state = AssertionState::Open;
+            },
+            AssertionState::Operator => {
+                if word == "be" {}
+                else {
+                    if let Some(word) = ["<", "<=", ">", ">=", "==", "!="].iter()
+                                        .find(|&&op| op == word) {
+                        operator = Some(word);
+                        state = AssertionState::Threshold;
+                    } else {
+                        return Err(ParseError::InvalidOperator(word.to_owned()))
+                    }
+                }
+            },
+            AssertionState::Threshold => {
+                if let Ok(thresh) = word.parse::<f64>() {
+                    threshold = Some(thresh)
+                } else {
+                    return Err(ParseError::InvalidThreshold(format!(
+                        "Couldn't parse float from '{}'", word)))
+                }
+            }
+        }
+    }
+
+    Ok(Assertion {
+        operator: operator.expect("No operator found in predicate").to_owned(),
+        threshold: threshold.expect("No threshold found in predicate"),
+        point_ratio: point_ratio.expect("No point ratio found in predicate"),
+        series_ratio: series_ratio
+    })
 }
 
 #[cfg_attr(test, allow(dead_code))]
@@ -324,7 +459,7 @@ fn main() {
         Err(status) => status.exit()
     };
 
-    let status = do_check(with_data, &args.operator, args.threshold);
+    let status = do_check(with_data, &args.assertion.operator, args.assertion.threshold);
     status.exit();
 }
 
@@ -335,7 +470,7 @@ mod test {
     use rustc_serialize::json::Json;
 
     use super::{GraphiteData, DataPoint, operator_string_to_func, graphite_result_to_vec, do_check,
-                NoDataStatus, ExitStatus, filter_to_with_data};
+                NoDataStatus, ExitStatus, filter_to_with_data, parse_assertion};
 
     fn json_two_sets_of_graphite_data() -> Json {
         Json::from_str(r#"
@@ -481,5 +616,62 @@ mod test {
         } else {
             panic!("Expected an ExitStatus::Ok, got: {:?}", result)
         }
+    }
+
+    #[allow(float_cmp)]
+    #[test]
+    fn parse_assertion_finds_per_point_description() {
+        let predicates = parse_assertion("all points must be > 100").ok().unwrap();
+
+        assert_eq!(predicates.operator, ">");
+        assert_eq!(predicates.threshold, 100_f64);
+        assert_eq!(predicates.point_ratio, 1_f64);
+    }
+
+    #[allow(float_cmp)]
+    #[test]
+    fn parse_assertion_finds_per_point_description2() {
+        let predicates = parse_assertion("all points must be >= 5.5").unwrap();
+
+        assert_eq!(predicates.operator, ">=");
+        assert_eq!(predicates.threshold, 5.5_f64);
+        assert_eq!(predicates.point_ratio, 1_f64);
+    }
+
+    #[allow(float_cmp)]
+    #[test]
+    fn parse_series() {
+        let assertion = parse_assertion("all points in all series must be >= 5.5")
+            .unwrap();
+        assert_eq!(assertion.point_ratio, 1_f64);
+        assert_eq!(assertion.series_ratio, 1_f64);
+    }
+
+    #[allow(float_cmp)]
+    #[test]
+    fn parse_some_series() {
+        let assertion = parse_assertion("all points in at least 20% of series must be >= 5.5")
+            .unwrap();
+        assert_eq!(assertion.point_ratio, 1_f64);
+        assert_eq!(assertion.series_ratio, 0.2_f64);
+    }
+
+    #[allow(float_cmp)]
+    #[test]
+    fn parse_some_points() {
+        let assertion = parse_assertion("at least 20% of points must be >= 5.5")
+            .unwrap();
+        assert_eq!(assertion.point_ratio, 0.2_f64);
+        assert_eq!(assertion.series_ratio, 1_f64);
+    }
+
+    #[allow(float_cmp)]
+    #[test]
+    fn parse_some_points_and_some_series() {
+        let assertion = parse_assertion(
+            "at least 80% of points in at least 90% of series must be >= 5.5")
+            .unwrap();
+        assert_eq!(assertion.point_ratio, 0.8_f64);
+        assert_eq!(assertion.series_ratio, 0.9_f64);
     }
 }
