@@ -14,14 +14,15 @@ pub fn api_url(path: &str) -> Result<url::Url, SensuError> {
 
 pub fn api_get(path: &str) -> response::Response {//SensuResult<Result<A,B>> {
     //let path = api_url(path);
-    let req = Client::new().get(path).send().unwrap();
+    let mut c = Client::new();
+    let result = c.get(path).send().unwrap();
     // let req = match path {
     //     Ok(path) => Client::new().get(path).send().unwrap(),
     //     Err(ref e) => return Err(SensuError::ParseError(
     //         format!("{:?} is not a valid url part {:?}", path, e)))
     // };
     //let result = try!(try!(req).start()).send();
-    req
+    result
 }
 
 pub fn stash_exists(stash: &str) -> bool {

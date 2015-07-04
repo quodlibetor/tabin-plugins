@@ -1,4 +1,3 @@
-#![feature(exit_status)]
 extern crate rustc_serialize;
 
 extern crate docopt;
@@ -152,7 +151,7 @@ fn main() {
     match mem.percent_used() {
         Ok(percent) => if percent > args.flag_crit {
             println!("check-ram critical: {:.1}% > {}%", percent, args.flag_crit);
-            std::env::set_exit_status(2);
+            std::process::exit(2);
         } else if percent > args.flag_warn {
             println!("check-ram warning: {:.1}% > {}%", percent, args.flag_warn)
         } else {
@@ -160,7 +159,7 @@ fn main() {
         },
         Err(e) => {
             println!("check-ram UNEXPECTED ERROR: {:?}", e);
-            std::env::set_exit_status(3)
+            std::process::exit(3)
         }
     }
 }

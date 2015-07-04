@@ -29,9 +29,7 @@
 //! * `Event`s, `Client`s and `Check`s are manually parsed, insted of being
 //!   decoded in some way
 
-#![feature(libc,collections)]
 extern crate rustc_serialize;
-extern crate libc;
 extern crate url;
 extern crate hyper;
 
@@ -66,4 +64,3 @@ fn defaults() -> Defaults {
         interval: 60,
     }
 }
-

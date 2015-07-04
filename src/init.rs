@@ -91,14 +91,14 @@ pub enum SensuError {
     InitError(String),
     EventError(String),
     ParseError(String),
-    HttpError(hyper::HttpError)
+    HttpError(hyper::Error)
 }
 
 pub type SensuResult<T> = Result<T, SensuError>;
 
 impl<E: error::Error> From<E> for SensuError {
     fn from(_: E) -> SensuError {
-        super::init::SensuError::ParseError(String::from_str("bad"))
+        super::init::SensuError::ParseError(String::from("bad"))
     }
 }
 
@@ -296,7 +296,7 @@ fn read_check(event: &Json) -> SensuResult<Check> {
 
 #[cfg(test)]
 mod build_objects {
-    use serialize::json;
+    use rustc_serialize::json::{self, Json};
     use super::{read_event, read_check, read_client, Check};
 
     #[test]

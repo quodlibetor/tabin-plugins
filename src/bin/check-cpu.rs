@@ -1,7 +1,5 @@
 //! This is a documentation.
 
-#![feature(exit_status)]
-
 extern crate rustc_serialize;
 
 extern crate docopt;
@@ -166,14 +164,16 @@ fn main() {
     std::thread::sleep_ms((args.flag_sleep * 1000) as u32);
     let end = read_cpu();
     let total = percent_util(&args.flag_type, &start, &end);
+    let mut exit_status = 0;
     if total > args.flag_crit as f64 {
-        std::env::set_exit_status(2);
+        exit_status = 2;
         println!("check-cpu critical: {:?} > {}", total, args.flag_crit);
     } else if total > args.flag_warn as f64 {
-        std::env::set_exit_status(1);
+        exit_status = 1;
         println!("check-cpu warning: {} > {}", total, args.flag_warn);
     } else {
         println!("check-cpu ok");
     }
-    println!("{:?}={:?} ({:?})", args.flag_type, total, end.sub(&start))
+    println!("{:?}={:?} ({:?})", args.flag_type, total, end.sub(&start));
+    std::process::exit(exit_status);
 }

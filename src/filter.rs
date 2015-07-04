@@ -1,6 +1,6 @@
 //! Functions related to determining if the current Event should be Handled
 
-use libc;
+use std;
 use Event;
 use Filter::{Disabled, NotRefresh, Active};
 
@@ -60,7 +60,7 @@ pub fn run_filters_or_die<'a>(event: &'a Event) {
         Active(_) => {},
         _ => {
             result.display();
-            unsafe { libc::exit(1 as libc::c_int); }
+            std::process::exit(1);
         }
     }
 }
