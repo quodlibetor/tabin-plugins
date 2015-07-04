@@ -325,8 +325,8 @@ mod build_objects {
             }
         }"#;
         match read_event(event) {
-            Ok(e) => println!("Parsed event: {}", e),
-            Err(e) => panic!("ERROR: {}", e)
+            Ok(e) => println!("Parsed event: {:?}", e),
+            Err(e) => panic!("ERROR: {:?}", e)
         };
     }
 
@@ -342,8 +342,8 @@ mod build_objects {
         }"#).unwrap();
         let client = read_client(&event);
         match client {
-            Ok(cl) => println!("Parsed: {}", cl),
-            Err(e) => panic!("ERROR: {}", e)
+            Ok(cl) => println!("Parsed: {:?}", cl),
+            Err(e) => panic!("ERROR: {:?}", e)
         }
     }
 
@@ -367,26 +367,26 @@ mod build_objects {
         }"#).unwrap();
         match read_check(&event) {
             Ok(check) => {
-                println!("Parsed: {}", check);
+                println!("Parsed: {:?}", check);
                 assert_eq!(check, Check {
-                    name: "test-check".into_string(),
+                    name: "test-check".into(),
                     issued: 1416069607i64,
-                    output: "we have output".into_string(),
+                    output: "we have output".into(),
                     status: 0,
-                    command: "echo 'we have output'".into_string(),
-                    subscribers: vec!("examples".into_string(),
-                                      "tests".into_string()),
+                    command: "echo 'we have output'".into(),
+                    subscribers: vec!("examples".into(),
+                                      "tests".into()),
                     alert: None,
                     occurrences: None,
                     interval: 60,
                     refresh: 1800,
-                    handler: Some("default".into_string()),
+                    handler: Some("default".into()),
                     handlers: None,
-                    history: Vec::from_fn(3, |_| "0".into_string()),
+                    history: vec!["0".into(); 3],
                     flapping: false,
                     additional: None });
             },
-            Err(e) => panic!("ERROR: {}", e)
+            Err(e) => panic!("ERROR: {:?}", e)
         }
     }
 
@@ -412,28 +412,28 @@ mod build_objects {
         }"#).unwrap();
         match read_check(&event) {
             Ok(check) => {
-                println!("Parsed: {}", check);
+                println!("Parsed: {:?}", check);
                 assert_eq!(check, Check {
-                    name: "test-check".into_string(),
+                    name: "test-check".into(),
                     issued: 1416069607i64,
-                    output: "we have output".into_string(),
+                    output: "we have output".into(),
                     status: 0,
-                    command: "echo 'we have output'".into_string(),
-                    subscribers: vec!("examples".into_string(),
-                                      "tests".into_string()),
+                    command: "echo 'we have output'".into(),
+                    subscribers: vec!("examples".into(),
+                                      "tests".into()),
 
                     alert: Some(false),
                     occurrences: Some(5),
 
                     refresh: 1800,
                     interval: 60,
-                    handler: Some("default".into_string()),
+                    handler: Some("default".into()),
                     handlers: None,
-                    history: Vec::from_fn(3, |_| "0".into_string()),
+                    history: vec!["0".into(); 3],
                     flapping: false,
                     additional: None });
             },
-            Err(e) => panic!("ERROR: {}", e)
+            Err(e) => panic!("ERROR: {:?}", e)
         }
     }
 
@@ -455,8 +455,8 @@ mod build_objects {
             }
         }"#).unwrap();
         match read_check(&event) {
-            Ok(cl) => println!("Parsed: {}", cl),
-            Err(e) => panic!("ERROR: {}", e)
+            Ok(cl) => println!("Parsed: {:?}", cl),
+            Err(e) => panic!("ERROR: {:?}", e)
         }
     }
 }
