@@ -8,36 +8,16 @@ extern crate chrono;
 extern crate hyper;
 extern crate rustc_serialize;
 
+extern crate turbine_plugins;
+
+use turbine_plugins::ExitStatus;
+
 use chrono::{UTC, Duration};
 use chrono::naive::datetime::NaiveDateTime;
 use rustc_serialize::json::{self, Json};
 
 use std::io::Read;
 use std::fmt;
-
-use std::process;
-
-#[must_use]
-#[derive(Debug)]
-pub enum ExitStatus {
-    Ok,
-    Warning,
-    Critical,
-    Unknown
-}
-
-impl ExitStatus {
-    #![cfg_attr(test, allow(dead_code))]
-    pub fn exit(self) -> ! {
-        use self::ExitStatus::*;
-        match self {
-            Ok => process::exit(0),
-            Warning => process::exit(1),
-            Critical => process::exit(2),
-            Unknown => process::exit(3)
-        }
-    }
-}
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct DataPoint {
@@ -190,28 +170,24 @@ fn operator_string_to_func(op: &str, val: f64) -> Box<Fn(f64) -> bool> {
 
 fn filter_to_with_data(data: Json,
                        history_begin: NaiveDateTime,
-                       no_data_status: NoDataStatus) -> Result<Vec<GraphiteData>, ExitStatus> {
+                       no_data_status: ExitStatus) -> Result<Vec<GraphiteData>, ExitStatus> {
     let data = graphite_result_to_vec(&data);
     let data_len = data.len();
     let series_with_data = data.into_iter()
         .map(|gd| gd.into_only_since(history_begin))
-        .filter(|gd| gd.points.len() > 0)
+        .filter(|gd| !gd.points.is_empty())
         .collect::<Vec<GraphiteData>>();
 
     println!("Found {} matches, but only {} have data", data_len, series_with_data.len());
-    if series_with_data.len() > 0 {
+    if !series_with_data.is_empty() {
         Ok(series_with_data)
     } else {
-        match no_data_status {
-            NoDataStatus::Ok => Err(ExitStatus::Ok),
-            NoDataStatus::Warning => Err(ExitStatus::Warning),
-            NoDataStatus::Critical => Err(ExitStatus::Critical),
-            NoDataStatus::Unknown => Err(ExitStatus::Unknown)
-        }
+        Err(no_data_status)
     }
 }
 
-fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64) -> ExitStatus {
+fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64,
+            error_ratio: f64) -> ExitStatus {
     let with_data_len = series_with_data.len();
     for graphite_data in series_with_data.iter() {
         let points: Vec<f64> = graphite_data.points.iter().map(|dp| dp.val.unwrap()).collect();
@@ -221,19 +197,26 @@ fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64) -> Ex
 
     let comparator = operator_string_to_func(op, threshold);
     let with_invalid_points = series_with_data.into_iter()
-        .map(|gd| gd.into_only_invalid(&comparator))
-        .filter(|gd| gd.points.len() > 0)
-        .collect::<Vec<GraphiteData>>();
+        .map(|gd| (gd.points.len() as f64, gd.into_only_invalid(&comparator)))
+        .filter(|&(original_len, ref invalid_gd)| {
+            if error_ratio < 0.0001 {
+                !invalid_gd.points.is_empty()
+            } else {
+                invalid_gd.points.len() as f64 / original_len >= error_ratio
+            }
+        })
+        .collect::<Vec<(f64, GraphiteData)>>();
 
     let with_invalid_len = with_invalid_points.len();
 
     if with_invalid_len > 0 {
-        println!("CRITICAL: Of {} paths with data, {} have invalid datapoints:",
-                 with_data_len, with_invalid_len);
-        for gd in with_invalid_points.iter() {
-            println!("{} has {} points that are not {} {}: {}",
+        println!("CRITICAL: Of {} paths with data, {} have at least {:.1}% invalid datapoints:",
+                 with_data_len, with_invalid_len, error_ratio * 100.0);
+        for &(original_len, ref gd) in with_invalid_points.iter() {
+            println!("{} has {} ({:.1}%) points that are not {} {}: {}",
                      gd.target,
                      gd.points.len(),
+                     (gd.points.len() as f64 / original_len as f64) * 100.0,
                      op,
                      threshold,
                      gd.points.iter().map(|gv| format!("{}", gv))
@@ -241,33 +224,9 @@ fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64) -> Ex
         }
         ExitStatus::Critical
     } else {
-        println!("OK: Found {} paths with data, none had invalid datapoints.",
-                 with_data_len);
+        println!("OK: Found {} paths with data, none had at least {}% invalid datapoints.",
+                 with_data_len, error_ratio * 100.0);
         ExitStatus::Ok
-    }
-}
-
-enum NoDataStatus {
-    Ok,
-    Warning,
-    Critical,
-    Unknown
-}
-
-impl NoDataStatus {
-    fn from_str(s: &str) -> NoDataStatus {
-        use NoDataStatus::*;
-        match s {
-            "ok" => Ok,
-            "warning" => Warning,
-            "critical" => Critical,
-            "unknown" => Unknown,
-            _ => panic!("Unexpected status for no-data: {}", s)
-        }
-    }
-
-    fn str_values() -> [&'static str; 4] {
-        ["ok", "warn", "critical", "unknown"]
     }
 }
 
@@ -276,11 +235,11 @@ struct Args {
     path: String,
     assertion: Assertion,
     window: i64,
-    no_data: NoDataStatus
+    no_data: ExitStatus
 }
 
 fn parse_args<'a>() -> Args {
-    let allowed_no_data = NoDataStatus::str_values(); // block-local var for borrowck
+    let allowed_no_data = ExitStatus::str_values(); // block-local var for borrowck
     let args = clap::App::new("check-graphite")
         .version("0.1.0")
         .author("Brandon W Maister <quodlibetor@gmail.com>")
@@ -304,21 +263,29 @@ fn parse_args<'a>() -> Args {
         path: args.value_of("PATH").unwrap().to_owned(),
         assertion: parse_assertion(assertion_str).unwrap(),
         window: value_t!(args.value_of("WINDOW"), i64).unwrap_or(10),
-        no_data: NoDataStatus::from_str(args.value_of("NO_DATA_STATUS").unwrap_or("warning"))
+        no_data: ExitStatus::from_str(args.value_of("NO_DATA_STATUS").unwrap_or("warning"))
     }
 }
 
+#[derive(Debug)]
 pub struct Assertion {
     pub operator: String,
     pub threshold: f64,
     pub point_ratio: f64,
-    pub series_ratio: f64
+    pub series_ratio: f64,
+    pub failure_status: ExitStatus
 }
 
 enum AssertionState {
+    /// Deciding if breaking this assertion means we go critical or warning
+    Status,
+    /// We're about to describe an assertion over points
     Points,
+    /// We're about to describe an assertion over series
     Series,
+    /// We're looking for an operator
     Operator,
+    /// We're looking for a threshold
     Threshold,
     /// Unknown state
     Open
@@ -331,20 +298,22 @@ enum ParseError {
     InvalidOperator(String),
     InvalidThreshold(String),
     NoRatioSpecifier(String),
+    NoStatusSpecifier(String),
     SyntaxError(String)
 }
 
+/// convert "all" -> 1, "at least 70% (points|series)" -> 0.7
 fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
     where I: Iterator<Item=&'a str>
 {
     let mut ratio;
 
     // chew through
-    //   all
-    //   at least NN% of
+    //   "any"
+    //   "at least NN% of"
 
-    if word == "all" {
-        ratio = Ok(1_f64);
+    if word == "any" {
+        ratio = Ok(0_f64);
     } else if word == "at" {
         let mut rat = None;
         while let Some(word) = it.next() {
@@ -352,7 +321,7 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
             else if word.find('%') == Some(word.len() - 1) {
                 rat = word[..word.len() - 1].parse::<f64>().ok();
                 break;
-            } else if word == "points" {
+            } else if word == "points" || word == "point" {
                 return Err(ParseError::NoPointSpecifier(
                     format!("Expected ratio specifier before '{}'", word)));
             } else if word == "series" {
@@ -367,7 +336,7 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
         ratio = Ok(rat.expect("Couldn't find ratio for blah") / 100f64)
     } else {
         ratio = Err(ParseError::SyntaxError(
-            format!("Expected 'all' or 'at least', found '{}'", word)))
+            format!("Expected 'any' or 'at least', found '{}'", word)))
     }
 
     if ratio.is_ok() {
@@ -375,7 +344,7 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
         while let Some(word) = it.next() {
             // chew through terminators
             if word == "of" { continue; }
-            else if word == "points" { break; }
+            else if word == "points" || word == "point" { break; }
             else if word == "series" { break; }
             else {
                 return Err(ParseError::SyntaxError(
@@ -388,14 +357,34 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
 }
 
 fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
-    let mut state = AssertionState::Points;
+    let mut state = AssertionState::Status;
     let mut operator: Option<&str> = None;
     let mut threshold: Option<f64> = None;
+    let mut status = None;
     let mut point_ratio = None;
-    let mut series_ratio = 1_f64;
+    let mut series_ratio = 0.0;
     let mut it = assertion.split(' ');
+
     while let Some(word) = it.next() {
         match state {
+            AssertionState::Status => {
+                status = match word {
+                    "critical" => Some(ExitStatus::Critical),
+                    "warning" => Some(ExitStatus::Warning),
+                    _ => return Err(ParseError::NoStatusSpecifier(format!(
+                        "Expect assertion to start with 'critical' or 'warning', not '{}'", word)))
+                };
+                if let Some(next) = it.next() {
+                    if next != "if" {
+                        return Err(ParseError::SyntaxError(format!(
+                                "Expected 'if' to follow '{}', not '{}'", word, next)));
+                    }
+                } else {
+                    return Err(ParseError::SyntaxError(format!(
+                                "Unexpected end of input after '{}'", word)));
+                }
+                state = AssertionState::Points;
+            },
             AssertionState::Points => {
                 point_ratio = Some(try!(parse_ratio(&mut it, word)));
                 state = AssertionState::Open;
@@ -403,11 +392,12 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
             AssertionState::Open => {
                 if word == "in" {
                     state = AssertionState::Series
-                } else if word == "must" {
+                } else if word == "is" || word == "are" {
+                    assert_eq!(it.next().unwrap(), "not");
                     state = AssertionState::Operator
                 } else {
                     return Err(ParseError::SyntaxError(
-                        format!("Expected 'in' or 'must', found '{}'", word)))
+                        format!("Expected 'in' or 'is not' or 'are not', found '{}'", word)))
                 }
             },
             AssertionState::Series => {
@@ -441,7 +431,8 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
         operator: operator.expect("No operator found in predicate").to_owned(),
         threshold: threshold.expect("No threshold found in predicate"),
         point_ratio: point_ratio.expect("No point ratio found in predicate"),
-        series_ratio: series_ratio
+        series_ratio: series_ratio,
+        failure_status: status.expect("Needed to start with an exit status")
     })
 }
 
@@ -459,7 +450,10 @@ fn main() {
         Err(status) => status.exit()
     };
 
-    let status = do_check(with_data, &args.assertion.operator, args.assertion.threshold);
+    let status = do_check(with_data,
+                          &args.assertion.operator,
+                          args.assertion.threshold,
+                          args.assertion.point_ratio);
     status.exit();
 }
 
@@ -469,8 +463,10 @@ mod test {
     use chrono::naive::datetime::NaiveDateTime;
     use rustc_serialize::json::Json;
 
+    use turbine_plugins::ExitStatus;
+
     use super::{GraphiteData, DataPoint, operator_string_to_func, graphite_result_to_vec, do_check,
-                NoDataStatus, ExitStatus, filter_to_with_data, parse_assertion};
+                ParseError, filter_to_with_data, parse_assertion};
 
     fn json_two_sets_of_graphite_data() -> Json {
         Json::from_str(r#"
@@ -585,7 +581,7 @@ mod test {
     fn filtered_to_with_data_returns_valid_data() {
         let result = filter_to_with_data(json_two_sets_of_graphite_data(),
                                          NaiveDateTime::from_timestamp(11140, 0),
-                                         NoDataStatus::Unknown);
+                                         ExitStatus::Unknown);
         let expected = valid_data_from_json_two_sets();
         match result {
             Ok(actual) => assert_eq!(actual,
@@ -598,7 +594,8 @@ mod test {
     fn do_check_errors_with_invalid_data() {
         let result = do_check(valid_data_from_json_two_sets(),
                               ">",
-                              2f64);
+                              2.0,
+                              0.0);
         if let ExitStatus::Critical = result {
              /* expected */
         } else {
@@ -610,7 +607,8 @@ mod test {
     fn do_check_succeeds_with_valid_data() {
         let result = do_check(valid_data_from_json_two_sets(),
                               ">",
-                              0f64);
+                              0.0,
+                              1.0);
         if let ExitStatus::Ok = result {
             /* expected */
         } else {
@@ -618,58 +616,74 @@ mod test {
         }
     }
 
+    #[test]
+    fn parse_assertion_requires_a_starting_status() {
+        let result = parse_assertion("any point is not < 100");
+        if let &Err(ref e) = &result {
+            if let &ParseError::NoStatusSpecifier(_) = e {
+                /* expected */
+            } else {
+                panic!("Unexpected result: {:?}", result)
+            }
+        } else {
+            panic!("Unexpected success: {:?}", result)
+        }
+    }
+
     #[allow(float_cmp)]
     #[test]
     fn parse_assertion_finds_per_point_description() {
-        let predicates = parse_assertion("all points must be > 100").ok().unwrap();
+        let predicates = parse_assertion("critical if any point is not < 100").unwrap();
 
-        assert_eq!(predicates.operator, ">");
+        assert_eq!(predicates.operator, "<");
         assert_eq!(predicates.threshold, 100_f64);
-        assert_eq!(predicates.point_ratio, 1_f64);
+        assert_eq!(predicates.point_ratio, 0.0);
     }
 
     #[allow(float_cmp)]
     #[test]
     fn parse_assertion_finds_per_point_description2() {
-        let predicates = parse_assertion("all points must be >= 5.5").unwrap();
+        let predicates = parse_assertion("critical if any point is not >= 5.5").unwrap();
 
         assert_eq!(predicates.operator, ">=");
         assert_eq!(predicates.threshold, 5.5_f64);
-        assert_eq!(predicates.point_ratio, 1_f64);
+        assert_eq!(predicates.point_ratio, 0.0);
     }
 
     #[allow(float_cmp)]
     #[test]
     fn parse_series() {
-        let assertion = parse_assertion("all points in all series must be >= 5.5")
+        let assertion = parse_assertion("critical if any point in any series is not >= 5.5")
             .unwrap();
-        assert_eq!(assertion.point_ratio, 1_f64);
-        assert_eq!(assertion.series_ratio, 1_f64);
+        assert_eq!(assertion.point_ratio, 0.0);
+        assert_eq!(assertion.series_ratio, 0.0);
     }
 
     #[allow(float_cmp)]
     #[test]
     fn parse_some_series() {
-        let assertion = parse_assertion("all points in at least 20% of series must be >= 5.5")
+        let assertion = parse_assertion(
+            "critical if any point in at least 20% of series is not >= 5.5")
             .unwrap();
-        assert_eq!(assertion.point_ratio, 1_f64);
+        assert_eq!(assertion.point_ratio, 0.0);
         assert_eq!(assertion.series_ratio, 0.2_f64);
     }
 
     #[allow(float_cmp)]
     #[test]
     fn parse_some_points() {
-        let assertion = parse_assertion("at least 20% of points must be >= 5.5")
+        let assertion = parse_assertion(
+            "critical if at least 20% of points are not >= 5.5")
             .unwrap();
         assert_eq!(assertion.point_ratio, 0.2_f64);
-        assert_eq!(assertion.series_ratio, 1_f64);
+        assert_eq!(assertion.series_ratio, 0.0);
     }
 
     #[allow(float_cmp)]
     #[test]
     fn parse_some_points_and_some_series() {
         let assertion = parse_assertion(
-            "at least 80% of points in at least 90% of series must be >= 5.5")
+            "critical if at least 80% of points in at least 90% of series are not >= 5.5")
             .unwrap();
         assert_eq!(assertion.point_ratio, 0.8_f64);
         assert_eq!(assertion.series_ratio, 0.9_f64);
