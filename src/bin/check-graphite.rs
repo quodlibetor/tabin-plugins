@@ -650,6 +650,36 @@ mod test {
         assert_eq!(predicates.point_ratio, 0.0);
     }
 
+    fn json_one_point_is_below_5_5() -> Json {
+        Json::from_str(r#"
+            [
+                {
+                    "datapoints": [[6, 60], [7, 70], [8, 80]],
+                    "target": "test.path.has-data"
+                },
+                {
+                    "datapoints": [[5, 50], [6, 60]],
+                    "target": "test.path.has-data"
+                }
+            ]
+        "#).unwrap()
+    }
+
+    #[test]
+    fn parse_assertion_finds_per_point_description2_and_correctly_alerts() {
+        let assertion = parse_assertion("critical if any point is not >= 5.5").unwrap();
+        let graphite_data = graphite_result_to_vec(&json_one_point_is_below_5_5());
+        let result = do_check(graphite_data,
+                              &assertion.operator,
+                              assertion.threshold,
+                              assertion.point_ratio);
+        if let ExitStatus::Critical = result  {
+             /* expected */
+        } else {
+            panic!("Expected Critical status, not '{:?}'", result)
+        }
+    }
+
     #[allow(float_cmp)]
     #[test]
     fn parse_series() {
@@ -667,6 +697,51 @@ mod test {
             .unwrap();
         assert_eq!(assertion.point_ratio, 0.0);
         assert_eq!(assertion.series_ratio, 0.2_f64);
+    }
+
+    fn json_80p_of_points_are_not_above_6() -> Json {
+        Json::from_str(r#"
+            [
+                {
+                    "datapoints": [[2, 20], [3, 30], [4, 40], [5, 50], [6, 60]],
+                    "target": "test.path.has-data"
+                }
+            ]
+        "#).unwrap()
+    }
+
+    #[test]
+    fn parse_some_series_and_correctly_alerts() {
+        let assertion = parse_assertion(
+            "critical if at least 80% of of points are not >= 5.5")
+            .unwrap();
+        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_not_above_6());
+        let result = do_check(graphite_data,
+                              &assertion.operator,
+                              assertion.threshold,
+                              assertion.point_ratio);
+        if let ExitStatus::Critical = result  {
+             /* expected */
+        } else {
+            panic!("Expected 'Critical' status, not '{:?}'", result)
+        }
+    }
+
+    #[test]
+    fn parse_some_series_and_correctly_allows() {
+        let assertion = parse_assertion(
+            "critical if at least 81% of of points are not >= 5.5")
+            .unwrap();
+        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_not_above_6());
+        let result = do_check(graphite_data,
+                              &assertion.operator,
+                              assertion.threshold,
+                              assertion.point_ratio);
+        if let ExitStatus::Ok = result  {
+             /* expected */
+        } else {
+            panic!("Expected 'Ok' status, not '{:?}'", result)
+        }
     }
 
     #[allow(float_cmp)]
