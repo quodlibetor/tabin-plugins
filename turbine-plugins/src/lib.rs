@@ -1,12 +1,13 @@
 use std::process;
+use std::cmp::{Ord};
 
 #[must_use]
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ExitStatus {
+    Unknown,
     Ok,
     Warning,
     Critical,
-    Unknown
 }
 
 impl ExitStatus {
@@ -35,4 +36,12 @@ impl ExitStatus {
     pub fn str_values() -> [&'static str; 4] {
         ["ok", "warn", "critical", "unknown"]
     }
+}
+
+#[test]
+fn comparison_is_as_expected() {
+    use ExitStatus::*;
+    assert!(Ok < Critical);
+    assert!(Ok < Warning);
+    assert_eq!(std::cmp::max(Warning, Critical), Critical)
 }
