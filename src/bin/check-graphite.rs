@@ -199,7 +199,7 @@ fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64,
     let with_invalid_points = series_with_data.into_iter()
         .map(|gd| (gd.points.len() as f64, gd.into_only_invalid(&comparator)))
         .filter(|&(original_len, ref invalid_gd)| {
-            if error_ratio < 0.0001 {
+            if error_ratio == 0.0 {
                 !invalid_gd.points.is_empty()
             } else {
                 invalid_gd.points.len() as f64 / original_len >= error_ratio
