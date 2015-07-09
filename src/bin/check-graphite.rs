@@ -213,7 +213,7 @@ fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64,
         println!("CRITICAL: Of {} paths with data, {} have at least {:.1}% invalid datapoints:",
                  with_data_len, with_invalid_len, error_ratio * 100.0);
         for &(original_len, ref gd) in with_invalid_points.iter() {
-            println!("{} has {} ({:.1}%) points that are not {} {}: {}",
+            println!("       -> {} has {} ({:.1}%) points that are not {} {}: {}",
                      gd.target,
                      gd.points.len(),
                      (gd.points.len() as f64 / original_len as f64) * 100.0,
@@ -224,8 +224,8 @@ fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64,
         }
         ExitStatus::Critical
     } else {
-        println!("OK: Found {} paths with data, none had at least {}% invalid datapoints.",
-                 with_data_len, error_ratio * 100.0);
+        println!("OK: Found {} paths with data, none had at least {:.1}% of datapoints not {} {}.",
+                 with_data_len, error_ratio * 100.0, op, threshold);
         ExitStatus::Ok
     }
 }
@@ -480,7 +480,7 @@ mod test {
                 "target": "test.path.some-data"
             }
         ]
-        "#).ok().expect("Couldn't create test graphite data")
+        "#).unwrap()
     }
 
     fn valid_data_from_json_two_sets() -> Vec<GraphiteData> {
@@ -498,7 +498,7 @@ mod test {
                 "datapoints": [[null, 11110], [null, 11120], [null, 11130]],
                 "target": "test.path.no-data"
             }
-        "#).ok().expect("Couldn't create test graphite data")
+        "#).unwrap()
     }
 
     fn json_two_data_vals_near_the_end() -> Json {
@@ -508,7 +508,7 @@ mod test {
                                [1, 11150], [null, 11160], [3, 11160]],
                 "target": "test.path.some-data"
             }
-        "#).ok().expect("Couldn't create test graphite data")
+        "#).unwrap()
     }
 
     fn json_some_data_vals() -> Json {
@@ -517,7 +517,7 @@ mod test {
                 "datapoints": [[12.4, 11110], [13.4, 11120], [14.4, 11130]],
                 "target": "test.path.has-data"
             }
-        "#).ok().expect("Couldn't create test graphite data")
+        "#).unwrap()
     }
 
     #[test]
