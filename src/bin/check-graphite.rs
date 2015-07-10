@@ -263,7 +263,8 @@ fn parse_args<'a>() -> Args {
         path: args.value_of("PATH").unwrap().to_owned(),
         assertion: parse_assertion(assertion_str).unwrap(),
         window: value_t!(args.value_of("WINDOW"), i64).unwrap_or(10),
-        no_data: ExitStatus::from_str(args.value_of("NO_DATA_STATUS").unwrap_or("warning"))
+        no_data: ExitStatus::from_str(args.value_of("NO_DATA_STATUS")
+                                      .unwrap_or("warning")).unwrap()
     }
 }
 

@@ -44,12 +44,14 @@ impl ExitStatus {
     }
 
     /// Primarily useful to construct from argv
+    pub fn from_str(s: &str) -> TurbineResult<ExitStatus> {
+        use ExitStatus::{Warning, Critical, Unknown};
         match s {
-            "ok" => Ok,
-            "warning" => Warning,
-            "critical" => Critical,
-            "unknown" => Unknown,
-            _ => panic!("Unexpected exit status: {}", s)
+            "ok" => Ok(ExitStatus::Ok),
+            "warning" => Ok(Warning),
+            "critical" => Ok(Critical),
+            "unknown" => Ok(Unknown),
+            _ => Err(TurbineError::UnknownValue(format!("Unexpected exit status: {}", s)))
         }
     }
 
