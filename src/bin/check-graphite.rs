@@ -329,11 +329,13 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
     //   "at least NN% of"
 
     if word == "any" {
-        ratio = Ok(0_f64);
+        ratio = Ok(0.0);
+    } else if word == "all" {
+        ratio = Ok(1.0)
     } else if word == "at" {
         let mut rat = None;
         while let Some(word) = it.next() {
-            if word == "least" { /* stop words */ }
+            if word == "least" { /* 'at least' */ }
             else if word.find('%') == Some(word.len() - 1) {
                 rat = word[..word.len() - 1].parse::<f64>().ok();
                 break;
@@ -352,7 +354,7 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
         ratio = Ok(rat.expect("Couldn't find ratio for blah") / 100f64)
     } else {
         ratio = Err(ParseError::SyntaxError(
-            format!("Expected 'any' or 'at least', found '{}'", word)))
+            format!("Expected 'any', 'all', or 'at least', found '{}'", word)))
     }
 
     if ratio.is_ok() {
@@ -734,6 +736,51 @@ mod test {
             .unwrap();
         assert_eq!(assertion.point_ratio, 0.0);
         assert_eq!(assertion.series_ratio, 0.2_f64);
+    }
+
+    fn json_all_points_above_5() -> Json {
+        Json::from_str(r#"
+            [
+                {
+                    "datapoints": [[6, 60], [7, 70], [8, 80], [9, 90]],
+                    "target": "test.path.has-data"
+                }
+            ]
+        "#).unwrap()
+    }
+
+    #[allow(float_cmp)]
+    #[test]
+    fn parse_all_points_and_critical() {
+        let assertion = parse_assertion(
+            "critical if all points are > 5")
+            .unwrap();
+        assert_eq!(assertion.point_ratio, 1.0);
+
+        let graphite_data = graphite_result_to_vec(&json_all_points_above_5());
+        let result = do_check(graphite_data,
+                              &assertion.operator,
+                              assertion.op_is_negated,
+                              assertion.threshold,
+                              assertion.point_ratio);
+        assert_eq!(result, ExitStatus::Critical);
+    }
+
+    #[allow(float_cmp)]
+    #[test]
+    fn parse_all_points_and_ok() {
+        let assertion = parse_assertion(
+            "critical if all points are > 5")
+            .unwrap();
+        assert_eq!(assertion.point_ratio, 1.0);
+
+        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
+        let result = do_check(graphite_data,
+                              &assertion.operator,
+                              assertion.op_is_negated,
+                              assertion.threshold,
+                              assertion.point_ratio);
+        assert_eq!(result, ExitStatus::Ok);
     }
 
     fn json_80p_of_points_are_below_6() -> Json {
