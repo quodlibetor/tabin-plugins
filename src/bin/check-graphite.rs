@@ -155,16 +155,22 @@ fn window_to_absolute_time(history_window: i64) -> NaiveDateTime {
 ///
 /// aka a function that returns only invalid numbers
 #[cfg_attr(test, allow(float_cmp))]
-fn operator_string_to_func(op: &str, val: f64) -> Box<Fn(f64) -> bool> {
+fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f64) -> bool> {
     let val = val.clone();
-    match op {
-        "<"  => Box::new(move |i: f64| !(i < val)),
-        "<=" => Box::new(move |i: f64| !(i <= val)),
-        ">"  => Box::new(move |i: f64| !(i > val)),
-        ">=" => Box::new(move |i: f64| !(i >= val)),
-        "==" => Box::new(move |i: f64| !(i == val)),
-        "!=" => Box::new(move |i: f64| !(i != val)),
+    let comp: Box<Fn(f64) -> bool> = match op {
+        "<"  => Box::new(move |i: f64| i <  val),
+        "<=" => Box::new(move |i: f64| i <= val),
+        ">"  => Box::new(move |i: f64| i >  val),
+        ">=" => Box::new(move |i: f64| i >= val),
+        "==" => Box::new(move |i: f64| i == val),
+        "!=" => Box::new(move |i: f64| i != val),
         a => panic!("Bad operator: {}", a)
+    };
+
+    if op_is_negated == NegOp::Yes {
+        Box::new(move |i: f64| !comp(i))
+    } else {
+        comp
     }
 }
 
@@ -186,8 +192,14 @@ fn filter_to_with_data(data: Json,
     }
 }
 
-fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64,
-            error_ratio: f64) -> ExitStatus {
+#[cfg_attr(test, allow(float_cmp))]
+fn do_check(
+    series_with_data: Vec<GraphiteData>,
+    op: &str,
+    op_is_negated: NegOp,
+    threshold: f64,
+    error_ratio: f64
+) -> ExitStatus {
     let with_data_len = series_with_data.len();
     for graphite_data in series_with_data.iter() {
         let points: Vec<f64> = graphite_data.points.iter().map(|dp| dp.val.unwrap()).collect();
@@ -195,7 +207,7 @@ fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64,
                  graphite_data.target, graphite_data.points.len(), points)
     }
 
-    let comparator = operator_string_to_func(op, threshold);
+    let comparator = operator_string_to_func(op, op_is_negated, threshold);
     let with_invalid_points = series_with_data.into_iter()
         .map(|gd| (gd.points.len() as f64, gd.into_only_invalid(&comparator)))
         .filter(|&(original_len, ref invalid_gd)| {
@@ -209,14 +221,16 @@ fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64,
 
     let with_invalid_len = with_invalid_points.len();
 
+    let nostr = if op_is_negated == NegOp::Yes { " not" } else { "" };
     if with_invalid_len > 0 {
         println!("CRITICAL: Of {} paths with data, {} have at least {:.1}% invalid datapoints:",
                  with_data_len, with_invalid_len, error_ratio * 100.0);
         for &(original_len, ref gd) in with_invalid_points.iter() {
-            println!("       -> {} has {} ({:.1}%) points that are not {} {}: {}",
+            println!("       -> {} has {} ({:.1}%) points that are{} {} {}: {}",
                      gd.target,
                      gd.points.len(),
                      (gd.points.len() as f64 / original_len as f64) * 100.0,
+                     nostr,
                      op,
                      threshold,
                      gd.points.iter().map(|gv| format!("{}", gv))
@@ -224,8 +238,8 @@ fn do_check(series_with_data: Vec<GraphiteData>, op: &str, threshold: f64,
         }
         ExitStatus::Critical
     } else {
-        println!("OK: Found {} paths with data, none had at least {:.1}% of datapoints not {} {}.",
-                 with_data_len, error_ratio * 100.0, op, threshold);
+        println!("OK: Found {} paths with data, none had at least {:.1}% of datapoints{} {} {}.",
+                 with_data_len, error_ratio * 100.0, nostr, op, threshold);
         ExitStatus::Ok
     }
 }
@@ -271,6 +285,7 @@ fn parse_args<'a>() -> Args {
 #[derive(Debug)]
 pub struct Assertion {
     pub operator: String,
+    pub op_is_negated: NegOp,
     pub threshold: f64,
     pub point_ratio: f64,
     pub series_ratio: f64,
@@ -357,6 +372,15 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
     return ratio;
 }
 
+// Whether or not the operator in the assertion is negated
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum NegOp {
+    // For situations like `are not`
+    Yes,
+    // Just `are`
+    No
+}
+
 fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
     let mut state = AssertionState::Status;
     let mut operator: Option<&str> = None;
@@ -364,7 +388,8 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
     let mut status = None;
     let mut point_ratio = None;
     let mut series_ratio = 0.0;
-    let mut it = assertion.split(' ');
+    let mut it = assertion.split(' ').peekable();
+    let mut negated: NegOp = NegOp::No;
 
     while let Some(word) = it.next() {
         match state {
@@ -394,7 +419,13 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                 if word == "in" {
                     state = AssertionState::Series
                 } else if word == "is" || word == "are" {
-                    assert_eq!(it.next().unwrap(), "not");
+                    if it.peek() == Some(&"not") {
+                        println!("negating {:?}", it.peek());
+                        negated = NegOp::Yes;
+                        it.next();
+                    } else {
+                        println!("not negating: {:?}", it.peek());
+                    }
                     state = AssertionState::Operator
                 } else {
                     return Err(ParseError::SyntaxError(
@@ -430,6 +461,7 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
 
     Ok(Assertion {
         operator: operator.expect("No operator found in predicate").to_owned(),
+        op_is_negated: negated,
         threshold: threshold.expect("No threshold found in predicate"),
         point_ratio: point_ratio.expect("No point ratio found in predicate"),
         series_ratio: series_ratio,
@@ -453,6 +485,7 @@ fn main() {
 
     let status = do_check(with_data,
                           &args.assertion.operator,
+                          args.assertion.op_is_negated,
                           args.assertion.threshold,
                           args.assertion.point_ratio);
     status.exit();
@@ -467,7 +500,7 @@ mod test {
     use turbine_plugins::ExitStatus;
 
     use super::{GraphiteData, DataPoint, operator_string_to_func, graphite_result_to_vec, do_check,
-                ParseError, filter_to_with_data, parse_assertion};
+                ParseError, NegOp, filter_to_with_data, parse_assertion};
 
     fn json_two_sets_of_graphite_data() -> Json {
         Json::from_str(r#"
@@ -574,7 +607,7 @@ mod test {
 
     #[test]
     fn operator_string_to_func_returns_a_good_filter() {
-        let invalid = operator_string_to_func("<", 5_f64);
+        let invalid = operator_string_to_func("<", NegOp::Yes, 5_f64);
         assert!(invalid(6_f64))
     }
 
@@ -595,6 +628,7 @@ mod test {
     fn do_check_errors_with_invalid_data() {
         let result = do_check(valid_data_from_json_two_sets(),
                               ">",
+                              NegOp::Yes,
                               2.0,
                               0.0);
         if let ExitStatus::Critical = result {
@@ -608,6 +642,7 @@ mod test {
     fn do_check_succeeds_with_valid_data() {
         let result = do_check(valid_data_from_json_two_sets(),
                               ">",
+                              NegOp::Yes,
                               0.0,
                               1.0);
         if let ExitStatus::Ok = result {
@@ -672,6 +707,7 @@ mod test {
         let graphite_data = graphite_result_to_vec(&json_one_point_is_below_5_5());
         let result = do_check(graphite_data,
                               &assertion.operator,
+                              assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_ratio);
         if let ExitStatus::Critical = result  {
@@ -700,7 +736,7 @@ mod test {
         assert_eq!(assertion.series_ratio, 0.2_f64);
     }
 
-    fn json_80p_of_points_are_not_above_6() -> Json {
+    fn json_80p_of_points_are_below_6() -> Json {
         Json::from_str(r#"
             [
                 {
@@ -716,33 +752,41 @@ mod test {
         let assertion = parse_assertion(
             "critical if at least 80% of of points are not >= 5.5")
             .unwrap();
-        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_not_above_6());
+        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
         let result = do_check(graphite_data,
                               &assertion.operator,
+                              assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_ratio);
-        if let ExitStatus::Critical = result  {
-             /* expected */
-        } else {
-            panic!("Expected 'Critical' status, not '{:?}'", result)
-        }
+        assert_eq!(result, ExitStatus::Critical);
     }
 
     #[test]
-    fn parse_some_series_and_correctly_allows() {
+    fn parse_some_series_positive_assertion_and_correctly_allows() {
         let assertion = parse_assertion(
-            "critical if at least 81% of of points are not >= 5.5")
+            "critical if at least 79% of of points are < 6")
             .unwrap();
-        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_not_above_6());
+        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
         let result = do_check(graphite_data,
                               &assertion.operator,
+                              assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_ratio);
-        if let ExitStatus::Ok = result  {
-             /* expected */
-        } else {
-            panic!("Expected 'Ok' status, not '{:?}'", result)
-        }
+        assert_eq!(result, ExitStatus::Critical);
+    }
+
+    #[test]
+    fn parse_some_series_positive_assertion__and_correctly_allows_all_points() {
+        let assertion = parse_assertion(
+            "critical if at least 79% of of points are < 6")
+            .unwrap();
+        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
+        let result = do_check(graphite_data,
+                              &assertion.operator,
+                              assertion.op_is_negated,
+                              assertion.threshold,
+                              assertion.point_ratio);
+        assert_eq!(result, ExitStatus::Critical);
     }
 
     #[allow(float_cmp)]
