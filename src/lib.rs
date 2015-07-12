@@ -1,4 +1,4 @@
-//! Iron Fan: strongly typed Sensu handlers
+//! Turbine: strongly typed Sensu libraries
 //!
 //! The goal is to make it easy to transplant the majority of the
 //! [`sensu-community-plugins`](https://github.com/sensu/sensu-community-plugins)
@@ -6,18 +6,18 @@
 //! and fast to execute, because your monitoring system shouldn't go down
 //! because you mistyped `do_alret('critical')`.
 //!
-//! Expected use: write a bin that uses iron_fan::init(), which will populate
+//! Expected use: write a bin that uses turbine::init(), which will populate
 //! an `Event` and run filters on it:
 //!
 //! ```rust
 //! extern crate turbine;
 //!
 //! fn main() {
-//!     // parse stdin into an iron_fan::Event
-//!     let event = iron_fan::init();
+//!     // parse stdin into an turbine::Event
+//!     let event = turbine::init();
 //!     match event {
 //!         Ok(event) => { /* do_stuff_with(event) */ },
-//!         Err(iron_fan::InitError(msg)) => println!("{}", msg),
+//!         Err(turbine::InitError(msg)) => println!("{}", msg),
 //!         _ => { /* handle other errors */ }
 //!     };
 //! }

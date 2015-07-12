@@ -29,7 +29,7 @@ impl<'a, T: ErrorParts<'a>> DisplayError<'a> for T {
 }
 
 impl<'a> ErrorParts<'a> for Filter<'a> {
-    fn lib(&'a self) -> String { "iron_fan".to_string() }
+    fn lib(&'a self) -> String { "turbine".to_string() }
     fn msg(&'a self) -> String {
         match *self {
             Filter::Disabled => format!("check is disabled"),
