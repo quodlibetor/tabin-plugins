@@ -25,7 +25,7 @@ struct Args {
     flag_crit:  f64,
 }
 
-#[derive(Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct MemInfo {
     total: Option<usize>,
     available: Option<usize>,
@@ -64,6 +64,72 @@ impl MemInfo {
         let free = try!(self.percent_free());
         Ok(100f64 - free)
     }
+
+    /// Convert the contents of a string like /proc/meminfo into a MemInfo
+    /// object
+    fn from_str(meminfo: &str) -> Self {
+        let mut word = String::new();
+        let mut info = MemInfo {
+            total: None,
+            free: None,
+            available: None,
+            cached: None
+        };
+        let mut amount: usize;
+        enum Currently {
+            Total, Free, Available, Cached, Unknown, None
+        };
+        let mut currently = Currently::None;
+
+        for chr in meminfo.chars() {
+            // println!("'a'<= {}: {}, {} <= 'Z': {}",
+            //        chr, 'A' <= chr, chr, chr <= 'z');
+            match chr {
+                c if 'A' <= c && c <= 'z' => {
+                    word.push(chr);
+                },
+                ':' => {
+                    match &word[..] {
+                        "MemTotal" => currently = Currently::Total,
+                        "MemAvailable" => currently = Currently::Available,
+                        "MemFree" => currently = Currently::Free,
+                        "Cached" => currently = Currently::Cached,
+                        _ => currently = Currently::Unknown
+                    };
+                    word.clear();
+                }
+                x if '0' <= x && x <= '9' => {
+                    word.push(chr);
+                },
+                ' ' | '\n' => {
+                    if word.is_empty() { continue };
+                    if word == "kB" { word.clear(); continue; };
+
+                    amount = match word.parse() {
+                        Ok(amount) => amount,
+                        Err(e) => panic!(r#"Unable to parse number from "{}": {:?}"#, word, e)
+                    };
+                    word.clear();
+
+                    match currently {
+                        Currently::Total => info.total = Some(amount),
+                        Currently::Free => info.free = Some(amount),
+                        Currently::Available => info.available = Some(amount),
+                        Currently::Cached => info.cached = Some(amount),
+                        Currently::Unknown => { /* don't care */ },
+                        Currently::None => {
+                            panic!(
+                                "Unexpectedly parsed a number before figuring out where I am: {}",
+                                amount)
+                        }
+                    }
+                }
+                _ => { /* Don't care about other chars */ }
+            }
+        }
+
+        info
+    }
 }
 
 fn read_mem() -> MemInfo {
@@ -75,69 +141,11 @@ fn read_mem() -> MemInfo {
         }
         Err(e) => panic!("Unable to /proc/meminfo: {:?}", e)
     };
-    let mut word = String::new();
-    let mut info = MemInfo {
-        total: None,
-        free: None,
-        available: None,
-        cached: None
-    };
-    let mut amount: usize;
-    enum Currently {
-        Total, Free, Available, Cached, Unknown, None
-    };
-    let mut currently = Currently::None;
 
-    for chr in contents.chars() {
-        // println!("'a'<= {}: {}, {} <= 'Z': {}",
-        //        chr, 'A' <= chr, chr, chr <= 'z');
-        match chr {
-            c if 'A' <= c && c <= 'z' => {
-                word.push(chr);
-            },
-            ':' => {
-                match &word[..] {
-                    "MemTotal" => currently = Currently::Total,
-                    "MemAvailable" => currently = Currently::Available,
-                    "MemFree" => currently = Currently::Free,
-                    "Cached" => currently = Currently::Cached,
-                    _ => currently = Currently::Unknown
-                };
-                word.clear();
-            }
-            x if '0' <= x && x <= '9' => {
-                word.push(chr);
-            },
-            ' ' | '\n' => {
-                if word.is_empty() { continue };
-                if word == "kB" { word.clear(); continue; };
-
-                amount = match word.parse() {
-                    Ok(amount) => amount,
-                    Err(e) => panic!(r#"Unable to parse number from "{}": {:?}"#, word, e)
-                };
-                word.clear();
-
-                match currently {
-                    Currently::Total => info.total = Some(amount),
-                    Currently::Free => info.free = Some(amount),
-                    Currently::Available => info.available = Some(amount),
-                    Currently::Cached => info.cached = Some(amount),
-                    Currently::Unknown => { /* don't care */ },
-                    Currently::None => {
-                        panic!(
-                            "Unexpectedly parsed a number before figuring out where I am: {}",
-                            amount)
-                    }
-                }
-            }
-            _ => { /* Don't care about other chars */ }
-        }
-    }
-
-    info
+    MemInfo::from_str(&contents)
 }
 
+#[cfg_attr(test, allow(dead_code))]
 fn main() {
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.decode())
@@ -161,5 +169,30 @@ fn main() {
             println!("check-ram UNEXPECTED ERROR: {:?}", e);
             std::process::exit(3)
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::MemInfo;
+
+    #[test]
+    fn parse_meminfo() {
+        assert_eq!(
+            MemInfo::from_str(
+"Useless: 898
+MemTotal: 500
+MemAvailable: 20
+MemFree: 280
+Meaningless: 777
+Cached: 200
+"),
+            MemInfo {
+                total: Some(500),
+                available: Some(20),
+                free: Some(280),
+                cached: Some(200)
+            }
+        )
     }
 }

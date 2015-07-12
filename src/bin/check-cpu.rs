@@ -1,4 +1,4 @@
-//! This is a documentation.
+//! Check CPU usage
 
 extern crate rustc_serialize;
 
@@ -61,6 +61,7 @@ pub struct Calculations {
 }
 
 impl Calculations {
+    /// Create a new `Calculations` struct with the difference between self and other
     pub fn sub(&self, other: &Calculations) -> Calculations {
         Calculations {
             user: self.user - other.user,
@@ -79,17 +80,41 @@ impl Calculations {
         }
     }
 
+    /// Jiffies spent non-idle
+    ///
+    /// This includes all processes in user space, kernel space, and time
+    /// stolen by other VMs.
+    pub fn active(&self) -> f64 {
+        self.user + self.nice // user processes
+            + self.system + self.irq + self.softirq // kernel and interrupts
+            + self.steal  // vm interrupts
+    }
+
+    /// Jiffies spent with nothing to do
+    pub fn idle(&self) -> f64 {
+        self.idle + self.iowait
+    }
+
+    /// Jiffies spent running child VMs
+    ///
+    /// This is included in `active()`, so don't add this to that when
+    /// totalling.
+    pub fn virt(&self) -> f64 {
+        self.guest + self.guest_nice.unwrap_or(0.0)
+    }
+
+    /// All jiffies since the kernel started tracking
     pub fn total(&self) -> f64 {
-        self.user + self.nice + self.system + self.idle + self.iowait +
-            self.irq + self.softirq + self.steal + self.guest +
-            self.guest_nice.unwrap_or(0f64)
+        self.active() + self.idle()
     }
 }
 
+/// Return how much the specific worksource took
+///
+/// The number returned is between 0 and 100
 fn percent_util(kind: &WorkSource, start: &Calculations, end: &Calculations) -> f64 {
     let (start_val, end_val) = match *kind {
-        WorkSource::Total => ((start.user + start.nice + start.system + start.iowait + start.irq + start.steal),
-                              (end.user + end.nice + end.system + end.iowait + end.irq + end.steal)),
+        WorkSource::Total => (start.active(), end.active()),
         WorkSource::User => (start.user, end.user),
         WorkSource::IoWait => (start.iowait, end.iowait),
         WorkSource::Nice => (start.nice, end.nice),
@@ -151,6 +176,7 @@ pub fn read_cpu() -> Calculations {
     }
 }
 
+#[cfg_attr(test, allow(dead_code))]
 fn main() {
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.decode())
@@ -176,4 +202,81 @@ fn main() {
     }
     println!("{:?}={:?} ({:?})", args.flag_type, total, end.sub(&start));
     std::process::exit(exit_status);
+}
+
+#[cfg(test)]
+mod test {
+    use docopt::Docopt;
+    use super::{USAGE, WorkSource, Calculations, percent_util};
+
+    #[test]
+    fn validate_docstring() {
+        Docopt::new(USAGE).unwrap();
+    }
+
+    fn begintime() -> Calculations {
+        Calculations {
+            user: 100.0,
+            nice: 100.0,
+            system: 100.0,
+            idle: 100.0,
+            iowait: 100.0,
+            irq: 100.0,
+            softirq: 100.0,
+            steal: 100.0,
+            guest: 100.0,
+            guest_nice: Some(0.0),
+        }
+    }
+
+    #[test]
+    fn percentage_user_idle() {
+        let start = begintime();
+
+        let end = Calculations {
+            user: 110.0,
+            idle: 110.0,
+            ..start
+        };
+
+        assert_eq!(percent_util(&WorkSource::User, &start, &end), 50.0)
+    }
+
+    #[test]
+    fn percentage_user() {
+        let start = begintime();
+
+        let end = Calculations {
+            user: 110.0,
+            ..start
+        };
+
+        assert_eq!(percent_util(&WorkSource::User, &start, &end), 100.0)
+    }
+
+    #[test]
+    fn percentage_total_user_idle() {
+        let start = begintime();
+        let end = Calculations {
+            user: 110.0,
+            idle: 110.0,
+            ..start
+        };
+
+        assert_eq!(percent_util(&WorkSource::Total, &start, &end), 50.0)
+    }
+
+    #[test]
+    fn percentage_total_user_idle_system_steal() {
+        let start = begintime();
+        let end = Calculations {
+            user: 110.0,
+            system: 110.0,
+            steal: 110.0,
+            idle: 110.0,
+            ..start
+        };
+
+        assert_eq!(percent_util(&WorkSource::Total, &start, &end), 75.0)
+    }
 }

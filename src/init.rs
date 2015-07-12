@@ -296,7 +296,7 @@ fn read_check(event: &Json) -> SensuResult<Check> {
 
 #[cfg(test)]
 mod build_objects {
-    use rustc_serialize::json::{self, Json};
+    use rustc_serialize::json::Json;
     use super::{read_event, read_check, read_client, Check};
 
     #[test]

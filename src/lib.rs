@@ -17,7 +17,7 @@
 //!     let event = turbine::init();
 //!     match event {
 //!         Ok(event) => { /* do_stuff_with(event) */ },
-//!         Err(turbine::InitError(msg)) => println!("{}", msg),
+//!         Err(turbine::SensuError::InitError(msg)) => println!("{}", msg),
 //!         _ => { /* handle other errors */ }
 //!     };
 //! }
