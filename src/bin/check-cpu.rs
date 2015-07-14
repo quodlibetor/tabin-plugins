@@ -4,29 +4,33 @@ extern crate rustc_serialize;
 
 extern crate docopt;
 
+extern crate turbine_plugins;
+
 use docopt::Docopt;
+use turbine_plugins::ExitStatus;
 
 use std::fs::File;
 use std::io::{BufReader,Read};
 use std::path::Path;
 
 static USAGE: &'static str = "
-Usage: check-cpu [options] [--type=<work-source>]
+Usage: check-cpu [options] [--type=<work-source>...]
 
 Options:
-    -h, --help             Show this help message
+    -h, --help               Show this help message
 
-    -s, --sleep=<seconds>  Seconds to collect for [default: 1]
-    -w, --warn=<percent>   Percent to warn at     [default: 80]
-    -c, --crit=<percent>   Percent to critical at [default: 95]
+    -s, --sample=<seconds>   Seconds to spent collecting   [default: 1]
+    -w, --warn=<percent>     Percent to warn at            [default: 80]
+    -c, --crit=<percent>     Percent to critical at        [default: 95]
 
 CPU Work Types:
+
     Specifying one of the CPU kinds checks that kind of utilization. The
     default is to check total utilization.
 
-    --type=<usage>  One of:
-                       total user nice system idle
-                       iowait irq softirq steal guest [default: total]
+    --type=<usage>           Some of:
+                                total user nice system idle
+                                iowait irq softirq steal guest [default: total]
 ";
 
 #[derive(RustcDecodable, Debug)]
@@ -34,64 +38,65 @@ enum WorkSource {
     Total, User, Nice, System, Idle, IoWait, Irq, SoftIrq, Steal, Guest, GuestNice
 }
 
+impl std::fmt::Display for WorkSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        use WorkSource::*;
+        let s = match *self {
+            Total => "total",
+            User => "user",
+            Nice => "nice",
+            System => "system",
+            Idle => "idle",
+            IoWait => "iowait",
+            Irq => "irq",
+            SoftIrq => "softirq",
+            Steal => "steal",
+            Guest => "guest",
+            GuestNice => "guestnice"
+        };
+        f.write_str(s)
+    }
+}
+
 #[derive(RustcDecodable, Debug)]
 struct Args {
     flag_help: bool,
-    flag_sleep: i32,
-    flag_warn:  isize,
-    flag_crit:  isize,
+    flag_sample: i32,
+    flag_warn: isize,
+    flag_crit: isize,
 
-    flag_type: WorkSource,
+    flag_type: Vec<WorkSource>,
 }
 
 /// The number of calculations that have occured on this computer since it
 /// started
 #[derive(Debug)]
-pub struct Calculations {
-    pub user: f64,
-    pub nice: f64,
-    pub system: f64,
-    pub idle: f64,
-    pub iowait: f64,
-    pub irq: f64,
-    pub softirq: f64,
-    pub steal: f64,
-    pub guest: f64,
-    pub guest_nice: Option<f64>,
+struct Calculations {
+    user: f64,
+    nice: f64,
+    system: f64,
+    idle: f64,
+    iowait: f64,
+    irq: f64,
+    softirq: f64,
+    steal: f64,
+    guest: f64,
+    guest_nice: Option<f64>,
 }
 
 impl Calculations {
-    /// Create a new `Calculations` struct with the difference between self and other
-    pub fn sub(&self, other: &Calculations) -> Calculations {
-        Calculations {
-            user: self.user - other.user,
-            nice: self.nice - other.nice,
-            system: self.system - other.system,
-            idle: self.idle - other.idle,
-            iowait: self.iowait - other.iowait,
-            irq: self.irq - other.irq,
-            softirq: self.softirq - other.softirq,
-            steal: self.steal - other.steal,
-            guest: self.guest - other.guest,
-            guest_nice: match (self.guest_nice, other.guest_nice) {
-                (Some(snice), Some(onice)) => Some(snice - onice),
-                _ => None
-            }
-        }
-    }
-
     /// Jiffies spent non-idle
     ///
     /// This includes all processes in user space, kernel space, and time
     /// stolen by other VMs.
-    pub fn active(&self) -> f64 {
+    fn active(&self) -> f64 {
         self.user + self.nice // user processes
             + self.system + self.irq + self.softirq // kernel and interrupts
-            + self.steal  // vm interrupts
+            + self.steal  // other VMs stealing our precious time
     }
 
     /// Jiffies spent with nothing to do
-    pub fn idle(&self) -> f64 {
+    fn idle(&self) -> f64 {
         self.idle + self.iowait
     }
 
@@ -99,17 +104,18 @@ impl Calculations {
     ///
     /// This is included in `active()`, so don't add this to that when
     /// totalling.
-    pub fn virt(&self) -> f64 {
+    #[allow(dead_code)]  // this mostly exists as documentation of what `guest` means
+    fn virt(&self) -> f64 {
         self.guest + self.guest_nice.unwrap_or(0.0)
     }
 
     /// All jiffies since the kernel started tracking
-    pub fn total(&self) -> f64 {
+    fn total(&self) -> f64 {
         self.active() + self.idle()
     }
 }
 
-/// Return how much the specific worksource took
+/// Return how much cpu time the specific worksource took
 ///
 /// The number returned is between 0 and 100
 fn percent_util(kind: &WorkSource, start: &Calculations, end: &Calculations) -> f64 {
@@ -131,7 +137,7 @@ fn percent_util(kind: &WorkSource, start: &Calculations, end: &Calculations) -> 
     total * 100f64
 }
 
-pub fn read_cpu() -> Calculations {
+fn read_cpu() -> Calculations {
     let contents = match File::open(&Path::new("/proc/stat")) {
         Ok(ref mut content) => {
             let mut s = String::new();
@@ -176,6 +182,26 @@ pub fn read_cpu() -> Calculations {
     }
 }
 
+fn do_comparison(args: &Args, start: &Calculations, end: &Calculations) -> ExitStatus {
+    let mut exit_status = ExitStatus::Ok;
+
+    for flag in &args.flag_type {
+        let total = percent_util(flag, &start, &end);
+        if total > args.flag_crit as f64 {
+            exit_status = std::cmp::max(exit_status, ExitStatus::Critical);
+            println!("CRITICAL [check-cpu]: {} {} > {}", flag, total, args.flag_crit);
+        } else if total > args.flag_warn as f64 {
+            exit_status = std::cmp::max(exit_status, ExitStatus::Warning);
+            println!("WARNING [check-cpu]: {} {} > {}", flag, total, args.flag_warn);
+        } else {
+            println!("OK [check-cpu]");
+        }
+    }
+
+    exit_status
+}
+
+
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
     let args: Args = Docopt::new(USAGE)
@@ -187,31 +213,28 @@ fn main() {
     }
 
     let start = read_cpu();
-    std::thread::sleep_ms((args.flag_sleep * 1000) as u32);
+    std::thread::sleep_ms((args.flag_sample * 1000) as u32);
     let end = read_cpu();
-    let total = percent_util(&args.flag_type, &start, &end);
-    let mut exit_status = 0;
-    if total > args.flag_crit as f64 {
-        exit_status = 2;
-        println!("check-cpu critical: {:?} > {}", total, args.flag_crit);
-    } else if total > args.flag_warn as f64 {
-        exit_status = 1;
-        println!("check-cpu warning: {} > {}", total, args.flag_warn);
-    } else {
-        println!("check-cpu ok");
-    }
-    println!("{:?}={:?} ({:?})", args.flag_type, total, end.sub(&start));
-    std::process::exit(exit_status);
+    let status = do_comparison(&args, &start, &end);
+    status.exit()
 }
 
 #[cfg(test)]
-mod test {
+mod unit {
     use docopt::Docopt;
     use super::{USAGE, WorkSource, Calculations, percent_util};
 
     #[test]
     fn validate_docstring() {
         Docopt::new(USAGE).unwrap();
+    }
+
+    #[test]
+    fn validate_allows_multiple_worksources() {
+        let argv = || vec!["check-cpu", "--type", "total", "--type", "steal"];
+        let _: super::Args = Docopt::new(USAGE)
+            .and_then(|d| d.argv(argv().into_iter()).decode())
+            .unwrap();
     }
 
     fn begintime() -> Calculations {
@@ -278,5 +301,46 @@ mod test {
         };
 
         assert_eq!(percent_util(&WorkSource::Total, &start, &end), 75.0)
+    }
+}
+
+#[cfg(test)]
+mod integration {
+    // not really integration tests, but higher level
+    use super::{do_comparison, Calculations, USAGE};
+
+    use turbine_plugins::ExitStatus;
+    use docopt::Docopt;
+
+    fn start() -> Calculations {
+        Calculations {
+            user: 100.0,
+            nice: 100.0,
+            system: 100.0,
+            idle: 100.0,
+            iowait: 100.0,
+            irq: 100.0,
+            softirq: 100.0,
+            steal: 100.0,
+            guest: 100.0,
+            guest_nice: Some(0.0),
+        }
+    }
+
+    #[test]
+    fn does_alert() {
+        let argv = || vec!["check-cpu", "-c", "49", "--type", "total", "--type", "steal"];
+        let start = start();
+        let end = Calculations {
+            user: 110.0,
+            idle: 110.0,
+            ..start
+        };
+        let args: super::Args = Docopt::new(USAGE)
+            .and_then(|d| d.argv(argv().into_iter()).decode())
+            .unwrap();
+
+        assert_eq!(do_comparison(&args, &start, &end),
+                   ExitStatus::Critical);
     }
 }
