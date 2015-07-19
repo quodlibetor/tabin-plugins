@@ -3,9 +3,16 @@
 //! Right now this is just the `ExitStatus` struct, useful for making sure that
 //! you exit correctly.
 
+#[macro_use] extern crate scan_fmt;
+#[macro_use] extern crate wrapped_enum;
+
+extern crate regex;
+extern crate rustc_serialize;
 
 use std::process;
 use std::cmp::{Ord};
+
+pub mod procfs;
 
 /// All errors are TurbineErrors
 #[derive(Debug)]

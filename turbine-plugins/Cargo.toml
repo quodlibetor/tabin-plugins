@@ -2,3 +2,9 @@
 name = "turbine-plugins"
 version = "0.1.0"
 authors = ["Brandon W Maister <quodlibetor@gmail.com>"]
+
+[dependencies]
+scan_fmt = "0.1"
+wrapped_enum = "*"
+regex = "0.1"
+rustc-serialize = "0.3"
