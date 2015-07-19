@@ -14,7 +14,7 @@ pub fn api_url(path: &str) -> Result<url::Url, SensuError> {
 
 pub fn api_get(path: &str) -> response::Response {//SensuResult<Result<A,B>> {
     //let path = api_url(path);
-    let mut c = Client::new();
+    let c = Client::new();
     let result = c.get(path).send().unwrap();
     // let req = match path {
     //     Ok(path) => Client::new().get(path).send().unwrap(),

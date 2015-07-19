@@ -138,7 +138,7 @@ fn graphite_result_to_vec(data: &Json) -> Vec<GraphiteData> {
 #[cfg_attr(test, allow(dead_code))]
 fn get_graphite<S: Into<String>, T: Into<String>>(url: S, target: T) -> String {
     let full_path = format!("{}/render?target={}&format=json", url.into(), target.into());
-    let mut c = hyper::Client::new();
+    let c = hyper::Client::new();
     let mut result = c.get(&full_path).send().unwrap();
     let mut s = String::new();
     result.read_to_string(&mut s).unwrap();
@@ -322,7 +322,7 @@ enum ParseError {
 fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<f64, ParseError>
     where I: Iterator<Item=&'a str>
 {
-    let mut ratio;
+    let ratio;
 
     // chew through
     //   "any"
