@@ -192,6 +192,7 @@ fn filter_to_with_data(data: Json,
     }
 }
 
+#[allow(deprecated)] // connect => join in 1.3
 #[cfg_attr(test, allow(float_cmp))]
 fn do_check(
     series_with_data: Vec<GraphiteData>,
