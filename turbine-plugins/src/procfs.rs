@@ -14,6 +14,8 @@ wrapped_enum!{
     pub enum ProcFsError {
         /// Errors originating in IO
         Io(io::Error),
+        /// Error pulling all required data out of procfs
+        InsufficientData(String)
     }
 }
 
@@ -373,25 +375,180 @@ impl<'a> Sub for &'a Calculations {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Memory
+
+/// A struct that represents overall memory usage on the system.
+#[derive(PartialEq, Eq, Debug)]
+pub struct MemInfo {
+    pub total: Option<usize>,
+    pub available: Option<usize>,
+    pub free: Option<usize>,
+    pub cached: Option<usize>
+}
+
+impl MemInfo {
+    /// Read the data from /proc/meminfo into a `MemInfo`
+    pub fn load() -> MemInfo {
+        let contents = match File::open("/proc/meminfo") {
+            Ok(ref mut content) => {
+                let mut s = String::new();
+                let _ = content.read_to_string(&mut s);
+                s
+            }
+            Err(e) => panic!("Unable to /proc/meminfo: {:?}", e)
+        };
+
+        MemInfo::from_str(&contents)
+    }
+    /// Try to figure out how much memory is being used
+    ///
+    /// Since linux kernel 3.16 this just performs
+    ///
+    /// ```text
+    ///     (total - available) / total * 100
+    /// ```
+    ///
+    /// Before that we approximate available as Free + Cached, even though that
+    /// is [almost certain to be incorrect][].
+    ///
+    /// [almost certain to be incorrect]: https://github.com/torvalds/linux/commit/34e431b0ae398fc54ea69ff85ec700722c9da773
+    pub fn percent_free(&self) -> Result<f64, ProcFsError> {
+        match *self {
+            MemInfo { total: Some(t), available: Some(a), .. } => {
+                Ok( (t - a) as f64 / t as f64 * 100f64 )
+            }
+            MemInfo { total: Some(t), free: Some(f), cached: Some(c), ..} => {
+                Ok( (t - (f + c)) as f64 / t as f64) },
+            _ => { Err(ProcFsError::InsufficientData(
+                format!("/proc/meminfo is missing one of total, available, free, or cached: {:?}",
+                        self)))
+            }
+        }
+    }
+
+    /// The inverse of `MemInfo::percent_free`
+    pub fn percent_used(&self) -> Result<f64, ProcFsError> {
+        let free = try!(self.percent_free());
+        Ok(100f64 - free)
+    }
+
+    /// Convert the contents of a string like /proc/meminfo into a MemInfo
+    /// object
+    fn from_str(meminfo: &str) -> Self {
+        let mut word = String::new();
+        let mut info = MemInfo {
+            total: None,
+            free: None,
+            available: None,
+            cached: None
+        };
+        let mut amount: usize;
+        enum Currently {
+            Total, Free, Available, Cached, Unknown, None
+        };
+        let mut currently = Currently::None;
+
+        for chr in meminfo.chars() {
+            // println!("'a'<= {}: {}, {} <= 'Z': {}",
+            //        chr, 'A' <= chr, chr, chr <= 'z');
+            match chr {
+                c if 'A' <= c && c <= 'z' => {
+                    word.push(chr);
+                },
+                ':' => {
+                    match &word[..] {
+                        "MemTotal" => currently = Currently::Total,
+                        "MemAvailable" => currently = Currently::Available,
+                        "MemFree" => currently = Currently::Free,
+                        "Cached" => currently = Currently::Cached,
+                        _ => currently = Currently::Unknown
+                    };
+                    word.clear();
+                }
+                x if '0' <= x && x <= '9' => {
+                    word.push(chr);
+                },
+                ' ' | '\n' => {
+                    if word.is_empty() { continue };
+                    if word == "kB" { word.clear(); continue; };
+
+                    amount = match word.parse() {
+                        Ok(amount) => amount,
+                        Err(e) => panic!(r#"Unable to parse number from "{}": {:?}"#, word, e)
+                    };
+                    word.clear();
+
+                    match currently {
+                        Currently::Total => info.total = Some(amount),
+                        Currently::Free => info.free = Some(amount),
+                        Currently::Available => info.available = Some(amount),
+                        Currently::Cached => info.cached = Some(amount),
+                        Currently::Unknown => { /* don't care */ },
+                        Currently::None => {
+                            panic!(
+                                "Unexpectedly parsed a number before figuring out where I am: {}",
+                                amount)
+                        }
+                    }
+                }
+                _ => { /* Don't care about other chars */ }
+            }
+        }
+
+        info
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Testing
+
 #[cfg(test)]
 mod unit {
-    use super::ProcStat;
+    use super::{ProcStat, MemInfo};
 
     #[test]
     fn can_parse_proc() {
         let stat = "1 (init) S 0 1 1 0 -1 4219136 40326 5752369 36 3370 16 41 25846 8061 20 0 1 0 5 34381824 610 18446744073709551615 1 1 0 0 0 0 0 4096 536962595 18446744073709551615 0 0 17 0 0 0 7 0 0 0 0 0 0 0 0 0 0";
         stat.parse::<ProcStat>().unwrap();
     }
+
+    #[test]
+    fn parse_meminfo() {
+        assert_eq!(
+            MemInfo::from_str(
+"Useless: 898
+MemTotal: 500
+MemAvailable: 20
+MemFree: 280
+Meaningless: 777
+Cached: 200
+"),
+            MemInfo {
+                total: Some(500),
+                available: Some(20),
+                free: Some(280),
+                cached: Some(200)
+            }
+            )
+    }
+
 }
 
 #[cfg(test)]
 #[cfg(target_os = "linux")]
 mod integration {
-    use super::RunningProcs;
+    use super::{RunningProcs, MemInfo};
 
     #[test]
     fn can_read_all_procs() {
         let procs = RunningProcs::currently_running().unwrap();
         assert!(procs.0.len() > 0);
+    }
+
+    #[test]
+    fn meminfo_can_load() {
+        let info = MemInfo::load();
+        assert_eq!(info.percent_free().unwrap() + info.percent_used().unwrap(), 100.0)
     }
 }
