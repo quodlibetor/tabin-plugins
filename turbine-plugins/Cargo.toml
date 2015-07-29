@@ -9,4 +9,9 @@ wrapped_enum = "*"
 regex = "0.1"
 rustc-serialize = "0.3"
 docopt = "0.6"
-clap = "*"
+clap = "1.1"
+chrono = "0.2"
+hyper = "0.6"
+
+[dev-dependencies.clippy]
+git = "https://github.com/Manishearth/rust-clippy"
