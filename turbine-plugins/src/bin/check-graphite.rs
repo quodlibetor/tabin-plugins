@@ -85,9 +85,6 @@ impl GraphiteData {
     }
 
     /// Strip our points to just include self.data_since points
-    /// TODO: this would be much nicer as an &mut self method, but then we'd
-    /// need to have a vec of &GraphitePoint's instead of owned
-    /// graphitepoints... I think. `into_iter()` doesn't work, anyway.
     pub fn into_only_since(mut self, since: NaiveDateTime) -> Self {
         let new_points = self.points.into_iter()
             .filter(|point| point.val.is_some() && point.time >= since)
@@ -97,7 +94,6 @@ impl GraphiteData {
     }
 
     /// Mutate to only have the invalid points
-    /// TODO: this would be much nicer as an &mut self method. See above.
     pub fn into_only_invalid(mut self, comparator: &Box<Fn(f64) -> bool>) -> Self {
         self.points = self.points.into_iter()
                          .filter(|p| comparator(p.val.unwrap()))
