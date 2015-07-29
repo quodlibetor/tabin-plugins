@@ -406,7 +406,7 @@ impl MemInfo {
     /// Since linux kernel 3.16 this just performs
     ///
     /// ```text
-    ///     (total - available) / total * 100
+    ///     available / total * 100
     /// ```
     ///
     /// Before that we approximate available as Free + Cached, even though that
@@ -416,10 +416,11 @@ impl MemInfo {
     pub fn percent_free(&self) -> Result<f64, ProcFsError> {
         match *self {
             MemInfo { total: Some(t), available: Some(a), .. } => {
-                Ok( (t - a) as f64 / t as f64 * 100f64 )
+                Ok( a as f64 / t as f64 * 100.0 )
             }
             MemInfo { total: Some(t), free: Some(f), cached: Some(c), ..} => {
-                Ok( (t - (f + c)) as f64 / t as f64) },
+                Ok( (f + c) as f64 / t as f64 * 100.0 )
+            },
             _ => { Err(ProcFsError::InsufficientData(
                 format!("/proc/meminfo is missing one of total, available, free, or cached: {:?}",
                         self)))
@@ -533,6 +534,24 @@ Cached: 200
             )
     }
 
+    #[test]
+    fn meminfo_percent_free() {
+        let mem = MemInfo {
+            total: Some(100),
+            available: Some(30),
+            free: None,
+            cached: None
+        };
+        assert_eq!(mem.percent_free().unwrap(), 30.0);
+
+        let mem = MemInfo {
+            total: Some(100),
+            available: None,
+            free: Some(25),
+            cached: Some(20)
+        };
+        assert_eq!(mem.percent_free().unwrap(), 45.0);
+    }
 }
 
 #[cfg(test)]
