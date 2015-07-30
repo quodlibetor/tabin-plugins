@@ -6,7 +6,7 @@ extern crate turbine_plugins;
 use docopt::Docopt;
 
 use turbine_plugins::ExitStatus;
-use turbine_plugins::procfs::MemInfo;
+use turbine_plugins::procfs::{RunningProcs, MemInfo};
 
 static USAGE: &'static str = "
 Usage: check-ram [options]
@@ -16,6 +16,9 @@ Options:
 
     -w, --warn=<percent>   Percent used to warn at      [default: 80]
     -c, --crit=<percent>   Percent used to critical at  [default: 95]
+
+    --show-hogs=<count>    Show most RAM-hungry procs   [default: 0]
+    -v, --verbose          Always show the hogs
 ";
 
 #[derive(RustcDecodable, Debug)]
@@ -23,6 +26,8 @@ struct Args {
     flag_help: bool,
     flag_warn:  f64,
     flag_crit:  f64,
+    flag_show_hogs: usize,
+    flag_verbose: bool
 }
 
 fn compare_status(crit: f64, warn: f64, mem: MemInfo) -> ExitStatus {
@@ -57,6 +62,15 @@ fn main() {
     }
     let mem = MemInfo::load();
     let status = compare_status(args.flag_crit, args.flag_warn, mem);
+    if args.flag_show_hogs > 0 && (status != ExitStatus::Ok ||
+                                   args.flag_verbose) {
+        let per_proc = RunningProcs::currently_running().unwrap();
+        let mut procs = per_proc.0.values().collect::<Vec<_>>();
+        procs.sort_by(|l, r| r.rss.cmp(&l.rss));
+        for process in procs.iter().take(args.flag_show_hogs) {
+            println!("mem: {} {} pages", process.comm, process.rss)
+        }
+    };
     status.exit();
 }
 
