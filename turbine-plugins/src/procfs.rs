@@ -8,6 +8,7 @@ use std::collections::hash_map;
 use std::fs::{self, File};
 use std::io::{self, BufReader, Read};
 use std::ops::Sub;
+use std::result::Result as StdResult;
 use std::str::FromStr;
 use std::fmt;
 use std::num;
@@ -23,9 +24,12 @@ wrapped_enum!{
         /// Error pulling all required data out of procfs
         InsufficientData(String),
         /// Happens when we try to parse a float from something in procfs
-        InvalidData(num::ParseFloatError)
+        InvalidData(num::ParseFloatError),
     }
 }
+
+/// All the results are results with `ProcFsError`s
+pub type Result<T> = StdResult<T, ProcFsError>;
 
 type Usages<'a> = Vec<ProcUsage<'a>>;
 pub struct ProcUsages<'a>(pub Usages<'a>);
@@ -49,7 +53,7 @@ pub struct RunningProcs(pub ProcMap);
 
 impl RunningProcs {
     /// Load the currently running processes from /proc/[pid]/*
-    pub fn currently_running() -> Result<RunningProcs, ProcFsError> {
+    pub fn currently_running() -> Result<RunningProcs> {
         let mut procs = ProcMap::new();
         let is_digit = Regex::new(r"^[0-9]+$").unwrap();
         for entry in try!(fs::read_dir("/proc")) {
@@ -127,7 +131,7 @@ pub struct ProcStat {
 }
 
 impl ProcStat {
-    pub fn from_pid<P: fmt::Display>(pid: P) -> Result<ProcStat, ProcFsError> {
+    pub fn from_pid<P: fmt::Display>(pid: P) -> Result<ProcStat> {
         let path_str = format!("/proc/{}/stat", pid);
         let mut f = try!(File::open(&path_str));
         let mut s = String::new();
@@ -151,7 +155,7 @@ impl Default for ProcStat {
 impl FromStr for ProcStat {
     type Err = ProcFsError;
     /// Parse the results of /proc/[pid]/stat into a `ProcStat`
-    fn from_str(s: &str) -> Result<ProcStat, ProcFsError> {
+    fn from_str(s: &str) -> Result<ProcStat> {
         let (pid, comm, state, ppid, pgrp, session, tty_nr, tpgid, flags, minflt, cminflt, majflt,
              cmajflt, utime, stime, cutime, cstime, priority, nice, num_threads, starttime, vsize,
              rss) = scan_fmt!(
@@ -455,7 +459,7 @@ impl MemInfo {
     /// is [almost certain to be incorrect][].
     ///
     /// [almost certain to be incorrect]: https://github.com/torvalds/linux/commit/34e431b0ae398fc54ea69ff85ec700722c9da773
-    pub fn percent_free(&self) -> Result<f64, ProcFsError> {
+    pub fn percent_free(&self) -> Result<f64> {
         match *self {
             MemInfo { total: Some(t), available: Some(a), .. } => {
                 Ok( a as f64 / t as f64 * 100.0 )
@@ -471,7 +475,7 @@ impl MemInfo {
     }
 
     /// The inverse of `MemInfo::percent_free`
-    pub fn percent_used(&self) -> Result<f64, ProcFsError> {
+    pub fn percent_used(&self) -> Result<f64> {
         let free = try!(self.percent_free());
         Ok(100f64 - free)
     }
@@ -556,7 +560,7 @@ pub struct LoadAvg {
 
 impl LoadAvg {
     /// Load from the /proc/loadavg file
-    pub fn load() -> Result<LoadAvg, ProcFsError> {
+    pub fn load() -> Result<LoadAvg> {
         let mut fh = try!(File::open("/proc/loadavg"));
         let mut contents = String::new();
         try!(fh.read_to_string(&mut contents));
@@ -575,7 +579,7 @@ impl LoadAvg {
 }
 
 impl fmt::Display for LoadAvg {
-    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
         try!(write!(f, "{:.1} {:.1} {:.1}", self.one, self.five, self.fifteen));
         Ok(())
     }
