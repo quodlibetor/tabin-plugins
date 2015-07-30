@@ -28,14 +28,12 @@ Threshold Behavior:
 
 #[derive(RustcDecodable, Debug)]
 struct RawArgs {
-    flag_help: bool,
     flag_warn: String,
     flag_crit: String,
     flag_verbose: bool,
 }
 
 struct Args {
-    flag_help: bool,
     flag_warn: LoadAvg,
     flag_crit: LoadAvg,
     flag_verbose: bool,
@@ -48,7 +46,6 @@ impl From<RawArgs> for Args {
                 &format!("--warn should look like 'n.m,n.m,n.m' not {}", args.flag_warn)),
             flag_crit: args.flag_crit.parse().ok().expect(
                 &format!("--crit should look like 'n.m,n.m,n.m' not {}", args.flag_warn)),
-            flag_help: args.flag_help,
             flag_verbose: args.flag_verbose,
         }
     }
@@ -56,8 +53,8 @@ impl From<RawArgs> for Args {
 
 fn parse_args() -> Result<Args, docopt::Error> {
     let args: RawArgs = try!(Docopt::new(USAGE)
-                             .and_then(|d| d.decode()));
-    Ok(Args::from(args))
+                             .and_then(|d| d.help(true).decode()));
+    Ok(args.into())
 }
 
 fn do_check(args: Args, actual: LoadAvg) -> ExitStatus {
