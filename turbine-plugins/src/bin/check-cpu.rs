@@ -73,11 +73,11 @@ fn main() {
         return;
     }
 
-    let start = Calculations::load();
+    let start = Calculations::load().unwrap();
     let start_per_proc = RunningProcs::currently_running().unwrap();
     std::thread::sleep_ms((args.flag_sample * 1000) as u32);
     let end_per_proc = RunningProcs::currently_running().unwrap();
-    let end = Calculations::load();
+    let end = Calculations::load().unwrap();
     let mut per_proc = end_per_proc.percent_cpu_util_since(&start_per_proc,
                                                             end.total() - start.total());
     per_proc.0.sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());

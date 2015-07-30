@@ -6,8 +6,8 @@
 use std::collections::HashMap;
 use std::collections::hash_map;
 use std::fs::{self, File};
-use std::io::{self, BufReader, Read};
-use std::ops::Sub;
+use std::io::{self, Read};
+use std::ops::{Div, Sub};
 use std::result::Result as StdResult;
 use std::str::FromStr;
 use std::fmt;
@@ -274,45 +274,48 @@ pub struct Calculations {
 }
 
 impl Calculations {
-    /// Build a new `Calculations` from the /proc/stat pseudofile
-    pub fn load() -> Calculations {
-        let contents = match File::open("/proc/stat") {
-            Ok(ref mut content) => {
-                let mut s = String::new();
-                let _ = BufReader::new(content).read_to_string(&mut s);
-                s
-            },
-            Err(e) => panic!("Unable to read /proc/stat: {:?}", e)
-        };
+    /// Read /proc/stat and return its contents as a string
+    fn read_procstat() -> Result<String> {
+        let mut fh = try!(File::open("/proc/stat"));
+        let mut contents = String::new();
+        try!(fh.read_to_string(&mut contents));
+        Ok(contents)
+    }
+
+    /// Build a new `Calculations` for *total* CPU jiffies from the /proc/stat
+    /// pseudofile. See `load_per_cpu` for per-cpu metrics.
+    pub fn load() -> Result<Calculations> {
+        let contents = try!(Self::read_procstat());
         Self::from_str(&contents)
     }
 
-    fn from_str(contents: &str) -> Calculations {
-        let mut word = String::new();
-        let mut usages = Vec::new();
-        for chr in contents.chars() {
-            match chr {
-                ' ' => {
-                    if word != "" && word != "cpu" {
-                        let usage = match word.parse() {
-                            Ok(num) => num,
-                            Err(e) => panic!("Unable to parse '{}' as f64: {:?}", word, e)
-                        };
-                        usages.push(usage)
-                    };
-                    word.clear();
-                },
-                '\n' => {
-                    if word != "" {
-                        usages.push(word.parse().unwrap());
-                    }
-                    break;
-                },
-                _ => word.push(chr)
-            }
-        }
+    /// Build a list of per-cpu metrics from the /proc/stat file
+    ///
+    /// This does not include the `total` line, use `load()` for that.
+    pub fn load_per_cpu() -> Result<Vec<Calculations>> {
+        let contents = Self::read_procstat().unwrap();
+        contents.lines().skip(1).filter(|line| line.starts_with("cpu"))
+            .map(Calculations::from_line)
+            .collect::<StdResult<Vec<_>, _>>()
+    }
 
-        Calculations {
+    /// Parse the entire /proc/stat file into a single `Calculations` object
+    /// for total CPU
+    fn from_str(contents: &str) -> Result<Calculations> {
+        let mut calcs = try!(contents.lines().take(1).map(Self::from_line)
+                             .collect::<StdResult<Vec<_>, _>>());
+        Ok(calcs.remove(0))
+    }
+
+    /// Convert a single line from /proc/stat
+    fn from_line(line: &str) -> Result<Calculations> {
+        assert!(line.starts_with("cpu"));
+
+        let usages = try!(line.split(' ').skip(1)
+                          .filter(|part| part.len() > 0)
+                          .map(|part| part.parse())
+                          .collect::<StdResult<Vec<_>, _>>());
+        Ok(Calculations {
             user: usages[0],
             nice: usages[1],
             system: usages[2],
@@ -323,7 +326,7 @@ impl Calculations {
             steal: usages[7],
             guest: usages[8],
             guest_nice: usages.get(9).cloned(),
-        }
+        })
     }
 
     /// Jiffies spent non-idle
@@ -568,6 +571,19 @@ impl LoadAvg {
     }
 }
 
+impl Div<usize> for LoadAvg {
+    type Output = LoadAvg;
+
+    /// Divide by an integer. Useful to divide by the number of CPUs
+    fn div(self, rhs: usize) -> LoadAvg {
+        LoadAvg {
+            one: self.one / rhs as f64,
+            five: self.five / rhs as f64,
+            fifteen: self.fifteen / rhs as f64,
+        }
+    }
+}
+
 impl FromStr for LoadAvg {
     type Err = ProcFsError;
 
@@ -607,7 +623,7 @@ intr 17749885 52 10 0 0 0 0 0 0 0 0 0 0 149 0 0 0 0 0 0 493792 10457659 2437665
 ctxt 310
 btime 143
 ");
-        assert_eq!(c, Calculations {
+        assert_eq!(c.unwrap(), Calculations {
             user: 100.0,
             nice: 55.0,
             system: 66.0,
