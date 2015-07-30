@@ -551,7 +551,7 @@ impl MemInfo {
 ///
 /// Load average is number of jobs in the run queue (state R) or waiting for
 /// disk I/O (state D) averaged over 1, 5, and 15 minutes.
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, PartialOrd, Debug)]
 pub struct LoadAvg {
     pub one: f64,
     pub five: f64,
@@ -566,10 +566,15 @@ impl LoadAvg {
         try!(fh.read_to_string(&mut contents));
         Self::from_str(&contents)
     }
+}
 
-    fn from_str(contents: &str) -> Result<LoadAvg, ProcFsError> {
-        let fields = try!(contents.split(' ').take(3).map(|load| load.parse())
-                          .collect::<Result<Vec<f64>, _>>());
+impl FromStr for LoadAvg {
+    type Err = ProcFsError;
+
+    fn from_str(contents: &str) -> Result<LoadAvg> {
+        let pat = Regex::new(r"[ ,]").unwrap();
+        let fields = try!(pat.split(contents).take(3).map(|load| load.parse())
+                          .collect::<StdResult<Vec<f64>, _>>());
         Ok(LoadAvg {
             one: fields[0],
             five: fields[1],
@@ -591,6 +596,7 @@ impl fmt::Display for LoadAvg {
 #[cfg(test)]
 mod unit {
     use super::{Calculations, ProcStat, MemInfo, LoadAvg};
+    use std::str::FromStr;
 
     #[test]
     fn can_parse_stat_for_system() {
@@ -661,8 +667,18 @@ Cached: 200
     }
 
     #[test]
-    fn loadavg_can_parse_str() {
+    fn loadavg_can_parse_space_str() {
         let avg = LoadAvg::from_str("0.1 1.5 21 5/23 938").unwrap();
+        assert_eq!(avg, LoadAvg {
+            one: 0.1_f64,
+            five: 1.5_f64,
+            fifteen: 21_f64
+        });
+    }
+
+    #[test]
+    fn loadavg_can_parse_comma_str() {
+        let avg = LoadAvg::from_str("0.1,1.5,21").unwrap();
         assert_eq!(avg, LoadAvg {
             one: 0.1_f64,
             five: 1.5_f64,
