@@ -1,3 +1,8 @@
+//! Structs and impls for the various files from the /proc filesystem
+//!
+//! Each file gets a struct to represent its data, with an associated `load`
+//! function.
+
 use std::collections::HashMap;
 use std::collections::hash_map;
 use std::fs::{self, File};
@@ -15,24 +20,34 @@ wrapped_enum!{
         /// Errors originating in IO
         Io(io::Error),
         /// Error pulling all required data out of procfs
-        InsufficientData(String)
+        InsufficientData(String),
+        /// Happens when we try to parse a float from something in procfs
+        InvalidData(num::ParseFloatError)
     }
 }
-
-type ProcMap = HashMap<i32, ProcStat>;
-pub struct RunningProcs(pub ProcMap);
 
 type Usages<'a> = Vec<ProcUsage<'a>>;
 pub struct ProcUsages<'a>(pub Usages<'a>);
 
+/// Represent the percent CPU utilization of a specific process over a specific
+/// time period
 pub struct ProcUsage<'a> {
+    /// The process we're reporting on
     pub proc_stat: &'a ProcStat,
+    /// Percent time spent in user mode
     pub upercent: f64,
+    /// Percent time spent in system mode
     pub spercent: f64,
+    /// upercent + spercent
     pub total: f64
 }
 
+type ProcMap = HashMap<i32, ProcStat>;
+/// All the processes that are running
+pub struct RunningProcs(pub ProcMap);
+
 impl RunningProcs {
+    /// Load the currently running processes from /proc/[pid]/*
     pub fn currently_running() -> Result<RunningProcs, ProcFsError> {
         let mut procs = ProcMap::new();
         let is_digit = Regex::new(r"^[0-9]+$").unwrap();
@@ -52,14 +67,16 @@ impl RunningProcs {
         self.0.iter()
     }
 
-    /// Collect all the CPU Usages that have existed since the dawn of time
+    /// Collect CPU usage for each proc as compared to the total active CPU
+    /// time for the system.
+    ///
+    /// The value for `total_cpu` should probably be the result of subtracting
+    /// two `Calculations::total()`s from each other.
     pub fn percent_cpu_util_since<'a>(
         &self,
         start: &'a RunningProcs,
         total_cpu: f64
     ) -> ProcUsages<'a> {
-        println!("total cpu: {}", total_cpu);
-
         let me = &self.0;
         let mut usages = Usages::new();
         for (_start_pid, start_ps) in start.iter() {
@@ -78,6 +95,9 @@ impl RunningProcs {
     }
 }
 
+/// The status of a process
+///
+/// This represents much of the information in /proc/[pid]/stat
 #[derive(Debug)]
 pub struct ProcStat {
     pub pid: i32,
@@ -191,6 +211,10 @@ impl FromStr for ProcStat {
 
 ////////////////////////////////////////////////////////////////////////////////
 // System-Level totals
+
+/// A kind of CPU usage
+///
+/// Corresponds to the fields in `Calculations`, q.v. for the definitions.
 #[derive(RustcDecodable, Debug)]
 pub enum WorkSource {
     Total, User, Nice, System, Idle, IoWait, Irq, SoftIrq, Steal, Guest, GuestNice
@@ -218,22 +242,34 @@ impl fmt::Display for WorkSource {
 
 /// The number of calculations that have occured on this computer in a time
 /// period
-#[derive(Debug)]
+#[derive(PartialEq, Debug)]
 pub struct Calculations {
+    /// Time spent in user mode.
     pub user: f64,
+    /// Time spent in user mode with low priority (nice).
     pub nice: f64,
+    /// Time spent in system mode.
     pub system: f64,
+    /// Time spent not doing anything in particular
     pub idle: f64,
+    /// Time forced to be idle waiting for I/O to complete.
     pub iowait: f64,
+    /// Time spent servicing hardware interrupts
     pub irq: f64,
+    /// Time spent servicing software interrupts
     pub softirq: f64,
+    /// Stolen time, which is the time spent in other operating systems when
+    /// running in a virtualized environment
     pub steal: f64,
+    /// Time spent running a virtual CPU for a guest operating system. AKA time
+    /// we lent out to virtual machines.
     pub guest: f64,
+    /// Time spent running a niced guest
     pub guest_nice: Option<f64>,
 }
 
 impl Calculations {
-    /// Build a new `Calculations` from the /proc fs
+    /// Build a new `Calculations` from the /proc/stat pseudofile
     pub fn load() -> Calculations {
         let contents = match File::open("/proc/stat") {
             Ok(ref mut content) => {
@@ -278,7 +314,6 @@ impl Calculations {
             },
         }
     }
-
 
     /// Jiffies spent non-idle
     ///

@@ -24,7 +24,8 @@ Options:
 CPU Work Types:
 
     Specifying one of the CPU kinds checks that kind of utilization. The
-    default is to check total utilization.
+    default is to check total utilization. Specifying this multiple times
+    alerts if *any* of the CPU usage types are critical.
 
     --type=<usage>           Some of:
                                 total user nice system idle

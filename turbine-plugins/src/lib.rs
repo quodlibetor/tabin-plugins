@@ -1,7 +1,20 @@
 //! Utitilty for writing nagios-style check scripts/plugins
 //!
-//! Right now this is just the `ExitStatus` struct, useful for making sure that
-//! you exit correctly.
+//! There are three things:
+//!
+//! * The `ExitStatus` struct for exiting correctly
+//! * The `procfs` module, which contains rusty representations of some files
+//!   from /proc
+//! * A few scripts in the bin directory, which contain actual
+//!   nagios-compatible scripts
+//!
+//! TODOs include
+//!
+//! * Nice logging, including some standard formats -- json and human would be
+//!   nice
+//! * Some way of easily standardizing command-line args
+//! * Much of the code is hideous, and should not be
+
 
 #[macro_use] extern crate scan_fmt;
 #[macro_use] extern crate wrapped_enum;
