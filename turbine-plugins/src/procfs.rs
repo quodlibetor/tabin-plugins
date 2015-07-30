@@ -279,6 +279,10 @@ impl Calculations {
             },
             Err(e) => panic!("Unable to read /proc/stat: {:?}", e)
         };
+        Self::from_str(&contents)
+    }
+
+    fn from_str(contents: &str) -> Calculations {
         let mut word = String::new();
         let mut usages = Vec::new();
         for chr in contents.chars() {
@@ -293,7 +297,12 @@ impl Calculations {
                     };
                     word.clear();
                 },
-                '\n' => break,
+                '\n' => {
+                    if word != "" {
+                        usages.push(word.parse().unwrap());
+                    }
+                    break;
+                },
                 _ => word.push(chr)
             }
         }
@@ -308,10 +317,7 @@ impl Calculations {
             softirq: usages[6],
             steal: usages[7],
             guest: usages[8],
-            guest_nice: match usages.get(9) {
-                Some(n) => Some(n.clone()),
-                None => None
-            },
+            guest_nice: usages.get(9).cloned(),
         }
     }
 
@@ -541,10 +547,33 @@ impl MemInfo {
 
 #[cfg(test)]
 mod unit {
-    use super::{ProcStat, MemInfo};
+    use super::{Calculations, ProcStat, MemInfo, LoadAvg};
 
     #[test]
-    fn can_parse_proc() {
+    fn can_parse_stat_for_system() {
+        let c = Calculations::from_str(
+"cpu  100 55 66 77 88 1 9 0 0 0
+cpu0 415415 55 55572 37240261 7008 1 1803 0 0 0
+intr 17749885 52 10 0 0 0 0 0 0 0 0 0 0 149 0 0 0 0 0 0 493792 10457659 2437665
+ctxt 310
+btime 143
+");
+        assert_eq!(c, Calculations {
+            user: 100.0,
+            nice: 55.0,
+            system: 66.0,
+            idle: 77.0,
+            iowait: 88.0,
+            irq: 1.0,
+            softirq: 9.0,
+            steal: 0.0,
+            guest: 0.0,
+            guest_nice: Some(0.0),
+        });
+    }
+
+    #[test]
+    fn can_parse_stat_for_process() {
         let stat = "1 (init) S 0 1 1 0 -1 4219136 40326 5752369 36 3370 16 41 25846 8061 20 0 1 0 5 34381824 610 18446744073709551615 1 1 0 0 0 0 0 4096 536962595 18446744073709551615 0 0 17 0 0 0 7 0 0 0 0 0 0 0 0 0 0";
         stat.parse::<ProcStat>().unwrap();
     }
