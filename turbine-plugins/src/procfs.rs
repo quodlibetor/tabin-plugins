@@ -10,6 +10,7 @@ use std::io::{self, BufReader, Read};
 use std::ops::Sub;
 use std::str::FromStr;
 use std::fmt;
+use std::num;
 
 use regex::Regex;
 
@@ -542,6 +543,44 @@ impl MemInfo {
     }
 }
 
+/// The load average of the system
+///
+/// Load average is number of jobs in the run queue (state R) or waiting for
+/// disk I/O (state D) averaged over 1, 5, and 15 minutes.
+#[derive(PartialEq, Debug)]
+pub struct LoadAvg {
+    pub one: f64,
+    pub five: f64,
+    pub fifteen: f64
+}
+
+impl LoadAvg {
+    /// Load from the /proc/loadavg file
+    pub fn load() -> Result<LoadAvg, ProcFsError> {
+        let mut fh = try!(File::open("/proc/loadavg"));
+        let mut contents = String::new();
+        try!(fh.read_to_string(&mut contents));
+        Self::from_str(&contents)
+    }
+
+    fn from_str(contents: &str) -> Result<LoadAvg, ProcFsError> {
+        let fields = try!(contents.split(' ').take(3).map(|load| load.parse())
+                          .collect::<Result<Vec<f64>, _>>());
+        Ok(LoadAvg {
+            one: fields[0],
+            five: fields[1],
+            fifteen: fields[2]
+        })
+    }
+}
+
+impl fmt::Display for LoadAvg {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        try!(write!(f, "{:.1} {:.1} {:.1}", self.one, self.five, self.fifteen));
+        Ok(())
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Testing
 
@@ -616,12 +655,29 @@ Cached: 200
         };
         assert_eq!(mem.percent_free().unwrap(), 45.0);
     }
+
+    #[test]
+    fn loadavg_can_parse_str() {
+        let avg = LoadAvg::from_str("0.1 1.5 21 5/23 938").unwrap();
+        assert_eq!(avg, LoadAvg {
+            one: 0.1_f64,
+            five: 1.5_f64,
+            fifteen: 21_f64
+        });
+    }
+
+    #[test]
+    fn loadavg_display() {
+        let string = format!("{}", LoadAvg { one: 0.888, five: 1.0, fifteen: 0.1 });
+        // ooh, rounding
+        assert_eq!(&string, "0.9 1.0 0.1");
+    }
 }
 
 #[cfg(test)]
 #[cfg(target_os = "linux")]
 mod integration {
-    use super::{RunningProcs, MemInfo};
+    use super::{RunningProcs, MemInfo, LoadAvg};
 
     #[test]
     fn can_read_all_procs() {
@@ -633,5 +689,10 @@ mod integration {
     fn meminfo_can_load() {
         let info = MemInfo::load();
         assert_eq!(info.percent_free().unwrap() + info.percent_used().unwrap(), 100.0)
+    }
+
+    #[test]
+    fn loadavg_can_load() {
+        LoadAvg::load().unwrap();
     }
 }
