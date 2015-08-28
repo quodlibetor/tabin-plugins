@@ -26,6 +26,7 @@ use std::process;
 use std::cmp::{Ord};
 
 pub mod procfs;
+pub mod scripts;
 
 /// All errors are TurbineErrors
 #[derive(Debug)]

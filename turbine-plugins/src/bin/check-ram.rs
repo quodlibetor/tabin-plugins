@@ -10,6 +10,7 @@ use turbine_plugins::procfs::{RunningProcs, MemInfo};
 
 static USAGE: &'static str = "
 Usage: check-ram [options]
+       check-ram -h | --help
 
 Options:
     -h, --help             Show this help message

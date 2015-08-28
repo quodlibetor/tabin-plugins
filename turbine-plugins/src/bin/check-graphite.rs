@@ -312,9 +312,9 @@ fn parse_args<'a>() -> Args {
         .author("Brandon W Maister <quodlibetor@gmail.com>")
         .about("Query graphite and exit based on predicates")
         .args_from_usage(
-            "<URL>                'The domain to query graphite.'
-             <PATH>               'The graphite path to query.'
-             <ASSERTION>          'The assertion to make against the PATH'
+            "<URL>                'The domain to query graphite. Must include scheme (http/s)'
+             <PATH>               'The graphite path to query. For example: \"collectd.*.cpu\"'
+             <ASSERTION>          'The assertion to make against the PATH. See Below.'
              -w --window=[WINDOW] 'How many minutes of data to test. Default 10.'")
         .arg(clap::Arg::with_name("NO_DATA_STATUS")
                        .long("--no-data")
@@ -322,7 +322,40 @@ fn parse_args<'a>() -> Args {
                        .takes_value(true)
                        .possible_values(&allowed_no_data)
              )
-        .get_matches();
+        .after_help(r#"About Assertions:
+
+    Assertions look like 'critical if any point in any series is > 5'.
+
+    They describe what you care about in your graphite data. The structure of
+    an assertion is as follows:
+
+        <errorkind> if <point spec> [in <series spec>] is|are [not] <operator> <threshold>
+
+    Where:
+
+        - `errorkind` is either `critical` or `warning`
+        - `point spec` can be one of:
+            - `any point`
+            - `all points`
+            - `at least <N>% of points`
+            - `most recent point`
+        - `series spec` (optional) can be one of:
+            - `any series`
+            - `all series`
+            - `at least <N>% of series`
+        - `not` is optional, and inverts the following operator
+        - `operator` is one of: `==` `!=` `<` `>` `<=` `>=`
+        - `threshold` is a floating-point value (e.g. 100, 78.0)
+
+    Here are some example assertions:
+
+        - `critical if any point is > 0`
+        - `warning if any point is == 9`
+        - `critical if all points are > 100.0`
+        - `critical if at least 20% of points are > 100`
+        - `critical if most recent point is > 5`
+        - `critical if most recent point in all series == 0`"#)
+     .get_matches();
 
     let assertion_str = args.value_of("ASSERTION").unwrap();
     Args {

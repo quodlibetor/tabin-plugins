@@ -1,7 +1,8 @@
 //! Check the load average of the system
 //!
-//! Load average is the number of processes *waiting* to do work in a queue,
-//! either due to IO or CPU constraints, averaged over 1, 5 and 15 minutes.
+//! Load average is the number of processes *waiting* to do work in a queue, either
+//! due to IO or CPU constraints. The numbers used to check are the load averaged
+//! over 1, 5 and 15 minutes, respectively
 
 extern crate rustc_serialize;
 
@@ -15,6 +16,13 @@ use turbine_plugins::procfs::{Calculations, LoadAvg};
 
 static USAGE: &'static str = "
 Usage: check-load [options]
+       check-load -h | --help
+
+Check the load average of the system
+
+Load average is the number of processes *waiting* to do work in a queue, either
+due to IO or CPU constraints. The numbers used to check are the load averaged
+over 1, 5 and 15 minutes, respectively
 
 Options:
     -h, --help              Show this message and exit
