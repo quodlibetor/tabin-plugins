@@ -1,7 +1,3 @@
-#![cfg_attr(test, feature(plugin))]
-#![cfg_attr(test, plugin(clippy))]
-
-
 #[macro_use]
 extern crate clap;
 extern crate chrono;
@@ -162,7 +158,6 @@ fn window_to_absolute_time(history_window: i64) -> NaiveDateTime {
 /// filter to return only values that *do not* satisfy the operator.
 ///
 /// aka a function that returns only invalid numbers
-#[cfg_attr(test, allow(float_cmp))]
 fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f64) -> bool> {
     let val = val.clone();
     let comp: Box<Fn(f64) -> bool> = match op {
@@ -201,7 +196,6 @@ fn filter_to_with_data(data: Json,
 }
 
 #[allow(deprecated)] // connect => join in 1.3
-#[cfg_attr(test, allow(float_cmp))]
 fn do_check(
     series_with_data: Vec<GraphiteData>,
     op: &str,
@@ -759,7 +753,6 @@ mod test {
         }
     }
 
-    #[allow(float_cmp)]
     #[test]
     fn parse_assertion_finds_per_point_description() {
         let predicates = parse_assertion("critical if any point is not < 100").unwrap();
@@ -769,7 +762,6 @@ mod test {
         assert_eq!(predicates.point_assertion, Ratio(0.0));
     }
 
-    #[allow(float_cmp)]
     #[test]
     fn parse_assertion_finds_per_point_description2() {
         let predicates = parse_assertion("critical if any point is not >= 5.5").unwrap();
@@ -810,7 +802,6 @@ mod test {
         }
     }
 
-    #[allow(float_cmp)]
     #[test]
     fn parse_series() {
         let assertion = parse_assertion("critical if any point in any series is not >= 5.5")
@@ -819,7 +810,6 @@ mod test {
         assert_eq!(assertion.series_ratio, 0.0);
     }
 
-    #[allow(float_cmp)]
     #[test]
     fn parse_some_series() {
         let assertion = parse_assertion(
@@ -840,7 +830,6 @@ mod test {
         "#).unwrap()
     }
 
-    #[allow(float_cmp)]
     #[test]
     fn parse_all_points_and_critical() {
         let assertion = parse_assertion(
@@ -857,7 +846,6 @@ mod test {
         assert_eq!(result, ExitStatus::Critical);
     }
 
-    #[allow(float_cmp)]
     #[test]
     fn parse_all_points_and_ok() {
         let assertion = parse_assertion(
@@ -1007,7 +995,6 @@ mod test {
         assert_eq!(result, ExitStatus::Critical);
     }
 
-    #[allow(float_cmp)]
     #[test]
     fn parse_some_points() {
         let assertion = parse_assertion(
@@ -1017,7 +1004,6 @@ mod test {
         assert_eq!(assertion.series_ratio, 0.0);
     }
 
-    #[allow(float_cmp)]
     #[test]
     fn parse_some_points_and_some_series() {
         let assertion = parse_assertion(
