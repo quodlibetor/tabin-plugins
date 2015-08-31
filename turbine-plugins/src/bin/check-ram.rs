@@ -5,7 +5,7 @@ extern crate turbine_plugins;
 
 use docopt::Docopt;
 
-use turbine_plugins::ExitStatus;
+use turbine_plugins::Status;
 use turbine_plugins::procfs::{RunningProcs, MemInfo};
 
 static USAGE: &'static str = "
@@ -31,23 +31,23 @@ struct Args {
     flag_verbose: bool
 }
 
-fn compare_status(crit: f64, warn: f64, mem: MemInfo) -> ExitStatus {
+fn compare_status(crit: f64, warn: f64, mem: MemInfo) -> Status {
     match mem.percent_used() {
         Ok(percent) => {
             if percent > crit {
                 println!("check-ram critical: {:.1}% > {}%", percent, crit);
-                ExitStatus::Critical
+                Status::Critical
             } else if percent > warn {
                 println!("check-ram warning: {:.1}% > {}%", percent, warn);
-                ExitStatus::Warning
+                Status::Warning
             } else {
                 println!("check-ram okay: {:.1}% < {}%", percent, warn);
-                ExitStatus::Ok
+                Status::Ok
             }
         },
         Err(e) => {
             println!("check-ram UNEXPECTED ERROR: {:?}", e);
-            ExitStatus::Unknown
+            Status::Unknown
         }
     }
 }
@@ -63,7 +63,7 @@ fn main() {
     }
     let mem = MemInfo::load();
     let status = compare_status(args.flag_crit, args.flag_warn, mem);
-    if args.flag_show_hogs > 0 && (status != ExitStatus::Ok ||
+    if args.flag_show_hogs > 0 && (status != Status::Ok ||
                                    args.flag_verbose) {
         let per_proc = RunningProcs::currently_running().unwrap();
         let mut procs = per_proc.0.values().collect::<Vec<_>>();
@@ -79,7 +79,7 @@ fn main() {
 mod test {
     use docopt::Docopt;
     use super::{USAGE, Args, compare_status};
-    use turbine_plugins::ExitStatus;
+    use turbine_plugins::Status;
     use turbine_plugins::procfs::MemInfo;
 
     #[test]
@@ -97,6 +97,6 @@ mod test {
         };
         let crit_threshold = 80.0;
 
-        assert_eq!(compare_status(crit_threshold, 25.0, mem), ExitStatus::Critical);
+        assert_eq!(compare_status(crit_threshold, 25.0, mem), Status::Critical);
     }
 }

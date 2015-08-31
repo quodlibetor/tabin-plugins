@@ -6,7 +6,7 @@ extern crate rustc_serialize;
 
 extern crate turbine_plugins;
 
-use turbine_plugins::ExitStatus;
+use turbine_plugins::Status;
 
 use chrono::{UTC, Duration};
 use chrono::naive::datetime::NaiveDateTime;
@@ -179,7 +179,7 @@ fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f
 
 fn filter_to_with_data(data: Json,
                        history_begin: NaiveDateTime,
-                       no_data_status: ExitStatus) -> Result<Vec<GraphiteData>, ExitStatus> {
+                       no_data_status: Status) -> Result<Vec<GraphiteData>, Status> {
     let data = graphite_result_to_vec(&data);
     let data_len = data.len();
     let series_with_data = data.into_iter()
@@ -202,7 +202,7 @@ fn do_check(
     op_is_negated: NegOp,
     threshold: f64,
     error_condition: PointAssertion
-) -> ExitStatus {
+) -> Status {
     let with_data_len = series_with_data.len();
 
     let comparator = operator_string_to_func(op, op_is_negated, threshold);
@@ -278,7 +278,7 @@ fn do_check(
                 }
             }
         }
-        ExitStatus::Critical
+        Status::Critical
     } else {
         match error_condition {
             PointAssertion::Ratio(percent) => {
@@ -293,7 +293,7 @@ fn do_check(
                     );
             }
         };
-        ExitStatus::Ok
+        Status::Ok
     }
 }
 
@@ -302,7 +302,7 @@ struct Args {
     path: String,
     assertion: Assertion,
     window: i64,
-    no_data: ExitStatus
+    no_data: Status
 }
 
 static ASSERTION_EXAMPLES: &'static [&'static str] = &[
@@ -316,7 +316,7 @@ static ASSERTION_EXAMPLES: &'static [&'static str] = &[
 
 #[allow(deprecated)]  // connect ->
 fn parse_args<'a>() -> Args {
-    let allowed_no_data = ExitStatus::str_values(); // block-local var for borrowck
+    let allowed_no_data = Status::str_values(); // block-local var for borrowck
     let args = clap::App::new("check-graphite")
         .version("0.1.0")
         .author("Brandon W Maister <quodlibetor@gmail.com>")
@@ -368,7 +368,7 @@ fn parse_args<'a>() -> Args {
         path: args.value_of("PATH").unwrap().to_owned(),
         assertion: parse_assertion(assertion_str).unwrap(),
         window: value_t!(args.value_of("WINDOW"), i64).unwrap_or(10),
-        no_data: ExitStatus::from_str(args.value_of("NO_DATA_STATUS")
+        no_data: Status::from_str(args.value_of("NO_DATA_STATUS")
                                       .unwrap_or("warning")).unwrap()
     }
 }
@@ -380,7 +380,7 @@ pub struct Assertion {
     pub threshold: f64,
     pub point_assertion: PointAssertion,
     pub series_ratio: f64,
-    pub failure_status: ExitStatus
+    pub failure_status: Status
 }
 
 enum AssertionState {
@@ -512,8 +512,8 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
         match state {
             AssertionState::Status => {
                 status = match word {
-                    "critical" => Some(ExitStatus::Critical),
-                    "warning" => Some(ExitStatus::Warning),
+                    "critical" => Some(Status::Critical),
+                    "warning" => Some(Status::Warning),
                     _ => return Err(ParseError::NoStatusSpecifier(format!(
                         "Expect assertion to start with 'critical' or 'warning', not '{}'", word)))
                 };
@@ -620,7 +620,7 @@ mod test {
     use chrono::naive::datetime::NaiveDateTime;
     use rustc_serialize::json::Json;
 
-    use turbine_plugins::ExitStatus;
+    use turbine_plugins::Status;
 
     use super::{Assertion, GraphiteData, DataPoint, operator_string_to_func,
                 graphite_result_to_vec, do_check, ParseError, NegOp,
@@ -748,7 +748,7 @@ mod test {
     fn filtered_to_with_data_returns_valid_data() {
         let result = filter_to_with_data(json_two_sets_of_graphite_data(),
                                          NaiveDateTime::from_timestamp(11140, 0),
-                                         ExitStatus::Unknown);
+                                         Status::Unknown);
         let expected = valid_data_from_json_two_sets();
         match result {
             Ok(actual) => assert_eq!(actual,
@@ -764,10 +764,10 @@ mod test {
                               NegOp::Yes,
                               2.0,
                               Ratio(0.0));
-        if let ExitStatus::Critical = result {
+        if let Status::Critical = result {
              /* expected */
         } else {
-            panic!("Expected an ExitStatus::Critical, got: {:?}", result)
+            panic!("Expected an Status::Critical, got: {:?}", result)
         }
     }
 
@@ -778,10 +778,10 @@ mod test {
                               NegOp::Yes,
                               0.0,
                               Ratio(1.0));
-        if let ExitStatus::Ok = result {
+        if let Status::Ok = result {
             /* expected */
         } else {
-            panic!("Expected an ExitStatus::Ok, got: {:?}", result)
+            panic!("Expected an Status::Ok, got: {:?}", result)
         }
     }
 
@@ -841,7 +841,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        if let ExitStatus::Critical = result  {
+        if let Status::Critical = result  {
              /* expected */
         } else {
             panic!("Expected Critical status, not '{:?}'", result)
@@ -889,7 +889,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        assert_eq!(result, ExitStatus::Critical);
+        assert_eq!(result, Status::Critical);
     }
 
     #[test]
@@ -905,7 +905,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        assert_eq!(result, ExitStatus::Ok);
+        assert_eq!(result, Status::Ok);
     }
 
     #[test]
@@ -920,7 +920,7 @@ mod test {
                        threshold: 5.0,
                        point_assertion: Recent(1),
                        series_ratio: 0.0,
-                       failure_status: ExitStatus::Critical
+                       failure_status: Status::Critical
                    })
     }
 
@@ -955,7 +955,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        assert_eq!(result, ExitStatus::Ok);
+        assert_eq!(result, Status::Ok);
 
         let assertion = parse_assertion("critical if most recent point is > 4").unwrap();
         let graphite_data = graphite_result_to_vec(&json_last_point_is_5());
@@ -964,7 +964,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        assert_eq!(result, ExitStatus::Critical);
+        assert_eq!(result, Status::Critical);
     }
 
     #[test]
@@ -976,7 +976,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        assert_eq!(result, ExitStatus::Ok);
+        assert_eq!(result, Status::Ok);
 
         let assertion = parse_assertion("critical if most recent point is > 4").unwrap();
         let graphite_data = graphite_result_to_vec(&json_last_existing_point_is_5());
@@ -985,7 +985,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        assert_eq!(result, ExitStatus::Critical);
+        assert_eq!(result, Status::Critical);
     }
 
     fn json_80p_of_points_are_below_6() -> Json {
@@ -1010,7 +1010,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        assert_eq!(result, ExitStatus::Critical);
+        assert_eq!(result, Status::Critical);
     }
 
     #[test]
@@ -1024,7 +1024,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        assert_eq!(result, ExitStatus::Critical);
+        assert_eq!(result, Status::Critical);
     }
 
     #[test]
@@ -1038,7 +1038,7 @@ mod test {
                               assertion.op_is_negated,
                               assertion.threshold,
                               assertion.point_assertion);
-        assert_eq!(result, ExitStatus::Critical);
+        assert_eq!(result, Status::Critical);
     }
 
     #[test]

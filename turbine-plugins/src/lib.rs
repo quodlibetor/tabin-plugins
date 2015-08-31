@@ -2,7 +2,7 @@
 //!
 //! There are three things:
 //!
-//! * The `ExitStatus` struct for exiting correctly
+//! * The `Status` enum for representing health status
 //! * The `procfs` module, which contains rusty representations of some files
 //!   from /proc
 //! * A few scripts in the bin directory, which contain actual
@@ -41,7 +41,7 @@ pub type TurbineResult<T> = Result<T, TurbineError>;
 /// Represent the nagios-ish error status of a script.
 #[must_use]
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub enum ExitStatus {
+pub enum Status {
     /// Unexpected result
     Unknown,
     /// Everything is fine
@@ -52,10 +52,10 @@ pub enum ExitStatus {
     Critical,
 }
 
-impl ExitStatus {
+impl Status {
     /// Exit with a return code that indicates the state of the system
     pub fn exit(self) -> ! {
-        use self::ExitStatus::*;
+        use self::Status::*;
         match self {
             Ok => process::exit(0),
             Warning => process::exit(1),
@@ -65,10 +65,10 @@ impl ExitStatus {
     }
 
     /// Primarily useful to construct from argv
-    pub fn from_str(s: &str) -> TurbineResult<ExitStatus> {
-        use ExitStatus::{Warning, Critical, Unknown};
+    pub fn from_str(s: &str) -> TurbineResult<Status> {
+        use Status::{Warning, Critical, Unknown};
         match s {
-            "ok" => Ok(ExitStatus::Ok),
+            "ok" => Ok(Status::Ok),
             "warning" => Ok(Warning),
             "critical" => Ok(Critical),
             "unknown" => Ok(Unknown),
@@ -84,7 +84,7 @@ impl ExitStatus {
 
 #[test]
 fn comparison_is_as_expected() {
-    use ExitStatus::*;
+    use Status::*;
     assert!(Ok < Critical);
     assert!(Ok < Warning);
     assert_eq!(std::cmp::max(Warning, Critical), Critical)

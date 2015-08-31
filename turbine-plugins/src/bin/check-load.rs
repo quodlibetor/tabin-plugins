@@ -11,7 +11,7 @@ extern crate docopt;
 extern crate turbine_plugins;
 
 use docopt::Docopt;
-use turbine_plugins::ExitStatus;
+use turbine_plugins::Status;
 use turbine_plugins::procfs::{Calculations, LoadAvg};
 
 static USAGE: &'static str = "
@@ -71,23 +71,23 @@ fn parse_args() -> Result<Args, docopt::Error> {
     Ok(args.into())
 }
 
-fn do_check(args: Args, actual: LoadAvg, num_cpus: usize) -> ExitStatus {
+fn do_check(args: Args, actual: LoadAvg, num_cpus: usize) -> Status {
     let actual = actual / num_cpus;
 
     if actual > args.flag_crit {
         println!("[check-load] CRITICAL: load average is {} (> {})",
                  actual, args.flag_crit);
-        ExitStatus::Critical
+        Status::Critical
     } else if actual > args.flag_warn {
         println!("[check-load] WARNING: load average is {} (> {})",
                  actual, args.flag_warn);
-        ExitStatus::Warning
+        Status::Warning
     } else {
         if args.flag_verbose {
             println!("[check-load] OK: load average is {} (< {})",
                  actual, args.flag_warn);
         }
-        ExitStatus::Ok
+        Status::Ok
     }
 }
 
@@ -110,7 +110,7 @@ fn main() {
 #[cfg(test)]
 mod test {
     use docopt::Docopt;
-    use turbine_plugins::ExitStatus;
+    use turbine_plugins::Status;
 
     use super::{USAGE, RawArgs, Args, parse_args, do_check};
 
@@ -132,7 +132,7 @@ mod test {
             do_check(args,
                      "2 1 1".parse().unwrap(),
                      1),
-            ExitStatus::Critical
+            Status::Critical
         );
 
         let args = docopt(vec!["check-load", "-w", "1,2,3"]);
@@ -140,7 +140,7 @@ mod test {
             do_check(args,
                      "1.1 1 1".parse().unwrap(),
                      1),
-            ExitStatus::Warning
+            Status::Warning
         );
 
         let args = docopt(vec!["check-load"]);
@@ -148,7 +148,7 @@ mod test {
             do_check(args,
                      "2 1 1".parse().unwrap(),
                      1),
-            ExitStatus::Ok
+            Status::Ok
         );
 
         let args = docopt(vec!["check-load"]);
@@ -156,7 +156,7 @@ mod test {
             do_check(args,
                      "12 1 1".parse().unwrap(),
                      1),
-            ExitStatus::Critical
+            Status::Critical
         );
 
         let args = docopt(vec!["check-load", "-w", "7,2,2"]);
@@ -164,7 +164,7 @@ mod test {
             do_check(args,
                      "12 1 1".parse().unwrap(),
                      2),
-            ExitStatus::Ok
+            Status::Ok
         );
 
 
@@ -173,7 +173,7 @@ mod test {
             do_check(args,
                      ".5 .5 .5".parse().unwrap(),
                      1),
-            ExitStatus::Ok
+            Status::Ok
         );
     }
 }

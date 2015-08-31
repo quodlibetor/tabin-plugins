@@ -7,7 +7,7 @@ extern crate docopt;
 extern crate turbine_plugins;
 
 use docopt::Docopt;
-use turbine_plugins::ExitStatus;
+use turbine_plugins::Status;
 use turbine_plugins::procfs::{Calculations, RunningProcs, WorkSource};
 
 static USAGE: &'static str = "
@@ -43,16 +43,16 @@ struct Args {
     flag_type: Vec<WorkSource>,
 }
 
-fn do_comparison(args: &Args, start: &Calculations, end: &Calculations) -> ExitStatus {
-    let mut exit_status = ExitStatus::Ok;
+fn do_comparison(args: &Args, start: &Calculations, end: &Calculations) -> Status {
+    let mut exit_status = Status::Ok;
 
     for flag in &args.flag_type {
         let total = end.percent_util_since(flag, &start);
         if total > args.flag_crit as f64 {
-            exit_status = std::cmp::max(exit_status, ExitStatus::Critical);
+            exit_status = std::cmp::max(exit_status, Status::Critical);
             println!("CRITICAL [check-cpu]: {} {} > {}", flag, total, args.flag_crit);
         } else if total > args.flag_warn as f64 {
-            exit_status = std::cmp::max(exit_status, ExitStatus::Warning);
+            exit_status = std::cmp::max(exit_status, Status::Warning);
             println!("WARNING [check-cpu]: {} {} > {}", flag, total, args.flag_warn);
         } else {
             println!("OK [check-cpu]");
@@ -180,7 +180,7 @@ mod integration {
     // not really integration tests, but higher level
     use super::{do_comparison, USAGE};
 
-    use turbine_plugins::ExitStatus;
+    use turbine_plugins::Status;
     use turbine_plugins::procfs::Calculations;
     use docopt::Docopt;
 
@@ -213,6 +213,6 @@ mod integration {
             .unwrap();
 
         assert_eq!(do_comparison(&args, &start, &end),
-                   ExitStatus::Critical);
+                   Status::Critical);
     }
 }
