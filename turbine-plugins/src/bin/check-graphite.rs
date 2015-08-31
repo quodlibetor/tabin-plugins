@@ -305,6 +305,16 @@ struct Args {
     no_data: ExitStatus
 }
 
+static ASSERTION_EXAMPLES: &'static [&'static str] = &[
+    "critical if any point is > 0",
+    "warning if any point is == 9",
+    "critical if all points are > 100.0",
+    "critical if at least 20% of points are > 100",
+    "critical if most recent point is > 5",
+    "critical if most recent point in all series are == 0",
+    ];
+
+#[allow(deprecated)]  // connect ->
 fn parse_args<'a>() -> Args {
     let allowed_no_data = ExitStatus::str_values(); // block-local var for borrowck
     let args = clap::App::new("check-graphite")
@@ -322,7 +332,7 @@ fn parse_args<'a>() -> Args {
                        .takes_value(true)
                        .possible_values(&allowed_no_data)
              )
-        .after_help(r#"About Assertions:
+        .after_help(&format!("About Assertions:
 
     Assertions look like 'critical if any point in any series is > 5'.
 
@@ -349,12 +359,7 @@ fn parse_args<'a>() -> Args {
 
     Here are some example assertions:
 
-        - `critical if any point is > 0`
-        - `warning if any point is == 9`
-        - `critical if all points are > 100.0`
-        - `critical if at least 20% of points are > 100`
-        - `critical if most recent point is > 5`
-        - `critical if most recent point in all series == 0`"#)
+        - `{}`", ASSERTION_EXAMPLES.connect("`\n        - `")))
      .get_matches();
 
     let assertion_str = args.value_of("ASSERTION").unwrap();
@@ -619,8 +624,16 @@ mod test {
 
     use super::{Assertion, GraphiteData, DataPoint, operator_string_to_func,
                 graphite_result_to_vec, do_check, ParseError, NegOp,
-                filter_to_with_data, parse_assertion};
+                filter_to_with_data, parse_assertion, ASSERTION_EXAMPLES};
     use super::PointAssertion::*;
+
+    #[test]
+    fn all_examples_are_accurate() {
+        for assertion in ASSERTION_EXAMPLES {
+            println!("testing `{}`", assertion);
+            parse_assertion(assertion).unwrap();
+        }
+    }
 
     fn json_two_sets_of_graphite_data() -> Json {
         Json::from_str(r#"
