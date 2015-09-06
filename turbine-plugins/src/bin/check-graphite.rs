@@ -537,11 +537,8 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                     state = AssertionState::Series
                 } else if word == "is" || word == "are" {
                     if it.peek() == Some(&"not") {
-                        println!("negating {:?}", it.peek());
                         negated = NegOp::Yes;
                         it.next();
-                    } else {
-                        println!("not negating: {:?}", it.peek());
                     }
                     state = AssertionState::Operator
                 } else {
