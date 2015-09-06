@@ -18,8 +18,11 @@ use rustc_serialize::json::{self, Json};
 
 use std::io::Read;
 use std::fmt;
-use std::mem;
 
+/// One of the datapoints that graphite has returned.
+///
+/// Graphite always returns all values in its time range, even if it hasn't got
+/// any data for them, so the val might not exist.
 #[derive(Debug, PartialEq, Clone)]
 pub struct DataPoint {
     val: Option<f64>,
@@ -55,10 +58,18 @@ impl fmt::Display for DataPoint {
     }
 }
 
+/// All the data for one fully-resolved target
 #[derive(PartialEq, Debug)]
 pub struct GraphiteData {
     points: Vec<DataPoint>,
     target: String
+}
+
+/// Represent the data that we received after some filtering operation
+#[derive(Debug, PartialEq)]
+struct FilteredGraphiteData<'a> {
+    original: &'a GraphiteData,
+    points: Vec<&'a DataPoint>
 }
 
 impl GraphiteData {
@@ -73,6 +84,11 @@ impl GraphiteData {
             target: obj.find("target").expect("Couldn't find target in graphite data")
                        .as_string().unwrap().to_owned()
         }
+    }
+
+    /// The number of points that we received
+    fn len(&self) -> usize {
+        self.points.len()
     }
 
     /// return true if any of our datapoints have actual values
@@ -105,12 +121,22 @@ impl GraphiteData {
         self
     }
 
+    fn iter_only_invalid(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
+        self.points.iter().filter( |p| p.val.map_or(false, |v| comparator(v)) ).collect()
+    }
+
     /// Mutate to only have the invalid points
     pub fn into_only_invalid(mut self, comparator: &Box<Fn(f64) -> bool>) -> Self {
         self.points = self.points.into_iter()
                          .filter(|p| comparator(p.val.expect("No value here")))
                          .collect::<Vec<DataPoint>>();
         self
+    }
+}
+
+impl<'a> FilteredGraphiteData<'a> {
+    fn len(&self) -> usize {
+        self.points.len()
     }
 }
 
@@ -194,16 +220,15 @@ fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f
 fn filter_to_with_data(data: Json,
                        no_data_status: Status) -> Result<Vec<GraphiteData>, Status> {
     let data = graphite_result_to_vec(&data);
-    let data_len = data.len();
     let series_with_data = data.into_iter()
         .map(|series| series.into_only_with_data())
         .filter(|series| !series.points.is_empty())
         .collect::<Vec<GraphiteData>>();
 
-    println!("Found {} matches, but only {} have data", data_len, series_with_data.len());
     if !series_with_data.is_empty() {
         Ok(series_with_data)
     } else {
+        println!("{}: Graphite returned no matches", no_data_status);
         Err(no_data_status)
     }
 }
@@ -216,76 +241,61 @@ fn do_check(
     threshold: f64,
     error_condition: PointAssertion
 ) -> Status {
-    let with_data_len = series_with_data.len();
-
     let comparator = operator_string_to_func(op, op_is_negated, threshold);
-    // We want to creat a vec of series' that only have (existing) invalid
+    // We want to create a vec of series' that only have (existing) invalid
     // points. The first element is the original length of the vector of points
-    let with_invalid_points = match error_condition {
+    let with_invalid = match error_condition {
         // Here, invalid points can exist anywhere
-        PointAssertion::Ratio(error_ratio) => series_with_data.into_iter()
-            .map(|series|
-                 (series.points.len() as f64, series.into_only_invalid(&comparator)))
-            .filter(|&(original_len, ref invalid_gd)| {
+        PointAssertion::Ratio(error_ratio) => series_with_data.iter()
+            .map(|series| FilteredGraphiteData {
+                original: &series,
+                points: series.iter_only_invalid(&comparator)
+            })
+            .filter(|invalid| {
                 if error_ratio == 0.0 {
-                    !invalid_gd.points.is_empty()
+                    !invalid.points.is_empty()
                 } else {
-                    invalid_gd.points.len() as f64 / original_len >= error_ratio
+                    let filtered = invalid.points.len() as f64;
+                    let original = invalid.original.points.len() as f64;
+                    filtered / original >= error_ratio
                 }
             })
-            .collect::<Vec<(f64, GraphiteData)>>(),
-        PointAssertion::Recent(count) => series_with_data.into_iter()
-            .map(|mut series| {
-                let target = mem::replace(&mut series.target, String::new());
-                let tail = series.into_iter()
-                    .filter(|dp| dp.val.is_some())
-                    .rev().take(count)
-                    .filter(|dp| {
-                            dp.val.map(|val| comparator(val)).unwrap_or(false)
-                    })
-                    .collect::<Vec<DataPoint>>();
-                GraphiteData {
-                    target: target,
-                    points: tail
-                }
+            .collect::<Vec<FilteredGraphiteData>>(),
+        PointAssertion::Recent(count) => series_with_data.iter()
+            .map(|ref series| FilteredGraphiteData {
+                original: &series,
+                points: series
+                    .iter_only_invalid(&comparator)
+                    .into_iter().rev().take(count)
+                    .collect::<Vec<&DataPoint>>()
             })
-            .filter(|series| series.points.len() > 0)
-            .map(|series| (0.0, series))
-            .collect::<Vec<(f64, GraphiteData)>>()
+            .filter(|ref invalid| invalid.points.len() > 0)
+            .collect::<Vec<(FilteredGraphiteData)>>()
     };
 
-    let with_invalid_len = with_invalid_points.len();
-
     let nostr = if op_is_negated == NegOp::Yes { " not" } else { "" };
-    if with_invalid_len > 0 {
+    if with_invalid.len() > 0 {
         match error_condition {
             PointAssertion::Ratio(count) => {
                 println!("CRITICAL: Of {} paths with data, {} have at least {:.1}% invalid datapoints:",
-                         with_data_len, with_invalid_len, count * 100.0);
-                for &(original_len, ref series) in with_invalid_points.iter() {
+                         series_with_data.len(), with_invalid.len(), count * 100.0);
+                for series in with_invalid.iter() {
                     println!(
                         "       -> {} has {} ({:.1}%) points that are{} {} {}: {}",
-                        series.target,
-                        series.points.len(),
-                        (series.points.len() as f64 / original_len as f64) * 100.0,
-                        nostr,
-                        op,
-                        threshold,
+                        series.original.target, series.points.len(),
+                        (series.len() as f64 / series.original.len() as f64) * 100.0,
+                        nostr, op, threshold,
                         series.points.iter().map(|gv| format!("{}", gv))
                             .collect::<Vec<_>>().connect(", "));
                 }
             },
             PointAssertion::Recent(count) => {
                 println!("CRITICAL: Of {} paths with data, {} have the last {} points invalid",
-                         with_data_len, with_invalid_len, count);
-                for &(_, ref series) in with_invalid_points.iter() {
+                         series_with_data.len(), with_invalid.len(), count);
+                for series in with_invalid.iter() {
                     println!(
                         "       -> {}'s last {} points are{} {} {}: {}",
-                        series.target,
-                        count,
-                        nostr,
-                        op,
-                        threshold,
+                        series.original.target, count, nostr, op, threshold,
                         series.points.iter().map(|gv| format!("{}", gv))
                             .collect::<Vec<_>>().connect(", "));
                 }
@@ -297,15 +307,22 @@ fn do_check(
             PointAssertion::Ratio(percent) => {
                 println!(
                     "OK: Found {} paths with data, none had at least {:.1}% of datapoints{} {} {}.",
-                    with_data_len, percent * 100.0, nostr, op, threshold);
+                    series_with_data.len(), percent * 100.0, nostr, op, threshold);
             },
             PointAssertion::Recent(count) => {
                 println!(
                     "OK: Found {} paths with data, none had their last {} of datapoints{} {} {}.",
-                    with_data_len, count, nostr, op, threshold
+                    series_with_data.len(), count, nostr, op, threshold
                     );
             }
         };
+        for series in series_with_data.iter() {
+            println!("    -> {}'s looks like: {}",
+                     series.target,
+                     series.points.iter()
+                     .map(|gv| format!("{}", gv))
+                     .collect::<Vec<_>>().connect(", "))
+        }
         Status::Ok
     }
 }

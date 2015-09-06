@@ -24,6 +24,7 @@ extern crate rustc_serialize;
 
 use std::process;
 use std::cmp::{Ord};
+use std::fmt;
 
 pub mod procfs;
 pub mod scripts;
@@ -79,6 +80,19 @@ impl Status {
     /// The legal values for `from_str`
     pub fn str_values() -> [&'static str; 4] {
         ["ok", "warn", "critical", "unknown"]
+    }
+}
+
+impl fmt::Display for Status {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use Status::*;
+        let msg = match *self {
+            Ok => "OK",
+            Unknown => "UNKNOWN",
+            Warning => "WARNING",
+            Critical => "CRITICAL"
+        };
+        write!(f, "{}", msg)
     }
 }
 
