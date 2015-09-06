@@ -1,7 +1,11 @@
+#![cfg_attr(test, feature(plugin))]
+#![cfg_attr(test, plugin(passert_macros))]
+
 #[macro_use]
 extern crate clap;
 extern crate chrono;
 extern crate hyper;
+#[cfg(test)] extern crate passert;
 extern crate rustc_serialize;
 
 extern crate turbine_plugins;
@@ -83,6 +87,15 @@ impl GraphiteData {
             .collect()
     }
 
+    /// Strip out any invalid points
+    pub fn into_only_with_data(mut self) -> Self {
+        let new_points = self.points.into_iter()
+            .filter(|point| point.val.is_some())
+            .collect();
+        self.points = new_points;
+        self
+    }
+
     /// Strip our points to just include self.data_since points
     pub fn into_only_since(mut self, since: NaiveDateTime) -> Self {
         let new_points = self.points.into_iter()
@@ -140,8 +153,9 @@ fn graphite_result_to_vec(data: &Json) -> Vec<GraphiteData> {
 }
 
 #[cfg_attr(test, allow(dead_code))]
-fn get_graphite<S: Into<String>, T: Into<String>>(url: S, target: T) -> String {
-    let full_path = format!("{}/render?target={}&format=json", url.into(), target.into());
+fn get_graphite<S: Into<String>, T: Into<String>>(url: S, target: T, window: i64) -> String {
+    let full_path = format!("{}/render?target={}&format=json&from=-{}min",
+                            url.into(), target.into(), window);
     let c = hyper::Client::new();
     let mut result = c.get(&full_path).send().unwrap();
     let mut s = String::new();
@@ -178,13 +192,12 @@ fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f
 }
 
 fn filter_to_with_data(data: Json,
-                       history_begin: NaiveDateTime,
                        no_data_status: Status) -> Result<Vec<GraphiteData>, Status> {
     let data = graphite_result_to_vec(&data);
     let data_len = data.len();
     let series_with_data = data.into_iter()
-        .map(|gd| gd.into_only_since(history_begin))
-        .filter(|gd| !gd.points.is_empty())
+        .map(|series| series.into_only_with_data())
+        .filter(|series| !series.points.is_empty())
         .collect::<Vec<GraphiteData>>();
 
     println!("Found {} matches, but only {} have data", data_len, series_with_data.len());
@@ -592,12 +605,11 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
     let args = parse_args();
-    let json_str = get_graphite(args.url, args.path);
+    let json_str = get_graphite(args.url, args.path, args.window);
 
     let data = json::Json::from_str(&json_str).unwrap();
-    let history_begin = window_to_absolute_time(args.window);
 
-    let filtered = filter_to_with_data(data, history_begin, args.no_data);
+    let filtered = filter_to_with_data(data, args.no_data);
     let with_data = match filtered {
         Ok(data) => data,
         Err(status) => status.exit()
@@ -744,12 +756,10 @@ mod test {
     #[test]
     fn filtered_to_with_data_returns_valid_data() {
         let result = filter_to_with_data(json_two_sets_of_graphite_data(),
-                                         NaiveDateTime::from_timestamp(11140, 0),
                                          Status::Unknown);
         let expected = valid_data_from_json_two_sets();
         match result {
-            Ok(actual) => assert_eq!(actual,
-                                     expected),
+            Ok(actual) => passert!(actual == expected),
             Err(_) => panic!("wha")
         }
     }
