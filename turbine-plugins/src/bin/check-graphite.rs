@@ -12,7 +12,6 @@ extern crate turbine_plugins;
 
 use turbine_plugins::Status;
 
-use chrono::{UTC, Duration};
 use chrono::naive::datetime::NaiveDateTime;
 use rustc_serialize::json::{self, Json};
 
@@ -24,7 +23,7 @@ use std::fmt;
 /// Graphite always returns all values in its time range, even if it hasn't got
 /// any data for them, so the val might not exist.
 #[derive(Debug, PartialEq, Clone)]
-pub struct DataPoint {
+struct DataPoint {
     val: Option<f64>,
     time: NaiveDateTime
 }
@@ -60,7 +59,7 @@ impl fmt::Display for DataPoint {
 
 /// All the data for one fully-resolved target
 #[derive(PartialEq, Debug)]
-pub struct GraphiteData {
+struct GraphiteData {
     points: Vec<DataPoint>,
     target: String
 }
@@ -73,7 +72,7 @@ struct FilteredGraphiteData<'a> {
 }
 
 impl GraphiteData {
-    pub fn from_json_obj (obj: &Json) -> GraphiteData {
+    fn from_json_obj (obj: &Json) -> GraphiteData {
         let dl = obj
             .find("datapoints").expect("Could not find datapoints in obj")
             .as_array().expect("Graphite did not return an array").into_iter()
@@ -91,20 +90,8 @@ impl GraphiteData {
         self.points.len()
     }
 
-    /// return true if any of our datapoints have actual values
-    pub fn has_datapoints(&self) -> bool {
-        self.points.iter().all(|point| point.val.is_some())
-    }
-
-    /// All data points with values since the time
-    pub fn data_since(&self, since: NaiveDateTime) -> Vec<&DataPoint> {
-        self.points.iter()
-            .filter(|point| point.val.is_some() && point.time >= since)
-            .collect()
-    }
-
     /// Strip out any invalid points
-    pub fn into_only_with_data(mut self) -> Self {
+    fn into_only_with_data(mut self) -> Self {
         let new_points = self.points.into_iter()
             .filter(|point| point.val.is_some())
             .collect();
@@ -112,25 +99,9 @@ impl GraphiteData {
         self
     }
 
-    /// Strip our points to just include self.data_since points
-    pub fn into_only_since(mut self, since: NaiveDateTime) -> Self {
-        let new_points = self.points.into_iter()
-            .filter(|point| point.val.is_some() && point.time >= since)
-            .collect();
-        self.points = new_points;
-        self
-    }
-
-    fn iter_only_invalid(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
+    /// References to the points that exist and do not satisfy the comparator
+    fn invalid_points(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
         self.points.iter().filter( |p| p.val.map_or(false, |v| comparator(v)) ).collect()
-    }
-
-    /// Mutate to only have the invalid points
-    pub fn into_only_invalid(mut self, comparator: &Box<Fn(f64) -> bool>) -> Self {
-        self.points = self.points.into_iter()
-                         .filter(|p| comparator(p.val.expect("No value here")))
-                         .collect::<Vec<DataPoint>>();
-        self
     }
 }
 
@@ -140,7 +111,7 @@ impl<'a> FilteredGraphiteData<'a> {
     }
 }
 
-pub struct GraphiteIterator {
+struct GraphiteIterator {
     current: usize,
     back: usize,
     data: GraphiteData
@@ -187,11 +158,6 @@ fn get_graphite<S: Into<String>, T: Into<String>>(url: S, target: T, window: i64
     let mut s = String::new();
     result.read_to_string(&mut s).unwrap();
     s
-}
-
-#[cfg_attr(test, allow(dead_code))]
-fn window_to_absolute_time(history_window: i64) -> NaiveDateTime {
-    (UTC::now() - Duration::minutes(history_window)).naive_utc()
 }
 
 /// Take an operator and a value and return a function that can be used in a
@@ -249,7 +215,7 @@ fn do_check(
         PointAssertion::Ratio(error_ratio) => series_with_data.iter()
             .map(|series| FilteredGraphiteData {
                 original: &series,
-                points: series.iter_only_invalid(&comparator)
+                points: series.invalid_points(&comparator)
             })
             .filter(|invalid| {
                 if error_ratio == 0.0 {
@@ -265,7 +231,7 @@ fn do_check(
             .map(|ref series| FilteredGraphiteData {
                 original: &series,
                 points: series
-                    .iter_only_invalid(&comparator)
+                    .invalid_points(&comparator)
                     .into_iter().rev().take(count)
                     .collect::<Vec<&DataPoint>>()
             })
@@ -404,13 +370,13 @@ fn parse_args<'a>() -> Args {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Assertion {
-    pub operator: String,
-    pub op_is_negated: NegOp,
-    pub threshold: f64,
-    pub point_assertion: PointAssertion,
-    pub series_ratio: f64,
-    pub failure_status: Status
+struct Assertion {
+    operator: String,
+    op_is_negated: NegOp,
+    threshold: f64,
+    point_assertion: PointAssertion,
+    series_ratio: f64,
+    failure_status: Status
 }
 
 enum AssertionState {
@@ -440,7 +406,7 @@ enum ParseError {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum PointAssertion {
+enum PointAssertion {
     Ratio(f64),
     Recent(usize)
 }
@@ -521,7 +487,7 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<PointAssertion, P
 
 // Whether or not the operator in the assertion is negated
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum NegOp {
+enum NegOp {
     // For situations like `are not`
     Yes,
     // Just `are`
@@ -685,84 +651,13 @@ mod test {
             target: "test.path.some-data".to_owned() }]
     }
 
-    fn json_no_data_vals() -> Json {
-        Json::from_str(r#"
-            {
-                "datapoints": [[null, 11110], [null, 11120], [null, 11130]],
-                "target": "test.path.no-data"
-            }
-        "#).unwrap()
-    }
-
-    fn json_two_data_vals_near_the_end() -> Json {
-        Json::from_str(r#"
-            {
-                "datapoints": [[null, 11110], [null, 11120], [null, 11130], [2, 11140],
-                               [1, 11150], [null, 11160], [3, 11160]],
-                "target": "test.path.some-data"
-            }
-        "#).unwrap()
-    }
-
-    fn json_some_data_vals() -> Json {
-        Json::from_str(r#"
-            {
-                "datapoints": [[12.4, 11110], [13.4, 11120], [14.4, 11130]],
-                "target": "test.path.has-data"
-            }
-        "#).unwrap()
-    }
-
     #[test]
     fn graphite_result_to_vec_creates_a_vec_of_GraphiteData() {
         let vec = graphite_result_to_vec(&json_two_sets_of_graphite_data());
         assert_eq!(vec.len(), 2)
     }
 
-    #[test]
-    fn has_datapoints_is_false_when_there_is_no_data() {
-        let gd = GraphiteData::from_json_obj(&json_no_data_vals());
-        assert!(!gd.has_datapoints())
-    }
-
-    #[test]
-    fn has_datapoints_is_true_when_there_is_data() {
-        let gd = GraphiteData::from_json_obj(&json_some_data_vals());
-        assert!(gd.has_datapoints())
-    }
-
-    #[test]
-    fn data_since_returns_data_when_it_exists() {
-        let gd = GraphiteData::from_json_obj(&json_two_data_vals_near_the_end());
-        fn dt(t: i64) -> NaiveDateTime { NaiveDateTime::from_timestamp(t, 0) }
-        let data = gd.data_since(NaiveDateTime::from_timestamp(11140, 0));
-        let expected = vec![DataPoint { val: Some(2f64), time: dt(11140) },
-                            DataPoint { val: Some(1f64), time: dt(11150) },
-                            DataPoint { val: Some(3f64), time: dt(11160) }
-                            ];
-        assert_eq!(data.len(), 3);
-        for (actual, expected) in data.iter().zip(expected) {
-            // These are some funky ref/derefs
-            assert_eq!(*actual, &expected);
-        };
-    }
-
     fn dt(t: i64) -> NaiveDateTime { NaiveDateTime::from_timestamp(t, 0) }
-
-    #[test]
-    fn only_since_correctly_strips_down() {
-        let gd = GraphiteData::from_json_obj(&json_two_data_vals_near_the_end());
-        let gd_stripped = gd.into_only_since(NaiveDateTime::from_timestamp(11140, 0));
-        let expected = vec![DataPoint { val: Some(2f64), time: dt(11140) },
-                            DataPoint { val: Some(1f64), time: dt(11150) },
-                            DataPoint { val: Some(3f64), time: dt(11160) }
-                            ];
-        assert_eq!(gd_stripped.points.len(), 3);
-        for (actual, expected) in gd_stripped.points.iter().zip(expected) {
-            // These are some funky ref/derefs
-            assert_eq!(*actual, expected);
-        };
-    }
 
     #[test]
     fn operator_string_to_func_returns_a_good_filter() {
