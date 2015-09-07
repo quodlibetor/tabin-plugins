@@ -10,13 +10,15 @@ extern crate rustc_serialize;
 
 extern crate turbine_plugins;
 
-use turbine_plugins::Status;
-
-use chrono::naive::datetime::NaiveDateTime;
-use rustc_serialize::json::{self, Json};
-
 use std::io::Read;
 use std::fmt;
+use std::thread::sleep_ms;
+
+use chrono::naive::datetime::NaiveDateTime;
+use hyper::error::Result as HyperResult;
+use rustc_serialize::json::{self, Json};
+
+use turbine_plugins::Status;
 
 /// One of the datapoints that graphite has returned.
 ///
@@ -149,15 +151,60 @@ fn graphite_result_to_vec(data: &Json) -> Vec<GraphiteData> {
         .map(GraphiteData::from_json_obj).collect()
 }
 
+/// Fetch data from graphite
+///
+/// Returns the string that graphite returned, or an error
 #[cfg_attr(test, allow(dead_code))]
-fn get_graphite<S: Into<String>, T: Into<String>>(url: S, target: T, window: i64) -> String {
+fn get_graphite(url: &str, target: &str, window: i64)
+-> HyperResult<String> {
     let full_path = format!("{}/render?target={}&format=json&from=-{}min",
-                            url.into(), target.into(), window);
+                            url, target, window);
     let c = hyper::Client::new();
-    let mut result = c.get(&full_path).send().unwrap();
+    let mut result = try!(c.get(&full_path).send());
     let mut s = String::new();
-    result.read_to_string(&mut s).unwrap();
-    s
+    try!(result.read_to_string(&mut s));
+    Ok(s)
+}
+
+/// Load data from graphite
+///
+/// Retry until success or exit the script
+fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Status) -> Json {
+    let json_str;
+    let mut attempts = 0;
+    let mut retry_sleep = 2000;
+    loop {
+        match get_graphite(url, target, window) {
+            Ok(s) => {
+                json_str = s;
+                break;
+            },
+            Err(e) => {
+                print!("Graphite error for {}: {}. ", url, e);
+                if attempts < retries {
+                    println!("Retrying in {}s.", retry_sleep / 1000);
+                    attempts += 1;
+                    sleep_ms(retry_sleep);
+                    retry_sleep *= 2;
+                    continue;
+                } else {
+                    println!("Giving up after {} retries.", retries);
+                    no_data.exit();
+                }
+            }
+        };
+    }
+    match json::Json::from_str(&json_str) {
+        Ok(data) => data,
+        Err(e) => match e {
+            json::ParserError::SyntaxError(..) => {
+                panic!("Graphite returned invalid json:\n{}", json_str);
+            },
+            _ => {
+                panic!(e);
+            }
+        }
+    }
 }
 
 /// Take an operator and a value and return a function that can be used in a
@@ -298,6 +345,7 @@ struct Args {
     path: String,
     assertion: Assertion,
     window: i64,
+    retries: u8,
     no_data: Status
 }
 
@@ -322,10 +370,14 @@ fn parse_args<'a>() -> Args {
             "<URL>                'The domain to query graphite. Must include scheme (http/s)'
              <PATH>               'The graphite path to query. For example: \"collectd.*.cpu\"'
              <ASSERTION>          'The assertion to make against the PATH. See Below.'
-             -w --window=[WINDOW] 'How many minutes of data to test. Default 10.'")
+             -w --window=[WINDOW] 'How many minutes of data to test. Default 10.'
+             --retries=[COUNT]   'How many times to retry reaching graphite. Default 4.")
         .arg(clap::Arg::with_name("NO_DATA_STATUS")
                        .long("--no-data")
-                       .help("What to do with no data. Choices: ok, warn, critical, unknown. Default: warn.")
+                       .help("What to do with no data.
+                              Choices: ok, warn, critical, unknown.
+                              No data includes 'all nulls' and error connecting.
+                              Default: warn.")
                        .takes_value(true)
                        .possible_values(&allowed_no_data)
              )
@@ -365,6 +417,7 @@ fn parse_args<'a>() -> Args {
         path: args.value_of("PATH").unwrap().to_owned(),
         assertion: parse_assertion(assertion_str).unwrap(),
         window: value_t!(args.value_of("WINDOW"), i64).unwrap_or(10),
+        retries: value_t!(args.value_of("COUNT"), u8).unwrap_or(4),
         no_data: Status::from_str(args.value_of("NO_DATA_STATUS")
                                       .unwrap_or("warning")).unwrap()
     }
@@ -589,9 +642,7 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
     let args = parse_args();
-    let json_str = get_graphite(args.url, args.path, args.window);
-
-    let data = json::Json::from_str(&json_str).unwrap();
+    let data = fetch_data(&args.url, &args.path, args.window, args.retries, &args.no_data);
 
     let filtered = filter_to_with_data(data, args.no_data);
     let with_data = match filtered {

@@ -55,9 +55,9 @@ pub enum Status {
 
 impl Status {
     /// Exit with a return code that indicates the state of the system
-    pub fn exit(self) -> ! {
+    pub fn exit(&self) -> ! {
         use self::Status::*;
-        match self {
+        match *self {
             Ok => process::exit(0),
             Warning => process::exit(1),
             Critical => process::exit(2),
