@@ -54,8 +54,12 @@ impl<'a> From<&'a Json> for DataPoint {
 impl fmt::Display for DataPoint {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{} (at {})",
-               self.val.map(|v| format!("{}", v)).unwrap_or("No Data".into()),
-               self.time.format("%H:%MZ"))
+               self.val.map_or("No Data".into(),
+                               |v| format!("{:.*}",
+                                           // the number of points past the dot to show
+                                           if v.round() == v { 0 } else { 2 },
+                                           v)),
+               self.time.format("%H:%Mz"))
     }
 }
 
@@ -83,13 +87,8 @@ impl GraphiteData {
         GraphiteData {
             points: dl,
             target: obj.find("target").expect("Couldn't find target in graphite data")
-                       .as_string().unwrap().to_owned()
+                       .as_string().expect("Couldn't convert target to string").to_owned()
         }
-    }
-
-    /// The number of points that we received
-    fn len(&self) -> usize {
-        self.points.len()
     }
 
     /// Strip out any invalid points
@@ -108,8 +107,17 @@ impl GraphiteData {
 }
 
 impl<'a> FilteredGraphiteData<'a> {
+    /// The number of points that we have
     fn len(&self) -> usize {
         self.points.len()
+    }
+
+    /// The percent of the original points that were included by the filter
+    ///
+    /// This only includes the original points that actually have data
+    fn percent_matched(&self) -> f64 {
+        (self.len() as f64 /
+         self.original.points.iter().filter(|point| point.val.is_some()).count() as f64) * 100.0
     }
 }
 
@@ -290,13 +298,24 @@ fn do_check(
     if with_invalid.len() > 0 {
         match error_condition {
             PointAssertion::Ratio(count) => {
-                println!("CRITICAL: Of {} paths with data, {} have at least {:.1}% invalid datapoints:",
+                if series_with_data.len() == with_invalid.len() {
+                    if count == 0.0 {
+                        println!("CRITICAL: All matched paths have invalid datapoints:")
+                    } else {
+                        println!(
+                            "CRITICAL: All matched paths have at least {:.1}% invalid datapoints",
+                            count)
+                    }
+                } else {
+                    println!("CRITICAL: Of {} paths with data, \
+                             {} have at least {:.1}% invalid datapoints:",
                          series_with_data.len(), with_invalid.len(), count * 100.0);
+                }
                 for series in with_invalid.iter() {
                     println!(
-                        "       -> {} has {} ({:.1}%) points that are{} {} {}: {}",
+                        "       -> {} has {} points ({:.1}%) that are{} {} {}: {}",
                         series.original.target, series.points.len(),
-                        (series.len() as f64 / series.original.len() as f64) * 100.0,
+                        series.percent_matched(),
                         nostr, op, threshold,
                         series.points.iter().map(|gv| format!("{}", gv))
                             .collect::<Vec<_>>().connect(", "));
