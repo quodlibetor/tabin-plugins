@@ -10,8 +10,9 @@ extern crate rustc_serialize;
 
 extern crate turbine_plugins;
 
-use std::io::Read;
+use std::cmp::max;
 use std::fmt;
+use std::io::Read;
 use std::thread::sleep_ms;
 
 use chrono::naive::datetime::NaiveDateTime;
@@ -256,11 +257,12 @@ fn filter_to_with_data(data: Json,
 
 #[allow(deprecated)] // connect => join in 1.3
 fn do_check(
-    series_with_data: Vec<GraphiteData>,
+    series_with_data: &[GraphiteData],
     op: &str,
     op_is_negated: NegOp,
     threshold: f64,
-    error_condition: PointAssertion
+    error_condition: PointAssertion,
+    status: Status
 ) -> Status {
     let comparator = operator_string_to_func(op, op_is_negated, threshold);
     // We want to create a vec of series' that only have (existing) invalid
@@ -362,7 +364,7 @@ fn do_check(
 struct Args {
     url: String,
     path: String,
-    assertion: Assertion,
+    assertions: Vec<Assertion>,
     window: i64,
     retries: u8,
     no_data: Status
@@ -388,7 +390,7 @@ fn parse_args<'a>() -> Args {
         .args_from_usage(
             "<URL>                'The domain to query graphite. Must include scheme (http/s)'
              <PATH>               'The graphite path to query. For example: \"collectd.*.cpu\"'
-             <ASSERTION>          'The assertion to make against the PATH. See Below.'
+             <ASSERTION>...       'The assertion to make against the PATH. See Below.'
              -w --window=[WINDOW] 'How many minutes of data to test. Default 10.'
              --retries=[COUNT]   'How many times to retry reaching graphite. Default 4.")
         .arg(clap::Arg::with_name("NO_DATA_STATUS")
@@ -430,11 +432,12 @@ fn parse_args<'a>() -> Args {
         - `{}`", ASSERTION_EXAMPLES.connect("`\n        - `")))
      .get_matches();
 
-    let assertion_str = args.value_of("ASSERTION").unwrap();
     Args {
         url: args.value_of("URL").unwrap().to_owned(),
         path: args.value_of("PATH").unwrap().to_owned(),
-        assertion: parse_assertion(assertion_str).unwrap(),
+        assertions: args.values_of("ASSERTION").unwrap()
+            .iter().map(|assertion_str|
+                        parse_assertion(assertion_str).unwrap()).collect(),
         window: value_t!(args.value_of("WINDOW"), i64).unwrap_or(10),
         retries: value_t!(args.value_of("COUNT"), u8).unwrap_or(4),
         no_data: Status::from_str(args.value_of("NO_DATA_STATUS")
@@ -669,11 +672,16 @@ fn main() {
         Err(status) => status.exit()
     };
 
-    let status = do_check(with_data,
-                          &args.assertion.operator,
-                          args.assertion.op_is_negated,
-                          args.assertion.threshold,
-                          args.assertion.point_assertion);
+    let mut status = Status::Ok;
+    for assertion in args.assertions {
+        status = max(status,
+                     do_check(&with_data,
+                              &assertion.operator,
+                              assertion.op_is_negated,
+                              assertion.threshold,
+                              assertion.point_assertion,
+                              assertion.failure_status));
+    }
     status.exit();
 }
 
@@ -749,11 +757,12 @@ mod test {
 
     #[test]
     fn do_check_errors_with_invalid_data() {
-        let result = do_check(valid_data_from_json_two_sets(),
+        let result = do_check(&valid_data_from_json_two_sets(),
                               ">",
                               NegOp::Yes,
                               2.0,
-                              Ratio(0.0));
+                              Ratio(0.0),
+                              Status::Critical);
         if let Status::Critical = result {
              /* expected */
         } else {
@@ -763,11 +772,12 @@ mod test {
 
     #[test]
     fn do_check_succeeds_with_valid_data() {
-        let result = do_check(valid_data_from_json_two_sets(),
+        let result = do_check(&valid_data_from_json_two_sets(),
                               ">",
                               NegOp::Yes,
                               0.0,
-                              Ratio(1.0));
+                              Ratio(1.0),
+                              Status::Critical);
         if let Status::Ok = result {
             /* expected */
         } else {
@@ -826,11 +836,12 @@ mod test {
     fn parse_assertion_finds_per_point_description2_and_correctly_alerts() {
         let assertion = parse_assertion("critical if any point is not >= 5.5").unwrap();
         let graphite_data = graphite_result_to_vec(&json_one_point_is_below_5_5());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         if let Status::Critical = result  {
              /* expected */
         } else {
@@ -874,11 +885,12 @@ mod test {
         assert_eq!(assertion.point_assertion, Ratio(1.0));
 
         let graphite_data = graphite_result_to_vec(&json_all_points_above_5());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         assert_eq!(result, Status::Critical);
     }
 
@@ -890,11 +902,12 @@ mod test {
         assert_eq!(assertion.point_assertion, Ratio(1.0));
 
         let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         assert_eq!(result, Status::Ok);
     }
 
@@ -940,20 +953,22 @@ mod test {
     fn most_recent_is_non_empty_works() {
         let assertion = parse_assertion("critical if most recent point is > 5").unwrap();
         let graphite_data = graphite_result_to_vec(&json_last_point_is_5());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         assert_eq!(result, Status::Ok);
 
         let assertion = parse_assertion("critical if most recent point is > 4").unwrap();
         let graphite_data = graphite_result_to_vec(&json_last_point_is_5());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         assert_eq!(result, Status::Critical);
     }
 
@@ -961,20 +976,22 @@ mod test {
     fn most_recent_is_empty_works() {
         let assertion = parse_assertion("critical if most recent point is > 5").unwrap();
         let graphite_data = graphite_result_to_vec(&json_last_existing_point_is_5());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         assert_eq!(result, Status::Ok);
 
         let assertion = parse_assertion("critical if most recent point is > 4").unwrap();
         let graphite_data = graphite_result_to_vec(&json_last_existing_point_is_5());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         assert_eq!(result, Status::Critical);
     }
 
@@ -995,11 +1012,12 @@ mod test {
             "critical if at least 80% of of points are not >= 5.5")
             .unwrap();
         let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         assert_eq!(result, Status::Critical);
     }
 
@@ -1009,11 +1027,12 @@ mod test {
             "critical if at least 79% of of points are < 6")
             .unwrap();
         let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         assert_eq!(result, Status::Critical);
     }
 
@@ -1023,11 +1042,12 @@ mod test {
             "critical if at least 79% of of points are < 6")
             .unwrap();
         let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
-        let result = do_check(graphite_data,
+        let result = do_check(&graphite_data,
                               &assertion.operator,
                               assertion.op_is_negated,
                               assertion.threshold,
-                              assertion.point_assertion);
+                              assertion.point_assertion,
+                              assertion.failure_status);
         assert_eq!(result, Status::Critical);
     }
 
