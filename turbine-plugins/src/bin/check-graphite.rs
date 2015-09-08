@@ -299,19 +299,19 @@ fn do_check(
     let nostr = if op_is_negated == NegOp::Yes { " not" } else { "" };
     if with_invalid.len() > 0 {
         match error_condition {
-            PointAssertion::Ratio(count) => {
+            PointAssertion::Ratio(ratio) => {
                 if series_with_data.len() == with_invalid.len() {
-                    if count == 0.0 {
-                        println!("CRITICAL: All matched paths have invalid datapoints:")
+                    if ratio == 0.0 {
+                        println!("{}: All matched paths have invalid datapoints:", status)
                     } else {
                         println!(
-                            "CRITICAL: All matched paths have at least {:.1}% invalid datapoints",
-                            count)
+                            "{}: All matched paths have at least {:.0}% invalid datapoints",
+                            status, ratio * 100.0)
                     }
                 } else {
-                    println!("CRITICAL: Of {} paths with data, \
+                    println!("{}: Of {} paths with data, \
                              {} have at least {:.1}% invalid datapoints:",
-                         series_with_data.len(), with_invalid.len(), count * 100.0);
+                         status, series_with_data.len(), with_invalid.len(), ratio * 100.0);
                 }
                 for series in with_invalid.iter() {
                     println!(
@@ -324,8 +324,8 @@ fn do_check(
                 }
             },
             PointAssertion::Recent(count) => {
-                println!("CRITICAL: Of {} paths with data, {} have the last {} points invalid",
-                         series_with_data.len(), with_invalid.len(), count);
+                println!("{}: Of {} paths with data, {} have the last {} points invalid",
+                         status, series_with_data.len(), with_invalid.len(), count);
                 for series in with_invalid.iter() {
                     println!(
                         "       -> {}'s last {} points are{} {} {}: {}",
