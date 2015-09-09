@@ -79,7 +79,7 @@ impl Status {
 
     /// The legal values for `from_str`
     pub fn str_values() -> [&'static str; 4] {
-        ["ok", "warn", "critical", "unknown"]
+        ["ok", "warning", "critical", "unknown"]
     }
 }
 
