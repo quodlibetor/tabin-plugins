@@ -339,9 +339,11 @@ fn do_check(
     } else {
         match error_condition {
             PointAssertion::Ratio(percent) => {
+                let amount;
+                if percent == 0.0 { amount = "any".to_owned() } else { amount = format!("at least {:.1}% of", percent * 100.0) }
                 println!(
-                    "OK: Found {} paths with data, none had at least {:.1}% of datapoints{} {} {}.",
-                    series_with_data.len(), percent * 100.0, nostr, op, threshold);
+                    "OK: Found {} paths with data, none had {} datapoints{} {} {:.2}.",
+                    series_with_data.len(), amount, nostr, op, threshold);
             },
             PointAssertion::Recent(count) => {
                 println!(
