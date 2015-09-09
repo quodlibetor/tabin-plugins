@@ -374,6 +374,7 @@ struct Args {
 
 static ASSERTION_EXAMPLES: &'static [&'static str] = &[
     "critical if any point is > 0",
+    "critical if any point in at least 40% of series is > 0",
     "critical if any point is not > 0",
     "warning if any point is == 9",
     "critical if all points are > 100.0",
