@@ -16,6 +16,7 @@ use std::io::Read;
 use std::thread::sleep_ms;
 
 use chrono::naive::datetime::NaiveDateTime;
+use hyper::client::Response;
 use hyper::error::Result as HyperResult;
 use rustc_serialize::json::{self, Json};
 
@@ -169,14 +170,14 @@ fn graphite_result_to_vec(data: &Json) -> Vec<GraphiteData> {
 /// Returns a tuple of (full request path, string that graphite returned), or an error
 #[cfg_attr(test, allow(dead_code))]
 fn get_graphite(url: &str, target: &str, window: i64)
--> HyperResult<(String, String)> {
+-> HyperResult<(Response, String)> {
     let full_path = format!("{}/render?target={}&format=json&from=-{}min",
                             url, target, window);
     let c = hyper::Client::new();
     let mut result = try!(c.get(&full_path).send());
     let mut s = String::new();
     try!(result.read_to_string(&mut s));
-    Ok((full_path, s))
+    Ok((result, s))
 }
 
 /// Load data from graphite
@@ -184,7 +185,7 @@ fn get_graphite(url: &str, target: &str, window: i64)
 /// Retry until success or exit the script
 fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Status)
 -> Result<Json, String> {
-    let graphite_result: (String, String);
+    let graphite_result: (Response, String);
     let mut attempts = 0;
     let mut retry_sleep = 2000;
     loop {
@@ -194,7 +195,7 @@ fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Statu
                 break;
             },
             Err(e) => {
-                print!("Graphite error for {}: {}. ", url, e);
+                print!("HTTP error for {}: {}. ", url, e);
                 if attempts < retries {
                     println!("Retrying in {}s.", retry_sleep / 1000);
                     attempts += 1;
@@ -202,7 +203,7 @@ fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Statu
                     retry_sleep *= 2;
                     continue;
                 } else {
-                    println!("Giving up after {} retries.", retries);
+                    println!("Giving up after {} attempts.", retries + 1);
                     no_data.exit();
                 }
             }
@@ -212,11 +213,12 @@ fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Statu
         Ok(data) => Ok(data),
         Err(e) => match e {
             json::ParserError::SyntaxError(..) => {
-                Err(format!("Graphite returned invalid json from {}:\n{}",
-                            graphite_result.0, graphite_result.1))
+                Err(format!(
+                    "{}: Graphite returned invalid json:\n{}\n=========================\nThe full url queried was: {}",
+                            no_data, graphite_result.1, graphite_result.0.url))
             },
             _ => {
-                Err(format!("{}", e))
+                Err(format!("{}: {}", no_data, e))
             }
         }
     }
