@@ -8,7 +8,7 @@ extern crate turbine_plugins;
 
 use docopt::Docopt;
 use turbine_plugins::Status;
-use turbine_plugins::procfs::{Calculations, RunningProcs, WorkSource, pid};
+use turbine_plugins::procfs::{Calculations, RunningProcs, WorkSource};
 
 static USAGE: &'static str = "
 Usage:
@@ -91,24 +91,11 @@ fn main() {
     let status = do_comparison(&args, &start, &end);
 
     if args.flag_show_hogs > 0 {
-        println!("INFO: cpu hogs:");
+        println!("INFO [check-cpu]: hogs");
         for usage in per_proc.0.iter().take(args.flag_show_hogs) {
-            // We want to get the full command, but some things have none, so
-            // fall back to the `comm` when either there is no command or it
-            // died since we started testing
-            let cmdline = pid::CmdLine::from_pid(usage.proc_stat.pid)
-                .map(|cmd| {
-                    let c = String::from(cmd);
-                    if c.len() > 0 {
-                        c
-                    } else {
-                        usage.proc_stat.comm.clone()
-                    }
-                })
-                .unwrap_or(usage.proc_stat.comm.clone());
-            println!("     {}: {:.1}%",
-                     cmdline,
-                     usage.total);
+            println!("     {:.1}%: {}",
+                     usage.total,
+                     usage.process.useful_cmdline());
         }
     }
     status.exit()

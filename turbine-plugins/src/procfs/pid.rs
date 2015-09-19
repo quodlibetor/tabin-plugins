@@ -5,8 +5,7 @@ use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
 
-use super::ProcFsError;
-use super::Result;
+use super::{Result, ProcFsError, MemInfo};
 
 pub struct Process {
     pub stat: Stat,
@@ -22,16 +21,20 @@ impl Process {
     }
 
     pub fn useful_cmdline(&self) -> String {
-        pid::CmdLine::from_pid(usage.proc_stat.pid)
-            .map(|cmd| {
-                let c = String::from(cmd);
-                if c.len() > 0 {
-                    c
-                } else {
-                    usage.proc_stat.comm.clone()
-                }
-            })
-            .unwrap_or(usage.proc_stat.comm.clone())
+        let cmd = self.cmdline.display();
+        if cmd.len() > 0 {
+            cmd
+        } else {
+            self.stat.comm.clone()
+        }
+    }
+
+    pub fn percent_ram(&self, mem: &MemInfo) -> Option<f64> {
+        if let &MemInfo { total: Some(system), .. } = mem {
+            Some(self.stat.rss as f64 / system as f64 * 100.0)
+        } else {
+            None
+        }
     }
 }
 
@@ -167,16 +170,12 @@ impl CmdLine {
                 .filter(|arg| arg.len() > 0).collect(),
         })
     }
-}
 
-impl fmt::Display for CmdLine {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str(&self.line.join(" "))
+    pub fn len(&self) -> usize {
+        self.line.len()
     }
-}
 
-impl From<CmdLine> for String {
-    fn from(c: CmdLine) -> String {
-        format!("{}", c)
+    pub fn display(&self) -> String {
+        self.line.join(" ")
     }
 }

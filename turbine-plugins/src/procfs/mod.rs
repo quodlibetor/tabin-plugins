@@ -40,7 +40,7 @@ pub struct ProcUsages<'a>(pub Usages<'a>);
 /// time period
 pub struct ProcUsage<'a> {
     /// The process we're reporting on
-    pub proc_stat: &'a pid::Stat,
+    pub process: &'a pid::Process,
     /// Percent time spent in user mode
     pub upercent: f64,
     /// Percent time spent in system mode
@@ -49,7 +49,7 @@ pub struct ProcUsage<'a> {
     pub total: f64
 }
 
-type ProcMap = HashMap<i32, pid::Stat>;
+type ProcMap = HashMap<i32, pid::Process>;
 /// All the processes that are running
 pub struct RunningProcs(pub ProcMap);
 
@@ -62,15 +62,15 @@ impl RunningProcs {
             if let Some(fname) = try!(entry).path().file_name() {
                 let fname_str = fname.to_str().unwrap();
                 if is_digit.is_match(fname_str) {
-                    let stat = try!(pid::Stat::from_pid(fname_str));
-                    procs.insert(stat.pid, stat);
+                    let prc = try!(pid::Process::from_pid(fname_str));
+                    procs.insert(prc.stat.pid, prc);
                 }
             }
         }
         Ok(RunningProcs(procs))
     }
 
-    fn iter(&self) -> hash_map::Iter<i32, pid::Stat> {
+    fn iter(&self) -> hash_map::Iter<i32, pid::Process> {
         self.0.iter()
     }
 
@@ -86,12 +86,13 @@ impl RunningProcs {
     ) -> ProcUsages<'a> {
         let me = &self.0;
         let mut usages = Usages::new();
-        for (_start_pid, start_ps) in start.iter() {
-            if let Some(end_ps) = me.get(&start_ps.pid) {
+        for (_start_pid, start_process) in start.iter() {
+            if let Some(end_process) = me.get(&start_process.stat.pid) {
+                let (start_ps, end_ps) = (&start_process.stat, &end_process.stat);
                 let user = 100.0 * (end_ps.utime - start_ps.utime) as f64 / total_cpu as f64;
                 let sys = 100.0 * (end_ps.stime - start_ps.stime) as f64 / total_cpu as f64;
                 usages.push(ProcUsage {
-                    proc_stat: &start_ps,
+                    process: &start_process,
                     upercent: user,
                     spercent: sys,
                     total: user + sys
