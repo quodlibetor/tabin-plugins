@@ -11,7 +11,9 @@ use turbine_plugins::Status;
 use turbine_plugins::procfs::{Calculations, RunningProcs, WorkSource};
 
 static USAGE: &'static str = "
-Usage: check-cpu [options] [--type=<work-source>...] [--show-hogs=<count>]
+Usage:
+    check-cpu [options] [--type=<work-source>...] [--show-hogs=<count>]
+    check-cpu (-h | --help)
 
 Options:
     -h, --help               Show this help message
@@ -43,21 +45,22 @@ struct Args {
     flag_type: Vec<WorkSource>,
 }
 
-fn do_comparison(args: &Args, start: &Calculations, end: &Calculations) -> Status {
+fn do_comparison<'a>(args: &Args, start: &'a Calculations, end: &'a Calculations) -> Status {
     let mut exit_status = Status::Ok;
 
     for flag in &args.flag_type {
         let total = end.percent_util_since(flag, &start);
         if total > args.flag_crit as f64 {
             exit_status = std::cmp::max(exit_status, Status::Critical);
-            println!("CRITICAL [check-cpu]: {} {} > {}", flag, total, args.flag_crit);
+            println!("CRITICAL [check-cpu]: {} {:.2} > {}%", flag, total, args.flag_crit);
         } else if total > args.flag_warn as f64 {
             exit_status = std::cmp::max(exit_status, Status::Warning);
-            println!("WARNING [check-cpu]: {} {} > {}", flag, total, args.flag_warn);
+            println!("WARNING [check-cpu]: {} {:.2} > {}%", flag, total, args.flag_warn);
         } else {
-            println!("OK [check-cpu]");
+            println!("OK [check-cpu]: {} {:.2} < {}%", flag, total, args.flag_warn);
         }
     }
+    println!("INFO [check-cpu]: Usage breakdown: {}", end - start);
 
     exit_status
 }
@@ -68,10 +71,6 @@ fn main() {
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.decode())
         .unwrap_or_else(|e| e.exit());
-    if args.flag_help {
-        print!("{}", USAGE);
-        return;
-    }
 
     let start = Calculations::load().unwrap();
     let start_per_proc = RunningProcs::currently_running().unwrap();
@@ -81,10 +80,15 @@ fn main() {
     let mut per_proc = end_per_proc.percent_cpu_util_since(&start_per_proc,
                                                             end.total() - start.total());
     per_proc.0.sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
-    for usage in per_proc.0.iter().take(args.flag_show_hogs) {
-        println!("{}: {:.1}%", usage.proc_stat.comm, usage.total);
-    }
+
     let status = do_comparison(&args, &start, &end);
+
+    if args.flag_show_hogs > 0 {
+        println!("INFO: cpu hogs:");
+        for usage in per_proc.0.iter().take(args.flag_show_hogs) {
+            println!("     {}: {:.1}%", usage.proc_stat.comm, usage.total);
+        }
+    }
     status.exit()
 }
 

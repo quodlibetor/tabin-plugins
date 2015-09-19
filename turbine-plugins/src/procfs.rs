@@ -424,6 +424,18 @@ impl<'a> Sub for &'a Calculations {
     }
 }
 
+impl fmt::Display for Calculations {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let total = self.total();
+        let p = |v: f64| 100.0 * v / total;
+        write!(f, "user={:.1} system={:.1} nice={:.1} irq={:.1} softirq={:.1} | idle={:.1} iowait={:.1} | steal={:.1} guest={:.1} guest_nice={}",
+               p(self.user), p(self.system), p(self.nice), p(self.irq), p(self.softirq),
+               p(self.idle), p(self.iowait),
+               p(self.steal), p(self.guest), self.guest_nice.map_or(
+                   "unknown".into(), |v| format!("{}", v)))
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Memory
 
