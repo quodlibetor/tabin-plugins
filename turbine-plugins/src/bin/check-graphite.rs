@@ -33,7 +33,7 @@ struct DataPoint {
 
 impl<'a> From<&'a Json> for DataPoint {
     /// Convert a [value, timestamp] json list into a datapoint
-    /// panics if the list is of an invalid format
+    /// Exits the process with a critical status if data is malformed.
     fn from(point: &Json) -> DataPoint {
         DataPoint {
             val: match point[0] {
@@ -41,12 +41,16 @@ impl<'a> From<&'a Json> for DataPoint {
                 Json::F64(n) => Some(n),
                 Json::U64(n) => Some(n as f64),
                 Json::I64(n) => Some(n as f64),
-                _ => panic!(format!("Unexpected float type: {:?}", point[0]))
+                _ => {
+                    println!("Unable to convert data value into floating point: {:?}", point[0]);
+                    Status::Critical.exit();
+                }
             },
             time: if let Json::U64(n) = point[1] {
                 NaiveDateTime::from_timestamp(n as i64, 0)
             } else {
-                panic!(format!("Unexpected timestamp type: {:?}", point[1]))
+                println!("Timestamp does not look like an integer: {:?}", point[1]);
+                Status::Critical.exit();
             }
         }
     }
