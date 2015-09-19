@@ -29,9 +29,16 @@ CPU Work Types:
     default is to check total utilization. Specifying this multiple times
     alerts if *any* of the CPU usage types are critical.
 
+    There are three CPU type groups: `active` `activeplusiowait` and
+    `activeminusnice`. `activeplusiowait` considers time spent waiting for IO
+    to be busy time, this gets alerts to be more aligned with the overall
+    system load, but is different from CPU usage reported by `top` since the
+    CPU isn't actually *busy* during this time.
+
     --type=<usage>           Some of:
-                                total user nice system idle
-                                iowait irq softirq steal guest [default: total]
+                                active activeplusiowait activeminusnice
+                                user nice system  irq softirq steal guest
+                                idle iowait [default: active]
 ";
 
 #[derive(RustcDecodable, Debug)]
@@ -106,7 +113,7 @@ mod unit {
 
     #[test]
     fn validate_allows_multiple_worksources() {
-        let argv = || vec!["check-cpu", "--type", "total", "--type", "steal"];
+        let argv = || vec!["check-cpu", "--type", "active", "--type", "steal"];
         let _: super::Args = Docopt::new(USAGE)
             .and_then(|d| d.argv(argv().into_iter()).decode())
             .unwrap();
@@ -161,7 +168,7 @@ mod unit {
             ..start
         };
 
-        assert_eq!(start.percent_util_since(&WorkSource::Total, &end), 50.0)
+        assert_eq!(start.percent_util_since(&WorkSource::Active, &end), 50.0)
     }
 
     #[test]
@@ -175,10 +182,11 @@ mod unit {
             ..start
         };
 
-        assert_eq!(start.percent_util_since(&WorkSource::Total, &end), 75.0)
+        assert_eq!(start.percent_util_since(&WorkSource::Active, &end), 75.0)
     }
 }
 
+#[cfg(target_os = "linux")]
 #[cfg(test)]
 mod integration {
     // not really integration tests, but higher level

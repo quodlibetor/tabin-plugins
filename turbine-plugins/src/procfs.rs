@@ -219,17 +219,22 @@ impl FromStr for ProcStat {
 
 /// A kind of CPU usage
 ///
-/// Corresponds to the fields in `Calculations`, q.v. for the definitions.
+/// Corresponds to the fields and functions in `Calculations`, q.v. for the
+/// definitions.
 #[derive(RustcDecodable, Debug)]
 pub enum WorkSource {
-    Total, User, Nice, System, Idle, IoWait, Irq, SoftIrq, Steal, Guest, GuestNice
+    Active, ActivePlusIoWait, ActiveMinusNice,
+    User, Nice, System, Irq, SoftIrq, Steal, Guest, GuestNice,
+    Idle, IoWait,
 }
 
 impl fmt::Display for WorkSource {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use self::WorkSource::*;
         let s = match *self {
-            Total => "total",
+            Active => "active",
+            ActivePlusIoWait => "active+iowait",
+            ActiveMinusNice => "active-nice",
             User => "user",
             Nice => "nice",
             System => "system",
@@ -346,8 +351,8 @@ impl Calculations {
 
     /// Jiffies spent running child VMs
     ///
-    /// This is included in `active()`, so don't add this to that when
-    /// totalling.
+    /// This is included in `active()` by the nature of the way that
+    /// /proc/stats reports things, so don't add this to that when totalling.
     #[allow(dead_code)]  // this mostly exists as documentation of what `guest` means
     pub fn virt(&self) -> f64 {
         self.guest + self.guest_nice.unwrap_or(0.0)
@@ -363,7 +368,11 @@ impl Calculations {
     /// The number returned is between 0 and 100
     pub fn percent_util_since(&self, kind: &WorkSource, start: &Calculations) -> f64 {
         let (start_val, end_val) = match *kind {
-            WorkSource::Total => (start.active(), self.active()),
+            WorkSource::Active => (start.active(), self.active()),
+            WorkSource::ActivePlusIoWait => (start.active() + start.iowait,
+                                             self.active() + self.iowait),
+            WorkSource::ActiveMinusNice => (start.active() - start.nice,
+                                            self.active() - self.nice),
             WorkSource::User => (start.user, self.user),
             WorkSource::IoWait => (start.iowait, self.iowait),
             WorkSource::Nice => (start.nice, self.nice),
