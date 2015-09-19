@@ -162,30 +162,31 @@ fn graphite_result_to_vec(data: &Json) -> Vec<GraphiteData> {
 
 /// Fetch data from graphite
 ///
-/// Returns the string that graphite returned, or an error
+/// Returns a tuple of (full request path, string that graphite returned), or an error
 #[cfg_attr(test, allow(dead_code))]
 fn get_graphite(url: &str, target: &str, window: i64)
--> HyperResult<String> {
+-> HyperResult<(String, String)> {
     let full_path = format!("{}/render?target={}&format=json&from=-{}min",
                             url, target, window);
     let c = hyper::Client::new();
     let mut result = try!(c.get(&full_path).send());
     let mut s = String::new();
     try!(result.read_to_string(&mut s));
-    Ok(s)
+    Ok((full_path, s))
 }
 
 /// Load data from graphite
 ///
 /// Retry until success or exit the script
-fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Status) -> Json {
-    let json_str;
+fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Status)
+-> Result<Json, String> {
+    let graphite_result: (String, String);
     let mut attempts = 0;
     let mut retry_sleep = 2000;
     loop {
         match get_graphite(url, target, window) {
             Ok(s) => {
-                json_str = s;
+                graphite_result = s;
                 break;
             },
             Err(e) => {
@@ -203,14 +204,15 @@ fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Statu
             }
         };
     }
-    match json::Json::from_str(&json_str) {
-        Ok(data) => data,
+    match json::Json::from_str(&graphite_result.1) {
+        Ok(data) => Ok(data),
         Err(e) => match e {
             json::ParserError::SyntaxError(..) => {
-                panic!("Graphite returned invalid json:\n{}", json_str);
+                Err(format!("Graphite returned invalid json from {}:\n{}",
+                            graphite_result.0, graphite_result.1))
             },
             _ => {
-                panic!(e);
+                Err(format!("{}", e))
             }
         }
     }
@@ -699,7 +701,14 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
     let args = parse_args();
-    let data = fetch_data(&args.url, &args.path, args.window, args.retries, &args.no_data);
+    let data = match fetch_data(
+        &args.url, &args.path, args.window, args.retries, &args.no_data) {
+        Ok(data) => data,
+        Err(e) => {
+            println!("{}", e);
+            args.no_data.exit();
+        }
+    };
 
     let filtered = filter_to_with_data(&args.path, data, args.no_data);
     let with_data = match filtered {
