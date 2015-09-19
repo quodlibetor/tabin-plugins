@@ -239,18 +239,26 @@ fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f
     }
 }
 
-fn filter_to_with_data(data: Json,
+fn filter_to_with_data(path: &str,
+                       data: Json,
                        no_data_status: Status) -> Result<Vec<GraphiteData>, Status> {
     let data = graphite_result_to_vec(&data);
+    let matched_len = data.len();
+    if data.len() == 0 {
+        println!("{}: Graphite returned no matching series for pattern '{}'",
+                 no_data_status, path);
+        return Err(no_data_status);
+    }
     let series_with_data = data.into_iter()
         .map(|series| series.into_only_with_data())
         .filter(|series| !series.points.is_empty())
         .collect::<Vec<GraphiteData>>();
 
-    if !series_with_data.is_empty() {
+    if series_with_data.len() > 0 {
         Ok(series_with_data)
     } else {
-        println!("{}: Graphite returned no matches", no_data_status);
+        print!("{}: Graphite found {} series but returned only empty datapoints for them",
+               no_data_status, matched_len);
         Err(no_data_status)
     }
 }
@@ -435,12 +443,20 @@ fn parse_args<'a>() -> Args {
         - `{}`", ASSERTION_EXAMPLES.connect("`\n        - `")))
      .get_matches();
 
+    let assertions = args.values_of("ASSERTION").unwrap()
+        .iter().map(|assertion_str|
+                    match parse_assertion(assertion_str) {
+                        Ok(a) => a,
+                        Err(e) => {
+                            println!("Error `{}` in assertion `{}`", e, assertion_str);
+                            Status::Critical.exit();
+                        }
+                    }).collect();
+
     Args {
         url: args.value_of("URL").unwrap().to_owned(),
         path: args.value_of("PATH").unwrap().to_owned(),
-        assertions: args.values_of("ASSERTION").unwrap()
-            .iter().map(|assertion_str|
-                        parse_assertion(assertion_str).unwrap()).collect(),
+        assertions: assertions,
         window: value_t!(args.value_of("WINDOW"), i64).unwrap_or(10),
         retries: value_t!(args.value_of("COUNT"), u8).unwrap_or(4),
         no_data: Status::from_str(args.value_of("NO_DATA_STATUS")
@@ -482,6 +498,22 @@ enum ParseError {
     NoRatioSpecifier(String),
     NoStatusSpecifier(String),
     SyntaxError(String)
+}
+
+impl fmt::Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use ParseError::*;
+        let msg = match *self {
+            NoPointSpecifier(ref msg) => msg,
+            NoSeriesSpecifier(ref msg) => msg,
+            InvalidOperator(ref msg) => msg,
+            InvalidThreshold(ref msg) => msg,
+            NoRatioSpecifier(ref msg) => msg,
+            NoStatusSpecifier(ref msg) => msg,
+            SyntaxError(ref msg) => msg
+        };
+        write!(f, "{}", msg)
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -595,7 +627,7 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                 if let Some(next) = it.next() {
                     if next != "if" {
                         return Err(ParseError::SyntaxError(format!(
-                                "Expected 'if' to follow '{}', not '{}'", word, next)));
+                                "Expected 'if' to follow '{}', found '{}'", word, next)));
                     }
                 } else {
                     return Err(ParseError::SyntaxError(format!(
@@ -618,7 +650,7 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                     state = AssertionState::Operator
                 } else {
                     return Err(ParseError::SyntaxError(
-                        format!("Expected 'in' or 'is not' or 'are not', found '{}'", word)))
+                        format!("Expected 'in' or 'is'/'are' (series spec or operator), found '{}'", word)))
                 }
             },
             AssertionState::Series => {
@@ -669,7 +701,7 @@ fn main() {
     let args = parse_args();
     let data = fetch_data(&args.url, &args.path, args.window, args.retries, &args.no_data);
 
-    let filtered = filter_to_with_data(data, args.no_data);
+    let filtered = filter_to_with_data(&args.path, data, args.no_data);
     let with_data = match filtered {
         Ok(data) => data,
         Err(status) => status.exit()
@@ -749,7 +781,8 @@ mod test {
 
     #[test]
     fn filtered_to_with_data_returns_valid_data() {
-        let result = filter_to_with_data(json_two_sets_of_graphite_data(),
+        let result = filter_to_with_data("test.path",
+                                         json_two_sets_of_graphite_data(),
                                          Status::Unknown);
         let expected = valid_data_from_json_two_sets();
         match result {
