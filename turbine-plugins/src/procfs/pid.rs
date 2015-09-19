@@ -8,6 +8,33 @@ use std::str::FromStr;
 use super::ProcFsError;
 use super::Result;
 
+pub struct Process {
+    pub stat: Stat,
+    pub cmdline: CmdLine,
+}
+
+impl Process {
+    pub fn from_pid<P: fmt::Display + Copy>(p: P) -> Result<Process> {
+        Ok(Process {
+            stat: try!(Stat::from_pid(p)),
+            cmdline: try!(CmdLine::from_pid(p)),
+        })
+    }
+
+    pub fn useful_cmdline(&self) -> String {
+        pid::CmdLine::from_pid(usage.proc_stat.pid)
+            .map(|cmd| {
+                let c = String::from(cmd);
+                if c.len() > 0 {
+                    c
+                } else {
+                    usage.proc_stat.comm.clone()
+                }
+            })
+            .unwrap_or(usage.proc_stat.comm.clone())
+    }
+}
+
 /// The status of a process
 ///
 /// This represents much of the information in /proc/[pid]/stat
@@ -119,5 +146,37 @@ impl FromStr for Stat {
             vsize: vsize.expect("unable to parse vsize."),
             rss: rss.expect("unable to parse rss.")
         })
+    }
+}
+
+#[derive(Debug)]
+pub struct CmdLine {
+    line: Vec<String>,
+}
+
+impl CmdLine {
+    pub fn from_pid<P: fmt::Display>(pid: P) -> Result<CmdLine> {
+        let path_str = format!("/proc/{}/cmdline", pid);
+        let mut f = try!(File::open(&path_str));
+        let mut s = String::new();
+        try!(f.read_to_string(&mut s));
+        //let splitted = ;
+        Ok(CmdLine {
+            line: s.split("\0")
+                .map(|arg| String::from(arg))
+                .filter(|arg| arg.len() > 0).collect(),
+        })
+    }
+}
+
+impl fmt::Display for CmdLine {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str(&self.line.join(" "))
+    }
+}
+
+impl From<CmdLine> for String {
+    fn from(c: CmdLine) -> String {
+        format!("{}", c)
     }
 }
