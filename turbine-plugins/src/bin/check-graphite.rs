@@ -448,7 +448,7 @@ fn parse_args<'a>() -> Args {
 
     Here are some example assertions:
 
-        - `{}`", ASSERTION_EXAMPLES.connect("`\n        - `")))
+        - `{}`\n", ASSERTION_EXAMPLES.connect("`\n        - `")))
      .get_matches();
 
     let assertions = args.values_of("ASSERTION").unwrap()
