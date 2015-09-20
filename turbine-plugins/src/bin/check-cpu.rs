@@ -215,7 +215,7 @@ mod integration {
 
     #[test]
     fn does_alert() {
-        let argv = || vec!["check-cpu", "-c", "49", "--type", "total", "--type", "steal"];
+        let argv = || vec!["check-cpu", "-c", "49", "--type", "active", "--type", "steal"];
         let start = start();
         let end = Calculations {
             user: 110.0,
