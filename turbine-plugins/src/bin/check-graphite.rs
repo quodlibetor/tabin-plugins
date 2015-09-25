@@ -1,11 +1,9 @@
 #![cfg_attr(test, feature(plugin))]
-#![cfg_attr(test, plugin(passert_macros))]
 
 #[macro_use]
 extern crate clap;
 extern crate chrono;
 extern crate hyper;
-#[cfg(test)] extern crate passert;
 extern crate rustc_serialize;
 
 extern crate turbine_plugins;
@@ -813,7 +811,7 @@ mod test {
                                          Status::Unknown);
         let expected = valid_data_from_json_two_sets();
         match result {
-            Ok(actual) => passert!(actual == expected),
+            Ok(actual) => assert_eq!(actual, expected),
             Err(_) => panic!("wha")
         }
     }
