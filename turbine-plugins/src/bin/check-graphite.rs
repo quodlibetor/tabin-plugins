@@ -183,7 +183,7 @@ fn get_graphite(url: &str, target: &str, window: i64)
 /// Load data from graphite
 ///
 /// Retry until success or exit the script
-fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Status)
+fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Status, graphite_error: &Status)
 -> Result<Json, String> {
     let graphite_result: (Response, String);
     let mut attempts = 0;
@@ -204,7 +204,7 @@ fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Statu
                     continue;
                 } else {
                     println!("Giving up after {} attempts.", retries + 1);
-                    no_data.exit();
+                    graphite_error.exit();
                 }
             }
         };
@@ -385,6 +385,7 @@ struct Args {
     assertions: Vec<Assertion>,
     window: i64,
     retries: u8,
+    graphite_error: Status,
     no_data: Status
 }
 
@@ -418,6 +419,15 @@ fn parse_args<'a>() -> Args {
                               Choices: ok, warn, critical, unknown.
                               No data includes 'all nulls' and error connecting.
                               Default: warn.")
+                       .takes_value(true)
+                       .possible_values(&allowed_no_data)
+             )
+        .arg(clap::Arg::with_name("GRAPHITE_ERROR_STATUS")
+                       .long("--graphite-error")
+                       .help("What to do with no data.
+                              Choices: ok, warn, critical, unknown.
+                              No data includes 'all nulls' and error connecting.
+                              Default: unknown.")
                        .takes_value(true)
                        .possible_values(&allowed_no_data)
              )
@@ -467,8 +477,10 @@ fn parse_args<'a>() -> Args {
         assertions: assertions,
         window: value_t!(args.value_of("WINDOW"), i64).unwrap_or(10),
         retries: value_t!(args.value_of("COUNT"), u8).unwrap_or(4),
+        graphite_error: Status::from_str(args.value_of("NO_DATA_STATUS")
+                                         .unwrap_or("unknown")).unwrap(),
         no_data: Status::from_str(args.value_of("NO_DATA_STATUS")
-                                      .unwrap_or("warning")).unwrap()
+                                  .unwrap_or("warning")).unwrap()
     }
 }
 
@@ -708,11 +720,11 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
 fn main() {
     let args = parse_args();
     let data = match fetch_data(
-        &args.url, &args.path, args.window, args.retries, &args.no_data) {
+        &args.url, &args.path, args.window, args.retries, &args.no_data, &args.graphite_error) {
         Ok(data) => data,
         Err(e) => {
             println!("{}", e);
-            args.no_data.exit();
+            args.graphite_error.exit();
         }
     };
 
