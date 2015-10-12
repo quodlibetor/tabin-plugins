@@ -1,5 +1,3 @@
-#![cfg_attr(test, feature(plugin))]
-
 #[macro_use]
 extern crate clap;
 extern crate chrono;
