@@ -3,8 +3,7 @@
 //! Each file gets a struct to represent its data, with an associated `load`
 //! function.
 
-use std::collections::HashMap;
-use std::collections::hash_map;
+use std::collections::{HashMap, hash_map};
 use std::fs::{self, File};
 use std::io::{self, Read};
 use std::ops::{Div, Sub};
@@ -14,6 +13,8 @@ use std::fmt;
 use std::num;
 
 use regex::Regex;
+
+use linux::{Jiffies, Ratio};
 
 pub mod pid;
 
@@ -26,14 +27,16 @@ wrapped_enum!{
         /// Error pulling all required data out of procfs
         InsufficientData(String),
         /// Happens when we try to parse a float from something in procfs
-        InvalidData(num::ParseFloatError),
+        InvalidFloat(num::ParseFloatError),
+        /// Happens when we try to parse an int from something in procfs
+        InvalidInt(num::ParseIntError),
     }
 }
 
 /// All the results are results with `ProcFsError`s
 pub type Result<T> = StdResult<T, ProcFsError>;
 
-type Usages<'a> = Vec<ProcUsage<'a>>;
+pub type Usages<'a> = Vec<ProcUsage<'a>>;
 pub struct ProcUsages<'a>(pub Usages<'a>);
 
 /// Represent the percent CPU utilization of a specific process over a specific
@@ -49,7 +52,7 @@ pub struct ProcUsage<'a> {
     pub total: f64
 }
 
-type ProcMap = HashMap<i32, pid::Process>;
+pub type ProcMap = HashMap<i32, pid::Process>;
 /// All the processes that are running
 pub struct RunningProcs(pub ProcMap);
 
@@ -82,15 +85,15 @@ impl RunningProcs {
     pub fn percent_cpu_util_since<'a>(
         &self,
         start: &'a RunningProcs,
-        total_cpu: f64
+        total_cpu: Jiffies
     ) -> ProcUsages<'a> {
         let me = &self.0;
         let mut usages = Usages::new();
         for (_start_pid, start_process) in start.iter() {
             if let Some(end_process) = me.get(&start_process.stat.pid) {
                 let (start_ps, end_ps) = (&start_process.stat, &end_process.stat);
-                let user = 100.0 * (end_ps.utime - start_ps.utime) as f64 / total_cpu as f64;
-                let sys = 100.0 * (end_ps.stime - start_ps.stime) as f64 / total_cpu as f64;
+                let user = 100.0 * (end_ps.utime - start_ps.utime).duration().ratio(&total_cpu.duration());
+                let sys = 100.0 * (end_ps.stime - start_ps.stime).duration().ratio(&total_cpu.duration());
                 usages.push(ProcUsage {
                     process: &start_process,
                     upercent: user,
@@ -144,27 +147,27 @@ impl fmt::Display for WorkSource {
 #[derive(PartialEq, Debug)]
 pub struct Calculations {
     /// Time spent in user mode.
-    pub user: f64,
+    pub user: Jiffies,
     /// Time spent in user mode with low priority (nice).
-    pub nice: f64,
+    pub nice: Jiffies,
     /// Time spent in system mode.
-    pub system: f64,
+    pub system: Jiffies,
     /// Time spent not doing anything in particular
-    pub idle: f64,
+    pub idle: Jiffies,
     /// Time forced to be idle waiting for I/O to complete.
-    pub iowait: f64,
+    pub iowait: Jiffies,
     /// Time spent servicing hardware interrupts
-    pub irq: f64,
+    pub irq: Jiffies,
     /// Time spent servicing software interrupts
-    pub softirq: f64,
+    pub softirq: Jiffies,
     /// Stolen time, which is the time spent in other operating systems when
     /// running in a virtualized environment
-    pub steal: f64,
+    pub steal: Jiffies,
     /// Time spent running a virtual CPU for a guest operating system. AKA time
     /// we lent out to virtual machines.
-    pub guest: f64,
+    pub guest: Jiffies,
     /// Time spent running a niced guest
-    pub guest_nice: Option<f64>,
+    pub guest_nice: Option<Jiffies>,
 }
 
 impl Calculations {
@@ -208,18 +211,18 @@ impl Calculations {
         let usages = try!(line.split(' ').skip(1)
                           .filter(|part| part.len() > 0)
                           .map(|part| part.parse())
-                          .collect::<StdResult<Vec<_>, _>>());
+                          .collect::<StdResult<Vec<u64>, _>>());
         Ok(Calculations {
-            user: usages[0],
-            nice: usages[1],
-            system: usages[2],
-            idle: usages[3],
-            iowait: usages[4],
-            irq: usages[5],
-            softirq: usages[6],
-            steal: usages[7],
-            guest: usages[8],
-            guest_nice: usages.get(9).cloned(),
+            user: Jiffies::new(usages[0]),
+            nice: Jiffies::new(usages[1]),
+            system: Jiffies::new(usages[2]),
+            idle: Jiffies::new(usages[3]),
+            iowait: Jiffies::new(usages[4]),
+            irq: Jiffies::new(usages[5]),
+            softirq: Jiffies::new(usages[6]),
+            steal: Jiffies::new(usages[7]),
+            guest: Jiffies::new(usages[8]),
+            guest_nice: usages.get(9).map(|v| Jiffies::new(v.clone()))
         })
     }
 
@@ -227,14 +230,14 @@ impl Calculations {
     ///
     /// This includes all processes in user space, kernel space, and time
     /// stolen by other VMs.
-    pub fn active(&self) -> f64 {
-        self.user + self.nice // user processes
-            + self.system + self.irq + self.softirq // kernel and interrupts
-            + self.steal  // other VMs stealing our precious time
+    pub fn active(&self) -> Jiffies {
+        self.user + self.nice + // user processes
+            self.system + self.irq + self.softirq + // kernel and interrupts
+            self.steal  // other VMs stealing our precious time
     }
 
     /// Jiffies spent with nothing to do
-    pub fn idle(&self) -> f64 {
+    pub fn idle(&self) -> Jiffies {
         self.idle + self.iowait
     }
 
@@ -243,12 +246,12 @@ impl Calculations {
     /// This is included in `active()` by the nature of the way that
     /// /proc/stats reports things, so don't add this to that when totalling.
     #[allow(dead_code)]  // this mostly exists as documentation of what `guest` means
-    pub fn virt(&self) -> f64 {
-        self.guest + self.guest_nice.unwrap_or(0.0)
+    pub fn virt(&self) -> Jiffies {
+        self.guest + self.guest_nice.unwrap_or(Jiffies::new(0))
     }
 
     /// All jiffies since the kernel started tracking
-    pub fn total(&self) -> f64 {
+    pub fn total(&self) -> Jiffies {
         self.active() + self.idle()
     }
 
@@ -271,8 +274,11 @@ impl Calculations {
             WorkSource::SoftIrq => (start.softirq, self.softirq),
             WorkSource::Steal => (start.steal, self.steal),
             WorkSource::Guest => (start.guest, self.guest),
-            WorkSource::GuestNice => (start.guest_nice.unwrap_or(0f64), self.guest_nice.unwrap_or(0f64)),
+            WorkSource::GuestNice => (start.guest_nice.unwrap_or(Jiffies::new(0)),
+                                      self.guest_nice.unwrap_or(Jiffies::new(0))),
         };
+        println!("end_val - start_val {} - {} / {} - {}", end_val, start_val, self.total(), start.total());
+        assert!(self.total() > start.total());
         let total = (end_val - start_val) /
             (self.total() - start.total());
         total * 100f64
@@ -325,7 +331,7 @@ impl<'a> Sub for &'a Calculations {
 impl fmt::Display for Calculations {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let total = self.total();
-        let p = |v: f64| 100.0 * v / total;
+        let p = |v: Jiffies| 100 * v / total;
         write!(f, "user={:.1} system={:.1} nice={:.1} irq={:.1} softirq={:.1} | idle={:.1} iowait={:.1} | steal={:.1} guest={:.1} guest_nice={}",
                p(self.user), p(self.system), p(self.nice), p(self.irq), p(self.softirq),
                p(self.idle), p(self.iowait),
@@ -525,6 +531,8 @@ mod unit {
     use super::pid;
     use std::str::FromStr;
 
+    use linux::Jiffies;
+
     #[test]
     fn can_parse_stat_for_system() {
         let c = Calculations::from_str(
@@ -535,16 +543,16 @@ ctxt 310
 btime 143
 ");
         assert_eq!(c.unwrap(), Calculations {
-            user: 100.0,
-            nice: 55.0,
-            system: 66.0,
-            idle: 77.0,
-            iowait: 88.0,
-            irq: 1.0,
-            softirq: 9.0,
-            steal: 0.0,
-            guest: 0.0,
-            guest_nice: Some(0.0),
+            user: Jiffies::new(100),
+            nice: Jiffies::new(55),
+            system: Jiffies::new(66),
+            idle: Jiffies::new(77),
+            iowait: Jiffies::new(88),
+            irq: Jiffies::new(1),
+            softirq: Jiffies::new(9),
+            steal: Jiffies::new(0),
+            guest: Jiffies::new(0),
+            guest_nice: Some(Jiffies::new(0)),
         });
     }
 
@@ -557,14 +565,13 @@ btime 143
     #[test]
     fn parse_meminfo() {
         assert_eq!(
-            MemInfo::from_str(
-"Useless: 898
-MemTotal: 500
-MemAvailable: 20
-MemFree: 280
-Meaningless: 777
-Cached: 200
-"),
+            MemInfo::from_str(concat!(
+                "Useless: 898\n",
+                "MemTotal: 500\n",
+                "MemAvailable: 20\n",
+                "MemFree: 280\n",
+                "Meaningless: 777\n",
+                "Cached: 200\n")),
             MemInfo {
                 total: Some(500),
                 available: Some(20),

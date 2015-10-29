@@ -16,9 +16,11 @@
 //! * Much of the code is hideous, and should not be
 
 
+#[macro_use] extern crate lazy_static;
 #[macro_use] extern crate scan_fmt;
 #[macro_use] extern crate wrapped_enum;
 
+extern crate libc;
 extern crate regex;
 extern crate rustc_serialize;
 
@@ -26,7 +28,9 @@ use std::process;
 use std::cmp::{Ord};
 use std::fmt;
 
+pub mod linux;
 pub mod procfs;
+pub mod sys;
 pub mod scripts;
 
 /// All errors are TurbineErrors
@@ -41,7 +45,7 @@ pub type TurbineResult<T> = Result<T, TurbineError>;
 
 /// Represent the nagios-ish error status of a script.
 #[must_use]
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 pub enum Status {
     /// Unexpected result
     Unknown,

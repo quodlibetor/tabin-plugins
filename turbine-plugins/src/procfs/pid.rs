@@ -7,6 +7,8 @@ use std::str::FromStr;
 
 use super::{Result, ProcFsError, MemInfo};
 
+use linux::Jiffies;
+
 pub struct Process {
     pub stat: Stat,
     pub cmdline: CmdLine,
@@ -56,10 +58,10 @@ pub struct Stat {
     pub cminflt: u64,
     pub majflt: u64,
     pub cmajflt: u64,
-    pub utime: u64,
-    pub stime: u64,
-    pub cutime: i64,
-    pub cstime: i64,
+    pub utime: Jiffies,
+    pub stime: Jiffies,
+    pub cutime: Jiffies,
+    pub cstime: Jiffies,
     pub priority: i64,
     pub nice: i64,
     pub num_threads: i64,
@@ -83,9 +85,9 @@ impl Default for Stat {
         Stat {
             pid: 0, comm: "init".to_string(), state: "R".to_string(), ppid: 0,
             pgrp: 0, session: 0, tty_nr: 0, tpgid: 0, flags: 0, minflt: 0,
-            cminflt: 0, majflt: 0, cmajflt: 0, utime: 0, stime: 0, cutime: 0,
-            cstime: 0, priority: 0, nice: 0, num_threads: 0, starttime: 0,
-            vsize: 0, rss: 0
+            cminflt: 0, majflt: 0, cmajflt: 0, utime: Jiffies::new(0), stime: Jiffies::new(0),
+            cutime: Jiffies::new(0), cstime: Jiffies::new(0), priority: 0, nice: 0, num_threads: 0,
+            starttime: 0, vsize: 0, rss: 0
         }
     }
 }
@@ -138,10 +140,10 @@ impl FromStr for Stat {
             cminflt: cminflt.expect("unable to parse cminflt."),
             majflt: majflt.expect("unable to parse majflt."),
             cmajflt: cmajflt.expect("unable to parse cmajflt."),
-            utime: utime.expect("unable to parse utime."),
-            stime: stime.expect("unable to parse stime."),
-            cutime: cutime.expect("unable to parse cutime."),
-            cstime: cstime.expect("unable to parse cstime."),
+            utime: utime.expect("unable to parse utime.").into(),
+            stime: stime.expect("unable to parse stime.").into(),
+            cutime: cutime.expect("unable to parse cutime.").into(),
+            cstime: cstime.expect("unable to parse cstime.").into(),
             priority: priority.expect("unable to parse priority."),
             nice: nice.expect("unable to parse nice."),
             num_threads: num_threads.expect("unable to parse num_threads."),
