@@ -261,7 +261,7 @@ fn filter_to_with_data(path: &str,
     if series_with_data.len() > 0 {
         Ok(series_with_data)
     } else {
-        print!("{}: Graphite found {} series but returned only empty datapoints for them",
+        println!("{}: Graphite found {} series but returned only empty datapoints for them",
                no_data_status, matched_len);
         Err(no_data_status)
     }
