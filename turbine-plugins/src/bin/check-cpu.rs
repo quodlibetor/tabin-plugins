@@ -103,19 +103,21 @@ fn main() {
     let mut status = Status::Ok;
 
     let start = Calculations::load().unwrap();
-    let start_per_proc = RunningProcs::currently_running().unwrap();
-
+    let mut start_per_proc = None;
+    if args.flag_show_hogs > 0 {
+        start_per_proc = Some(RunningProcs::currently_running().unwrap());
+    }
     std::thread::sleep_ms(args.flag_sample * 1000);
 
-    let end_per_proc = RunningProcs::currently_running().unwrap();
     let end = Calculations::load().unwrap();
-    let mut per_proc = end_per_proc.percent_cpu_util_since(&start_per_proc,
-                                                           end.total() - start.total());
-    per_proc.0.sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
-
     status = max(status, do_comparison(&args, &start, &end));
 
     if args.flag_show_hogs > 0 {
+        let end_per_proc = RunningProcs::currently_running().unwrap();
+        let start_per_proc = start_per_proc.unwrap();
+        let mut per_proc = end_per_proc.percent_cpu_util_since(&start_per_proc,
+                                                               end.total() - start.total());
+        per_proc.0.sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
         println!("INFO [check-cpu]: hogs");
         for usage in per_proc.0.iter().take(args.flag_show_hogs) {
             println!("     {:.1}%: {}",
