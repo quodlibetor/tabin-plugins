@@ -13,12 +13,10 @@ use std::cmp::{PartialOrd, max};
 use docopt::Docopt;
 use turbine_plugins::Status;
 use turbine_plugins::procfs::{Calculations, RunningProcs, WorkSource};
-use turbine_plugins::sys::fs::cgroup::cpuacct::Stat as CGroupStat;
-use turbine_plugins::linux::Ratio;
 
 static USAGE: &'static str = "
 Usage:
-    check-cpu [options] [--type=<work-source>...] [--container] [--show-hogs=<count>]
+    check-cpu [options] [--type=<work-source>...] [--show-hogs=<count>]
     check-cpu (-h | --help)
 
 Options:
@@ -45,10 +43,6 @@ CPU Work Types:
                                 active activeplusiowait activeminusnice
                                 user nice system irq softirq steal guest
                                 idle iowait [default: active]
-
-    --container              Use the total process from inside the currently
-                             running container
-
 ";
 
 #[derive(RustcDecodable, Debug)]
@@ -60,7 +54,6 @@ struct Args {
     flag_show_hogs: usize,
 
     flag_type: Vec<WorkSource>,
-    flag_container: bool,
 }
 
 fn print_errors_and_status<T: Display, V: PartialOrd<V> + Display>(
@@ -84,9 +77,7 @@ fn print_errors_and_status<T: Display, V: PartialOrd<V> + Display>(
 /// thresholds.
 fn do_comparison<'a>(args: &Args,
                      start: &'a Calculations,
-                     end: &'a Calculations,
-                     start_cstat: &'a Option<CGroupStat>,
-                     end_cstat: &'a Option<CGroupStat>
+                     end: &'a Calculations
 ) -> Status {
     let mut exit_status = Status::Ok;
 
@@ -96,15 +87,6 @@ fn do_comparison<'a>(args: &Args,
             exit_status,
             print_errors_and_status(
                 flag, total, args.flag_crit.into(), args.flag_warn, exit_status));
-    }
-    if let (&Some(ref cstart), &Some(ref cend)) = (start_cstat, end_cstat) {
-        let total = (end.total() - start.total()).duration();
-        let container = (cend.total() - cstart.total()).duration();
-        let usage_ratio = container.ratio(&total);
-        exit_status = std::cmp::max(
-            exit_status,
-            print_errors_and_status(
-                "container", usage_ratio, args.flag_crit, args.flag_warn, exit_status));
     }
     println!("INFO [check-cpu]: Usage breakdown: {}", end - start);
 
@@ -118,21 +100,8 @@ fn main() {
         .and_then(|d| d.decode())
         .unwrap_or_else(|e| e.exit());
 
-    let mut cstat_start = None;
-    let mut cstat_end = None;
     let mut status = Status::Ok;
 
-    if args.flag_container {
-        match CGroupStat::load() {
-            Ok(val) => cstat_start = Some(val),
-            Err(e) => {
-                println!(
-                    "WARNING [check-cpu]: unable to load container stats from /sys/fs (are you running from inside a container?): {}",
-                    e);
-                status = max(status, Status::Warning);
-            }
-        };
-    }
     let start = Calculations::load().unwrap();
     let start_per_proc = RunningProcs::currently_running().unwrap();
 
@@ -144,11 +113,7 @@ fn main() {
                                                            end.total() - start.total());
     per_proc.0.sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
 
-    if args.flag_container {
-        cstat_end = CGroupStat::load().ok()
-    }
-
-    status = max(status, do_comparison(&args, &start, &end, &cstat_start, &cstat_end));
+    status = max(status, do_comparison(&args, &start, &end));
 
     if args.flag_show_hogs > 0 {
         println!("INFO [check-cpu]: hogs");
