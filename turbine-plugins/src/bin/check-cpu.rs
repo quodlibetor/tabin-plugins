@@ -25,6 +25,13 @@ Options:
     -s, --sample=<seconds>   Seconds to spent collecting   [default: 1]
     -w, --warn=<percent>     Percent to warn at            [default: 80]
     -c, --crit=<percent>     Percent to critical at        [default: 95]
+
+    --per-cpu                Gauge values per-cpu instead of across the
+                             entire machine
+    --cpu-count=<num>        If --per-cpu is specified, this is how many
+                             CPUs need to be at a threshold to trigger.
+                             [default: 1]
+
     --show-hogs=<count>      Show most cpu-hungry procs    [default: 0]
 
 CPU Work Types:
@@ -52,6 +59,9 @@ struct Args {
     flag_warn: f64,
     flag_crit: f64,
     flag_show_hogs: usize,
+
+    flag_per_cpu: bool,
+    flag_cpu_count: u32,
 
     flag_type: Vec<WorkSource>,
 }
@@ -93,6 +103,25 @@ fn do_comparison<'a>(args: &Args,
     exit_status
 }
 
+fn determine_status_per_cpu(args: &Args, start: &[Calculations], end: &[Calculations])
+-> Vec<Status> {
+    start.iter().enumerate()
+        .map(|(i, val)|
+             do_comparison(&args, &val, &end[i]))
+        .collect::<Vec<_>>()
+}
+
+fn determine_exit(args: &Args, statuses: &[Status]) -> Status {
+    let crit = statuses.iter().filter(|status| **status == Status::Critical).collect::<Vec<_>>();
+    let warn = statuses.iter().filter(|status| **status == Status::Warning).collect::<Vec<_>>();
+    if crit.len() >= args.flag_cpu_count as usize {
+        Status::Critical
+    } else if warn.len() >= args.flag_cpu_count as usize {
+        Status::Warning
+    } else {
+        Status::Ok
+    }
+}
 
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
@@ -100,23 +129,32 @@ fn main() {
         .and_then(|d| d.decode())
         .unwrap_or_else(|e| e.exit());
 
-    let mut status = Status::Ok;
-
-    let start = Calculations::load().unwrap();
+    let start = if args.flag_per_cpu {
+        Calculations::load_per_cpu().unwrap()
+    } else {
+        vec![Calculations::load().unwrap()]
+    };
     let mut start_per_proc = None;
     if args.flag_show_hogs > 0 {
         start_per_proc = Some(RunningProcs::currently_running().unwrap());
     }
     std::thread::sleep_ms(args.flag_sample * 1000);
 
-    let end = Calculations::load().unwrap();
-    status = max(status, do_comparison(&args, &start, &end));
+    let end = if args.flag_per_cpu {
+        Calculations::load_per_cpu().unwrap()
+    } else {
+        vec![Calculations::load().unwrap()]
+    };
+    let statuses = determine_status_per_cpu(&args, &start, &end);
 
     if args.flag_show_hogs > 0 {
         let end_per_proc = RunningProcs::currently_running().unwrap();
         let start_per_proc = start_per_proc.unwrap();
-        let mut per_proc = end_per_proc.percent_cpu_util_since(&start_per_proc,
-                                                               end.total() - start.total());
+        let single_start = &start[0];
+        let single_end = &end[0];
+        let mut per_proc = end_per_proc.percent_cpu_util_since(
+            &start_per_proc,
+            single_end.total() - single_start.total());
         per_proc.0.sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
         println!("INFO [check-cpu]: hogs");
         for usage in per_proc.0.iter().take(args.flag_show_hogs) {
@@ -125,20 +163,34 @@ fn main() {
                      usage.process.useful_cmdline());
         }
     }
-    status.exit()
+
+    determine_exit(&args, &statuses).exit()
 }
 
 #[cfg(test)]
 mod unit {
     use docopt::Docopt;
-    use super::{USAGE};
+    use super::{Args, USAGE, do_comparison, determine_exit, determine_status_per_cpu};
 
+    use turbine_plugins::Status;
     use turbine_plugins::procfs::{Calculations, WorkSource};
     use turbine_plugins::linux::Jiffies;
 
     #[test]
     fn validate_docstring() {
-        Docopt::new(USAGE).unwrap();
+        let _: Args = Docopt::new(USAGE)
+            .and_then(|d| d.argv(vec!["arg0", "--per-cpu"].into_iter()).help(true).decode())
+            .unwrap();
+        let args: Args = Docopt::new(USAGE)
+            .and_then(|d| d.argv(vec!["arg0", "--per-cpu", "--cpu-count", "2"].into_iter())
+                      .decode())
+            .unwrap();
+        assert_eq!(args.flag_per_cpu, true);
+        let args: Args = Docopt::new(USAGE)
+            .and_then(|d| d.argv(vec!["arg0", "--show-hogs", "5"].into_iter()).decode())
+            .unwrap();
+        assert_eq!(args.flag_per_cpu, false);
+        assert_eq!(args.flag_show_hogs, 5);
     }
 
     #[test]
@@ -214,30 +266,19 @@ mod unit {
 
         assert_eq!(end.percent_util_since(&WorkSource::Active, &start), 75.0)
     }
-}
-
-#[cfg(target_os = "linux")]
-#[cfg(test)]
-mod integration {
-    // not really integration tests, but higher level
-    use super::{do_comparison, USAGE};
-
-    use turbine_plugins::Status;
-    use turbine_plugins::procfs::Calculations;
-    use docopt::Docopt;
 
     fn start() -> Calculations {
         Calculations {
-            user: 100.0,
-            nice: 100.0,
-            system: 100.0,
-            idle: 100.0,
-            iowait: 100.0,
-            irq: 100.0,
-            softirq: 100.0,
-            steal: 100.0,
-            guest: 100.0,
-            guest_nice: Some(0.0),
+            user: Jiffies::new(100),
+            nice: Jiffies::new(100),
+            system: Jiffies::new(100),
+            idle: Jiffies::new(100),
+            iowait: Jiffies::new(100),
+            irq: Jiffies::new(100),
+            softirq: Jiffies::new(100),
+            steal: Jiffies::new(100),
+            guest: Jiffies::new(100),
+            guest_nice: Some(Jiffies::new(0)),
         }
     }
 
@@ -246,8 +287,8 @@ mod integration {
         let argv = || vec!["check-cpu", "-c", "49", "--type", "active", "--type", "steal"];
         let start = start();
         let end = Calculations {
-            user: 110.0,
-            idle: 110.0,
+            user: Jiffies::new(110),
+            idle: Jiffies::new(110),
             ..start
         };
         let args: super::Args = Docopt::new(USAGE)
@@ -256,5 +297,66 @@ mod integration {
 
         assert_eq!(do_comparison(&args, &start, &end),
                    Status::Critical);
+    }
+
+    // Exactly the same as does_alert, but also validate the determine* functions
+    #[test]
+    fn does_alert_per_cpu() {
+        let argv = || vec!["check-cpu", "-c", "49", "--type", "active", "--type", "steal"];
+        let start = vec![start()];
+        let end = vec![Calculations {
+            user: Jiffies::new(110),
+            idle: Jiffies::new(110),
+            ..start[0]
+        }];
+        let args: super::Args = Docopt::new(USAGE)
+            .and_then(|d| d.argv(argv().into_iter()).decode())
+            .unwrap();
+        let statuses = determine_status_per_cpu(&args, &start, &end);
+        assert_eq!(statuses, vec![Status::Critical]);
+        assert_eq!(determine_exit(&args, &statuses), Status::Critical);
+    }
+
+    #[test]
+    fn does_alert_per_cpu_with_some_ok() {
+        let argv = || vec!["check-cpu", "-c", "49", "--type", "active",
+                           "--per-cpu", "--cpu-count", "2"];
+        let start = vec![start(), start(), start()];
+        let mut end = vec![
+            Calculations {
+                user: Jiffies::new(110),
+                idle: Jiffies::new(110),
+                ..start[0]
+            },
+            Calculations {
+                user: Jiffies::new(105),
+                idle: Jiffies::new(110),
+                ..start[0]
+            },
+            Calculations {
+                user: Jiffies::new(105),
+                idle: Jiffies::new(110),
+                ..start[0]
+            },
+            ];
+        let args: super::Args = Docopt::new(USAGE)
+            .and_then(|d| d.argv(argv().into_iter()).decode())
+            .unwrap();
+        let statuses = determine_status_per_cpu(&args, &start, &end);
+        assert_eq!(statuses, vec![Status::Critical, Status::Ok, Status::Ok]);
+        assert_eq!(determine_exit(&args, &statuses), Status::Ok);
+
+
+        end[1] = Calculations {
+                user: Jiffies::new(110),
+                idle: Jiffies::new(110),
+                ..start[0]
+            };
+        let args: super::Args = Docopt::new(USAGE)
+            .and_then(|d| d.argv(argv().into_iter()).decode())
+            .unwrap();
+        let statuses = determine_status_per_cpu(&args, &start, &end);
+        assert_eq!(statuses, vec![Status::Critical, Status::Critical, Status::Ok]);
+        assert_eq!(determine_exit(&args, &statuses), Status::Critical);
     }
 }

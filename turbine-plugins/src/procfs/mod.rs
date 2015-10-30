@@ -144,7 +144,7 @@ impl fmt::Display for WorkSource {
 
 /// The number of calculations that have occured on this computer in a time
 /// period
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Calculations {
     /// Time spent in user mode.
     pub user: Jiffies,
@@ -191,6 +191,11 @@ impl Calculations {
     /// This does not include the `total` line, use `load()` for that.
     pub fn load_per_cpu() -> Result<Vec<Calculations>> {
         let contents = Self::read_procstat().unwrap();
+        Calculations::per_cpu(&contents)
+    }
+
+    /// Create a Vec of Calculations for each individual cpu in a stat file
+    fn per_cpu(contents: &str) -> Result<Vec<Calculations>> {
         contents.lines().skip(1).filter(|line| line.starts_with("cpu"))
             .map(Calculations::from_line)
             .collect::<StdResult<Vec<_>, _>>()
@@ -277,8 +282,7 @@ impl Calculations {
             WorkSource::GuestNice => (start.guest_nice.unwrap_or(Jiffies::new(0)),
                                       self.guest_nice.unwrap_or(Jiffies::new(0))),
         };
-        println!("end_val - start_val {} - {} / {} - {}", end_val, start_val, self.total(), start.total());
-        assert!(self.total() > start.total());
+        assert!(self.total() >= start.total());
         let total = (end_val - start_val) /
             (self.total() - start.total());
         total * 100f64
@@ -555,6 +559,57 @@ btime 143
             guest_nice: Some(Jiffies::new(0)),
         });
     }
+
+        #[test]
+    fn can_parse_multiple_cpus() {
+        let c = Calculations::per_cpu(
+"cpu  100 55 66 77 88 1 9 0 0 0
+cpu0 101 99 99 99 99 99 99 0 0 0
+cpu1 102 98 98 98 98 98 98 0 0 0
+cpu1 103 97 97 97 97 97 97 0 0 0
+intr 17749885 52 10 0 0 0 0 0 0 0 0 0 0 149 0 0 0 0 0 0 493792 10457659 2437665
+ctxt 310
+btime 143
+");
+        assert_eq!(c.unwrap(), vec![
+            Calculations {
+                user: Jiffies::new(101),
+                nice: Jiffies::new(99),
+                system: Jiffies::new(99),
+                idle: Jiffies::new(99),
+                iowait: Jiffies::new(99),
+                irq: Jiffies::new(99),
+                softirq: Jiffies::new(99),
+                steal: Jiffies::new(0),
+                guest: Jiffies::new(0),
+                guest_nice: Some(Jiffies::new(0)),
+            },
+            Calculations {
+                user: Jiffies::new(102),
+                nice: Jiffies::new(98),
+                system: Jiffies::new(98),
+                idle: Jiffies::new(98),
+                iowait: Jiffies::new(98),
+                irq: Jiffies::new(98),
+                softirq: Jiffies::new(98),
+                steal: Jiffies::new(0),
+                guest: Jiffies::new(0),
+                guest_nice: Some(Jiffies::new(0)),
+            },
+            Calculations {
+                user: Jiffies::new(103),
+                nice: Jiffies::new(97),
+                system: Jiffies::new(97),
+                idle: Jiffies::new(97),
+                iowait: Jiffies::new(97),
+                irq: Jiffies::new(97),
+                softirq: Jiffies::new(97),
+                steal: Jiffies::new(0),
+                guest: Jiffies::new(0),
+                guest_nice: Some(Jiffies::new(0)),
+            }]);
+    }
+
 
     #[test]
     fn can_parse_stat_for_process() {
