@@ -54,6 +54,8 @@ pub struct ProcUsage<'a> {
 
 pub type ProcMap = HashMap<i32, pid::Process>;
 /// All the processes that are running
+// TODO: make this internal field private, and re-export the methods on the
+// vec.
 pub struct RunningProcs(pub ProcMap);
 
 impl RunningProcs {

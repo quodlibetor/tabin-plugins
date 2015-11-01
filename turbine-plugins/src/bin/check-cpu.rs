@@ -158,7 +158,8 @@ fn main() {
         per_proc.0.sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
         println!("INFO [check-cpu]: hogs");
         for usage in per_proc.0.iter().take(args.flag_show_hogs) {
-            println!("     {:.1}%: {}",
+            println!("[{:>5}]{:>5.1}%: {}",
+                     usage.process.stat.pid,
                      usage.total,
                      usage.process.useful_cmdline());
         }
