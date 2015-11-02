@@ -2,6 +2,7 @@
 extern crate clap;
 extern crate chrono;
 extern crate hyper;
+extern crate itertools;
 extern crate rustc_serialize;
 
 extern crate turbine_plugins;
@@ -14,6 +15,7 @@ use std::thread::sleep_ms;
 use chrono::naive::datetime::NaiveDateTime;
 use hyper::client::Response;
 use hyper::error::Result as HyperResult;
+use itertools::Itertools;
 use rustc_serialize::json::{self, Json};
 
 use turbine_plugins::Status;
@@ -267,7 +269,6 @@ fn filter_to_with_data(path: &str,
     }
 }
 
-#[allow(deprecated)] // connect => join in 1.3
 fn do_check(
     series_with_data: &[GraphiteData],
     op: &str,
@@ -340,7 +341,7 @@ fn do_check(
                         series.percent_matched(),
                         nostr, op, threshold,
                         series.points.iter().map(|gv| format!("{}", gv))
-                            .collect::<Vec<_>>().connect(", "));
+                            .join(", "));
                 }
             },
             PointAssertion::Recent(count) => {
@@ -356,7 +357,7 @@ fn do_check(
                         "       -> {}'s last {} {}{} {} {}: {}",
                         series.original.target, count, descriptor, nostr, op, threshold,
                         series.points.iter().map(|gv| format!("{}", gv))
-                            .collect::<Vec<_>>().connect(", "));
+                            .join(", "));
                 }
             }
         }
@@ -382,7 +383,7 @@ fn do_check(
                      series.target,
                      series.points.iter()
                      .map(|gv| format!("{}", gv))
-                     .collect::<Vec<_>>().connect(", "))
+                     .join(", "))
         }
         Status::Ok
     }
@@ -409,7 +410,6 @@ static ASSERTION_EXAMPLES: &'static [&'static str] = &[
     "critical if most recent point in all series are == 0",
     ];
 
-#[allow(deprecated)]  // connect ->
 fn parse_args<'a>() -> Args {
     let allowed_no_data = Status::str_values(); // block-local var for borrowck
     let args = clap::App::new("check-graphite")
@@ -467,7 +467,7 @@ fn parse_args<'a>() -> Args {
 
     Here are some example assertions:
 
-        - `{}`\n", ASSERTION_EXAMPLES.connect("`\n        - `")))
+        - `{}`\n", ASSERTION_EXAMPLES.join("`\n        - `")))
      .get_matches();
 
     let assertions = args.values_of("ASSERTION").unwrap()
