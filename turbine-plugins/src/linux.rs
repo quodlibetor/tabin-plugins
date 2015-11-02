@@ -4,12 +4,48 @@ use std::fmt;
 use std::ops;
 use std::time::Duration;
 
-use libc::consts::os::sysconf::_SC_CLK_TCK;
+use libc::consts::os::sysconf::{_SC_CLK_TCK, _SC_PAGESIZE};
 use libc::funcs::posix88::unistd::sysconf;
 
 lazy_static!(
     pub static ref USER_HZ: u64 = unsafe { sysconf(_SC_CLK_TCK) } as u64;
+    pub static ref PAGESIZE: u64 = unsafe { sysconf(_SC_PAGESIZE) } as u64;
 );
+
+
+pub fn pages_to_human_size(pages: u64) -> String {
+    let bytes = pages * (*PAGESIZE);
+    bytes_to_human_size(bytes)
+}
+
+fn bytes_to_human_size(bytes: u64) -> String {
+    let mut bytes = bytes as f64;
+    let sizes = ["B", "K", "M", "G", "T"];
+    let mut reductions = 0;
+    while reductions < sizes.len() - 1 {
+        if bytes > 1000.0 {
+            bytes = bytes / 1024.0;
+            reductions += 1;
+        } else {
+            break;
+        }
+    }
+    format!("{:>5.1}{}", bytes, sizes[reductions])
+}
+
+#[test]
+fn pages_to_human_size_produces_shortest() {
+    let reprs = [(999,                    "999.0B"),
+                 (9_999,                  "  9.8K"),
+                 (9_999_999,              "  9.5M"),
+                 (35_999_999,             " 34.3M"),
+                 (9_999_999_999,          "  9.3G"),
+                 (9_999_999_999_999,      "  9.1T"),
+                 (90_999_999_999_999_999, "82764.0T")];
+
+    reprs.iter().map(|&(raw, repr): &(u64, &str)|
+                     assert_eq!(bytes_to_human_size(raw), repr)).collect::<Vec<_>>();
+}
 
 /// A value that is in USER_HZ units
 ///

@@ -350,6 +350,8 @@ impl fmt::Display for Calculations {
 // Memory
 
 /// A struct that represents overall memory usage on the system.
+///
+/// All values are in KB.
 #[derive(PartialEq, Eq, Debug)]
 pub struct MemInfo {
     pub total: Option<usize>,
@@ -422,8 +424,6 @@ impl MemInfo {
         let mut currently = Currently::None;
 
         for chr in meminfo.chars() {
-            // println!("'a'<= {}: {}, {} <= 'Z': {}",
-            //        chr, 'A' <= chr, chr, chr <= 'z');
             match chr {
                 c if 'A' <= c && c <= 'z' => {
                     word.push(chr);

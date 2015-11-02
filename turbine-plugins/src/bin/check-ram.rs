@@ -5,6 +5,7 @@ extern crate turbine_plugins;
 
 use docopt::Docopt;
 
+use turbine_plugins::linux::pages_to_human_size;
 use turbine_plugins::Status;
 use turbine_plugins::procfs::{RunningProcs, MemInfo};
 
@@ -65,7 +66,10 @@ fn main() {
             println!("INFO [check-ram]: ram hogs");
             for process in procs.iter().take(args.flag_show_hogs) {
                 let percent = process.percent_ram(&mem).unwrap_or(0.0);
-                println!("     {:.1}%: {}", percent, process.useful_cmdline());
+                println!("[{:>6}]{:>5.1}% {}: {}",
+                         process.stat.pid,
+                         percent, pages_to_human_size(process.stat.rss),
+                         process.useful_cmdline());
             }
         }
     };

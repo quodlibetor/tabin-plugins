@@ -7,7 +7,7 @@ use std::str::FromStr;
 
 use super::{Result, ProcFsError, MemInfo};
 
-use linux::Jiffies;
+use linux::{Jiffies, PAGESIZE};
 
 pub struct Process {
     pub stat: Stat,
@@ -33,11 +33,15 @@ impl Process {
 
     pub fn percent_ram(&self, mem: &MemInfo) -> Option<f64> {
         if let &MemInfo { total: Some(system), .. } = mem {
-            Some(self.stat.rss as f64 / system as f64 * 100.0)
+            Some(pages_to_kb(self.stat.rss) as f64 / system as f64 * 100.0)
         } else {
             None
         }
     }
+}
+
+fn pages_to_kb(pages: u64) -> u64 {
+    pages * (*PAGESIZE) / 1024
 }
 
 /// The status of a process
@@ -67,7 +71,7 @@ pub struct Stat {
     pub num_threads: i64,
     pub starttime: u64,
     pub vsize: u64,
-    pub rss: i64
+    pub rss: u64
 }
 
 impl Stat {
@@ -124,7 +128,7 @@ impl FromStr for Stat {
             // itrealvalue (always 0)
             u64,                    // starttime FIXME: should be long long int
             u64,                    // vsize
-            i64                     // rss
+            u64                     // rss
                 );
         Ok(Stat {
             pid: pid.expect("unable to parse pid."),
