@@ -261,7 +261,7 @@ fn filter_to_with_data(path: &str,
     if series_with_data.len() > 0 {
         Ok(series_with_data)
     } else {
-        println!("{}: Graphite found {} series but returned only empty datapoints for them",
+        println!("{}: Graphite found {} series but returned only null datapoints for them",
                no_data_status, matched_len);
         Err(no_data_status)
     }
@@ -313,11 +313,13 @@ fn do_check(
         match error_condition {
             PointAssertion::Ratio(ratio) => {
                 if series_with_data.len() == with_invalid.len() {
-                    if ratio == 0.0 {
+                    if with_invalid.len() == 1 {
+                        print!("{}: ", status)
+                    } else if ratio == 0.0 {
                         println!("{}: All matched paths have invalid datapoints:", status)
                     } else {
                         println!(
-                            "{}: All matched paths have at least {:.0}% invalid datapoints",
+                            "{}: All matched paths have at least {:.0}% invalid datapoints:",
                             status, ratio * 100.0)
                     }
                 } else {
@@ -326,8 +328,14 @@ fn do_check(
                          status, series_with_data.len(), with_invalid.len(), ratio * 100.0);
                 }
                 for series in with_invalid.iter() {
+                    let prefix = if with_invalid.len() == 1 {
+                        "       ->"
+                    } else {
+                        ""
+                    };
                     println!(
-                        "       -> {} has {} points ({:.1}%) that are{} {} {}: {}",
+                        "{} {} has {} points ({:.1}%) that are{} {} {}: {}",
+                        prefix,
                         series.original.target, series.points.len(),
                         series.percent_matched(),
                         nostr, op, threshold,
@@ -336,12 +344,17 @@ fn do_check(
                 }
             },
             PointAssertion::Recent(count) => {
-                println!("{}: Of {} paths with data, {} have the last {} points invalid",
+                println!("{}: Of {} paths with data, {} have the last {} points invalid:",
                          status, series_with_data.len(), with_invalid.len(), count);
                 for series in with_invalid.iter() {
+                    let descriptor = if count == 1 {
+                        "point is"
+                    } else {
+                        "points are"
+                    };
                     println!(
-                        "       -> {}'s last {} points are{} {} {}: {}",
-                        series.original.target, count, nostr, op, threshold,
+                        "       -> {}'s last {} {}{} {} {}: {}",
+                        series.original.target, count, descriptor, nostr, op, threshold,
                         series.points.iter().map(|gv| format!("{}", gv))
                             .collect::<Vec<_>>().connect(", "));
                 }
