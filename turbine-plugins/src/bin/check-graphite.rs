@@ -3,6 +3,7 @@ extern crate clap;
 extern crate chrono;
 extern crate hyper;
 extern crate itertools;
+extern crate url;
 extern crate rustc_serialize;
 
 extern crate turbine_plugins;
@@ -16,6 +17,7 @@ use chrono::naive::datetime::NaiveDateTime;
 use hyper::client::Response;
 use hyper::error::Result as HyperResult;
 use itertools::Itertools;
+use url::Url;
 use rustc_serialize::json::{self, Json};
 
 use turbine_plugins::Status;
@@ -178,11 +180,16 @@ fn get_graphite(url: &str, target: &str, window: i64)
     Ok((result, s))
 }
 
+struct GraphiteResponse {
+    result: Json,
+    url: url::Url
+}
+
 /// Load data from graphite
 ///
 /// Retry until success or exit the script
 fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Status, graphite_error: &Status)
--> Result<Json, String> {
+-> Result<GraphiteResponse, String> {
     let graphite_result: (Response, String);
     let mut attempts = 0;
     let mut retry_sleep = 2000;
@@ -208,7 +215,7 @@ fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Statu
         };
     }
     match json::Json::from_str(&graphite_result.1) {
-        Ok(data) => Ok(data),
+        Ok(data) => Ok(GraphiteResponse { result: data, url: graphite_result.0.url.clone() }),
         Err(e) => match e {
             json::ParserError::SyntaxError(..) => {
                 Err(format!(
@@ -317,11 +324,12 @@ fn do_check(
                     if with_invalid.len() == 1 {
                         print!("{}: ", status)
                     } else if ratio == 0.0 {
-                        println!("{}: All matched paths have invalid datapoints:", status)
+                        println!("{}: All {} matched paths have invalid datapoints:",
+                                 status, with_invalid.len())
                     } else {
                         println!(
-                            "{}: All matched paths have at least {:.0}% invalid datapoints:",
-                            status, ratio * 100.0)
+                            "{}: All {} matched paths have at least {:.0}% invalid datapoints:",
+                            status, with_invalid.len(), ratio * 100.0)
                     }
                 } else {
                     println!("{}: Of {} paths with data, \
@@ -330,9 +338,9 @@ fn do_check(
                 }
                 for series in with_invalid.iter() {
                     let prefix = if with_invalid.len() == 1 {
-                        "       ->"
-                    } else {
                         ""
+                    } else {
+                        "       ->"
                     };
                     println!(
                         "{} {} has {} points ({:.1}%) that are{} {} {}: {}",
@@ -354,7 +362,7 @@ fn do_check(
                         "points are"
                     };
                     println!(
-                        "       -> {}'s last {} {}{} {} {}: {}",
+                        "       -> {} last {} {}{} {} {}: {}",
                         series.original.target, count, descriptor, nostr, op, threshold,
                         series.points.iter().map(|gv| format!("{}", gv))
                             .join(", "));
@@ -373,13 +381,13 @@ fn do_check(
             },
             PointAssertion::Recent(count) => {
                 println!(
-                    "OK: Found {} paths with data, none had their last {} of datapoints{} {} {}.",
+                    "OK: Found {} paths with data, none had their last {} datapoints{} {} {}.",
                     series_with_data.len(), count, nostr, op, threshold
                     );
             }
         };
         for series in series_with_data.iter() {
-            println!("    -> {}'s looks like: {}",
+            println!("    -> {}: {}",
                      series.target,
                      series.points.iter()
                      .map(|gv| format!("{}", gv))
@@ -737,10 +745,13 @@ fn main() {
         }
     };
 
-    let filtered = filter_to_with_data(&args.path, data, args.no_data);
+    let filtered = filter_to_with_data(&args.path, data.result, args.no_data);
     let with_data = match filtered {
         Ok(data) => data,
-        Err(status) => status.exit()
+        Err(status) => {
+            println!("INFO: Full query: {}", data.url);
+            status.exit();
+        }
     };
 
     let mut status = Status::Ok;
