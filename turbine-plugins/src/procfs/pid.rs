@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
 
-use super::{Result, ProcFsError, MemInfo};
+use super::{Result, ProcFsError};
 
 use linux::{Jiffies, PAGESIZE};
 
@@ -31,17 +31,16 @@ impl Process {
         }
     }
 
-    pub fn percent_ram(&self, mem: &MemInfo) -> Option<f64> {
-        if let &MemInfo { total: Some(system), .. } = mem {
-            Some(pages_to_kb(self.stat.rss) as f64 / system as f64 * 100.0)
-        } else {
-            None
-        }
+    /// What percent this process is using
+    ///
+    /// First argument should be in bytes.
+    pub fn percent_ram(&self, of_bytes: usize) -> f64 {
+        pages_to_bytes(self.stat.rss) as f64 / of_bytes as f64 * 100.0
     }
 }
 
-fn pages_to_kb(pages: u64) -> u64 {
-    pages * (*PAGESIZE) / 1024
+fn pages_to_bytes(pages: u64) -> u64 {
+    pages * (*PAGESIZE)
 }
 
 /// The status of a process

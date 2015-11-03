@@ -62,15 +62,14 @@ fn main() {
         let per_proc = RunningProcs::currently_running().unwrap();
         let mut procs = per_proc.0.values().collect::<Vec<_>>();
         procs.sort_by(|l, r| r.stat.rss.cmp(&l.stat.rss));
-        if args.flag_show_hogs > 0 {
-            println!("INFO [check-ram]: ram hogs");
-            for process in procs.iter().take(args.flag_show_hogs) {
-                let percent = process.percent_ram(&mem).unwrap_or(0.0);
-                println!("[{:>6}]{:>5.1}% {}: {}",
-                         process.stat.pid,
-                         percent, pages_to_human_size(process.stat.rss),
-                         process.useful_cmdline());
-            }
+        println!("INFO [check-ram]: ram hogs");
+        for process in procs.iter().take(args.flag_show_hogs) {
+            let system_kb = mem.total.unwrap();
+            let percent = process.percent_ram(system_kb * 1024);
+            println!("[{:>6}]{:>5.1}% {}: {}",
+                     process.stat.pid,
+                     percent, pages_to_human_size(process.stat.rss),
+                     process.useful_cmdline());
         }
     };
     status.exit();
