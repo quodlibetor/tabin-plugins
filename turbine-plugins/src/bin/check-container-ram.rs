@@ -5,6 +5,7 @@ extern crate docopt;
 
 extern crate turbine_plugins;
 
+use std::fmt;
 use std::cmp::max;
 
 use docopt::Docopt;
@@ -47,6 +48,20 @@ struct Args {
     flag_show_hogs: u32
 }
 
+enum Limit {
+    CGroup,
+    System
+}
+
+impl fmt::Display for Limit {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Limit::CGroup => write!(f, "cgroup limit"),
+            Limit::System => write!(f, "system ram")
+        }
+    }
+}
+
 fn main() {
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.decode())
@@ -54,6 +69,7 @@ fn main() {
     let mut status = Status::Ok;
 
     let mut limit = limit_in_bytes().unwrap();
+    let mut limit_type = Limit::CGroup;
     let mem = MemInfo::load();
     let system_bytes = mem.total.unwrap() * 1024;
     if limit > system_bytes {
@@ -65,6 +81,7 @@ fn main() {
             status = args.flag_invalid_limit;
         }
         limit = system_bytes;
+        limit_type = Limit::System;
     }
 
     let cgroup_stat = Stat::load().unwrap();
@@ -72,16 +89,16 @@ fn main() {
     let percent = ratio * 100.0;
 
     if percent > args.flag_crit {
-        println!("CRITICAL: cgroup is using {:.1}% of {} limit (greater than {}%)",
-                 percent, bytes_to_human_size(limit as u64), args.flag_crit);
+        println!("CRITICAL: cgroup is using {:.1}% of {} {} (greater than {}%)",
+                 percent, bytes_to_human_size(limit as u64), limit_type, args.flag_crit);
         status = Status::Critical;
     } else if percent > args.flag_warn {
-        println!("WARNING: cgroup is using {:.1}% of {} limit (greater than {}%)",
-                 percent, bytes_to_human_size(limit as u64), args.flag_warn);
+        println!("WARNING: cgroup is using {:.1}% of {} {} (greater than {}%)",
+                 percent, bytes_to_human_size(limit as u64), limit_type, args.flag_warn);
         status = max(status, Status::Warning);
     } else {
-        println!("OK: cgroup is using {:.1}% of {} limit (less than {}%)",
-                 percent, bytes_to_human_size(limit as u64), args.flag_warn);
+        println!("OK: cgroup is using {:.1}% of {} {} (less than {}%)",
+                 percent, bytes_to_human_size(limit as u64), limit_type, args.flag_warn);
     }
 
     if args.flag_show_hogs > 0 {
