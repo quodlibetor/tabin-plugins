@@ -45,7 +45,7 @@ pub type TurbineResult<T> = Result<T, TurbineError>;
 
 /// Represent the nagios-ish error status of a script.
 #[must_use]
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, RustcDecodable)]
 pub enum Status {
     /// Unexpected result
     Unknown,

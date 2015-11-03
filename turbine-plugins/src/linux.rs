@@ -18,7 +18,7 @@ pub fn pages_to_human_size(pages: u64) -> String {
     bytes_to_human_size(bytes)
 }
 
-fn bytes_to_human_size(bytes: u64) -> String {
+pub fn bytes_to_human_size(bytes: u64) -> String {
     let mut bytes = bytes as f64;
     let sizes = ["B", "K", "M", "G", "T"];
     let mut reductions = 0;
