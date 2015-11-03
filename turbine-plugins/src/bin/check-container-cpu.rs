@@ -14,8 +14,11 @@ use turbine_plugins::sys::fs::cgroup::cpuacct::Stat as CGroupStat;
 
 static USAGE: &'static str = "
 Usage:
-    check-container-cpu [--one-cpu-share] [options]
+    check-container-cpu [options]
     check-cpu (-h | --help)
+
+Check the cpu usage of the currently-running container. This must be run from
+inside the container to be checked.
 
 Options:
     -h, --help            Show this help message
