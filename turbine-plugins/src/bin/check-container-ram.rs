@@ -108,9 +108,10 @@ fn main() {
         println!("INFO [check-container-ram]: ram hogs");
         for process in procs.iter().take(args.flag_show_hogs as usize) {
             let percent = process.percent_ram(limit);
-            println!("[{:>6}]{:>5.1}% {}: {}",
+            println!("[{:>6}]{:>5.1}% {:>6}: {}",
                      process.stat.pid,
-                     percent, pages_to_human_size(process.stat.rss),
+                     percent,
+                     pages_to_human_size(process.stat.rss),
                      process.useful_cmdline());
         }
     }

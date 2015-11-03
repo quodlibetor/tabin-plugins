@@ -66,9 +66,10 @@ fn main() {
         for process in procs.iter().take(args.flag_show_hogs) {
             let system_kb = mem.total.unwrap();
             let percent = process.percent_ram(system_kb * 1024);
-            println!("[{:>6}]{:>5.1}% {}: {}",
+            println!("[{:>6}]{:>5.1}% {:>6}: {}",
                      process.stat.pid,
-                     percent, pages_to_human_size(process.stat.rss),
+                     percent,
+                     pages_to_human_size(process.stat.rss),
                      process.useful_cmdline());
         }
     };

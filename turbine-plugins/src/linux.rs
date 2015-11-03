@@ -30,17 +30,17 @@ pub fn bytes_to_human_size(bytes: u64) -> String {
             break;
         }
     }
-    format!("{:>5.1}{}", bytes, sizes[reductions])
+    format!("{:.1}{}", bytes, sizes[reductions])
 }
 
 #[test]
 fn pages_to_human_size_produces_shortest() {
     let reprs = [(999,                    "999.0B"),
-                 (9_999,                  "  9.8K"),
-                 (9_999_999,              "  9.5M"),
-                 (35_999_999,             " 34.3M"),
-                 (9_999_999_999,          "  9.3G"),
-                 (9_999_999_999_999,      "  9.1T"),
+                 (9_999,                  "9.8K"),
+                 (9_999_999,              "9.5M"),
+                 (35_999_999,             "34.3M"),
+                 (9_999_999_999,          "9.3G"),
+                 (9_999_999_999_999,      "9.1T"),
                  (90_999_999_999_999_999, "82764.0T")];
 
     reprs.iter().map(|&(raw, repr): &(u64, &str)|
