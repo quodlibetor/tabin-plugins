@@ -49,13 +49,13 @@ pub struct ProcUsage<'a> {
     /// Percent time spent in system mode
     pub spercent: f64,
     /// upercent + spercent
-    pub total: f64
+    pub total: f64,
 }
 
 pub type ProcMap = HashMap<i32, pid::Process>;
 /// All the processes that are running
-// TODO: make this internal field private, and re-export the methods on the
-// vec.
+// TODO: make this internal field private, and re-export the methods
+// on the vec.
 pub struct RunningProcs(pub ProcMap);
 
 impl RunningProcs {
@@ -84,23 +84,24 @@ impl RunningProcs {
     ///
     /// The value for `total_cpu` should probably be the result of subtracting
     /// two `Calculations::total()`s from each other.
-    pub fn percent_cpu_util_since<'a>(
-        &self,
-        start: &'a RunningProcs,
-        total_cpu: Jiffies
-    ) -> ProcUsages<'a> {
+    pub fn percent_cpu_util_since<'a>(&self,
+                                      start: &'a RunningProcs,
+                                      total_cpu: Jiffies)
+                                      -> ProcUsages<'a> {
         let me = &self.0;
         let mut usages = Usages::new();
         for (_start_pid, start_process) in start.iter() {
             if let Some(end_process) = me.get(&start_process.stat.pid) {
                 let (start_ps, end_ps) = (&start_process.stat, &end_process.stat);
-                let user = 100.0 * (end_ps.utime - start_ps.utime).duration().ratio(&total_cpu.duration());
-                let sys = 100.0 * (end_ps.stime - start_ps.stime).duration().ratio(&total_cpu.duration());
+                let user = 100.0 *
+                           (end_ps.utime - start_ps.utime).duration().ratio(&total_cpu.duration());
+                let sys = 100.0 *
+                          (end_ps.stime - start_ps.stime).duration().ratio(&total_cpu.duration());
                 usages.push(ProcUsage {
                     process: &start_process,
                     upercent: user,
                     spercent: sys,
-                    total: user + sys
+                    total: user + sys,
                 })
             }
         }
@@ -108,7 +109,7 @@ impl RunningProcs {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 // System-Level totals
 
 /// A kind of CPU usage
@@ -117,9 +118,19 @@ impl RunningProcs {
 /// definitions.
 #[derive(RustcDecodable, Debug)]
 pub enum WorkSource {
-    Active, ActivePlusIoWait, ActiveMinusNice,
-    User, Nice, System, Irq, SoftIrq, Steal, Guest, GuestNice,
-    Idle, IoWait,
+    Active,
+    ActivePlusIoWait,
+    ActiveMinusNice,
+    User,
+    Nice,
+    System,
+    Irq,
+    SoftIrq,
+    Steal,
+    Guest,
+    GuestNice,
+    Idle,
+    IoWait,
 }
 
 impl fmt::Display for WorkSource {
@@ -138,7 +149,7 @@ impl fmt::Display for WorkSource {
             SoftIrq => "softirq",
             Steal => "steal",
             Guest => "guest",
-            GuestNice => "guestnice"
+            GuestNice => "guestnice",
         };
         f.write_str(s)
     }
@@ -198,16 +209,20 @@ impl Calculations {
 
     /// Create a Vec of Calculations for each individual cpu in a stat file
     fn per_cpu(contents: &str) -> Result<Vec<Calculations>> {
-        contents.lines().skip(1).filter(|line| line.starts_with("cpu"))
-            .map(Calculations::from_line)
-            .collect::<StdResult<Vec<_>, _>>()
+        contents.lines()
+                .skip(1)
+                .filter(|line| line.starts_with("cpu"))
+                .map(Calculations::from_line)
+                .collect::<StdResult<Vec<_>, _>>()
     }
 
     /// Parse the entire /proc/stat file into a single `Calculations` object
     /// for total CPU
     fn from_str(contents: &str) -> Result<Calculations> {
-        let mut calcs = try!(contents.lines().take(1).map(Self::from_line)
-                             .collect::<StdResult<Vec<_>, _>>());
+        let mut calcs = try!(contents.lines()
+                                     .take(1)
+                                     .map(Self::from_line)
+                                     .collect::<StdResult<Vec<_>, _>>());
         Ok(calcs.remove(0))
     }
 
@@ -215,10 +230,11 @@ impl Calculations {
     fn from_line(line: &str) -> Result<Calculations> {
         assert!(line.starts_with("cpu"));
 
-        let usages = try!(line.split(' ').skip(1)
-                          .filter(|part| part.len() > 0)
-                          .map(|part| part.parse())
-                          .collect::<StdResult<Vec<u64>, _>>());
+        let usages = try!(line.split(' ')
+                              .skip(1)
+                              .filter(|part| part.len() > 0)
+                              .map(|part| part.parse())
+                              .collect::<StdResult<Vec<u64>, _>>());
         Ok(Calculations {
             user: Jiffies::new(usages[0]),
             nice: Jiffies::new(usages[1]),
@@ -229,7 +245,7 @@ impl Calculations {
             softirq: Jiffies::new(usages[6]),
             steal: Jiffies::new(usages[7]),
             guest: Jiffies::new(usages[8]),
-            guest_nice: usages.get(9).map(|v| Jiffies::new(v.clone()))
+            guest_nice: usages.get(9).map(|v| Jiffies::new(v.clone())),
         })
     }
 
@@ -268,10 +284,9 @@ impl Calculations {
     pub fn percent_util_since(&self, kind: &WorkSource, start: &Calculations) -> f64 {
         let (start_val, end_val) = match *kind {
             WorkSource::Active => (start.active(), self.active()),
-            WorkSource::ActivePlusIoWait => (start.active() + start.iowait,
-                                             self.active() + self.iowait),
-            WorkSource::ActiveMinusNice => (start.active() - start.nice,
-                                            self.active() - self.nice),
+            WorkSource::ActivePlusIoWait =>
+                (start.active() + start.iowait, self.active() + self.iowait),
+            WorkSource::ActiveMinusNice => (start.active() - start.nice, self.active() - self.nice),
             WorkSource::User => (start.user, self.user),
             WorkSource::IoWait => (start.iowait, self.iowait),
             WorkSource::Nice => (start.nice, self.nice),
@@ -285,8 +300,7 @@ impl Calculations {
                                       self.guest_nice.unwrap_or(Jiffies::new(0))),
         };
         assert!(self.total() >= start.total());
-        let total = (end_val - start_val) /
-            (self.total() - start.total());
+        let total = (end_val - start_val) / (self.total() - start.total());
         total * 100f64
     }
 
@@ -307,8 +321,8 @@ impl Sub for Calculations {
             guest: self.guest - rhs.guest,
             guest_nice: match (self.guest_nice, rhs.guest_nice) {
                 (Some(lhs), Some(rhs)) => Some(lhs - rhs),
-                _ => None
-            }
+                _ => None,
+            },
         }
     }
 }
@@ -328,8 +342,8 @@ impl<'a> Sub for &'a Calculations {
             guest: self.guest - rhs.guest,
             guest_nice: match (self.guest_nice, rhs.guest_nice) {
                 (Some(lhs), Some(rhs)) => Some(lhs - rhs),
-                _ => None
-            }
+                _ => None,
+            },
         }
     }
 }
@@ -338,15 +352,23 @@ impl fmt::Display for Calculations {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let total = self.total();
         let p = |v: Jiffies| 100 * v / total;
-        write!(f, "user={:.1} system={:.1} nice={:.1} irq={:.1} softirq={:.1} | idle={:.1} iowait={:.1} | steal={:.1} guest={:.1} guest_nice={}",
-               p(self.user), p(self.system), p(self.nice), p(self.irq), p(self.softirq),
-               p(self.idle), p(self.iowait),
-               p(self.steal), p(self.guest), self.guest_nice.map_or(
-                   "unknown".into(), |v| format!("{}", v)))
+        write!(f,
+               "user={:.1} system={:.1} nice={:.1} irq={:.1} softirq={:.1} | idle={:.1} \
+                iowait={:.1} | steal={:.1} guest={:.1} guest_nice={}",
+               p(self.user),
+               p(self.system),
+               p(self.nice),
+               p(self.irq),
+               p(self.softirq),
+               p(self.idle),
+               p(self.iowait),
+               p(self.steal),
+               p(self.guest),
+               self.guest_nice.map_or("unknown".into(), |v| format!("{}", v)))
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 // Memory
 
 /// A struct that represents overall memory usage on the system.
@@ -357,7 +379,7 @@ pub struct MemInfo {
     pub total: Option<usize>,
     pub available: Option<usize>,
     pub free: Option<usize>,
-    pub cached: Option<usize>
+    pub cached: Option<usize>,
 }
 
 impl MemInfo {
@@ -369,7 +391,7 @@ impl MemInfo {
                 let _ = content.read_to_string(&mut s);
                 s
             }
-            Err(e) => panic!("Unable to /proc/meminfo: {:?}", e)
+            Err(e) => panic!("Unable to open /proc/meminfo: {:?}", e),
         };
 
         MemInfo::from_str(&contents)
@@ -389,14 +411,16 @@ impl MemInfo {
     pub fn percent_free(&self) -> Result<f64> {
         match *self {
             MemInfo { total: Some(t), available: Some(a), .. } => {
-                Ok( a as f64 / t as f64 * 100.0 )
+                Ok(a as f64 / t as f64 * 100.0)
             }
             MemInfo { total: Some(t), free: Some(f), cached: Some(c), ..} => {
-                Ok( (f + c) as f64 / t as f64 * 100.0 )
-            },
-            _ => { Err(ProcFsError::InsufficientData(
-                format!("/proc/meminfo is missing one of total, available, free, or cached: {:?}",
-                        self)))
+                Ok((f + c) as f64 / t as f64 * 100.0)
+            }
+            _ => {
+                Err(ProcFsError::InsufficientData(format!("/proc/meminfo is missing one of \
+                                                           total, available, free, or cached: \
+                                                           {:?}",
+                                                          self)))
             }
         }
     }
@@ -415,11 +439,16 @@ impl MemInfo {
             total: None,
             free: None,
             available: None,
-            cached: None
+            cached: None,
         };
         let mut amount: usize;
         enum Currently {
-            Total, Free, Available, Cached, Unknown, None
+            Total,
+            Free,
+            Available,
+            Cached,
+            Unknown,
+            None,
         };
         let mut currently = Currently::None;
 
@@ -427,27 +456,32 @@ impl MemInfo {
             match chr {
                 c if 'A' <= c && c <= 'z' => {
                     word.push(chr);
-                },
+                }
                 ':' => {
                     match &word[..] {
                         "MemTotal" => currently = Currently::Total,
                         "MemAvailable" => currently = Currently::Available,
                         "MemFree" => currently = Currently::Free,
                         "Cached" => currently = Currently::Cached,
-                        _ => currently = Currently::Unknown
-                    };
+                        _ => currently = Currently::Unknown,
+                    }
                     word.clear();
                 }
                 x if '0' <= x && x <= '9' => {
                     word.push(chr);
-                },
+                }
                 ' ' | '\n' => {
-                    if word.is_empty() { continue };
-                    if word == "kB" { word.clear(); continue; };
+                    if word.is_empty() {
+                        continue;
+                    }
+                    if word == "kB" {
+                        word.clear();
+                        continue;
+                    }
 
                     amount = match word.parse() {
                         Ok(amount) => amount,
-                        Err(e) => panic!(r#"Unable to parse number from "{}": {:?}"#, word, e)
+                        Err(e) => panic!(r#"Unable to parse number from "{}": {:?}"#, word, e),
                     };
                     word.clear();
 
@@ -456,15 +490,19 @@ impl MemInfo {
                         Currently::Free => info.free = Some(amount),
                         Currently::Available => info.available = Some(amount),
                         Currently::Cached => info.cached = Some(amount),
-                        Currently::Unknown => { /* don't care */ },
+                        Currently::Unknown => {
+                            // don't care
+                        }
                         Currently::None => {
-                            panic!(
-                                "Unexpectedly parsed a number before figuring out where I am: {}",
-                                amount)
+                            panic!("Unexpectedly parsed a number before figuring out where I am: \
+                                    {}",
+                                   amount)
                         }
                     }
                 }
-                _ => { /* Don't care about other chars */ }
+                _ => {
+                    // Don't care about other chars
+                }
             }
         }
 
@@ -480,7 +518,7 @@ impl MemInfo {
 pub struct LoadAvg {
     pub one: f64,
     pub five: f64,
-    pub fifteen: f64
+    pub fifteen: f64,
 }
 
 impl LoadAvg {
@@ -511,12 +549,14 @@ impl FromStr for LoadAvg {
 
     fn from_str(contents: &str) -> Result<LoadAvg> {
         let pat = Regex::new(r"[ ,]").unwrap();
-        let fields = try!(pat.split(contents).take(3).map(|load| load.parse())
-                          .collect::<StdResult<Vec<f64>, _>>());
+        let fields = try!(pat.split(contents)
+                             .take(3)
+                             .map(|load| load.parse())
+                             .collect::<StdResult<Vec<f64>, _>>());
         Ok(LoadAvg {
             one: fields[0],
             five: fields[1],
-            fifteen: fields[2]
+            fifteen: fields[2],
         })
     }
 }
@@ -528,7 +568,7 @@ impl fmt::Display for LoadAvg {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 // Testing
 
 #[cfg(test)]
@@ -548,21 +588,22 @@ intr 17749885 52 10 0 0 0 0 0 0 0 0 0 0 149 0 0 0 0 0 0 493792 10457659 2437665
 ctxt 310
 btime 143
 ");
-        assert_eq!(c.unwrap(), Calculations {
-            user: Jiffies::new(100),
-            nice: Jiffies::new(55),
-            system: Jiffies::new(66),
-            idle: Jiffies::new(77),
-            iowait: Jiffies::new(88),
-            irq: Jiffies::new(1),
-            softirq: Jiffies::new(9),
-            steal: Jiffies::new(0),
-            guest: Jiffies::new(0),
-            guest_nice: Some(Jiffies::new(0)),
-        });
+        assert_eq!(c.unwrap(),
+                   Calculations {
+                       user: Jiffies::new(100),
+                       nice: Jiffies::new(55),
+                       system: Jiffies::new(66),
+                       idle: Jiffies::new(77),
+                       iowait: Jiffies::new(88),
+                       irq: Jiffies::new(1),
+                       softirq: Jiffies::new(9),
+                       steal: Jiffies::new(0),
+                       guest: Jiffies::new(0),
+                       guest_nice: Some(Jiffies::new(0)),
+                   });
     }
 
-        #[test]
+    #[test]
     fn can_parse_multiple_cpus() {
         let c = Calculations::per_cpu(
 "cpu  100 55 66 77 88 1 9 0 0 0
@@ -573,69 +614,68 @@ intr 17749885 52 10 0 0 0 0 0 0 0 0 0 0 149 0 0 0 0 0 0 493792 10457659 2437665
 ctxt 310
 btime 143
 ");
-        assert_eq!(c.unwrap(), vec![
-            Calculations {
-                user: Jiffies::new(101),
-                nice: Jiffies::new(99),
-                system: Jiffies::new(99),
-                idle: Jiffies::new(99),
-                iowait: Jiffies::new(99),
-                irq: Jiffies::new(99),
-                softirq: Jiffies::new(99),
-                steal: Jiffies::new(0),
-                guest: Jiffies::new(0),
-                guest_nice: Some(Jiffies::new(0)),
-            },
-            Calculations {
-                user: Jiffies::new(102),
-                nice: Jiffies::new(98),
-                system: Jiffies::new(98),
-                idle: Jiffies::new(98),
-                iowait: Jiffies::new(98),
-                irq: Jiffies::new(98),
-                softirq: Jiffies::new(98),
-                steal: Jiffies::new(0),
-                guest: Jiffies::new(0),
-                guest_nice: Some(Jiffies::new(0)),
-            },
-            Calculations {
-                user: Jiffies::new(103),
-                nice: Jiffies::new(97),
-                system: Jiffies::new(97),
-                idle: Jiffies::new(97),
-                iowait: Jiffies::new(97),
-                irq: Jiffies::new(97),
-                softirq: Jiffies::new(97),
-                steal: Jiffies::new(0),
-                guest: Jiffies::new(0),
-                guest_nice: Some(Jiffies::new(0)),
-            }]);
+        assert_eq!(c.unwrap(),
+                   vec![Calculations {
+                            user: Jiffies::new(101),
+                            nice: Jiffies::new(99),
+                            system: Jiffies::new(99),
+                            idle: Jiffies::new(99),
+                            iowait: Jiffies::new(99),
+                            irq: Jiffies::new(99),
+                            softirq: Jiffies::new(99),
+                            steal: Jiffies::new(0),
+                            guest: Jiffies::new(0),
+                            guest_nice: Some(Jiffies::new(0)),
+                        },
+                        Calculations {
+                            user: Jiffies::new(102),
+                            nice: Jiffies::new(98),
+                            system: Jiffies::new(98),
+                            idle: Jiffies::new(98),
+                            iowait: Jiffies::new(98),
+                            irq: Jiffies::new(98),
+                            softirq: Jiffies::new(98),
+                            steal: Jiffies::new(0),
+                            guest: Jiffies::new(0),
+                            guest_nice: Some(Jiffies::new(0)),
+                        },
+                        Calculations {
+                            user: Jiffies::new(103),
+                            nice: Jiffies::new(97),
+                            system: Jiffies::new(97),
+                            idle: Jiffies::new(97),
+                            iowait: Jiffies::new(97),
+                            irq: Jiffies::new(97),
+                            softirq: Jiffies::new(97),
+                            steal: Jiffies::new(0),
+                            guest: Jiffies::new(0),
+                            guest_nice: Some(Jiffies::new(0)),
+                        }]);
     }
 
 
     #[test]
     fn can_parse_stat_for_process() {
-        let stat = "1 (init) S 0 1 1 0 -1 4219136 40326 5752369 36 3370 16 41 25846 8061 20 0 1 0 5 34381824 610 18446744073709551615 1 1 0 0 0 0 0 4096 536962595 18446744073709551615 0 0 17 0 0 0 7 0 0 0 0 0 0 0 0 0 0";
+        let stat = "1 (init) S 0 1 1 0 -1 4219136 40326 5752369 36 3370 16 41 25846 8061 20 0 1 0 \
+                    5 34381824 610 18446744073709551615 1 1 0 0 0 0 0 4096 536962595 \
+                    18446744073709551615 0 0 17 0 0 0 7 0 0 0 0 0 0 0 0 0 0";
         stat.parse::<pid::Stat>().unwrap();
     }
 
     #[test]
     fn parse_meminfo() {
-        assert_eq!(
-            MemInfo::from_str(concat!(
-                "Useless: 898\n",
-                "MemTotal: 500\n",
-                "MemAvailable: 20\n",
-                "MemFree: 280\n",
-                "Meaningless: 777\n",
-                "Cached: 200\n")),
-            MemInfo {
-                total: Some(500),
-                available: Some(20),
-                free: Some(280),
-                cached: Some(200)
-            }
-            )
+        assert_eq!(MemInfo::from_str(concat!("Useless: 898\n",
+                                             "MemTotal: 500\n",
+                                             "MemAvailable: 20\n",
+                                             "MemFree: 280\n",
+                                             "Meaningless: 777\n",
+                                             "Cached: 200\n")),
+                   MemInfo {
+                       total: Some(500),
+                       available: Some(20),
+                       free: Some(280),
+                       cached: Some(200),
+                   })
     }
 
     #[test]
@@ -644,7 +684,7 @@ btime 143
             total: Some(100),
             available: Some(30),
             free: None,
-            cached: None
+            cached: None,
         };
         assert_eq!(mem.percent_free().unwrap(), 30.0);
 
@@ -652,7 +692,7 @@ btime 143
             total: Some(100),
             available: None,
             free: Some(25),
-            cached: Some(20)
+            cached: Some(20),
         };
         assert_eq!(mem.percent_free().unwrap(), 45.0);
     }
@@ -660,26 +700,33 @@ btime 143
     #[test]
     fn loadavg_can_parse_space_str() {
         let avg = LoadAvg::from_str("0.1 1.5 21 5/23 938").unwrap();
-        assert_eq!(avg, LoadAvg {
-            one: 0.1_f64,
-            five: 1.5_f64,
-            fifteen: 21_f64
-        });
+        assert_eq!(avg,
+                   LoadAvg {
+                       one: 0.1,
+                       five: 1.5,
+                       fifteen: 21.0,
+                   });
     }
 
     #[test]
     fn loadavg_can_parse_comma_str() {
         let avg = LoadAvg::from_str("0.1,1.5,21").unwrap();
-        assert_eq!(avg, LoadAvg {
-            one: 0.1_f64,
-            five: 1.5_f64,
-            fifteen: 21_f64
-        });
+        assert_eq!(avg,
+                   LoadAvg {
+                       one: 0.1,
+                       five: 1.5,
+                       fifteen: 21.0,
+                   });
     }
 
     #[test]
     fn loadavg_display() {
-        let string = format!("{}", LoadAvg { one: 0.888, five: 1.0, fifteen: 0.1 });
+        let string = format!("{}",
+                             LoadAvg {
+                                 one: 0.888,
+                                 five: 1.0,
+                                 fifteen: 0.1,
+                             });
         // ooh, rounding
         assert_eq!(&string, "0.9 1.0 0.1");
     }
@@ -699,7 +746,8 @@ mod integration {
     #[test]
     fn meminfo_can_load() {
         let info = MemInfo::load();
-        assert_eq!(info.percent_free().unwrap() + info.percent_used().unwrap(), 100.0)
+        assert_eq!(info.percent_free().unwrap() + info.percent_used().unwrap(),
+                   100.0)
     }
 
     #[test]

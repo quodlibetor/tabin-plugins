@@ -20,12 +20,12 @@ pub mod fs {
             use std::io;
 
             use linux::UserHz;
-            use ::sys::read_file;
+            use sys::read_file;
 
             #[derive(Debug)]
             pub struct Stat {
                 pub user: UserHz,
-                pub system: UserHz
+                pub system: UserHz,
             }
 
             impl Stat {
@@ -57,7 +57,7 @@ pub mod fs {
             use std::collections::{HashSet, HashMap};
             use std::io;
 
-            use ::sys::read_file;
+            use sys::read_file;
 
             /// The memory limit for this cgroup
             ///
@@ -91,12 +91,10 @@ pub mod fs {
                 pub fn load() -> Result<Stat, io::Error> {
                     let contents = try!(read_file("/sys/fs/cgroup/memory/memory.stat"));
                     let mut fields: HashMap<String, usize> = HashMap::new();
-                    let needed: HashSet<_> = [
-                        "cache",
-                        "rss",
-                        "rss_huge",
-                        "swap"
-                    ].iter().cloned().collect();
+                    let needed: HashSet<_> = ["cache", "rss", "rss_huge", "swap"]
+                                                 .iter()
+                                                 .cloned()
+                                                 .collect();
                     let mut found = 0;
                     for line in contents.lines() {
                         let mut parts = line.split(" ");

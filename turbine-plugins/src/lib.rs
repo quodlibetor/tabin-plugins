@@ -16,16 +16,19 @@
 //! * Much of the code is hideous, and should not be
 
 
-#[macro_use] extern crate lazy_static;
-#[macro_use] extern crate scan_fmt;
-#[macro_use] extern crate wrapped_enum;
+#[macro_use]
+extern crate lazy_static;
+#[macro_use]
+extern crate scan_fmt;
+#[macro_use]
+extern crate wrapped_enum;
 
 extern crate libc;
 extern crate regex;
 extern crate rustc_serialize;
 
 use std::process;
-use std::cmp::{Ord};
+use std::cmp::Ord;
 use std::fmt;
 
 pub mod linux;
@@ -37,7 +40,7 @@ pub mod scripts;
 #[derive(Debug)]
 pub enum TurbineError {
     /// Represents an incorrect value passed in to a function
-    UnknownValue(String)
+    UnknownValue(String),
 }
 
 /// All results are TurbineResults
@@ -65,7 +68,7 @@ impl Status {
             Ok => process::exit(0),
             Warning => process::exit(1),
             Critical => process::exit(2),
-            Unknown => process::exit(3)
+            Unknown => process::exit(3),
         }
     }
 
@@ -77,7 +80,7 @@ impl Status {
             "warning" => Ok(Warning),
             "critical" => Ok(Critical),
             "unknown" => Ok(Unknown),
-            _ => Err(TurbineError::UnknownValue(format!("Unexpected exit status: {}", s)))
+            _ => Err(TurbineError::UnknownValue(format!("Unexpected exit status: {}", s))),
         }
     }
 
@@ -94,7 +97,7 @@ impl fmt::Display for Status {
             Ok => "OK",
             Unknown => "UNKNOWN",
             Warning => "WARNING",
-            Critical => "CRITICAL"
+            Critical => "CRITICAL",
         };
         write!(f, "{}", msg)
     }

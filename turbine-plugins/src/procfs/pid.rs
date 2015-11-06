@@ -70,7 +70,7 @@ pub struct Stat {
     pub num_threads: i64,
     pub starttime: u64,
     pub vsize: u64,
-    pub rss: u64
+    pub rss: u64,
 }
 
 impl Stat {
@@ -86,11 +86,29 @@ impl Stat {
 impl Default for Stat {
     fn default() -> Stat {
         Stat {
-            pid: 0, comm: "init".to_string(), state: "R".to_string(), ppid: 0,
-            pgrp: 0, session: 0, tty_nr: 0, tpgid: 0, flags: 0, minflt: 0,
-            cminflt: 0, majflt: 0, cmajflt: 0, utime: Jiffies::new(0), stime: Jiffies::new(0),
-            cutime: Jiffies::new(0), cstime: Jiffies::new(0), priority: 0, nice: 0, num_threads: 0,
-            starttime: 0, vsize: 0, rss: 0
+            pid: 0,
+            comm: "init".to_string(),
+            state: "R".to_string(),
+            ppid: 0,
+            pgrp: 0,
+            session: 0,
+            tty_nr: 0,
+            tpgid: 0,
+            flags: 0,
+            minflt: 0,
+            cminflt: 0,
+            majflt: 0,
+            cmajflt: 0,
+            utime: Jiffies::new(0),
+            stime: Jiffies::new(0),
+            cutime: Jiffies::new(0),
+            cstime: Jiffies::new(0),
+            priority: 0,
+            nice: 0,
+            num_threads: 0,
+            starttime: 0,
+            vsize: 0,
+            rss: 0,
         }
     }
 }
@@ -99,36 +117,55 @@ impl FromStr for Stat {
     type Err = ProcFsError;
     /// Parse the results of /proc/[pid]/stat into a `Stat`
     fn from_str(s: &str) -> Result<Stat> {
-        let (pid, comm, state, ppid, pgrp, session, tty_nr, tpgid, flags, minflt, cminflt, majflt,
-             cmajflt, utime, stime, cutime, cstime, priority, nice, num_threads, starttime, vsize,
-             rss) = scan_fmt!(
-            s,
-            "{d} ({[^)]}) {} {} {} {} {} {} {d} {d} {d} {d} {d} {d} {d} {} {} {} {} {} 0 {d} {d} {}",
-            i32,                    // pid
-            String,                 // comm
-            String,                 // state
-            i32,                    // ppid
-            i32,                    // pgrp
-            i32,                    // session
-            i32,                    // tty_nr
-            i32,                    // tpgid
-            u32,                    // flags
-            u64,                    // minflt
-            u64,                    // cminflt
-            u64,                    // majflt
-            u64,                    // cmajflt
-            u64,                    // utime
-            u64,                    // stime
-            i64,                    // cutime (children usertime)
-            i64,                    // cstime
-            i64,                    // priority
-            i64,                    // nice
-            i64,                    // num_threads
-            // itrealvalue (always 0)
-            u64,                    // starttime FIXME: should be long long int
-            u64,                    // vsize
-            u64                     // rss
-                );
+        let (pid,
+             comm,
+             state,
+             ppid,
+             pgrp,
+             session,
+             tty_nr,
+             tpgid,
+             flags,
+             minflt,
+             cminflt,
+             majflt,
+             cmajflt,
+             utime,
+             stime,
+             cutime,
+             cstime,
+             priority,
+             nice,
+             num_threads,
+             starttime,
+             vsize,
+             rss) = scan_fmt!(s,
+                              "{d} ({[^)]}) {} {} {} {} {} {} {d} {d} {d} {d} {d} {d} {d} {} {} \
+                               {} {} {} 0 {d} {d} {}",
+                              i32, // pid
+                              String, // comm
+                              String, // state
+                              i32, // ppid
+                              i32, // pgrp
+                              i32, // session
+                              i32, // tty_nr
+                              i32, // tpgid
+                              u32, // flags
+                              u64, // minflt
+                              u64, // cminflt
+                              u64, // majflt
+                              u64, // cmajflt
+                              u64, // utime
+                              u64, // stime
+                              i64, // cutime (children usertime)
+                              i64, // cstime
+                              i64, // priority
+                              i64, // nice
+                              i64, // num_threads
+                              // itrealvalue (always 0)
+                              u64, // starttime FIXME: should be long long int
+                              u64, // vsize
+                              u64 /* rss */);
         Ok(Stat {
             pid: pid.expect("unable to parse pid."),
             comm: comm.expect("unable to parse comm."),
@@ -152,7 +189,7 @@ impl FromStr for Stat {
             num_threads: num_threads.expect("unable to parse num_threads."),
             starttime: starttime.expect("unable to parse starttime."),
             vsize: vsize.expect("unable to parse vsize."),
-            rss: rss.expect("unable to parse rss.")
+            rss: rss.expect("unable to parse rss."),
         })
     }
 }
@@ -168,11 +205,11 @@ impl CmdLine {
         let mut f = try!(File::open(&path_str));
         let mut s = String::new();
         try!(f.read_to_string(&mut s));
-        //let splitted = ;
         Ok(CmdLine {
             line: s.split("\0")
-                .map(|arg| String::from(arg))
-                .filter(|arg| arg.len() > 0).collect(),
+                   .map(|arg| String::from(arg))
+                   .filter(|arg| arg.len() > 0)
+                   .collect(),
         })
     }
 
