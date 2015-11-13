@@ -11,8 +11,9 @@ use turbine_plugins::Status;
 use turbine_plugins::linux::{Jiffies, Ratio};
 use turbine_plugins::procfs::{Calculations, RunningProcs};
 use turbine_plugins::sys::fs::cgroup::cpuacct::Stat as CGroupStat;
+use turbine_plugins::sys::fs::cgroup::cpu::shares;
 
-static USAGE: &'static str = "
+static USAGE: &'static str = r#"
 Usage:
     check-container-cpu [options]
     check-cpu (-h | --help)
@@ -31,18 +32,55 @@ Options:
     --show-hogs=<count>   Show <count> most cpu-intensive processes in this
                           container.                   [default: 0]
 
+    --shares-per-cpu=<shares>
+                          The number of CPU shares given to a cgroup when
+                          it has exactly one CPU allocated to it.
+
 About usage percentages:
 
-    Percentages should be specified relative to a single CPU's usage. So if you
-    have a process that you want to be allowed to use 4 CPUs worth of processor
-    time, and you were planning on going critical at 90%, you should specify
-    something like '--crit 360'
-";
+    If you don't specify '--shares-per-cpu', percentages should be specified
+    relative to a single CPU's usage. So if you have a process that you want to
+    be allowed to use 4 CPUs worth of processor time, and you were planning on
+    going critical at 90%, you should specify something like '--crit 360'
+
+    However, if you are using a container orchestrator such as Mesos, you often
+    tell it that you want this container to have "2 CPUs" worth of hardware.
+    Your scheduler is responsible for deciding how many cgroup cpu shares 1
+    CPU's worth of time is, and keeping track of how many shares it has doled
+    out, and then schedule your containers to run with 2 CPUs worth of CPU
+    shares. Assuming that your scheduler uses the default number of shares
+    (1024) as "one cpu", this will mean that you have given that cgroup 2048
+    shares.
+
+    If you do specify --shares-per-cpu then the percentage that you give will
+    be scaled by the number of CPUs worth of shares that this container has
+    been given, and CPU usage will be compared to the total percent of the CPUs
+    that it has been allocated.
+
+    Which is to say, if you specify --shares-per-cpu, you should always specify
+    your warn/crit percentages out of 100%, because this script will correctly
+    scale it for your process.
+
+    Here are some examples, where 'shares granted' is the value in
+    /sys/fs/cgroup/cpu/cpu.shares:
+
+        * args: --shares-per-cpu 1024 --crit 90
+          shares granted: 1024
+          percent of one CPU to alert at: 90
+        * args: --shares-per-cpu 1024 --crit 90
+          shares granted: 2024
+          percent of one CPU to alert at: 180
+        * args: --shares-per-cpu 1024 --crit 90
+          shares granted: 102
+          percent of one CPU to alert at: 9
+
+"#;
 
 #[derive(RustcDecodable, Debug)]
 struct Args {
     flag_warn: u32,
     flag_crit: u32,
+    flag_shares_per_cpu: Option<u32>,
 
     flag_sample: u32,
     flag_show_hogs: usize,
@@ -66,6 +104,15 @@ fn main() {
     let start_cpu = Calculations::load_per_cpu().unwrap();
     let start_container = CGroupStat::load();
     let mut start_per_proc = None;
+    let (mut crit, mut warn) = (args.flag_crit, args.flag_warn);
+    let mut cpus = None;
+    if let Some(shares_per_cpu) = args.flag_shares_per_cpu {
+        let available_cpus = shares().unwrap() as f64 / shares_per_cpu as f64;
+        crit = (crit as f64 * available_cpus) as u32;
+        warn = (warn as f64 * available_cpus) as u32;
+        cpus = Some(available_cpus)
+    }
+
     if args.flag_show_hogs > 0 {
         start_per_proc = Some(RunningProcs::currently_running().unwrap());
     }
@@ -82,14 +129,23 @@ fn main() {
         .ratio(&median_jiffies.duration());
 
     let mut status = Status::Ok;
-    if percent > args.flag_crit as f64 {
-        println!("CRITICAL: Container is using {}% CPU (> {}%)", percent, args.flag_crit);
+    let mut cpu_msg = String::new();
+    let mut percent_msg = "";
+    if let Some(cpus) = cpus {
+        cpu_msg = format!(" of {:.1} CPUs", cpus);
+        percent_msg = " of 1"
+    }
+    if percent > crit as f64 {
+        println!("CRITICAL: Container is using {}%{} CPU (> {}%{})",
+                 percent, percent_msg, args.flag_crit, cpu_msg);
         status = Status::Critical;
-    } else if percent > args.flag_warn as f64 {
-        println!("WARNING: Container is using {}% CPU (> {}%)", percent, args.flag_warn);
+    } else if percent > warn as f64 {
+        println!("WARNING: Container is using {}%{} CPU (> {}%{})",
+                 percent, percent_msg, args.flag_warn, cpu_msg);
         status = Status::Warning;
     } else {
-        println!("OK: Container is using {}% CPU (< {}%)", percent, args.flag_warn);
+        println!("OK: Container is using {}%{} CPU (< {}%{})",
+                 percent, percent_msg, args.flag_warn, cpu_msg);
     }
     if args.flag_show_hogs > 0 {
         let end_per_proc = RunningProcs::currently_running().unwrap();
@@ -123,6 +179,14 @@ mod unit {
                       .decode())
             .unwrap();
         assert_eq!(args.flag_crit, 480);
+        assert_eq!(args.flag_shares_per_cpu, None);
+
+        let args: Args = Docopt::new(USAGE)
+            .and_then(|d| d.argv(vec!["arg0", "--crit", "480", "--shares-per-cpu", "100"].into_iter())
+                      .decode())
+            .unwrap();
+        assert_eq!(args.flag_crit, 480);
+        assert_eq!(args.flag_shares_per_cpu, Some(100));
     }
 
     fn start() -> Calculations {
