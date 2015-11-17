@@ -708,7 +708,9 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                         operator = Some(word);
                         state = AssertionState::Threshold;
                     } else {
-                        return Err(ParseError::InvalidOperator(word.to_owned()))
+                        return Err(ParseError::InvalidOperator(format!(
+                            "Expected a comparison operator (e.g. >=), not '{}'",
+                            word.to_owned())))
                     }
                 }
             },
