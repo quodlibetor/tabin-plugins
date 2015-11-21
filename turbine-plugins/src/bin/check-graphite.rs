@@ -61,7 +61,7 @@ impl<'a> From<&'a Json> for DataPoint {
 impl fmt::Display for DataPoint {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{} (at {})",
-               self.val.map_or("No Data".into(),
+               self.val.map_or("null".into(),
                                |v| format!("{:.*}",
                                            // the number of points past the dot to show
                                            if v.round() == v { 0 } else { 2 },
@@ -96,15 +96,6 @@ impl GraphiteData {
             target: obj.find("target").expect("Couldn't find target in graphite data")
                        .as_string().expect("Couldn't convert target to string").to_owned()
         }
-    }
-
-    /// Strip out any invalid points
-    fn into_only_with_data(mut self) -> Self {
-        let new_points = self.points.into_iter()
-            .filter(|point| point.val.is_some())
-            .collect();
-        self.points = new_points;
-        self
     }
 
     /// References to the points that exist and do not satisfy the comparator
@@ -262,6 +253,7 @@ fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f
     }
 }
 
+/// Take a `Json` value and make sure that at least one series has real data
 fn filter_to_with_data(path: &str,
                        data: Json,
                        no_data_status: Status) -> Result<Vec<GraphiteData>, Status> {
@@ -273,8 +265,19 @@ fn filter_to_with_data(path: &str,
         return Err(no_data_status);
     }
     let series_with_data = data.into_iter()
-        .map(|series| series.into_only_with_data())
-        .filter(|series| !series.points.is_empty())
+        .filter(|series|
+                !series.points.is_empty() &&
+                !{
+                    let null_points = series.points.iter().fold(
+                        0, |count, point|{
+                            if point.val.is_none() {
+                                count + 1
+                            } else {
+                                count
+                            }
+                        });
+                    null_points == series.points.len()
+                })
         .collect::<Vec<GraphiteData>>();
 
     if series_with_data.len() > 0 {
@@ -812,7 +815,7 @@ mod test {
                 "target": "test.path.no-data"
             },
             {
-                "datapoints": [[1, 11150], [null, 11160], [3, 11160]],
+                "datapoints": [[1, 11150], [null, 11160], [3, 11170]],
                 "target": "test.path.some-data"
             }
         ]
@@ -823,8 +826,10 @@ mod test {
         vec![GraphiteData {
             points: vec![DataPoint { val: Some(1_f64),
                                      time: dt(11150) },
+                         DataPoint { val: None,
+                                     time: dt(11160) },
                          DataPoint { val: Some(3_f64),
-                                     time: dt(11160) }],
+                                     time: dt(11170) }],
             target: "test.path.some-data".to_owned() }]
     }
 
