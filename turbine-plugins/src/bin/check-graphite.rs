@@ -11,7 +11,8 @@ extern crate turbine_plugins;
 use std::cmp::max;
 use std::fmt;
 use std::io::Read;
-use std::thread::sleep_ms;
+use std::time::Duration;
+use std::thread::sleep;
 
 use chrono::naive::datetime::NaiveDateTime;
 use hyper::client::Response;
@@ -204,7 +205,7 @@ fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Statu
                 if attempts < retries {
                     println!("Retrying in {}s.", retry_sleep / 1000);
                     attempts += 1;
-                    sleep_ms(retry_sleep);
+                    sleep(Duration::from_millis(retry_sleep));
                     retry_sleep *= 2;
                     continue;
                 } else {

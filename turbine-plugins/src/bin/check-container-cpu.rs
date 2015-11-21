@@ -5,6 +5,9 @@ extern crate docopt;
 
 extern crate turbine_plugins;
 
+use std::thread::sleep;
+use std::time::Duration;
+
 use docopt::Docopt;
 
 use turbine_plugins::Status;
@@ -117,7 +120,7 @@ fn main() {
         start_per_proc = Some(RunningProcs::currently_running().unwrap());
     }
 
-    std::thread::sleep_ms(args.flag_sample * 1000);
+    sleep(Duration::from_millis(args.flag_sample as u64 * 1000));
 
     let end_cpu = Calculations::load_per_cpu().unwrap();
     let end_container = CGroupStat::load();
