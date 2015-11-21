@@ -425,11 +425,11 @@ fn parse_args<'a>() -> Args {
         .author("Brandon W Maister <quodlibetor@gmail.com>")
         .about("Query graphite and exit based on predicates")
         .args_from_usage(
-            "<URL>                'The domain to query graphite. Must include scheme (http/s)'
-             <PATH>               'The graphite path to query. For example: \"collectd.*.cpu\"'
-             <ASSERTION>...       'The assertion to make against the PATH. See Below.'
-             -w --window=[WINDOW] 'How many minutes of data to test. Default 10.'
-             --retries=[COUNT]   'How many times to retry reaching graphite. Default 4.")
+            "<URL>                 'The domain to query graphite. Must include scheme (http/s)'
+             <PATH>                'The graphite path to query. For example: \"collectd.*.cpu\"'
+             <ASSERTION>...        'The assertion to make against the PATH. See Below.'
+             -w --window=[MINUTES] 'How many minutes of data to test. Default 10.'
+             --retries=[COUNT]     'How many times to retry reaching graphite. Default 4.")
         .arg(clap::Arg::with_name("NO_DATA_STATUS")
                        .long("--no-data")
                        .help("What to do with no data.
@@ -492,7 +492,7 @@ fn parse_args<'a>() -> Args {
         url: args.value_of("URL").unwrap().to_owned(),
         path: args.value_of("PATH").unwrap().to_owned(),
         assertions: assertions,
-        window: value_t!(args.value_of("WINDOW"), i64).unwrap_or(10),
+        window: value_t!(args.value_of("MINUTES"), i64).unwrap_or(10),
         retries: value_t!(args.value_of("COUNT"), u8).unwrap_or(4),
         graphite_error: Status::from_str(args.value_of("NO_DATA_STATUS")
                                          .unwrap_or("unknown")).unwrap(),
