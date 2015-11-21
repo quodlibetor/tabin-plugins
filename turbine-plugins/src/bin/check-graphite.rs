@@ -170,11 +170,14 @@ fn graphite_result_to_vec(data: &Json) -> Vec<GraphiteData> {
 ///
 /// Returns a tuple of (full request path, string that graphite returned), or an error
 #[cfg_attr(test, allow(dead_code))]
-fn get_graphite(url: &str, target: &str, window: i64)
+fn get_graphite(url: &str, target: &str, window: i64, print_url: bool)
 -> HyperResult<(Response, String)> {
     let full_path = format!("{}/render?target={}&format=json&from=-{}min",
                             url, target, window);
     let c = hyper::Client::new();
+    if print_url {
+        println!("INFO: querying {}", full_path);
+    }
     let mut result = try!(c.get(&full_path).send());
     let mut s = String::new();
     try!(result.read_to_string(&mut s));
@@ -189,13 +192,19 @@ struct GraphiteResponse {
 /// Load data from graphite
 ///
 /// Retry until success or exit the script
-fn fetch_data(url: &str, target: &str, window: i64, retries: u8, no_data: &Status, graphite_error: &Status)
+fn fetch_data(url: &str,
+              target: &str,
+              window: i64,
+              retries: u8,
+              no_data: &Status,
+              graphite_error: &Status,
+              print_url: bool)
 -> Result<GraphiteResponse, String> {
     let graphite_result: (Response, String);
     let mut attempts = 0;
     let mut retry_sleep = 2000;
     loop {
-        match get_graphite(url, target, window) {
+        match get_graphite(url, target, window, print_url) {
             Ok(s) => {
                 graphite_result = s;
                 break;
@@ -405,7 +414,8 @@ struct Args {
     window: i64,
     retries: u8,
     graphite_error: Status,
-    no_data: Status
+    no_data: Status,
+    print_url: bool,
 }
 
 static ASSERTION_EXAMPLES: &'static [&'static str] = &[
@@ -430,7 +440,8 @@ fn parse_args<'a>() -> Args {
              <PATH>                'The graphite path to query. For example: \"collectd.*.cpu\"'
              <ASSERTION>...        'The assertion to make against the PATH. See Below.'
              -w --window=[MINUTES] 'How many minutes of data to test. Default 10.'
-             --retries=[COUNT]     'How many times to retry reaching graphite. Default 4.")
+             --retries=[COUNT]     'How many times to retry reaching graphite. Default 4.
+             --print-url           'Unconditionally print the graphite url queried'")
         .arg(clap::Arg::with_name("NO_DATA_STATUS")
                        .long("--no-data")
                        .help("What to do with no data.
@@ -498,7 +509,8 @@ fn parse_args<'a>() -> Args {
         graphite_error: Status::from_str(args.value_of("NO_DATA_STATUS")
                                          .unwrap_or("unknown")).unwrap(),
         no_data: Status::from_str(args.value_of("NO_DATA_STATUS")
-                                  .unwrap_or("warning")).unwrap()
+                                  .unwrap_or("warning")).unwrap(),
+        print_url: args.is_present("print-url"),
     }
 }
 
@@ -740,7 +752,8 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
 fn main() {
     let args = parse_args();
     let data = match fetch_data(
-        &args.url, &args.path, args.window, args.retries, &args.no_data, &args.graphite_error) {
+        &args.url, &args.path, args.window, args.retries, &args.no_data, &args.graphite_error,
+        args.print_url) {
         Ok(data) => data,
         Err(e) => {
             println!("{}", e);
