@@ -8,7 +8,7 @@ use std::fs::{self, File};
 use std::io::{self, Read};
 use std::ops::{Div, Sub};
 use std::result::Result as StdResult;
-use std::str::FromStr;
+use std::str::{FromStr, Split};
 use std::fmt;
 use std::num;
 
@@ -569,12 +569,66 @@ impl fmt::Display for LoadAvg {
 }
 
 // ////////////////////////////////////////////////////////////////////////////
+// Disks
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct Mount {
+    pub spec: String,
+    pub file: String,
+    pub vfstype: String,
+    pub mntops: Vec<String>,
+    pub freq: Option<u32>,
+    pub passno: Option<u32>,
+}
+
+fn next<'a>(parts: &mut Split<'a, &str>) -> Result<String> {
+    if let Some(part) = parts.next() {
+        Ok(part.to_owned())
+    } else {
+        Err(ProcFsError::InsufficientData("Missing part from mount".to_owned()))
+    }
+}
+
+fn mount_from_line(line: &str) -> Result<Mount> {
+    let mut parts = line.split(" ");
+    Ok(Mount {
+        spec: try!(next(&mut parts)),
+        file: try!(next(&mut parts)),
+        vfstype: try!(next(&mut parts)),
+        mntops: try!(parts.next().map_or(Err(ProcFsError::InsufficientData(
+            "Missing mnt ops from mount".to_owned())),
+                                         |p| Ok(p)))
+            .split(",").map(|part| part.to_owned()).collect::<Vec<_>>(),
+        freq: parts.next().map(|v| v.parse().unwrap()),
+        passno: parts.next().map(|v| v.parse().unwrap())
+    })
+}
+
+impl Mount {
+    fn read_mounts() -> Result<String> {
+        let mut fh = try!(File::open("/proc/mounts"));
+        let mut contents = String::new();
+        try!(fh.read_to_string(&mut contents));
+        Ok(contents)
+    }
+
+    fn from_str(mounts: &str) -> Result<Vec<Mount>> {
+        mounts.lines().map(mount_from_line).collect::<Result<Vec<_>>>()
+    }
+
+    pub fn load_all() -> Result<Vec<Mount>> {
+        let mounts = try!(Mount::read_mounts());
+        Mount::from_str(&mounts)
+    }
+}
+
+// ////////////////////////////////////////////////////////////////////////////
 // Testing
 
 #[cfg(test)]
 mod unit {
-    use super::{Calculations, MemInfo, LoadAvg};
-    use super::pid;
+    use super::*;
+    use super::mount_from_line;
     use std::str::FromStr;
 
     use linux::Jiffies;
@@ -730,6 +784,82 @@ btime 143
         // ooh, rounding
         assert_eq!(&string, "0.9 1.0 0.1");
     }
+
+    #[test]
+    fn mount_from_line_works() {
+        let line =
+            "none \
+             /data/docker/aufs/mnt/b6e1b \
+             aufs \
+             rw,relatime,si=5c1d022653bfa828,dio,dirperm1 \
+             0 \
+             0";
+        let mount = mount_from_line(&line).unwrap();
+
+        fn s(st: &str) -> String { st.to_owned() }
+        assert_eq!(mount,
+                   Mount {
+                       spec: s("none"),
+                       file: s("/data/docker/aufs/mnt/b6e1b"),
+                       vfstype: s("aufs"),
+                       mntops: vec![s("rw"),
+                                    s("relatime"),
+                                    s("si=5c1d022653bfa828"),
+                                    s("dio"),
+                                    s("dirperm1"),
+                                    ],
+                       freq: Some(0),
+                       passno: Some(0),
+                   })
+    }
+
+    #[test]
+    fn mount_all_works() {
+        let mount_config =
+            "none \
+             /data/docker/aufs/mnt/b6e1b \
+             aufs \
+             rw,relatime,si=5c1d022653bfa828,dio,dirperm1 \
+             0 \
+             0\n\
+             some \
+             / \
+             ext4 \
+             rw,relatime \
+             0\n";
+        let mounts = Mount::from_str(&mount_config).unwrap();
+
+        fn s(st: &str) -> String { st.to_owned() }
+        assert_eq!(mounts,
+                   vec![
+                       Mount {
+                           spec: s("none"),
+                           file: s("/data/docker/aufs/mnt/b6e1b"),
+                           vfstype: s("aufs"),
+                           mntops: vec![s("rw"),
+                                        s("relatime"),
+                                        s("si=5c1d022653bfa828"),
+                                        s("dio"),
+                                        s("dirperm1"),
+                                        ],
+                           freq: Some(0),
+                           passno: Some(0),
+                       },
+                       Mount {
+                           spec: s("some"),
+                           file: s("/"),
+                           vfstype: s("ext4"),
+                           mntops: vec![s("rw"),
+                                        s("relatime"),
+                                        ],
+                           freq: Some(0),
+                           passno: None,
+                       },
+                       ]
+                   )
+    }
+
+
 }
 
 #[cfg(test)]
@@ -753,5 +883,10 @@ mod integration {
     #[test]
     fn loadavg_can_load() {
         LoadAvg::load().unwrap();
+    }
+
+    #[test]
+    fn mount_can_load() {
+        Mount::load_all().unwrap();
     }
 }

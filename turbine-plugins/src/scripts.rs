@@ -163,3 +163,41 @@
 //!     --show-hogs=<count>    Show most RAM-hungry procs   [default: 0]
 //!     -v, --verbose          Always show the hogs
 //! ```
+//!
+//! check-disk
+//! ==========
+//!
+//! Linux-only.
+//!
+//! ```plain
+//! $ check-disk -h
+//! Usage:
+//!      check-disk [options] [thresholds] [filters]
+//!      check-disk -h | --help
+//!
+//! Check all mounted file systems for disk usage.
+//!
+//! For some reason this check generally generates values that are between 1% and
+//! 3% higher than `df`, even though AFAICT we're both just calling statvfs a bunch
+//! of times.
+//!
+//! Options:
+//!     -h, --help            Show this message and exit
+//!     --info                Print information of all known filesystems.
+//!                           Similar to df.
+//!
+//! Thresholds:
+//!     -w, --warn=<percent>  Percent usage to warn at. [default: 80]
+//!     -c, --crit=<percent>  Percent usage to go critical at. [default: 90]
+//!     -W, --warn-inodes=<percent>
+//!                           Percent of inode usage to warn at. [default: 80]
+//!     -C, --crit-inodes=<percent>
+//!                           Percent of inode usage to go critical at. [default: 90]
+//!
+//! Filters:
+//!     --pattern=<regex>     Only check filesystems that match this regex.
+//!     --exclude-pattern=<regex>  Do not check filesystems that match this regex.
+//!     --type=<fs>           Only check filesystems that are of this type, e.g.
+//!                           ext4 or tmpfs. See 'man 8 mount' for more examples.
+//!     --exclude-type=<fs>   Do not check filesystems that are of this type.
+//! ```
