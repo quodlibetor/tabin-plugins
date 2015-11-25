@@ -18,9 +18,15 @@ pub fn pages_to_human_size(pages: u64) -> String {
     bytes_to_human_size(bytes)
 }
 
+/// Convert a large number to something smaller with a suffix
+///
+/// ```
+/// let human = turbine_plugins::linux::bytes_to_human_size(9999);
+/// assert_eq!(human, "9.8K");
+/// ```
 pub fn bytes_to_human_size(bytes: u64) -> String {
     let mut bytes = bytes as f64;
-    let sizes = ["B", "K", "M", "G", "T"];
+    let sizes = ["", "K", "M", "G", "T", "P", "E", "Z", "Y"];
     let mut reductions = 0;
     while reductions < sizes.len() - 1 {
         if bytes > 1000.0 {
@@ -34,14 +40,14 @@ pub fn bytes_to_human_size(bytes: u64) -> String {
 }
 
 #[test]
-fn pages_to_human_size_produces_shortest() {
-    let reprs = [(999, "999.0B"),
+fn bytes_to_human_size_produces_shortest() {
+    let reprs = [(999, "999.0"),
                  (9_999, "9.8K"),
                  (9_999_999, "9.5M"),
                  (35_999_999, "34.3M"),
                  (9_999_999_999, "9.3G"),
                  (9_999_999_999_999, "9.1T"),
-                 (90_999_999_999_999_999, "82764.0T")];
+                 (90_999_999_999_999_999, "80.8P")];
 
     reprs.iter()
          .map(|&(raw, repr): &(u64, &str)| assert_eq!(bytes_to_human_size(raw), repr))
