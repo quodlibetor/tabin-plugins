@@ -865,7 +865,7 @@ btime 143
 #[cfg(test)]
 #[cfg(target_os = "linux")]
 mod integration {
-    use super::{RunningProcs, MemInfo, LoadAvg};
+    use super::{RunningProcs, MemInfo, LoadAvg, Mount};
 
     #[test]
     fn can_read_all_procs() {
