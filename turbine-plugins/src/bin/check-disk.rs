@@ -70,6 +70,13 @@ impl Args {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+struct ErrorMsg {
+    msg: String,
+}
+
+type DiskResult<T> = Result<T, ErrorMsg>;
+
 #[derive(Debug)]
 struct MountStat {
     mount: Mount,
@@ -78,6 +85,20 @@ struct MountStat {
 
 fn percent(part: u64, whole: u64) -> f64 {
     100.0 - (part as f64 / whole as f64) * 100.0
+}
+
+fn maybe_regex(pattern: &Option<String>) -> DiskResult<Option<Regex>> {
+    if let Some(ref pattern) = *pattern {
+        let re = match Regex::new(&pattern) {
+            Ok(re) => re,
+            Err(e) => return Err(ErrorMsg {
+                msg: format!("Unable to filter disks like {:?}: {}", pattern, e)
+            })
+        };
+        Ok(Some(re))
+    } else {
+        Ok(None)
+    }
 }
 
 /// Convert Mounts into MountStats, applying filters from args
@@ -89,9 +110,11 @@ fn percent(part: u64, whole: u64) -> f64 {
 /// * Only shows one of any given `/dev/` filesystem's mount points (the
 ///   shortest, same as df)
 /// * Applies the `pattern` and `type` filters
-fn filter(mounts: Vec<Mount>, args: &Args) -> Vec<MountStat> {
+fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
     let mut devices = HashSet::new();
-    mounts.into_iter()
+    let include_regex = try!(maybe_regex(&args.flag_pattern));
+    let exclude_regex = try!(maybe_regex(&args.flag_exclude_pattern));
+    let ms = mounts.into_iter()
         .filter_map(|mount| {
             let stat = vfs::Statvfs::for_path(mount.file.as_bytes()).unwrap();
             if stat.f_blocks > 0 && !mount.file.starts_with("/proc") {
@@ -103,6 +126,9 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> Vec<MountStat> {
                 None
             }
         })
+        // If the same device is mounted multiple times, we only want one. In
+        // To match df we expect these to come in in sorted order and just keep
+        // the first one.
         .filter_map(|ms| {
             if ms.mount.spec.starts_with("/dev") {
                 if devices.contains(&ms.mount.spec) {
@@ -116,15 +142,13 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> Vec<MountStat> {
             }
         })
         .filter(|ms|
-                if let Some(ref pattern) = args.flag_pattern {
-                    let re = Regex::new(&pattern).unwrap();
+                if let Some(ref re) = include_regex {
                     re.is_match(&ms.mount.file)
                 } else {
                     true
                 })
         .filter(|ms|
-                if let Some(ref pattern) = args.flag_exclude_pattern {
-                    let re = Regex::new(&pattern).unwrap();
+                if let Some(ref re) = exclude_regex {
                     !re.is_match(&ms.mount.file)
                 } else {
                     true
@@ -141,7 +165,8 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> Vec<MountStat> {
                 } else {
                     true
                 })
-        .collect::<Vec<_>>()
+        .collect::<Vec<_>>();
+    Ok(ms)
 }
 
 fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
@@ -209,7 +234,13 @@ fn main() {
     let mut mounts = Mount::load_all().unwrap();
     mounts.sort_by(|l, r| l.file.len().cmp(&r.file.len()));
 
-    let mountstats = filter(mounts, &args);
+    let mountstats = match filter(mounts, &args) {
+        Ok(ms) => ms,
+        Err(e) => {
+            println!("{}", e.msg);
+            Status::Critical.exit();
+        }
+    };
 
     let status = do_check(&mountstats, &args);
     status.exit();
@@ -217,7 +248,7 @@ fn main() {
 
 #[cfg(test)]
 mod unit {
-    use super::{Args, USAGE};
+    use super::{Args, USAGE, maybe_regex, ErrorMsg};
     use docopt::Docopt;
 
     #[test]
@@ -231,5 +262,16 @@ mod unit {
             .and_then(|d| d.argv(vec!["arg0", "--pattern", "hello"].into_iter()).decode())
             .unwrap();
         assert_eq!(args.flag_pattern.unwrap(), "hello");
+    }
+
+    #[test]
+    fn check_maybe_regex() {
+        assert_eq!(maybe_regex(&Some("[hello".to_owned())),
+                   Err(ErrorMsg {
+                       msg: "Unable to filter disks like \"[hello\": \
+                             Error parsing regex near \'hello\' at character offset 6: \
+                             Character class was not closed before the end of the regex \
+                             (missing a \']\').".to_owned()
+                   }))
     }
 }
