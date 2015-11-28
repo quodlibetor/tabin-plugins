@@ -11,6 +11,3 @@ url = "0.2"
 
 [dependencies.turbine-plugins]
 path = "turbine-plugins"
-
-[dev-dependencies.clippy]
-git = "https://github.com/Manishearth/rust-clippy"
