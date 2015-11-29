@@ -1,0 +1,6 @@
+target
+Cargo*
+.vagrant
+src
+/scripts
+.travis*

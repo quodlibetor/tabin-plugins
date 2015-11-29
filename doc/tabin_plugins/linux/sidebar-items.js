@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["bytes_to_human_size","Convert a large number to something smaller with a suffix"],["pages_to_human_size",""]],"struct":[["Jiffies","A count of Jiffies"],["PAGESIZE",""],["USER_HZ",""],["UserHz","A value that is in USER_HZ units"]],"trait":[["Ratio",""]]});

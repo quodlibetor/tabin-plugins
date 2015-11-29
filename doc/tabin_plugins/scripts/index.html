@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `scripts` mod in crate `tabin_plugins`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, scripts">
+
+    <title>tabin_plugins::scripts - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>tabin_plugins</a></p><script>window.sidebarCurrent = {name: 'scripts', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>tabin_plugins</a>::<wbr><a class='mod' href=''>scripts</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-1164' class='srclink' href='../../src/tabin_plugins/scripts.rs.html#2-333' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Documentation about the various scripts contained herein</p>
+
+<ul>
+<li><a href="#check-graphite">check-graphite</a></li>
+<li><a href="#check-cpu">check-cpu</a></li>
+<li><a href="#check-container-cpu">check-container-cpu</a></li>
+<li><a href="#check-load">check-load</a></li>
+<li><a href="#check-container-ram">check-container-ram</a></li>
+<li><a href="#check-ram">check-ram</a></li>
+<li><a href="#check-fs-writeable">check-fs-writeable</a></li>
+<li><a href="#check-disk">check-disk</a></li>
+</ul>
+
+<h1 id='check-graphite' class='section-header'><a href='#check-graphite'>check-graphite</a></h1>
+<p>Usage looks like:</p>
+
+<pre><code class="language-plain">$ target/osx/debug/check-graphite -h
+check-graphite 0.1.0
+Brandon W Maister &lt;quodlibetor@gmail.com&gt;
+Query graphite and exit based on predicates
+
+USAGE:
+        check-graphite [FLAGS] [OPTIONS] &lt;URL&gt; &lt;PATH&gt; &lt;ASSERTION&gt;... [--]
+
+FLAGS:
+    -h, --help         Prints help information
+        --print-url    Unconditionally print the graphite url queried
+    -V, --version      Prints version information
+
+OPTIONS:
+        --retries &lt;COUNT&gt;     How many times to retry reaching graphite. Default 4
+        --graphite-error &lt;GRAPHITE_ERROR_STATUS&gt;    What to do with no data.
+                              Choices: ok, warn, critical, unknown.
+                              No data includes &#39;all nulls&#39; and error connecting.
+                              Default: unknown. [values: ok warning critical unknown]
+    -w, --window &lt;MINUTES&gt;              How many minutes of data to test. Default 10.
+        --no-data &lt;NO_DATA_STATUS&gt;      What to do with no data.
+                              Choices: ok, warn, critical, unknown.
+                              No data includes &#39;all nulls&#39; and error connecting.
+                              Default: warn. [values: ok warning critical unknown]
+
+ARGS:
+    URL             The domain to query graphite. Must include scheme (http/s)
+    PATH            The graphite path to query. For example: &quot;collectd.*.cpu&quot;
+    ASSERTION...    The assertions to make against the PATH. See Below.
+
+About Assertions:
+
+    Assertions look like &#39;critical if any point in any series is &gt; 5&#39;.
+
+    They describe what you care about in your graphite data. The structure of
+    an assertion is as follows:
+
+        &lt;errorkind&gt; if &lt;point spec&gt; [in &lt;series spec&gt;] is|are [not] &lt;operator&gt; &lt;threshold&gt;
+
+    Where:
+
+        - `errorkind` is either `critical` or `warning`
+        - `point spec` can be one of:
+            - `any point`
+            - `all points`
+            - `at least &lt;N&gt;% of points`
+            - `most recent point`
+        - `series spec` (optional) can be one of:
+            - `any series`
+            - `all series`
+            - `at least &lt;N&gt;% of series`
+        - `not` is optional, and inverts the following operator
+        - `operator` is one of: `==` `!=` `&lt;` `&gt;` `&lt;=` `&gt;=`
+        - `threshold` is a floating-point value (e.g. 100, 78.0)
+
+    Here are some example assertions:
+
+        - `critical if any point is &gt; 0`
+        - `critical if any point in at least 40% of series is &gt; 0`
+        - `critical if any point is not &gt; 0`
+        - `warning if any point is == 9`
+        - `critical if all points are &gt; 100.0`
+        - `critical if at least 20% of points are &gt; 100`
+        - `critical if most recent point is &gt; 5`
+        - `critical if most recent point in all series are == 0`
+</code></pre>
+
+<h1 id='check-cpu' class='section-header'><a href='#check-cpu'>check-cpu</a></h1>
+<p>Linux-only.</p>
+
+<pre><code class="language-plain">Usage:
+    check-cpu [options] [--type=&lt;work-source&gt;...] [--show-hogs=&lt;count&gt;]
+    check-cpu (-h | --help)
+
+Options:
+    -h, --help               Show this help message
+
+    -s, --sample=&lt;seconds&gt;   Seconds to spent collecting   [default: 1]
+    -w, --warn=&lt;percent&gt;     Percent to warn at            [default: 80]
+    -c, --crit=&lt;percent&gt;     Percent to critical at        [default: 95]
+
+    --per-cpu                Gauge values per-cpu instead of across the
+                             entire machine
+    --cpu-count=&lt;num&gt;        If --per-cpu is specified, this is how many
+                             CPUs need to be at a threshold to trigger.
+                             [default: 1]
+
+    --show-hogs=&lt;count&gt;      Show most cpu-hungry procs    [default: 0]
+
+CPU Work Types:
+
+    Specifying one of the CPU kinds checks that kind of utilization. The
+    default is to check total utilization. Specifying this multiple times
+    alerts if *any* of the CPU usage types are critical.
+
+    There are three CPU type groups: `active` `activeplusiowait` and
+    `activeminusnice`. `activeplusiowait` considers time spent waiting for IO
+    to be busy time, this gets alerts to be more aligned with the overall
+    system load, but is different from CPU usage reported by `top` since the
+    CPU isn&#39;t actually *busy* during this time.
+
+    --type=&lt;usage&gt;           Some of:
+                                active activeplusiowait activeminusnice
+                                user nice system irq softirq steal guest
+                                idle iowait [default: active]
+</code></pre>
+
+<h1 id='check-container-cpu' class='section-header'><a href='#check-container-cpu'>check-container-cpu</a></h1>
+<p>Linux-only. Can only be run from inside a cgroup.</p>
+
+<pre><code class="language-plain">$ target/osx/debug/check-container-cpu -h
+Usage:
+    check-container-cpu [options]
+    check-cpu (-h | --help)
+
+Check the cpu usage of the currently-running container. This must be run from
+inside the container to be checked.
+
+Options:
+    -h, --help            Show this help message
+
+    -w, --warn=&lt;percent&gt;  Percent to warn at           [default: 80]
+    -c, --crit=&lt;percent&gt;  Percent to critical at       [default: 80]
+
+    -s, --sample=&lt;secs&gt;   Seconds to take sample over  [default: 5]
+
+    --show-hogs=&lt;count&gt;   Show &lt;count&gt; most cpu-intensive processes in this
+                          container.                   [default: 0]
+
+    --shares-per-cpu=&lt;shares&gt;
+                          The number of CPU shares given to a cgroup when
+                          it has exactly one CPU allocated to it.
+
+About usage percentages:
+
+    If you don&#39;t specify &#39;--shares-per-cpu&#39;, percentages should be specified
+    relative to a single CPU&#39;s usage. So if you have a process that you want to
+    be allowed to use 4 CPUs worth of processor time, and you were planning on
+    going critical at 90%, you should specify something like &#39;--crit 360&#39;
+
+    However, if you are using a container orchestrator such as Mesos, you often
+    tell it that you want this container to have &quot;2 CPUs&quot; worth of hardware.
+    Your scheduler is responsible for deciding how many cgroup cpu shares 1
+    CPU&#39;s worth of time is, and keeping track of how many shares it has doled
+    out, and then schedule your containers to run with 2 CPUs worth of CPU
+    shares. Assuming that your scheduler uses the default number of shares
+    (1024) as &quot;one cpu&quot;, this will mean that you have given that cgroup 2048
+    shares.
+
+    If you do specify --shares-per-cpu then the percentage that you give will
+    be scaled by the number of CPUs worth of shares that this container has
+    been given, and CPU usage will be compared to the total percent of the CPUs
+    that it has been allocated.
+
+    Which is to say, if you specify --shares-per-cpu, you should always specify
+    your warn/crit percentages out of 100%, because this script will correctly
+    scale it for your process.
+
+    Here are some examples, where &#39;shares granted&#39; is the value in
+    /sys/fs/cgroup/cpu/cpu.shares:
+
+        * args: --shares-per-cpu 1024 --crit 90
+          shares granted: 1024
+          percent of one CPU to alert at: 90
+        * args: --shares-per-cpu 1024 --crit 90
+          shares granted: 2024
+          percent of one CPU to alert at: 180
+        * args: --shares-per-cpu 1024 --crit 90
+          shares granted: 102
+          percent of one CPU to alert at: 9
+</code></pre>
+
+<h1 id='check-load' class='section-header'><a href='#check-load'>check-load</a></h1>
+<p>Linux-only.</p>
+
+<pre><code class="language-plain">$ check-load -h
+Usage: check-load [options]
+       check-load -h | --help
+
+Check the load average of the system
+
+Load average is the number of processes *waiting* to do work in a queue, either
+due to IO or CPU constraints. The numbers used to check are the load averaged
+over 1, 5 and 15 minutes, respectively
+
+Options:
+    -h, --help              Show this message and exit
+    -v, --verbose           Print even when things are okay
+
+Threshold Behavior:
+    -w, --warn=&lt;averages&gt;   Averages to warn at         [default: 5,3.5,2.5]
+    -c, --crit=&lt;averages&gt;   Averages to go critical at  [default: 10,5,3]
+
+    --per-cpu               Divide the load average by the number of processors on the
+                            system.
+</code></pre>
+
+<h1 id='check-ram' class='section-header'><a href='#check-ram'>check-ram</a></h1>
+<p>Linux-only.</p>
+
+<pre><code class="language-plain">$ check-ram -h
+Usage: check-ram [options]
+       check-ram -h | --help
+
+Options:
+    -h, --help             Show this help message
+
+    -w, --warn=&lt;percent&gt;   Percent used to warn at      [default: 80]
+    -c, --crit=&lt;percent&gt;   Percent used to critical at  [default: 95]
+
+    --show-hogs=&lt;count&gt;    Show most RAM-hungry procs   [default: 0]
+    -v, --verbose          Always show the hogs
+</code></pre>
+
+<h1 id='check-container-ram' class='section-header'><a href='#check-container-ram'>check-container-ram</a></h1>
+<p>Linux-only. Can only be run from inside a container.</p>
+
+<pre><code class="language-plain">$ target/osx/debug/check-container-ram -h
+Usage:
+    check-container-ram [--show-hogs=&lt;count&gt;] [--invalid-limit=&lt;status&gt;] [options]
+    check-container-ram (-h | --help)
+
+Check the RAM usage of the currently-running container. This must be run from
+inside the container to be checked.
+
+This checks as a ratio of the limit specified in the cgroup memory limit, and
+if there is no limit set (or the limit is greater than the total memory
+available on the system) this checks against the total system memory.
+
+Options:
+    -h, --help                 Show this message and exit
+
+    -w, --warn=&lt;percent&gt;       Warn at this percent used           [default: 85]
+    -c, --crit=&lt;percent&gt;       Critical at this percent used       [default: 95]
+
+    --invalid-limit=&lt;status&gt;   Status to consider this check if the CGroup limit
+                               is greater than the system ram      [default: ok]
+
+    --show-hogs=&lt;count&gt;        Show the most ram-hungry procs      [default: 0]
+</code></pre>
+
+<h1 id='check-disk' class='section-header'><a href='#check-disk'>check-disk</a></h1>
+<p>Linux-only.</p>
+
+<pre><code class="language-plain">$ check-disk -h
+Usage:
+     check-disk [options] [thresholds] [filters]
+     check-disk -h | --help
+
+Check all mounted file systems for disk usage.
+
+For some reason this check generally generates values that are between 1% and
+3% higher than `df`, even though AFAICT we&#39;re both just calling statvfs a bunch
+of times.
+
+Options:
+    -h, --help            Show this message and exit
+    --info                Print information of all known filesystems.
+                          Similar to df.
+
+Thresholds:
+    -w, --warn=&lt;percent&gt;  Percent usage to warn at. [default: 80]
+    -c, --crit=&lt;percent&gt;  Percent usage to go critical at. [default: 90]
+    -W, --warn-inodes=&lt;percent&gt;
+                          Percent of inode usage to warn at. [default: 80]
+    -C, --crit-inodes=&lt;percent&gt;
+                          Percent of inode usage to go critical at. [default: 90]
+
+Filters:
+    --pattern=&lt;regex&gt;     Only check filesystems that match this regex.
+    --exclude-pattern=&lt;regex&gt;  Do not check filesystems that match this regex.
+    --type=&lt;fs&gt;           Only check filesystems that are of this type, e.g.
+                          ext4 or tmpfs. See &#39;man 8 mount&#39; for more examples.
+    --exclude-type=&lt;fs&gt;   Do not check filesystems that are of this type.
+</code></pre>
+
+<h1 id='check-fs-writeable' class='section-header'><a href='#check-fs-writeable'>check-fs-writeable</a></h1>
+<pre><code class="language-plain">$ check-fs-writeable -h
+Usage:
+    check-fs-writeable &lt;filename&gt;
+    check-fs-writeable -h | --help
+
+Check that we can write to a filesystem by writing a byte to a file. Does not
+try to create the directory, or do anything else. Just writes a single byte to
+a file.
+
+Arguments:
+
+    &lt;filename&gt;            The file to write to
+
+Options:
+    -h, --help            Show this message and exit
+</code></pre>
+</div></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "tabin_plugins";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

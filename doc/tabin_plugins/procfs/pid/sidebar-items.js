@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CmdLine",""],["Process",""],["Stat","The status of a process"]]});

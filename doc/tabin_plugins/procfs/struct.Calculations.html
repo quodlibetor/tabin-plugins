@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Calculations` struct in crate `tabin_plugins`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Calculations">
+
+    <title>tabin_plugins::procfs::Calculations - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>procfs</a></p><script>window.sidebarCurrent = {name: 'Calculations', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>procfs</a>::<wbr><a class='struct' href=''>Calculations</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-598' class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#161-184' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Calculations {
+    pub user: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
+    pub nice: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
+    pub system: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
+    pub idle: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
+    pub iowait: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
+    pub irq: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
+    pub softirq: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
+    pub steal: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
+    pub guest: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
+    pub guest_nice: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>&gt;,
+}</pre><div class='docblock'><p>The number of calculations that have occured on this computer in a time
+period</p>
+</div><h2 class='fields'>Fields</h2>
+<table><tr class='stab '>
+                                  <td id='structfield.user'><code>user</code></td><td><div class='docblock'><p>Time spent in user mode.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.nice'><code>nice</code></td><td><div class='docblock'><p>Time spent in user mode with low priority (nice).</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.system'><code>system</code></td><td><div class='docblock'><p>Time spent in system mode.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.idle'><code>idle</code></td><td><div class='docblock'><p>Time spent not doing anything in particular</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.iowait'><code>iowait</code></td><td><div class='docblock'><p>Time forced to be idle waiting for I/O to complete.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.irq'><code>irq</code></td><td><div class='docblock'><p>Time spent servicing hardware interrupts</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.softirq'><code>softirq</code></td><td><div class='docblock'><p>Time spent servicing software interrupts</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.steal'><code>steal</code></td><td><div class='docblock'><p>Stolen time, which is the time spent in other operating systems when
+running in a virtualized environment</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.guest'><code>guest</code></td><td><div class='docblock'><p>Time spent running a virtual CPU for a guest operating system. AKA time
+we lent out to virtual machines.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.guest_nice'><code>guest_nice</code></td><td><div class='docblock'><p>Time spent running a niced guest</p>
+</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='method.load' class='method'><code>fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class='type' href='../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>&gt;</code></h4>
+<div class='docblock'><p>Build a new <code>Calculations</code> for <em>total</em> CPU jiffies from the /proc/stat
+pseudofile. See <code>load_per_cpu</code> for per-cpu metrics.</p>
+</div><h4 id='method.load_per_cpu' class='method'><code>fn <a href='#method.load_per_cpu' class='fnname'>load_per_cpu</a>() -&gt; <a class='type' href='../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>&gt;&gt;</code></h4>
+<div class='docblock'><p>Build a list of per-cpu metrics from the /proc/stat file</p>
+
+<p>This does not include the <code>total</code> line, use <code>load()</code> for that.</p>
+</div><h4 id='method.active' class='method'><code>fn <a href='#method.active' class='fnname'>active</a>(&amp;self) -&gt; <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a></code></h4>
+<div class='docblock'><p>Jiffies spent non-idle</p>
+
+<p>This includes all processes in user space, kernel space, and time
+stolen by other VMs.</p>
+</div><h4 id='method.idle' class='method'><code>fn <a href='#method.idle' class='fnname'>idle</a>(&amp;self) -&gt; <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a></code></h4>
+<div class='docblock'><p>Jiffies spent with nothing to do</p>
+</div><h4 id='method.virt' class='method'><code>fn <a href='#method.virt' class='fnname'>virt</a>(&amp;self) -&gt; <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a></code></h4>
+<div class='docblock'><p>Jiffies spent running child VMs</p>
+
+<p>This is included in <code>active()</code> by the nature of the way that
+/proc/stats reports things, so don&#39;t add this to that when totalling.</p>
+</div><h4 id='method.total' class='method'><code>fn <a href='#method.total' class='fnname'>total</a>(&amp;self) -&gt; <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a></code></h4>
+<div class='docblock'><p>All jiffies since the kernel started tracking</p>
+</div><h4 id='method.percent_util_since' class='method'><code>fn <a href='#method.percent_util_since' class='fnname'>percent_util_since</a>(&amp;self, kind: &amp;<a class='enum' href='../../tabin_plugins/procfs/enum.WorkSource.html' title='tabin_plugins::procfs::WorkSource'>WorkSource</a>, start: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code></h4>
+<div class='docblock'><p>Return how much cpu time the specific worksource took</p>
+
+<p>The number returned is between 0 and 100</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Sub.html' title='core::ops::Sub'>Sub</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='assoc_type.Output' class='type'><code>type Output = Self</code></h4>
+<h4 id='method.sub' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Sub.html#method.sub' class='fnname'>sub</a>(self, rhs: Self) -&gt; Self</code></h4>
+</div><h3 class='impl'><code>impl&lt;'a&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Sub.html' title='core::ops::Sub'>Sub</a> for &amp;'a <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='assoc_type.Output' class='type'><code>type Output = <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h4>
+<h4 id='method.sub' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Sub.html#method.sub' class='fnname'>sub</a>(self, rhs: Self) -&gt; <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h4>
+</div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html' title='core::fmt::Display'>Display</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html#method.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+</div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h4>
+<h4 id='method.clone_from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+</div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "tabin_plugins";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

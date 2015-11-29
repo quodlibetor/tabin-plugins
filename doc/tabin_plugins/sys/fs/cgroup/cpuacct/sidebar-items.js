@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Stat","Similar to /proc/stat, but shows toatal CPU usage by the cgroup"]]});
