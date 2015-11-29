@@ -1,3 +1,5 @@
 target
 /Cargo.lock
 .vagrant
+/doc
+/deploy_docs
