@@ -3,18 +3,18 @@
 extern crate rustc_serialize;
 extern crate docopt;
 
-extern crate turbine_plugins;
+extern crate tabin_plugins;
 
 use std::thread::sleep;
 use std::time::Duration;
 
 use docopt::Docopt;
 
-use turbine_plugins::Status;
-use turbine_plugins::linux::{Jiffies, Ratio};
-use turbine_plugins::procfs::{Calculations, RunningProcs};
-use turbine_plugins::sys::fs::cgroup::cpuacct::Stat as CGroupStat;
-use turbine_plugins::sys::fs::cgroup::cpu::shares;
+use tabin_plugins::Status;
+use tabin_plugins::linux::{Jiffies, Ratio};
+use tabin_plugins::procfs::{Calculations, RunningProcs};
+use tabin_plugins::sys::fs::cgroup::cpuacct::Stat as CGroupStat;
+use tabin_plugins::sys::fs::cgroup::cpu::shares;
 
 static USAGE: &'static str = r#"
 Usage:
@@ -171,8 +171,8 @@ fn main() {
 #[cfg(test)]
 mod unit {
     use docopt::Docopt;
-    use turbine_plugins::procfs::{Calculations}; //, RunningProcs};
-    use turbine_plugins::linux::Jiffies;
+    use tabin_plugins::procfs::{Calculations}; //, RunningProcs};
+    use tabin_plugins::linux::Jiffies;
     use super::{USAGE, Args, find_median_jiffies_used};
 
     #[test]

@@ -8,11 +8,11 @@ extern crate rustc_serialize;
 
 extern crate docopt;
 
-extern crate turbine_plugins;
+extern crate tabin_plugins;
 
 use docopt::Docopt;
-use turbine_plugins::Status;
-use turbine_plugins::procfs::{Calculations, LoadAvg};
+use tabin_plugins::Status;
+use tabin_plugins::procfs::{Calculations, LoadAvg};
 
 static USAGE: &'static str = "
 Usage: check-load [options]
@@ -112,7 +112,7 @@ fn main() {
 #[cfg(test)]
 mod test {
     use docopt::Docopt;
-    use turbine_plugins::Status;
+    use tabin_plugins::Status;
 
     use super::{USAGE, RawArgs, Args, parse_args, do_check};
 

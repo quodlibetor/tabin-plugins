@@ -1,13 +1,13 @@
 extern crate rustc_serialize;
 
 extern crate docopt;
-extern crate turbine_plugins;
+extern crate tabin_plugins;
 
 use docopt::Docopt;
 
-use turbine_plugins::linux::pages_to_human_size;
-use turbine_plugins::Status;
-use turbine_plugins::procfs::{RunningProcs, MemInfo};
+use tabin_plugins::linux::pages_to_human_size;
+use tabin_plugins::Status;
+use tabin_plugins::procfs::{RunningProcs, MemInfo};
 
 static USAGE: &'static str = "
 Usage: check-ram [options]
@@ -80,8 +80,8 @@ fn main() {
 mod test {
     use docopt::Docopt;
     use super::{USAGE, Args, compare_status};
-    use turbine_plugins::Status;
-    use turbine_plugins::procfs::MemInfo;
+    use tabin_plugins::Status;
+    use tabin_plugins::procfs::MemInfo;
 
     #[test]
     fn usage_is_valid() {

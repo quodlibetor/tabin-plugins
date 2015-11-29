@@ -5,7 +5,7 @@ extern crate nix;
 extern crate regex;
 extern crate rustc_serialize;
 
-extern crate turbine_plugins;
+extern crate tabin_plugins;
 
 use std::collections::HashSet;
 use std::cmp::max;
@@ -13,9 +13,9 @@ use std::cmp::max;
 use docopt::Docopt;
 use regex::Regex;
 use nix::sys::statvfs::vfs;
-use turbine_plugins::Status;
-use turbine_plugins::procfs::Mount;
-use turbine_plugins::linux::bytes_to_human_size;
+use tabin_plugins::Status;
+use tabin_plugins::procfs::Mount;
+use tabin_plugins::linux::bytes_to_human_size;
 
 static USAGE: &'static str = "
 Usage:

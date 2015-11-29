@@ -6,7 +6,7 @@ extern crate itertools;
 extern crate url;
 extern crate rustc_serialize;
 
-extern crate turbine_plugins;
+extern crate tabin_plugins;
 
 use std::cmp::max;
 use std::fmt;
@@ -21,7 +21,7 @@ use itertools::Itertools;
 use url::Url;
 use rustc_serialize::json::{self, Json};
 
-use turbine_plugins::Status;
+use tabin_plugins::Status;
 
 /// One of the datapoints that graphite has returned.
 ///
@@ -792,7 +792,7 @@ mod test {
     use chrono::naive::datetime::NaiveDateTime;
     use rustc_serialize::json::Json;
 
-    use turbine_plugins::Status;
+    use tabin_plugins::Status;
 
     use super::{Assertion, GraphiteData, DataPoint, operator_string_to_func,
                 graphite_result_to_vec, do_check, ParseError, NegOp,
