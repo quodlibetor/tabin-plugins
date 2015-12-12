@@ -11,6 +11,7 @@ hyper = "0.6"
 itertools = "0.4"
 lazy_static = "0.1"
 libc = "0.1.12"
+nix = "^0.4.2"
 regex = "0.1"
 rustc-serialize = "0.3"
 scan_fmt = "0.1"
@@ -21,7 +22,3 @@ wrapped_enum = "0.1"
 default-features = false
 features = ["suggestions"]
 version = "1.3"
-
-[dependencies.nix]
-git = "https://github.com/quodlibetor/nix-rust.git"
-branch = "improve-statvfs"
