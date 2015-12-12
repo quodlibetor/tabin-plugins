@@ -16,7 +16,7 @@
 //! Usage looks like:
 //!
 //! ```plain
-//! $ target/osx/debug/check-graphite -h
+//! $ check-graphite --help
 //! check-graphite 0.1.0
 //! Brandon W Maister <quodlibetor@gmail.com>
 //! Query graphite and exit based on predicates
@@ -25,26 +25,28 @@
 //!         check-graphite [FLAGS] [OPTIONS] <URL> <PATH> <ASSERTION>... [--]
 //!
 //! FLAGS:
-//!     -h, --help         Prints help information
-//!         --print-url    Unconditionally print the graphite url queried
-//!     -V, --version      Prints version information
+//!     -h, --help                 Prints help information
+//!         --print-url            Unconditionally print the graphite url queried
+//!     -V, --version              Prints version information
+//!         --verify-assertions    Just check assertion syntax, do not query urls
 //!
 //! OPTIONS:
-//!         --retries <COUNT>     How many times to retry reaching graphite. Default 4
+//!         --retries <COUNT>      How many times to retry reaching graphite. Default 4
 //!         --graphite-error <GRAPHITE_ERROR_STATUS>    What to do with no data.
 //!                               Choices: ok, warn, critical, unknown.
-//!                               No data includes 'all nulls' and error connecting.
+//!                               What to say if graphite returns a 500 or invalid JSON
 //!                               Default: unknown. [values: ok warning critical unknown]
-//!     -w, --window <MINUTES>              How many minutes of data to test. Default 10.
-//!         --no-data <NO_DATA_STATUS>      What to do with no data.
+//!     -w, --window <MINUTES>                          How many minutes of data to test. Default 10.
+//!         --no-data <NO_DATA_STATUS>                  What to do with no data.
 //!                               Choices: ok, warn, critical, unknown.
-//!                               No data includes 'all nulls' and error connecting.
+//!                               This is the value to use for the assertion
+//!                               'if all values are null'
 //!                               Default: warn. [values: ok warning critical unknown]
 //!
 //! ARGS:
 //!     URL             The domain to query graphite. Must include scheme (http/s)
 //!     PATH            The graphite path to query. For example: "collectd.*.cpu"
-//!     ASSERTION...    The assertions to make against the PATH. See Below.
+//!     ASSERTION...    The assertion to make against the PATH. See Below.
 //!
 //! About Assertions:
 //!

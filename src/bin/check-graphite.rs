@@ -444,12 +444,13 @@ fn parse_args<'a>() -> Args {
              <ASSERTION>...        'The assertion to make against the PATH. See Below.'
              -w --window=[MINUTES] 'How many minutes of data to test. Default 10.'
              --retries=[COUNT]     'How many times to retry reaching graphite. Default 4.
-             --print-url           'Unconditionally print the graphite url queried'")
+             --print-url           'Unconditionally print the graphite url queried'
+             --verify-assertions   'Just check assertion syntax, do not query urls'")
         .arg(clap::Arg::with_name("NO_DATA_STATUS")
                        .long("--no-data")
                        .help("What to do with no data.
                               Choices: ok, warn, critical, unknown.
-                              No data includes 'all nulls' and error connecting.
+                              This is the value to use for the assertion 'if all values are null'
                               Default: warn.")
                        .takes_value(true)
                        .possible_values(&allowed_no_data)
@@ -458,7 +459,7 @@ fn parse_args<'a>() -> Args {
                        .long("--graphite-error")
                        .help("What to do with no data.
                               Choices: ok, warn, critical, unknown.
-                              No data includes 'all nulls' and error connecting.
+                              What to say if graphite returns a 500 or invalid JSON
                               Default: unknown.")
                        .takes_value(true)
                        .possible_values(&allowed_no_data)
@@ -502,6 +503,11 @@ fn parse_args<'a>() -> Args {
                             Status::Critical.exit();
                         }
                     }).collect();
+
+    if args.is_present("verify-assertions") {
+        Status::Ok.exit();
+    }
+
 
     Args {
         url: args.value_of("URL").unwrap().to_owned(),
@@ -739,6 +745,12 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                 }
             }
         }
+    }
+
+    if threshold.is_none() {
+        return Err(ParseError::InvalidThreshold(
+            format!("No threshold found (e.g. '{0} N', not '{0}')",
+                    operator.unwrap_or(">="))));
     }
 
     Ok(Assertion {
