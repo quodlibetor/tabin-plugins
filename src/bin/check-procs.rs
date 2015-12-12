@@ -7,15 +7,15 @@ extern crate nix;
 extern crate regex;
 extern crate rustc_serialize;
 
-extern crate turbine_plugins;
+extern crate tabin_plugins;
 
 use docopt::Docopt;
 use nix::unistd::{getpid, getppid};
 use regex::Regex;
 
-use turbine_plugins::Status;
-use turbine_plugins::procfs::RunningProcs;
-use turbine_plugins::procfs::pid::Process;
+use tabin_plugins::Status;
+use tabin_plugins::procfs::RunningProcs;
+use tabin_plugins::procfs::pid::Process;
 
 
 static USAGE: &'static str = "

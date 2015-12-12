@@ -21,7 +21,7 @@ pub fn pages_to_human_size(pages: u64) -> String {
 /// Convert a large number to something smaller with a suffix
 ///
 /// ```
-/// let human = turbine_plugins::linux::bytes_to_human_size(9999);
+/// let human = tabin_plugins::linux::bytes_to_human_size(9999);
 /// assert_eq!(human, "9.8K");
 /// ```
 pub fn bytes_to_human_size(bytes: u64) -> String {

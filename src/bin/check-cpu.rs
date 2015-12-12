@@ -4,7 +4,7 @@ extern crate rustc_serialize;
 
 extern crate docopt;
 
-extern crate turbine_plugins;
+extern crate tabin_plugins;
 // extern crate rand;
 
 use std::fmt::Display;
@@ -13,8 +13,8 @@ use std::thread::sleep;
 use std::time::Duration;
 
 use docopt::Docopt;
-use turbine_plugins::Status;
-use turbine_plugins::procfs::{Calculations, RunningProcs, WorkSource};
+use tabin_plugins::Status;
+use tabin_plugins::procfs::{Calculations, RunningProcs, WorkSource};
 
 static USAGE: &'static str = "
 Usage:
@@ -175,9 +175,9 @@ mod unit {
     use docopt::Docopt;
     use super::{Args, USAGE, do_comparison, determine_exit, determine_status_per_cpu};
 
-    use turbine_plugins::Status;
-    use turbine_plugins::procfs::{Calculations, WorkSource};
-    use turbine_plugins::linux::Jiffies;
+    use tabin_plugins::Status;
+    use tabin_plugins::procfs::{Calculations, WorkSource};
+    use tabin_plugins::linux::Jiffies;
 
     #[test]
     fn validate_docstring() {

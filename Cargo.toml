@@ -1,6 +1,6 @@
 [package]
 authors = ["Brandon W Maister <quodlibetor@gmail.com>"]
-name = "turbine-plugins"
+name = "tabin-plugins"
 version = "0.1.4"
 
 [dependencies]

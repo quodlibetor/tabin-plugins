@@ -3,5 +3,11 @@ rust:
   - stable
   - beta
   - nightly
-script: ./.travis-test.sh
+
+script:
+  - cargo test --verbose
+
+after_success:
+  - ./scripts/doc-upload.sh
+
 sudo: false

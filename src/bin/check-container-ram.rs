@@ -3,17 +3,17 @@
 extern crate rustc_serialize;
 extern crate docopt;
 
-extern crate turbine_plugins;
+extern crate tabin_plugins;
 
 use std::fmt;
 use std::cmp::max;
 
 use docopt::Docopt;
 
-use turbine_plugins::Status;
-use turbine_plugins::sys::fs::cgroup::memory::{Stat, limit_in_bytes};
-use turbine_plugins::linux::{pages_to_human_size, bytes_to_human_size};
-use turbine_plugins::procfs::{RunningProcs, MemInfo};
+use tabin_plugins::Status;
+use tabin_plugins::sys::fs::cgroup::memory::{Stat, limit_in_bytes};
+use tabin_plugins::linux::{pages_to_human_size, bytes_to_human_size};
+use tabin_plugins::procfs::{RunningProcs, MemInfo};
 
 static USAGE: &'static str = "
 Usage:
@@ -122,7 +122,7 @@ fn main() {
 mod unit {
 
     use docopt::Docopt;
-    use turbine_plugins::Status;
+    use tabin_plugins::Status;
     use super::{USAGE, Args};
 
     #[test]
