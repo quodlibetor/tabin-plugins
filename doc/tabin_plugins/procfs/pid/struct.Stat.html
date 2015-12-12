@@ -45,31 +45,31 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-307' class='srclink' href='../../../src/tabin_plugins/procfs/pid.rs.html#50-74' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-305' class='srclink' href='../../../src/tabin_plugins/procfs/pid.rs.html#50-74' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Stat {
-    pub pid: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
+    pub pid: <a href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
     pub comm: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
     pub state: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
-    pub ppid: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
-    pub pgrp: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
-    pub session: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
-    pub tty_nr: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
-    pub tpgid: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
-    pub flags: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>,
-    pub minflt: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub cminflt: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub majflt: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub cmajflt: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub ppid: <a href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
+    pub pgrp: <a href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
+    pub session: <a href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
+    pub tty_nr: <a href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
+    pub tpgid: <a href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>,
+    pub flags: <a href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>,
+    pub minflt: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub cminflt: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub majflt: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub cmajflt: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
     pub utime: <a class='struct' href='../../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
     pub stime: <a class='struct' href='../../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
     pub cutime: <a class='struct' href='../../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
     pub cstime: <a class='struct' href='../../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
-    pub priority: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i64.html'>i64</a>,
-    pub nice: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i64.html'>i64</a>,
-    pub num_threads: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i64.html'>i64</a>,
-    pub starttime: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub vsize: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub rss: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub priority: <a href='https://doc.rust-lang.org/nightly/std/primitive.i64.html'>i64</a>,
+    pub nice: <a href='https://doc.rust-lang.org/nightly/std/primitive.i64.html'>i64</a>,
+    pub num_threads: <a href='https://doc.rust-lang.org/nightly/std/primitive.i64.html'>i64</a>,
+    pub starttime: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub vsize: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub rss: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
 }</pre><div class='docblock'><p>The status of a process</p>
 
 <p>This represents much of the information in /proc/[pid]/stat</p>
@@ -100,7 +100,7 @@
                                   <td id='structfield.rss'><code>rss</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../tabin_plugins/procfs/pid/struct.Stat.html' title='tabin_plugins::procfs::pid::Stat'>Stat</a></code></h3><div class='impl-items'><h4 id='method.from_pid' class='method'><code>fn <a href='#method.from_pid' class='fnname'>from_pid</a>&lt;P: <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html' title='core::fmt::Display'>Display</a>&gt;(pid: P) -&gt; <a class='type' href='../../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a class='struct' href='../../../tabin_plugins/procfs/pid/struct.Stat.html' title='tabin_plugins::procfs::pid::Stat'>Stat</a>&gt;</code></h4>
 </div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a> for <a class='struct' href='../../../tabin_plugins/procfs/pid/struct.Stat.html' title='tabin_plugins::procfs::pid::Stat'>Stat</a></code></h3><div class='impl-items'><h4 id='method.default' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html#method.default' class='fnname'>default</a>() -&gt; <a class='struct' href='../../../tabin_plugins/procfs/pid/struct.Stat.html' title='tabin_plugins::procfs::pid::Stat'>Stat</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html' title='core::str::FromStr'>FromStr</a> for <a class='struct' href='../../../tabin_plugins/procfs/pid/struct.Stat.html' title='tabin_plugins::procfs::pid::Stat'>Stat</a></code></h3><div class='impl-items'><h4 id='assoc_type.Err' class='type'><code>type Err = <a class='enum' href='../../../tabin_plugins/procfs/enum.ProcFsError.html' title='tabin_plugins::procfs::ProcFsError'>ProcFsError</a></code></h4>
-<h4 id='method.from_str' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html#method.from_str' class='fnname'>from_str</a>(s: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a class='struct' href='../../../tabin_plugins/procfs/pid/struct.Stat.html' title='tabin_plugins::procfs::pid::Stat'>Stat</a>&gt;</code></h4>
+<h4 id='method.from_str' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html#method.from_str' class='fnname'>from_str</a>(s: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a class='struct' href='../../../tabin_plugins/procfs/pid/struct.Stat.html' title='tabin_plugins::procfs::pid::Stat'>Stat</a>&gt;</code></h4>
 </div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../../tabin_plugins/procfs/pid/struct.Stat.html' title='tabin_plugins::procfs::pid::Stat'>Stat</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
@@ -161,6 +161,6 @@
     <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     
-    <script defer src="../../../search-index.js"></script>
+    <script async src="../../../search-index.js"></script>
 </body>
 </html>

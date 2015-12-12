@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-598' class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#161-184' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-577' class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#161-184' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Calculations {
     pub user: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
     pub nice: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>,
@@ -103,7 +103,7 @@ stolen by other VMs.</p>
 /proc/stats reports things, so don&#39;t add this to that when totalling.</p>
 </div><h4 id='method.total' class='method'><code>fn <a href='#method.total' class='fnname'>total</a>(&amp;self) -&gt; <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a></code></h4>
 <div class='docblock'><p>All jiffies since the kernel started tracking</p>
-</div><h4 id='method.percent_util_since' class='method'><code>fn <a href='#method.percent_util_since' class='fnname'>percent_util_since</a>(&amp;self, kind: &amp;<a class='enum' href='../../tabin_plugins/procfs/enum.WorkSource.html' title='tabin_plugins::procfs::WorkSource'>WorkSource</a>, start: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code></h4>
+</div><h4 id='method.percent_util_since' class='method'><code>fn <a href='#method.percent_util_since' class='fnname'>percent_util_since</a>(&amp;self, kind: &amp;<a class='enum' href='../../tabin_plugins/procfs/enum.WorkSource.html' title='tabin_plugins::procfs::WorkSource'>WorkSource</a>, start: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code></h4>
 <div class='docblock'><p>Return how much cpu time the specific worksource took</p>
 
 <p>The number returned is between 0 and 100</p>
@@ -115,8 +115,8 @@ stolen by other VMs.</p>
 </div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h4>
 <h4 id='method.clone_from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
-</div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
-<h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+</div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.Calculations.html' title='tabin_plugins::procfs::Calculations'>Calculations</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -176,6 +176,6 @@ stolen by other VMs.</p>
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script defer src="../../search-index.js"></script>
+    <script async src="../../search-index.js"></script>
 </body>
 </html>
