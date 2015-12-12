@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1137' class='srclink' href='../../src/tabin_plugins/scripts.rs.html#2-333' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-1137' class='srclink' href='../../src/tabin_plugins/scripts.rs.html#2-335' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Documentation about the various scripts contained herein</p>
 
 <ul>
@@ -62,7 +62,7 @@
 <h1 id='check-graphite' class='section-header'><a href='#check-graphite'>check-graphite</a></h1>
 <p>Usage looks like:</p>
 
-<pre><code class="language-plain">$ target/osx/debug/check-graphite -h
+<pre><code class="language-plain">$ check-graphite --help
 check-graphite 0.1.0
 Brandon W Maister &lt;quodlibetor@gmail.com&gt;
 Query graphite and exit based on predicates
@@ -71,26 +71,28 @@ USAGE:
         check-graphite [FLAGS] [OPTIONS] &lt;URL&gt; &lt;PATH&gt; &lt;ASSERTION&gt;... [--]
 
 FLAGS:
-    -h, --help         Prints help information
-        --print-url    Unconditionally print the graphite url queried
-    -V, --version      Prints version information
+    -h, --help                 Prints help information
+        --print-url            Unconditionally print the graphite url queried
+    -V, --version              Prints version information
+        --verify-assertions    Just check assertion syntax, do not query urls
 
 OPTIONS:
-        --retries &lt;COUNT&gt;     How many times to retry reaching graphite. Default 4
+        --retries &lt;COUNT&gt;      How many times to retry reaching graphite. Default 4
         --graphite-error &lt;GRAPHITE_ERROR_STATUS&gt;    What to do with no data.
                               Choices: ok, warn, critical, unknown.
-                              No data includes &#39;all nulls&#39; and error connecting.
+                              What to say if graphite returns a 500 or invalid JSON
                               Default: unknown. [values: ok warning critical unknown]
-    -w, --window &lt;MINUTES&gt;              How many minutes of data to test. Default 10.
-        --no-data &lt;NO_DATA_STATUS&gt;      What to do with no data.
+    -w, --window &lt;MINUTES&gt;                          How many minutes of data to test. Default 10.
+        --no-data &lt;NO_DATA_STATUS&gt;                  What to do with no data.
                               Choices: ok, warn, critical, unknown.
-                              No data includes &#39;all nulls&#39; and error connecting.
+                              This is the value to use for the assertion
+                              &#39;if all values are null&#39;
                               Default: warn. [values: ok warning critical unknown]
 
 ARGS:
     URL             The domain to query graphite. Must include scheme (http/s)
     PATH            The graphite path to query. For example: &quot;collectd.*.cpu&quot;
-    ASSERTION...    The assertions to make against the PATH. See Below.
+    ASSERTION...    The assertion to make against the PATH. See Below.
 
 About Assertions:
 
