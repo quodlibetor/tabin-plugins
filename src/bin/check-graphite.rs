@@ -100,7 +100,16 @@ impl GraphiteData {
 
     /// References to the points that exist and do not satisfy the comparator
     fn invalid_points(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
-        self.points.iter().filter( |p| p.val.map_or(false, |v| comparator(v)) ).collect()
+        self.points.iter()
+            .filter(|p| p.val.map_or(false, |v| comparator(v))).collect()
+    }
+
+    fn last_invalid_points(&self, n: usize, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
+        self.points.iter()
+            .rev()
+            .filter(|p| p.val.is_some())
+            .take(n)
+            .filter(|p| p.val.map_or(false, |v| comparator(v))).collect()
     }
 }
 
@@ -320,10 +329,7 @@ fn do_check(
         PointAssertion::Recent(count) => series_with_data.iter()
             .map(|ref series| FilteredGraphiteData {
                 original: &series,
-                points: series
-                    .invalid_points(&comparator)
-                    .into_iter().rev().take(count)
-                    .collect::<Vec<&DataPoint>>()
+                points: series.last_invalid_points(count, &comparator)
             })
             .filter(|ref invalid| invalid.points.len() > 0)
             .collect::<Vec<(FilteredGraphiteData)>>()
@@ -1109,6 +1115,20 @@ mod test {
                               assertion.point_assertion,
                               assertion.failure_status);
         assert_eq!(result, Status::Critical);
+    }
+
+    #[test]
+    fn most_recent_finds_okay_values_after_invalid() {
+        let assertion = parse_assertion("critical if most recent point is == 4").unwrap();
+        let graphite_data = graphite_result_to_vec(&json_last_point_is_5());
+
+        let result = do_check(&graphite_data,
+                              &assertion.operator,
+                              assertion.op_is_negated,
+                              assertion.threshold,
+                              assertion.point_assertion,
+                              assertion.failure_status);
+        assert_eq!(result, Status::Ok);
     }
 
     fn json_80p_of_points_are_below_6() -> Json {
