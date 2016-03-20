@@ -15,6 +15,8 @@
 //! * Some way of easily standardizing command-line args
 //! * Much of the code is hideous, and should not be
 
+#![cfg_attr(feature="clippy", feature(plugin))]
+#![cfg_attr(feature="clippy", plugin(clippy))]
 
 #[macro_use]
 extern crate lazy_static;
@@ -30,6 +32,7 @@ extern crate rustc_serialize;
 use std::process;
 use std::cmp::Ord;
 use std::fmt;
+use std::str::FromStr;
 
 pub mod linux;
 pub mod procfs;
@@ -72,8 +75,17 @@ impl Status {
         }
     }
 
+    /// The legal values for `from_str`
+    pub fn str_values() -> [&'static str; 4] {
+        ["ok", "warning", "critical", "unknown"]
+    }
+}
+
+impl FromStr for Status {
+    type Err = TurbineError;
+
     /// Primarily useful to construct from argv
-    pub fn from_str(s: &str) -> TurbineResult<Status> {
+    fn from_str(s: &str) -> TurbineResult<Status> {
         use Status::{Warning, Critical, Unknown};
         match s {
             "ok" => Ok(Status::Ok),
@@ -82,11 +94,6 @@ impl Status {
             "unknown" => Ok(Unknown),
             _ => Err(TurbineError::UnknownValue(format!("Unexpected exit status: {}", s))),
         }
-    }
-
-    /// The legal values for `from_str`
-    pub fn str_values() -> [&'static str; 4] {
-        ["ok", "warning", "critical", "unknown"]
     }
 }
 

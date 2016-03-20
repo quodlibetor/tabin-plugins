@@ -3,7 +3,6 @@
 extern crate rustc_serialize;
 extern crate docopt;
 
-use std::error::Error;
 use std::fs;
 use std::io::Write;
 use std::io::ErrorKind;

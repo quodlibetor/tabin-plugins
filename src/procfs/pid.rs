@@ -24,10 +24,10 @@ impl Process {
 
     pub fn useful_cmdline(&self) -> String {
         let cmd = self.cmdline.display();
-        if cmd.len() > 0 {
-            cmd
-        } else {
+        if cmd.is_empty() {
             self.stat.comm.clone()
+        } else {
+            cmd
         }
     }
 
@@ -87,8 +87,8 @@ impl Default for Stat {
     fn default() -> Stat {
         Stat {
             pid: 0,
-            comm: "init".to_string(),
-            state: "R".to_string(),
+            comm: "init".to_owned(),
+            state: "R".to_owned(),
             ppid: 0,
             pgrp: 0,
             session: 0,
@@ -206,15 +206,19 @@ impl CmdLine {
         let mut s = String::new();
         try!(f.read_to_string(&mut s));
         Ok(CmdLine {
-            line: s.split("\0")
-                   .map(|arg| String::from(arg))
-                   .filter(|arg| arg.len() > 0)
+            line: s.split('\0')
+                   .map(String::from)
+                   .filter(|arg| !arg.is_empty())
                    .collect(),
         })
     }
 
     pub fn len(&self) -> usize {
         self.line.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.line.is_empty()
     }
 
     pub fn display(&self) -> String {

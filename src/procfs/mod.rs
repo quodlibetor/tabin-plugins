@@ -216,16 +216,6 @@ impl Calculations {
                 .collect::<StdResult<Vec<_>, _>>()
     }
 
-    /// Parse the entire /proc/stat file into a single `Calculations` object
-    /// for total CPU
-    fn from_str(contents: &str) -> Result<Calculations> {
-        let mut calcs = try!(contents.lines()
-                                     .take(1)
-                                     .map(Self::from_line)
-                                     .collect::<StdResult<Vec<_>, _>>());
-        Ok(calcs.remove(0))
-    }
-
     /// Convert a single line from /proc/stat
     fn from_line(line: &str) -> Result<Calculations> {
         assert!(line.starts_with("cpu"));
@@ -245,7 +235,7 @@ impl Calculations {
             softirq: Jiffies::new(usages[6]),
             steal: Jiffies::new(usages[7]),
             guest: Jiffies::new(usages[8]),
-            guest_nice: usages.get(9).map(|v| Jiffies::new(v.clone())),
+            guest_nice: usages.get(9).map(|v| Jiffies::new(*v)),
         })
     }
 
@@ -253,6 +243,7 @@ impl Calculations {
     ///
     /// This includes all processes in user space, kernel space, and time
     /// stolen by other VMs.
+    #[cfg_attr(rustfmt, rustfmt_skip)]
     pub fn active(&self) -> Jiffies {
         self.user + self.nice + // user processes
             self.system + self.irq + self.softirq + // kernel and interrupts
@@ -270,7 +261,7 @@ impl Calculations {
     /// /proc/stats reports things, so don't add this to that when totalling.
     #[allow(dead_code)]  // this mostly exists as documentation of what `guest` means
     pub fn virt(&self) -> Jiffies {
-        self.guest + self.guest_nice.unwrap_or(Jiffies::new(0))
+        self.guest + self.guest_nice.unwrap_or_else(|| Jiffies::new(0))
     }
 
     /// All jiffies since the kernel started tracking
@@ -296,14 +287,26 @@ impl Calculations {
             WorkSource::SoftIrq => (start.softirq, self.softirq),
             WorkSource::Steal => (start.steal, self.steal),
             WorkSource::Guest => (start.guest, self.guest),
-            WorkSource::GuestNice => (start.guest_nice.unwrap_or(Jiffies::new(0)),
-                                      self.guest_nice.unwrap_or(Jiffies::new(0))),
+            WorkSource::GuestNice => (start.guest_nice.unwrap_or_else(|| Jiffies::new(0)),
+                                      self.guest_nice.unwrap_or_else(|| Jiffies::new(0))),
         };
         assert!(self.total() >= start.total());
         let total = (end_val - start_val) / (self.total() - start.total());
         total * 100f64
     }
+}
 
+impl FromStr for Calculations {
+    type Err = ProcFsError;
+    /// Parse the entire /proc/stat file into a single `Calculations` object
+    /// for total CPU
+    fn from_str(contents: &str) -> Result<Calculations> {
+        let mut calcs = try!(contents.lines()
+                                     .take(1)
+                                     .map(Self::from_line)
+                                     .collect::<StdResult<Vec<_>, _>>());
+        Ok(calcs.remove(0))
+    }
 }
 
 impl Sub for Calculations {
@@ -394,7 +397,7 @@ impl MemInfo {
             Err(e) => panic!("Unable to open /proc/meminfo: {:?}", e),
         };
 
-        MemInfo::from_str(&contents)
+        MemInfo::from_str(&contents).unwrap()
     }
     /// Try to figure out how much memory is being used
     ///
@@ -430,18 +433,14 @@ impl MemInfo {
         let free = try!(self.percent_free());
         Ok(100f64 - free)
     }
+}
+
+impl FromStr for MemInfo {
+    type Err = ProcFsError;
 
     /// Convert the contents of a string like /proc/meminfo into a MemInfo
     /// object
-    fn from_str(meminfo: &str) -> Self {
-        let mut word = String::new();
-        let mut info = MemInfo {
-            total: None,
-            free: None,
-            available: None,
-            cached: None,
-        };
-        let mut amount: usize;
+    fn from_str(meminfo: &str) -> Result<Self> {
         enum Currently {
             Total,
             Free,
@@ -450,6 +449,15 @@ impl MemInfo {
             Unknown,
             None,
         };
+
+        let mut word = String::new();
+        let mut info = MemInfo {
+            total: None,
+            free: None,
+            available: None,
+            cached: None,
+        };
+        let mut amount: usize;
         let mut currently = Currently::None;
 
         for chr in meminfo.chars() {
@@ -506,7 +514,7 @@ impl MemInfo {
             }
         }
 
-        info
+        Ok(info)
     }
 }
 
@@ -581,7 +589,7 @@ pub struct Mount {
     pub passno: Option<u32>,
 }
 
-fn next<'a>(parts: &mut Split<'a, &str>) -> Result<String> {
+fn next(parts: &mut Split<char>) -> Result<String> {
     if let Some(part) = parts.next() {
         Ok(part.to_owned())
     } else {
@@ -590,17 +598,20 @@ fn next<'a>(parts: &mut Split<'a, &str>) -> Result<String> {
 }
 
 fn mount_from_line(line: &str) -> Result<Mount> {
-    let mut parts = line.split(" ");
+    use self::ProcFsError::InsufficientData;
+    let mut parts = line.split(' ');
     Ok(Mount {
         spec: try!(next(&mut parts)),
         file: try!(next(&mut parts)),
         vfstype: try!(next(&mut parts)),
-        mntops: try!(parts.next().map_or(Err(ProcFsError::InsufficientData(
-            "Missing mnt ops from mount".to_owned())),
-                                         |p| Ok(p)))
-            .split(",").map(|part| part.to_owned()).collect::<Vec<_>>(),
+        mntops: try!(parts.next()
+                          .map_or(Err(InsufficientData("Missing mnt ops from mount".to_owned())),
+                                  Ok))
+                    .split(',')
+                    .map(|part| part.to_owned())
+                    .collect::<Vec<_>>(),
         freq: parts.next().map(|v| v.parse().unwrap()),
-        passno: parts.next().map(|v| v.parse().unwrap())
+        passno: parts.next().map(|v| v.parse().unwrap()),
     })
 }
 
@@ -612,13 +623,13 @@ impl Mount {
         Ok(contents)
     }
 
-    fn from_str(mounts: &str) -> Result<Vec<Mount>> {
+    fn parse_str(mounts: &str) -> Result<Vec<Mount>> {
         mounts.lines().map(mount_from_line).collect::<Result<Vec<_>>>()
     }
 
     pub fn load_all() -> Result<Vec<Mount>> {
         let mounts = try!(Mount::read_mounts());
-        Mount::from_str(&mounts)
+        Mount::parse_str(&mounts)
     }
 }
 
@@ -634,6 +645,7 @@ mod unit {
     use linux::Jiffies;
 
     #[test]
+    #[cfg_attr(rustfmt, rustfmt_skip)]
     fn can_parse_stat_for_system() {
         let c = Calculations::from_str(
 "cpu  100 55 66 77 88 1 9 0 0 0
@@ -658,6 +670,7 @@ btime 143
     }
 
     #[test]
+    #[cfg_attr(rustfmt, rustfmt_skip)]
     fn can_parse_multiple_cpus() {
         let c = Calculations::per_cpu(
 "cpu  100 55 66 77 88 1 9 0 0 0
@@ -723,7 +736,7 @@ btime 143
                                              "MemAvailable: 20\n",
                                              "MemFree: 280\n",
                                              "Meaningless: 777\n",
-                                             "Cached: 200\n")),
+                                             "Cached: 200\n")).unwrap(),
                    MemInfo {
                        total: Some(500),
                        available: Some(20),
@@ -787,16 +800,13 @@ btime 143
 
     #[test]
     fn mount_from_line_works() {
-        let line =
-            "none \
-             /data/docker/aufs/mnt/b6e1b \
-             aufs \
-             rw,relatime,si=5c1d022653bfa828,dio,dirperm1 \
-             0 \
-             0";
+        let line = "none /data/docker/aufs/mnt/b6e1b aufs \
+                    rw,relatime,si=5c1d022653bfa828,dio,dirperm1 0 0";
         let mount = mount_from_line(&line).unwrap();
 
-        fn s(st: &str) -> String { st.to_owned() }
+        fn s(st: &str) -> String {
+            st.to_owned()
+        }
         assert_eq!(mount,
                    Mount {
                        spec: s("none"),
@@ -815,21 +825,14 @@ btime 143
 
     #[test]
     fn mount_all_works() {
-        let mount_config =
-            "none \
-             /data/docker/aufs/mnt/b6e1b \
-             aufs \
-             rw,relatime,si=5c1d022653bfa828,dio,dirperm1 \
-             0 \
-             0\n\
-             some \
-             / \
-             ext4 \
-             rw,relatime \
-             0\n";
-        let mounts = Mount::from_str(&mount_config).unwrap();
+        let mount_config = "none /data/docker/aufs/mnt/b6e1b aufs \
+                            rw,relatime,si=5c1d022653bfa828,dio,dirperm1 0 0\nsome / ext4 \
+                            rw,relatime 0\n";
+        let mounts = Mount::parse_str(&mount_config).unwrap();
 
-        fn s(st: &str) -> String { st.to_owned() }
+        fn s(st: &str) -> String {
+            st.to_owned()
+        }
         assert_eq!(mounts,
                    vec![
                        Mount {
@@ -855,8 +858,7 @@ btime 143
                            freq: Some(0),
                            passno: None,
                        },
-                       ]
-                   )
+                       ])
     }
 
 

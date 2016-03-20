@@ -55,8 +55,8 @@ pub mod fs {
                 pub fn load() -> Result<Stat, io::Error> {
                     let contents = try!(read_file("/sys/fs/cgroup/cpuacct/cpuacct.stat"));
                     let mut lines = contents.lines();
-                    let user = lines.next().unwrap().split(" ").nth(1).unwrap();
-                    let sys = lines.next().unwrap().split(" ").nth(1).unwrap();
+                    let user = lines.next().unwrap().split(' ').nth(1).unwrap();
+                    let sys = lines.next().unwrap().split(' ').nth(1).unwrap();
 
                     Ok(Stat {
                         user: UserHz::new(user.parse().unwrap()),
@@ -120,7 +120,7 @@ pub mod fs {
                                                  .collect();
                     let mut found = 0;
                     for line in contents.lines() {
-                        let mut parts = line.split(" ");
+                        let mut parts = line.split(' ');
                         let field = parts.next().unwrap();
                         let val = parts.next().unwrap();
                         if needed.contains(&field) {

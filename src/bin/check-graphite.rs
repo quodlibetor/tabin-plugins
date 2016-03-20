@@ -1,3 +1,7 @@
+#![cfg_attr(feature="clippy", feature(plugin))]
+#![cfg_attr(feature="clippy", plugin(clippy))]
+#![cfg_attr(feature="clippy", allow(if_not_else))]
+
 #[macro_use]
 extern crate clap;
 extern crate chrono;
@@ -11,6 +15,7 @@ extern crate tabin_plugins;
 use std::cmp::max;
 use std::fmt;
 use std::io::Read;
+use std::str::FromStr;
 use std::time::Duration;
 use std::thread::sleep;
 
@@ -18,7 +23,6 @@ use chrono::naive::datetime::NaiveDateTime;
 use hyper::client::Response;
 use hyper::error::Result as HyperResult;
 use itertools::Itertools;
-use url::Url;
 use rustc_serialize::json::{self, Json};
 
 use tabin_plugins::Status;
@@ -59,11 +63,13 @@ impl<'a> From<&'a Json> for DataPoint {
 }
 
 impl fmt::Display for DataPoint {
+    #[cfg_attr(feature="clippy", allow(float_cmp))]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{} (at {})",
                self.val.map_or("null".into(),
                                |v| format!("{:.*}",
                                            // the number of points past the dot to show
+                                           // Don't show any if it's an integer
                                            if v.round() == v { 0 } else { 2 },
                                            v)),
                self.time.format("%H:%Mz"))
@@ -99,11 +105,15 @@ impl GraphiteData {
     }
 
     /// References to the points that exist and do not satisfy the comparator
+    // comparator is a box closure, which is not allows in map_or
+    #[cfg_attr(feature="clippy", allow(redundant_closure))]
     fn invalid_points(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
         self.points.iter()
             .filter(|p| p.val.map_or(false, |v| comparator(v))).collect()
     }
 
+    // comparator is a box closure, which is not allows in map_or
+    #[cfg_attr(feature="clippy", allow(redundant_closure))]
     fn last_invalid_points(&self, n: usize, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
         self.points.iter()
             .rev()
@@ -117,6 +127,11 @@ impl<'a> FilteredGraphiteData<'a> {
     /// The number of points that we have
     fn len(&self) -> usize {
         self.points.len()
+    }
+
+    /// If there are any points in the filtered graphite data
+    fn is_empty(&self) -> bool {
+        self.points.is_empty()
     }
 
     /// The percent of the original points that were included by the filter
@@ -138,7 +153,7 @@ impl Iterator for GraphiteIterator {
     type Item = DataPoint;
     fn next(&mut self) -> Option<DataPoint> {
         self.current += 1;
-        self.data.points.get(self.current - 1).map(|p| p.clone())
+        self.data.points.get(self.current - 1).cloned()
     }
 }
 
@@ -157,7 +172,7 @@ impl IntoIterator for GraphiteData {
 impl DoubleEndedIterator for GraphiteIterator {
     fn next_back(&mut self) -> Option<DataPoint> {
         self.back -= 1;
-        self.data.points.get(self.back).map(|p| p.clone())
+        self.data.points.get(self.back).cloned()
     }
 }
 
@@ -243,8 +258,16 @@ fn fetch_data(url: &str,
 /// filter to return only values that *do not* satisfy the operator.
 ///
 /// aka a function that returns only invalid numbers
+///
+/// Note: JSON considers all numbers either floats or arbitrary-precision
+/// decimals, so we use f64. Comparing f64 directly equal with each other is dangerous.
+///
+/// We aren't ever actually doing math on floats, so even though decimal 0.1 !=
+/// float 0.1, since we are always interpreting as f64 then we'll get the
+/// "wrong" values and compare them to each other. That said, we should
+/// probably use an epsilon in here.
+#[cfg_attr(feature="clippy", allow(float_cmp))]
 fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f64) -> bool> {
-    let val = val.clone();
     let comp: Box<Fn(f64) -> bool> = match op {
         "<"  => Box::new(move |i: f64| i <  val),
         "<=" => Box::new(move |i: f64| i <= val),
@@ -268,7 +291,7 @@ fn filter_to_with_data(path: &str,
                        no_data_status: Status) -> Result<Vec<GraphiteData>, Status> {
     let data = graphite_result_to_vec(&data);
     let matched_len = data.len();
-    if data.len() == 0 {
+    if data.is_empty() {
         println!("{}: Graphite returned no matching series for pattern '{}'",
                  no_data_status, path);
         return Err(no_data_status);
@@ -289,12 +312,12 @@ fn filter_to_with_data(path: &str,
                 })
         .collect::<Vec<GraphiteData>>();
 
-    if series_with_data.len() > 0 {
-        Ok(series_with_data)
-    } else {
+    if series_with_data.is_empty() {
         println!("{}: Graphite found {} series but returned only null datapoints for them",
-               no_data_status, matched_len);
+                 no_data_status, matched_len);
         Err(no_data_status)
+    } else {
+        Ok(series_with_data)
     }
 }
 
@@ -331,12 +354,12 @@ fn do_check(
                 original: &series,
                 points: series.last_invalid_points(count, &comparator)
             })
-            .filter(|ref invalid| invalid.points.len() > 0)
+            .filter(|ref invalid| !invalid.is_empty())
             .collect::<Vec<(FilteredGraphiteData)>>()
     };
 
     let nostr = if op_is_negated == NegOp::Yes { " not" } else { "" };
-    if with_invalid.len() > 0 {
+    if !with_invalid.is_empty() {
         match error_condition {
             PointAssertion::Ratio(ratio) => {
                 if series_with_data.len() == with_invalid.len() {
@@ -355,7 +378,7 @@ fn do_check(
                              {} have at least {:.1}% invalid datapoints:",
                          status, series_with_data.len(), with_invalid.len(), ratio * 100.0);
                 }
-                for series in with_invalid.iter() {
+                for series in &with_invalid {
                     let prefix = if with_invalid.len() == 1 {
                         ""
                     } else {
@@ -374,7 +397,7 @@ fn do_check(
             PointAssertion::Recent(count) => {
                 println!("{}: Of {} paths with data, {} have the last {} points invalid:",
                          status, series_with_data.len(), with_invalid.len(), count);
-                for series in with_invalid.iter() {
+                for series in &with_invalid {
                     let descriptor = if count == 1 {
                         "point is"
                     } else {
@@ -438,7 +461,7 @@ static ASSERTION_EXAMPLES: &'static [&'static str] = &[
     "critical if most recent point in all series are == 0",
     ];
 
-fn parse_args<'a>() -> Args {
+fn parse_args() -> Args {
     let allowed_no_data = Status::str_values(); // block-local var for borrowck
     let args = clap::App::new("check-graphite")
         .version("0.1.0")
@@ -569,12 +592,12 @@ impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use ParseError::*;
         let msg = match *self {
-            NoPointSpecifier(ref msg) => msg,
-            NoSeriesSpecifier(ref msg) => msg,
-            InvalidOperator(ref msg) => msg,
-            InvalidThreshold(ref msg) => msg,
-            NoRatioSpecifier(ref msg) => msg,
-            NoStatusSpecifier(ref msg) => msg,
+            NoPointSpecifier(ref msg) |
+            NoSeriesSpecifier(ref msg) |
+            InvalidOperator(ref msg) |
+            InvalidThreshold(ref msg) |
+            NoRatioSpecifier(ref msg) |
+            NoStatusSpecifier(ref msg) |
             SyntaxError(ref msg) => msg
         };
         write!(f, "{}", msg)
@@ -629,7 +652,7 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<PointAssertion, P
                 format!("Expected 'most recent' found 'most {}'",
                         word))),
             None => return Err(ParseError::SyntaxError(
-                format!("Expected 'most recent' found trailing 'most'")))
+                "Expected 'most recent' found trailing 'most'".to_owned()))
         };
         match it.next() {
             Some(word) if word == "point" => return Ok(Recent(1)),
@@ -637,7 +660,7 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<PointAssertion, P
                 format!("Expected 'most recent point' found 'most recent {}'",
                         word))),
             None => return Err(ParseError::SyntaxError(
-                format!("Expected 'most recent point' found trailing 'most recent'")))
+                "Expected 'most recent point' found trailing 'most recent'".to_owned()))
         }
     } else {
         ratio = Err(ParseError::SyntaxError(
@@ -646,11 +669,12 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<PointAssertion, P
 
     if ratio.is_ok() {
         // chew stop words
-        while let Some(word) = it.next() {
+        for word in it {
             // chew through terminators
             if word == "of" { continue; }
-            else if word == "points" || word == "point" { break; }
-            else if word == "series" { break; }
+            else if word == "points" || word == "point" || word == "series" {
+                break;
+            }
             else {
                 return Err(ParseError::SyntaxError(
                     format!("Expected 'of points|series', found '{}'", word)))
@@ -658,7 +682,7 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<PointAssertion, P
         }
     }
 
-    return ratio;
+    ratio
 }
 
 // Whether or not the operator in the assertion is negated
@@ -724,7 +748,7 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                 } else {
                     return Err(ParseError::SyntaxError(
                         "You can't specify a most recent series, \
-                         it doesn't make sense.".to_string()));
+                         it doesn't make sense.".to_owned()));
                 }
                 state = AssertionState::Open;
             },

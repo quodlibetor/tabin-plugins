@@ -8,7 +8,7 @@ extern crate tabin_plugins;
 // extern crate rand;
 
 use std::fmt::Display;
-use std::cmp::{PartialOrd, max};
+use std::cmp::PartialOrd;
 use std::thread::sleep;
 use std::time::Duration;
 
