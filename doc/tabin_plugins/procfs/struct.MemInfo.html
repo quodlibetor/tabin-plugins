@@ -9,6 +9,7 @@
 
     <title>tabin_plugins::procfs::MemInfo - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     
@@ -45,12 +46,12 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-752' class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#378-383' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-780' class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#381-386' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct MemInfo {
-    pub total: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;,
-    pub available: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;,
-    pub free: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;,
-    pub cached: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;,
+    pub total: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;,
+    pub available: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;,
+    pub free: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;,
+    pub cached: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;,
 }</pre><div class='docblock'><p>A struct that represents overall memory usage on the system.</p>
 
 <p>All values are in KB.</p>
@@ -61,7 +62,7 @@
                                   <td id='structfield.free'><code>free</code></td><td></td></tr><tr class='stab '>
                                   <td id='structfield.cached'><code>cached</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a></code></h3><div class='impl-items'><h4 id='method.load' class='method'><code>fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a></code></h4>
 <div class='docblock'><p>Read the data from /proc/meminfo into a <code>MemInfo</code></p>
-</div><h4 id='method.percent_free' class='method'><code>fn <a href='#method.percent_free' class='fnname'>percent_free</a>(&amp;self) -&gt; <a class='type' href='../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>&gt;</code></h4>
+</div><h4 id='method.percent_free' class='method'><code>fn <a href='#method.percent_free' class='fnname'>percent_free</a>(&amp;self) -&gt; <a class='type' href='../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>&gt;</code></h4>
 <div class='docblock'><p>Try to figure out how much memory is being used</p>
 
 <p>Since linux kernel 3.16 this just performs</p>
@@ -71,11 +72,13 @@
 
 <p>Before that we approximate available as Free + Cached, even though that
 is <a href="https://github.com/torvalds/linux/commit/34e431b0ae398fc54ea69ff85ec700722c9da773">almost certain to be incorrect</a>.</p>
-</div><h4 id='method.percent_used' class='method'><code>fn <a href='#method.percent_used' class='fnname'>percent_used</a>(&amp;self) -&gt; <a class='type' href='../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>&gt;</code></h4>
+</div><h4 id='method.percent_used' class='method'><code>fn <a href='#method.percent_used' class='fnname'>percent_used</a>(&amp;self) -&gt; <a class='type' href='../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>&gt;</code></h4>
 <div class='docblock'><p>The inverse of <code>MemInfo::percent_free</code></p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
-</div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a></code></h3><div class='impl-items'></div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
-<h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html' title='core::str::FromStr'>FromStr</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a></code></h3><div class='impl-items'><h4 id='assoc_type.Err' class='type'><code>type Err = <a class='enum' href='../../tabin_plugins/procfs/enum.ProcFsError.html' title='tabin_plugins::procfs::ProcFsError'>ProcFsError</a></code></h4>
+<h4 id='method.from_str' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html#method.from_str' class='fnname'>from_str</a>(meminfo: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;Self&gt;</code></h4>
+</div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+</div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a></code></h3><div class='impl-items'></div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='struct' href='../../tabin_plugins/procfs/struct.MemInfo.html' title='tabin_plugins::procfs::MemInfo'>MemInfo</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -135,6 +138,6 @@ is <a href="https://github.com/torvalds/linux/commit/34e431b0ae398fc54ea69ff85ec
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

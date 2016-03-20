@@ -9,6 +9,7 @@
 
     <title>regex_syntax - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     
@@ -45,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/regex_syntax/lib.rs.html#11-1201' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/regex_syntax/lib.rs.html#11-1844' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>This crate provides a regular expression parser and an abstract syntax for
 regular expressions. The abstract syntax is defined by the <code>Expr</code> type. The
 concrete syntax is enumerated in the
@@ -90,6 +91,24 @@ if an invalid character class range is given:</p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                     <tr class=' module-item'>
+                        <td><a class='struct' href='struct.ByteClass.html'
+                               title='regex_syntax::ByteClass'>ByteClass</a></td>
+                        <td class='docblock short'>
+                             <p>A byte class for byte ranges only.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.ByteRange.html'
+                               title='regex_syntax::ByteRange'>ByteRange</a></td>
+                        <td class='docblock short'>
+                             <p>A single inclusive range in a byte class.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
                         <td><a class='struct' href='struct.CharClass.html'
                                title='regex_syntax::CharClass'>CharClass</a></td>
                         <td class='docblock short'>
@@ -112,6 +131,15 @@ if an invalid character class range is given:</p>
                                title='regex_syntax::Error'>Error</a></td>
                         <td class='docblock short'>
                              <p>A parse error.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.ExprBuilder.html'
+                               title='regex_syntax::ExprBuilder'>ExprBuilder</a></td>
+                        <td class='docblock short'>
+                             <p>A builder for configuring regular expression parsing.</p>
 
                         </td>
                     </tr>
@@ -222,6 +250,6 @@ if an invalid character class range is given:</p>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>

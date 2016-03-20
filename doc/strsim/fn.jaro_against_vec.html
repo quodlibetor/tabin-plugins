@@ -9,6 +9,7 @@
 
     <title>strsim::jaro_against_vec - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     
@@ -45,8 +46,8 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-46' class='srclink' href='../src/strsim/lib.rs.html#118-124' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn jaro_against_vec(a: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, v: &amp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;&amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>&gt;</pre><div class='docblock'><p>Calculates the Jaro distance between a string and each string in a vector.
+        </span><a id='src-47' class='srclink' href='../src/strsim/lib.rs.html#118-124' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn jaro_against_vec(a: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, v: &amp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;&amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>&gt;</pre><div class='docblock'><p>Calculates the Jaro distance between a string and each string in a vector.
 Returns a vector of corresponding values between 0.0 and 1.0 (higher value
 means more similar).</p>
 <pre class='rust rust-example-rendered'>
@@ -119,6 +120,6 @@ means more similar).</p>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>

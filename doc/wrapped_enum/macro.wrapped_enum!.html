@@ -9,6 +9,7 @@
 
     <title>wrapped_enum::wrapped_enum! - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     
@@ -54,29 +55,13 @@
          <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_variant_name</span>:<span class='ident'>ident</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span>:<span class='ident'>ty</span>)),<span class='op'>+</span>
          $(,)<span class='op'>*</span>
      }
-    ) <span class='op'>=&gt;</span> (
-        $(<span class='attribute'>#[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>attr</span>]</span>)<span class='op'>*</span>
-        <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_name</span> { $($(<span class='attribute'>#[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>variant_attr</span>]</span>)<span class='op'>+</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_variant_name</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span>)),<span class='op'>+</span> }
-        $(<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_name</span> {
-            <span class='kw'>fn</span> <span class='ident'>from</span> (<span class='ident'>ty</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
-                <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_name</span>::<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_variant_name</span>(<span class='ident'>ty</span>)
-            }
-        })<span class='op'>+</span>
-    );
+    ) <span class='op'>=&gt;</span> { ... };
     ($(<span class='attribute'>#[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>attr</span>:<span class='ident'>meta</span>]</span>)<span class='op'>*</span>
      <span class='kw'>enum</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_name</span>:<span class='ident'>ident</span> {
          $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_variant_name</span>:<span class='ident'>ident</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span>:<span class='ident'>ty</span>)),<span class='op'>+</span>
          $(,)<span class='op'>*</span>
      }
-    ) <span class='op'>=&gt;</span> (
-        $(<span class='attribute'>#[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>attr</span>]</span>)<span class='op'>*</span>
-        <span class='kw'>enum</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_name</span> { $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_variant_name</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span>)),<span class='op'>+</span> }
-        $(<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_name</span> {
-            <span class='kw'>fn</span> <span class='ident'>from</span> (<span class='ident'>ty</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
-                <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_name</span>::<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_variant_name</span>(<span class='ident'>ty</span>)
-            }
-        })<span class='op'>+</span>
-    );
+    ) <span class='op'>=&gt;</span> { ... };
 }</pre>
 </section>
     <section id='search' class="content hidden"></section>
@@ -137,6 +122,6 @@
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>

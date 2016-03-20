@@ -9,6 +9,7 @@
 
     <title>nix::sys::statvfs::vfs::Statvfs - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../../main.css">
 
     
@@ -45,16 +46,16 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-7748' class='srclink' href='../../../../src/nix/sys/statvfs.rs.html#55-83' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-7919' class='srclink' href='../../../../src/nix/sys/statvfs.rs.html#55-83' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Statvfs {
     pub f_bsize: <a class='type' href='../../../../nix/sys/ioctl/libc/type.c_ulong.html' title='nix::sys::ioctl::libc::c_ulong'>c_ulong</a>,
     pub f_frsize: <a class='type' href='../../../../nix/sys/ioctl/libc/type.c_ulong.html' title='nix::sys::ioctl::libc::c_ulong'>c_ulong</a>,
-    pub f_blocks: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub f_bfree: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub f_bavail: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub f_files: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub f_ffree: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
-    pub f_favail: <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub f_blocks: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub f_bfree: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub f_bavail: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub f_files: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub f_ffree: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
+    pub f_favail: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>,
     pub f_fsid: <a class='type' href='../../../../nix/sys/ioctl/libc/type.c_ulong.html' title='nix::sys::ioctl::libc::c_ulong'>c_ulong</a>,
     pub f_flag: <a class='struct' href='../../../../nix/sys/statvfs/vfs/struct.FsFlags.html' title='nix::sys::statvfs::vfs::FsFlags'>FsFlags</a>,
     pub f_namemax: <a class='type' href='../../../../nix/sys/ioctl/libc/type.c_ulong.html' title='nix::sys::ioctl::libc::c_ulong'>c_ulong</a>,
@@ -91,11 +92,11 @@ reserved for root</p>
 </div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../../nix/sys/statvfs/vfs/struct.Statvfs.html' title='nix::sys::statvfs::vfs::Statvfs'>Statvfs</a></code></h3><div class='impl-items'><h4 id='method.for_path' class='method'><code>fn <a href='#method.for_path' class='fnname'>for_path</a>&lt;P: ?<a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='../../../../nix/trait.NixPath.html' title='nix::NixPath'>NixPath</a>&gt;(path: &amp;P) -&gt; <a class='type' href='../../../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a class='struct' href='../../../../nix/sys/statvfs/vfs/struct.Statvfs.html' title='nix::sys::statvfs::vfs::Statvfs'>Statvfs</a>&gt;</code></h4>
 <div class='docblock'><p>Create a new <code>Statvfs</code> object and fill it with information about
 the mount that contains <code>path</code></p>
-</div><h4 id='method.update_with_path' class='method'><code>fn <a href='#method.update_with_path' class='fnname'>update_with_path</a>&lt;P: ?<a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='../../../../nix/trait.NixPath.html' title='nix::NixPath'>NixPath</a>&gt;(&amp;mut self, path: &amp;P) -&gt; <a class='type' href='../../../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</code></h4>
+</div><h4 id='method.update_with_path' class='method'><code>fn <a href='#method.update_with_path' class='fnname'>update_with_path</a>&lt;P: ?<a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='../../../../nix/trait.NixPath.html' title='nix::NixPath'>NixPath</a>&gt;(&amp;mut self, path: &amp;P) -&gt; <a class='type' href='../../../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</code></h4>
 <div class='docblock'><p>Replace information in this struct with information about <code>path</code></p>
 </div><h4 id='method.for_fd' class='method'><code>fn <a href='#method.for_fd' class='fnname'>for_fd</a>&lt;T: <a class='trait' href='https://doc.rust-lang.org/nightly/std/sys/ext/io/trait.AsRawFd.html' title='std::sys::ext::io::AsRawFd'>AsRawFd</a>&gt;(fd: &amp;T) -&gt; <a class='type' href='../../../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a class='struct' href='../../../../nix/sys/statvfs/vfs/struct.Statvfs.html' title='nix::sys::statvfs::vfs::Statvfs'>Statvfs</a>&gt;</code></h4>
 <div class='docblock'><p>Create a new <code>Statvfs</code> object and fill it with information from fd</p>
-</div><h4 id='method.update_with_fd' class='method'><code>fn <a href='#method.update_with_fd' class='fnname'>update_with_fd</a>&lt;T: <a class='trait' href='https://doc.rust-lang.org/nightly/std/sys/ext/io/trait.AsRawFd.html' title='std::sys::ext::io::AsRawFd'>AsRawFd</a>&gt;(&amp;mut self, fd: &amp;T) -&gt; <a class='type' href='../../../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</code></h4>
+</div><h4 id='method.update_with_fd' class='method'><code>fn <a href='#method.update_with_fd' class='fnname'>update_with_fd</a>&lt;T: <a class='trait' href='https://doc.rust-lang.org/nightly/std/sys/ext/io/trait.AsRawFd.html' title='std::sys::ext::io::AsRawFd'>AsRawFd</a>&gt;(&amp;mut self, fd: &amp;T) -&gt; <a class='type' href='../../../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</code></h4>
 <div class='docblock'><p>Replace information in this struct with information about <code>fd</code></p>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a> for <a class='struct' href='../../../../nix/sys/statvfs/vfs/struct.Statvfs.html' title='nix::sys::statvfs::vfs::Statvfs'>Statvfs</a></code></h3><div class='impl-items'><h4 id='method.default' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html#method.default' class='fnname'>default</a>() -&gt; Self</code></h4>
 </div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../../../nix/sys/statvfs/vfs/struct.Statvfs.html' title='nix::sys::statvfs::vfs::Statvfs'>Statvfs</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../../../nix/sys/statvfs/vfs/struct.Statvfs.html' title='nix::sys::statvfs::vfs::Statvfs'>Statvfs</a></code></h4>
@@ -160,6 +161,6 @@ the mount that contains <code>path</code></p>
     <script src="../../../../jquery.js"></script>
     <script src="../../../../main.js"></script>
     
-    <script async src="../../../../search-index.js"></script>
+    <script defer src="../../../../search-index.js"></script>
 </body>
 </html>

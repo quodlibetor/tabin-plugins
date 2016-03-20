@@ -9,6 +9,7 @@
 
     <title>clap::value_t_or_exit! - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     
@@ -45,67 +46,11 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-4490' class='srclink' href='../src/clap/macros.rs.html#256-315' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-4572' class='srclink' href='../src/clap/macros.rs.html#256-315' title='goto source code'>[src]</a></span></h1>
 <pre class='rust macro'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>value_t_or_exit</span> {
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>:<span class='ident'>ident</span>.<span class='ident'>value_of</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>v</span>:<span class='ident'>expr</span>), <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ty</span>) <span class='op'>=&gt;</span> {
-        <span class='kw'>match</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>.<span class='ident'>value_of</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>v</span>) {
-            <span class='prelude-val'>Some</span>(<span class='ident'>v</span>) <span class='op'>=&gt;</span> {
-                <span class='kw'>match</span> <span class='ident'>v</span>.<span class='ident'>parse</span>::<span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span><span class='op'>&gt;</span>() {
-                    <span class='prelude-val'>Ok</span>(<span class='ident'>val</span>) <span class='op'>=&gt;</span> <span class='ident'>val</span>,
-                    <span class='prelude-val'>Err</span>(..)  <span class='op'>=&gt;</span> {
-                        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{} &#39;{}&#39; isn&#39;t a valid value\n\n{}\n\nPlease re-run with {} for \
-                            more information&quot;</span>,
-                            ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Error</span>(<span class='string'>&quot;error:&quot;</span>),
-                            ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Warning</span>(<span class='ident'>v</span>.<span class='ident'>to_string</span>()),
-                            <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>.<span class='ident'>usage</span>(),
-                            ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Good</span>(<span class='string'>&quot;--help&quot;</span>));
-                        ::<span class='ident'>std</span>::<span class='ident'>process</span>::<span class='ident'>exit</span>(<span class='number'>1</span>);
-                    }
-                }
-            },
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {
-                <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{} The argument &#39;{}&#39; was not found or is not valid\n\n{}\n\nPlease re-run with \
-                    {} for more information&quot;</span>,
-                    ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Error</span>(<span class='string'>&quot;error:&quot;</span>),
-                    ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Warning</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>v</span>.<span class='ident'>to_string</span>()),
-                    <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>.<span class='ident'>usage</span>(),
-                    ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Good</span>(<span class='string'>&quot;--help&quot;</span>));
-                ::<span class='ident'>std</span>::<span class='ident'>process</span>::<span class='ident'>exit</span>(<span class='number'>1</span>);
-            }
-        }
-    };
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>:<span class='ident'>ident</span>.<span class='ident'>values_of</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>v</span>:<span class='ident'>expr</span>), <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ty</span>) <span class='op'>=&gt;</span> {
-        <span class='kw'>match</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>.<span class='ident'>values_of</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>v</span>) {
-            <span class='prelude-val'>Some</span>(<span class='kw-2'>ref</span> <span class='ident'>v</span>) <span class='op'>=&gt;</span> {
-                <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>tmp</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>v</span>.<span class='ident'>len</span>());
-                <span class='kw'>for</span> <span class='ident'>pv</span> <span class='kw'>in</span> <span class='ident'>v</span> {
-                    <span class='kw'>match</span> <span class='ident'>pv</span>.<span class='ident'>parse</span>::<span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span><span class='op'>&gt;</span>() {
-                        <span class='prelude-val'>Ok</span>(<span class='ident'>rv</span>) <span class='op'>=&gt;</span> <span class='ident'>tmp</span>.<span class='ident'>push</span>(<span class='ident'>rv</span>),
-                        <span class='prelude-val'>Err</span>(_)  <span class='op'>=&gt;</span> {
-                            <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{} &#39;{}&#39; isn&#39;t a valid value\n\n{}\n\nPlease re-run with {} for more \
-                                information&quot;</span>,
-                                ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Error</span>(<span class='string'>&quot;error:&quot;</span>),
-                                ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Warning</span>(<span class='ident'>pv</span>),
-                                <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>.<span class='ident'>usage</span>(),
-                                ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Good</span>(<span class='string'>&quot;--help&quot;</span>));
-                            ::<span class='ident'>std</span>::<span class='ident'>process</span>::<span class='ident'>exit</span>(<span class='number'>1</span>);
-                        }
-                    }
-                }
-                <span class='ident'>tmp</span>
-            },
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {
-                <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{} The argument &#39;{}&#39; not found or is not valid\n\n{}\n\nPlease re-run with \
-                    {} for more information&quot;</span>,
-                    ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Error</span>(<span class='string'>&quot;error:&quot;</span>),
-                    ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Warning</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>v</span>.<span class='ident'>to_string</span>()),
-                    <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>.<span class='ident'>usage</span>(),
-                    ::<span class='ident'>clap</span>::<span class='ident'>Format</span>::<span class='ident'>Good</span>(<span class='string'>&quot;--help&quot;</span>));
-                ::<span class='ident'>std</span>::<span class='ident'>process</span>::<span class='ident'>exit</span>(<span class='number'>1</span>);
-            }
-        }
-    };
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>:<span class='ident'>ident</span>.<span class='ident'>value_of</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>v</span>:<span class='ident'>expr</span>), <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ty</span>) <span class='op'>=&gt;</span> { ... };
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>:<span class='ident'>ident</span>.<span class='ident'>values_of</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>v</span>:<span class='ident'>expr</span>), <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ty</span>) <span class='op'>=&gt;</span> { ... };
 }</pre>
 <div class='docblock'><p>Convenience macro getting a typed value <code>T</code> where <code>T</code> implements <code>std::str::FromStr</code>
 This macro returns a <code>T</code> or <code>Vec&lt;T&gt;</code> or exits with a usage string upon failure. This
@@ -193,6 +138,6 @@ standard syntax.</p>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>
