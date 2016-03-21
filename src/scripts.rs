@@ -134,10 +134,10 @@
 //! Linux-only. Can only be run from inside a cgroup.
 //!
 //! ```plain
-//! $ target/osx/debug/check-container-cpu -h
+//! $ check-container-cpu -h
 //! Usage:
 //!     check-container-cpu [options]
-//!     check-cpu (-h | --help)
+//!     check-container-cpu (-h | --help)
 //!
 //! Check the cpu usage of the currently-running container. This must be run from
 //! inside the container to be checked.
@@ -250,7 +250,7 @@
 //! Linux-only. Can only be run from inside a container.
 //!
 //! ```plain
-//! $ target/osx/debug/check-container-ram -h
+//! $ check-container-ram -h
 //! Usage:
 //!     check-container-ram [--show-hogs=<count>] [--invalid-limit=<status>] [options]
 //!     check-container-ram (-h | --help)
