@@ -175,10 +175,10 @@ CPU Work Types:
 <h1 id='check-container-cpu' class='section-header'><a href='#check-container-cpu'>check-container-cpu</a></h1>
 <p>Linux-only. Can only be run from inside a cgroup.</p>
 
-<pre><code class="language-plain">$ target/osx/debug/check-container-cpu -h
+<pre><code class="language-plain">$ check-container-cpu -h
 Usage:
     check-container-cpu [options]
-    check-cpu (-h | --help)
+    check-container-cpu (-h | --help)
 
 Check the cpu usage of the currently-running container. This must be run from
 inside the container to be checked.
@@ -282,7 +282,7 @@ Options:
 <h1 id='check-container-ram' class='section-header'><a href='#check-container-ram'>check-container-ram</a></h1>
 <p>Linux-only. Can only be run from inside a container.</p>
 
-<pre><code class="language-plain">$ target/osx/debug/check-container-ram -h
+<pre><code class="language-plain">$ check-container-ram -h
 Usage:
     check-container-ram [--show-hogs=&lt;count&gt;] [--invalid-limit=&lt;status&gt;] [options]
     check-container-ram (-h | --help)
