@@ -13,15 +13,15 @@ extern crate rustc_serialize;
 extern crate tabin_plugins;
 
 use std::cmp::max;
+use std::error::Error;
 use std::fmt;
-use std::io::Read;
+use std::io::{self, Read};
 use std::str::FromStr;
 use std::time::Duration;
 use std::thread::sleep;
 
 use chrono::naive::datetime::NaiveDateTime;
-use hyper::client::Response;
-use hyper::error::Result as HyperResult;
+use hyper::error::Error as HyperError;
 use itertools::Itertools;
 use rustc_serialize::json::{self, Json};
 
@@ -181,12 +181,50 @@ fn graphite_result_to_vec(data: &Json) -> Vec<GraphiteData> {
         .map(GraphiteData::from_json_obj).collect()
 }
 
+enum GraphiteError {
+    HttpError(HyperError),
+    JsonError(String),
+    IoError(String),
+}
+
+impl GraphiteError {
+    fn short_display(&self) -> String {
+        match *self {
+            GraphiteError::HttpError(ref e) => e.description().to_owned(),
+            GraphiteError::JsonError(_) => "Error parsing json".to_owned(),
+            GraphiteError::IoError(_) => "Error reading stream from graphite".to_owned(),
+        }
+    }
+}
+
+impl From<HyperError> for GraphiteError {
+    fn from(e: HyperError) -> Self {
+        GraphiteError::HttpError(e)
+    }
+}
+
+impl From<io::Error> for GraphiteError {
+    fn from(e: io::Error) -> Self {
+        GraphiteError::IoError(e.description().to_owned())
+    }
+}
+
+impl fmt::Display for GraphiteError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            GraphiteError::HttpError(ref e) => e.fmt(f),
+            GraphiteError::JsonError(ref e) => write!(f, "{}", e),
+            GraphiteError::IoError(ref e) => write!(f, "{}", e),
+        }
+    }
+}
+
 /// Fetch data from graphite
 ///
 /// Returns a tuple of (full request path, string that graphite returned), or an error
 #[cfg_attr(test, allow(dead_code))]
-fn get_graphite(url: &str, target: &str, window: i64, print_url: bool)
--> HyperResult<(Response, String)> {
+fn get_graphite(url: &str, target: &str, window: i64, print_url: bool, graphite_error: &Status)
+-> Result<GraphiteResponse, GraphiteError> {
     let full_path = format!("{}/render?target={}&format=json&from=-{}min",
                             url, target, window);
     let c = hyper::Client::new();
@@ -196,7 +234,21 @@ fn get_graphite(url: &str, target: &str, window: i64, print_url: bool)
     let mut result = try!(c.get(&full_path).send());
     let mut s = String::new();
     try!(result.read_to_string(&mut s));
-    Ok((result, s))
+    match json::Json::from_str(&s) {
+        Ok(data) => Ok(GraphiteResponse { result: data, url: result.url.clone() }),
+        Err(e) => match e {
+            json::ParserError::SyntaxError(..) => {
+                Err(GraphiteError::JsonError(format!(
+                    "{}: Graphite returned invalid json:\n{}\n\
+                     =========================\n\
+                     The full url queried was: {}",
+                            graphite_error, s, result.url)))
+            },
+            _ => {
+                Err(GraphiteError::JsonError(format!("{}: {}", graphite_error, e)))
+            }
+        }
+    }
 }
 
 struct GraphiteResponse {
@@ -211,21 +263,18 @@ fn fetch_data(url: &str,
               target: &str,
               window: i64,
               retries: u8,
-              no_data: &Status,
               graphite_error: &Status,
               print_url: bool)
 -> Result<GraphiteResponse, String> {
-    let graphite_result: (Response, String);
     let mut attempts = 0;
     let mut retry_sleep = 2000;
     loop {
-        match get_graphite(url, target, window, print_url) {
+        match get_graphite(url, target, window, print_url, graphite_error) {
             Ok(s) => {
-                graphite_result = s;
-                break;
+                return Ok(s);
             },
             Err(e) => {
-                print!("HTTP error for {}: {}. ", url, e);
+                print!("Error for {}: {}. ", url, e.short_display());
                 if attempts < retries {
                     println!("Retrying in {}s.", retry_sleep / 1000);
                     attempts += 1;
@@ -233,24 +282,12 @@ fn fetch_data(url: &str,
                     retry_sleep *= 2;
                     continue;
                 } else {
+                    println!("\nFull error: {}", e);
                     println!("Giving up after {} attempts.", retries + 1);
                     graphite_error.exit();
                 }
             }
         };
-    }
-    match json::Json::from_str(&graphite_result.1) {
-        Ok(data) => Ok(GraphiteResponse { result: data, url: graphite_result.0.url.clone() }),
-        Err(e) => match e {
-            json::ParserError::SyntaxError(..) => {
-                Err(format!(
-                    "{}: Graphite returned invalid json:\n{}\n=========================\nThe full url queried was: {}",
-                            no_data, graphite_result.1, graphite_result.0.url))
-            },
-            _ => {
-                Err(format!("{}: {}", no_data, e))
-            }
-        }
     }
 }
 
@@ -797,7 +834,7 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
 fn main() {
     let args = parse_args();
     let data = match fetch_data(
-        &args.url, &args.path, args.window, args.retries, &args.no_data, &args.graphite_error,
+        &args.url, &args.path, args.window, args.retries, &args.graphite_error,
         args.print_url) {
         Ok(data) => data,
         Err(e) => {
