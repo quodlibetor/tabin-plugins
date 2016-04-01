@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/strsim/lib.rs.html#2-470' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/strsim/lib.rs.html#2-658' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>This library implements string similarity metrics. Currently includes
 Hamming, Levenshtein, Jaro, and Jaro-Winkler.</p>
 </div><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
@@ -65,6 +65,16 @@ Hamming, Levenshtein, Jaro, and Jaro-Winkler.</p>
                                title='strsim::damerau_levenshtein'>damerau_levenshtein</a></td>
                         <td class='docblock short'>
                              <p>Same as Levenshtein but allows for adjacent transpositions.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.damerau_levenshtein_against_vec.html'
+                               title='strsim::damerau_levenshtein_against_vec'>damerau_levenshtein_against_vec</a></td>
+                        <td class='docblock short'>
+                             <p>Calculates the Damerau-Levenshtein distance between a string and each string
+in a vector. Returns a vector of corresponding values.</p>
 
                         </td>
                     </tr>
@@ -90,10 +100,31 @@ is between 0.0 and 1.0 (higher value means more similar).</p>
                     </tr>
                 
                     <tr class=' module-item'>
+                        <td><a class='fn' href='fn.jaro_against_vec.html'
+                               title='strsim::jaro_against_vec'>jaro_against_vec</a></td>
+                        <td class='docblock short'>
+                             <p>Calculates the Jaro distance between a string and each string in a vector.
+Returns a vector of corresponding values between 0.0 and 1.0 (higher value
+means more similar).</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
                         <td><a class='fn' href='fn.jaro_winkler.html'
                                title='strsim::jaro_winkler'>jaro_winkler</a></td>
                         <td class='docblock short'>
                              <p>Like Jaro but gives a boost to strings that have a common prefix.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.jaro_winkler_against_vec.html'
+                               title='strsim::jaro_winkler_against_vec'>jaro_winkler_against_vec</a></td>
+                        <td class='docblock short'>
+                             <p>Calculates the Jaro-Winkler distances between a string and each string
+in a vector. Returns a vector of corresponding values.</p>
 
                         </td>
                     </tr>
@@ -104,6 +135,16 @@ is between 0.0 and 1.0 (higher value means more similar).</p>
                         <td class='docblock short'>
                              <p>Calculates the minimum number of insertions, deletions, and substitutions
 required to change one string into the other.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.levenshtein_against_vec.html'
+                               title='strsim::levenshtein_against_vec'>levenshtein_against_vec</a></td>
+                        <td class='docblock short'>
+                             <p>Calculates the Levenshtein distance between a string and each string in a
+vector. Returns a vector of corresponding values.</p>
 
                         </td>
                     </tr>

@@ -46,9 +46,9 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/chrono/lib.rs.html#5-635' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/chrono/lib.rs.html#5-636' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'>
-<h1 id='chrono-0220' class='section-header'><a href='#chrono-0220'>Chrono 0.2.20</a></h1>
+<h1 id='chrono-0221' class='section-header'><a href='#chrono-0221'>Chrono 0.2.21</a></h1>
 <p>Date and time handling for Rust. (also known as <code>rust-chrono</code>)
 It aims to be a feature-complete superset of
 the <a href="https://github.com/rust-lang-deprecated/time">time</a> library.
@@ -91,9 +91,10 @@ provided by crates.io <code>time</code> crate (which originally comes from Chron
 <h3 id='date-and-time' class='section-header'><a href='#date-and-time'>Date and Time</a></h3>
 <p>Chrono provides a <code>DateTime</code> type for the combined date and time.</p>
 
-<p><code>DateTime</code>, among others, is timezone-aware and
-must be constructed from the <code>TimeZone</code> object.
-<code>DateTime</code>s with different time zones do not mix, but can be converted to each other.</p>
+<p><code>DateTime</code>, among others, is timezone-aware and must be constructed from
+the <code>TimeZone</code> object.
+<code>DateTime</code>s with different time zones do not mix, but can be converted to
+each other using the <code>DateTime::with_timezone</code> method.</p>
 
 <p>You can get the current date and time in the UTC time zone (<code>UTC::now()</code>)
 or in the local time zone (<code>Local::now()</code>).</p>
