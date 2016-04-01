@@ -544,7 +544,7 @@ fn parse_args() -> Args {
         assertions: assertions,
         window: value_t!(args.value_of("MINUTES"), i64).unwrap_or(10),
         retries: value_t!(args.value_of("COUNT"), u8).unwrap_or(4),
-        graphite_error: Status::from_str(args.value_of("NO_DATA_STATUS")
+        graphite_error: Status::from_str(args.value_of("GRAPHITE_ERROR_STATUS")
                                          .unwrap_or("unknown")).unwrap(),
         no_data: Status::from_str(args.value_of("NO_DATA_STATUS")
                                   .unwrap_or("warning")).unwrap(),
