@@ -15,8 +15,6 @@
 //! * Some way of easily standardizing command-line args
 //! * Much of the code is hideous, and should not be
 
-#![cfg_attr(feature="clippy", feature(plugin))]
-#![cfg_attr(feature="clippy", plugin(clippy))]
 
 #[macro_use]
 extern crate lazy_static;

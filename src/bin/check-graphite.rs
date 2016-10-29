@@ -1,7 +1,3 @@
-#![cfg_attr(feature="clippy", feature(plugin))]
-#![cfg_attr(feature="clippy", plugin(clippy))]
-#![cfg_attr(feature="clippy", allow(if_not_else))]
-
 #[macro_use]
 extern crate clap;
 extern crate chrono;
@@ -63,7 +59,6 @@ impl<'a> From<&'a Json> for DataPoint {
 }
 
 impl fmt::Display for DataPoint {
-    #[cfg_attr(feature="clippy", allow(float_cmp))]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{} (at {})",
                self.val.map_or("null".into(),
@@ -106,20 +101,20 @@ impl GraphiteData {
 
     /// References to the points that exist and do not satisfy the comparator
     // comparator is a box closure, which is not allows in map_or
-    #[cfg_attr(feature="clippy", allow(redundant_closure))]
     fn invalid_points(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
         self.points.iter()
             .filter(|p| p.val.map_or(false, |v| comparator(v))).collect()
     }
 
+    /// Get only invalid points from the end of the list
     // comparator is a box closure, which is not allows in map_or
-    #[cfg_attr(feature="clippy", allow(redundant_closure))]
     fn last_invalid_points(&self, n: usize, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
         self.points.iter()
             .rev()
             .filter(|p| p.val.is_some())
             .take(n)
-            .filter(|p| p.val.map_or(false, |v| comparator(v))).collect()
+            .filter(|p| p.val.map_or(false, |v| comparator(v)))
+            .collect()
     }
 }
 
@@ -303,7 +298,6 @@ fn fetch_data(url: &str,
 /// float 0.1, since we are always interpreting as f64 then we'll get the
 /// "wrong" values and compare them to each other. That said, we should
 /// probably use an epsilon in here.
-#[cfg_attr(feature="clippy", allow(float_cmp))]
 fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f64) -> bool> {
     let comp: Box<Fn(f64) -> bool> = match op {
         "<"  => Box::new(move |i: f64| i <  val),
