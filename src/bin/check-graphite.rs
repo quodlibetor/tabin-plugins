@@ -30,7 +30,7 @@ use tabin_plugins::Status;
 #[derive(Debug, PartialEq, Clone)]
 struct DataPoint {
     val: Option<f64>,
-    time: NaiveDateTime
+    time: NaiveDateTime,
 }
 
 impl<'a> From<&'a Json> for DataPoint {
@@ -44,7 +44,8 @@ impl<'a> From<&'a Json> for DataPoint {
                 Json::U64(n) => Some(n as f64),
                 Json::I64(n) => Some(n as f64),
                 _ => {
-                    println!("Unable to convert data value into floating point: {:?}", point[0]);
+                    println!("Unable to convert data value into floating point: {:?}",
+                             point[0]);
                     Status::Critical.exit();
                 }
             },
@@ -53,20 +54,26 @@ impl<'a> From<&'a Json> for DataPoint {
             } else {
                 println!("Timestamp does not look like an integer: {:?}", point[1]);
                 Status::Critical.exit();
-            }
+            },
         }
     }
 }
 
 impl fmt::Display for DataPoint {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} (at {})",
-               self.val.map_or("null".into(),
-                               |v| format!("{:.*}",
-                                           // the number of points past the dot to show
-                                           // Don't show any if it's an integer
-                                           if v.round() == v { 0 } else { 2 },
-                                           v)),
+        write!(f,
+               "{} (at {})",
+               self.val.map_or("null".into(), |v| {
+                   format!("{:.*}",
+                           // the number of points past the dot to show
+                           // Don't show any if it's an integer
+                           if v.round() == v {
+                               0
+                           } else {
+                               2
+                           },
+                           v)
+               }),
                self.time.format("%H:%Mz"))
     }
 }
@@ -75,41 +82,49 @@ impl fmt::Display for DataPoint {
 #[derive(PartialEq, Debug)]
 struct GraphiteData {
     points: Vec<DataPoint>,
-    target: String
+    target: String,
 }
 
 /// Represent the data that we received after some filtering operation
 #[derive(Debug, PartialEq)]
 struct FilteredGraphiteData<'a> {
     original: &'a GraphiteData,
-    points: Vec<&'a DataPoint>
+    points: Vec<&'a DataPoint>,
 }
 
 impl GraphiteData {
-    fn from_json_obj (obj: &Json) -> GraphiteData {
-        let dl = obj
-            .find("datapoints").expect("Could not find datapoints in obj")
-            .as_array().expect("Graphite did not return an array").into_iter()
-            .map(DataPoint::from)
-            .collect();
+    fn from_json_obj(obj: &Json) -> GraphiteData {
+        let dl = obj.find("datapoints")
+                    .expect("Could not find datapoints in obj")
+                    .as_array()
+                    .expect("Graphite did not return an array")
+                    .into_iter()
+                    .map(DataPoint::from)
+                    .collect();
         GraphiteData {
             points: dl,
-            target: obj.find("target").expect("Couldn't find target in graphite data")
-                       .as_string().expect("Couldn't convert target to string").to_owned()
+            target: obj.find("target")
+                       .expect("Couldn't find target in graphite data")
+                       .as_string()
+                       .expect("Couldn't convert target to string")
+                       .to_owned(),
         }
     }
 
     /// References to the points that exist and do not satisfy the comparator
     // comparator is a box closure, which is not allows in map_or
     fn invalid_points(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
-        self.points.iter()
-            .filter(|p| p.val.map_or(false, |v| comparator(v))).collect()
+        self.points
+            .iter()
+            .filter(|p| p.val.map_or(false, |v| comparator(v)))
+            .collect()
     }
 
     /// Get only invalid points from the end of the list
     // comparator is a box closure, which is not allows in map_or
     fn last_invalid_points(&self, n: usize, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
-        self.points.iter()
+        self.points
+            .iter()
             .rev()
             .filter(|p| p.val.is_some())
             .take(n)
@@ -134,14 +149,15 @@ impl<'a> FilteredGraphiteData<'a> {
     /// This only includes the original points that actually have data
     fn percent_matched(&self) -> f64 {
         (self.len() as f64 /
-         self.original.points.iter().filter(|point| point.val.is_some()).count() as f64) * 100.0
+         self.original.points.iter().filter(|point| point.val.is_some()).count() as f64) *
+        100.0
     }
 }
 
 struct GraphiteIterator {
     current: usize,
     back: usize,
-    data: GraphiteData
+    data: GraphiteData,
 }
 
 impl Iterator for GraphiteIterator {
@@ -159,7 +175,7 @@ impl IntoIterator for GraphiteData {
         GraphiteIterator {
             current: 0,
             back: self.points.len(),
-            data: self
+            data: self,
         }
     }
 }
@@ -172,8 +188,11 @@ impl DoubleEndedIterator for GraphiteIterator {
 }
 
 fn graphite_result_to_vec(data: &Json) -> Vec<GraphiteData> {
-    data.as_array().expect("Graphite should return an array").iter()
-        .map(GraphiteData::from_json_obj).collect()
+    data.as_array()
+        .expect("Graphite should return an array")
+        .iter()
+        .map(GraphiteData::from_json_obj)
+        .collect()
 }
 
 enum GraphiteError {
@@ -218,10 +237,16 @@ impl fmt::Display for GraphiteError {
 ///
 /// Returns a tuple of (full request path, string that graphite returned), or an error
 #[cfg_attr(test, allow(dead_code))]
-fn get_graphite(url: &str, target: &str, window: i64, print_url: bool, graphite_error: &Status)
--> Result<GraphiteResponse, GraphiteError> {
+fn get_graphite(url: &str,
+                target: &str,
+                window: i64,
+                print_url: bool,
+                graphite_error: &Status)
+                -> Result<GraphiteResponse, GraphiteError> {
     let full_path = format!("{}/render?target={}&format=json&from=-{}min",
-                            url, target, window);
+                            url,
+                            target,
+                            window);
     let c = hyper::Client::new();
     if print_url {
         println!("INFO: querying {}", full_path);
@@ -230,25 +255,29 @@ fn get_graphite(url: &str, target: &str, window: i64, print_url: bool, graphite_
     let mut s = String::new();
     try!(result.read_to_string(&mut s));
     match json::Json::from_str(&s) {
-        Ok(data) => Ok(GraphiteResponse { result: data, url: result.url.clone() }),
+        Ok(data) => Ok(GraphiteResponse {
+            result: data,
+            url: result.url.clone(),
+        }),
         Err(e) => match e {
             json::ParserError::SyntaxError(..) => {
-                Err(GraphiteError::JsonError(format!(
-                    "{}: Graphite returned invalid json:\n{}\n\
-                     =========================\n\
-                     The full url queried was: {}",
-                            graphite_error, s, result.url)))
-            },
+                Err(GraphiteError::JsonError(format!("{}: Graphite returned invalid \
+                                                      json:\n{}\n=========================\nThe \
+                                                      full url queried was: {}",
+                                                     graphite_error,
+                                                     s,
+                                                     result.url)))
+            }
             _ => {
                 Err(GraphiteError::JsonError(format!("{}: {}", graphite_error, e)))
             }
-        }
+        },
     }
 }
 
 struct GraphiteResponse {
     result: Json,
-    url: url::Url
+    url: url::Url,
 }
 
 /// Load data from graphite
@@ -260,14 +289,14 @@ fn fetch_data(url: &str,
               retries: u8,
               graphite_error: &Status,
               print_url: bool)
--> Result<GraphiteResponse, String> {
+              -> Result<GraphiteResponse, String> {
     let mut attempts = 0;
     let mut retry_sleep = 2000;
     loop {
         match get_graphite(url, target, window, print_url, graphite_error) {
             Ok(s) => {
                 return Ok(s);
-            },
+            }
             Err(e) => {
                 print!("Error for {}: {}. ", url, e.short_display());
                 if attempts < retries {
@@ -282,7 +311,7 @@ fn fetch_data(url: &str,
                     graphite_error.exit();
                 }
             }
-        };
+        }
     }
 }
 
@@ -300,13 +329,13 @@ fn fetch_data(url: &str,
 /// probably use an epsilon in here.
 fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f64) -> bool> {
     let comp: Box<Fn(f64) -> bool> = match op {
-        "<"  => Box::new(move |i: f64| i <  val),
+        "<" => Box::new(move |i: f64| i < val),
         "<=" => Box::new(move |i: f64| i <= val),
-        ">"  => Box::new(move |i: f64| i >  val),
+        ">" => Box::new(move |i: f64| i > val),
         ">=" => Box::new(move |i: f64| i >= val),
         "==" => Box::new(move |i: f64| i == val),
         "!=" => Box::new(move |i: f64| i != val),
-        a => panic!("Bad operator: {}", a)
+        a => panic!("Bad operator: {}", a),
     };
 
     if op_is_negated == NegOp::Yes {
@@ -319,77 +348,88 @@ fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f
 /// Take a `Json` value and make sure that at least one series has real data
 fn filter_to_with_data(path: &str,
                        data: Json,
-                       no_data_status: Status) -> Result<Vec<GraphiteData>, Status> {
+                       no_data_status: Status)
+                       -> Result<Vec<GraphiteData>, Status> {
     let data = graphite_result_to_vec(&data);
     let matched_len = data.len();
     if data.is_empty() {
         println!("{}: Graphite returned no matching series for pattern '{}'",
-                 no_data_status, path);
+                 no_data_status,
+                 path);
         return Err(no_data_status);
     }
     let series_with_data = data.into_iter()
-        .filter(|series|
-                !series.points.is_empty() &&
-                !{
-                    let null_points = series.points.iter().fold(
-                        0, |count, point|{
-                            if point.val.is_none() {
-                                count + 1
-                            } else {
-                                count
-                            }
-                        });
-                    null_points == series.points.len()
-                })
-        .collect::<Vec<GraphiteData>>();
+                               .filter(|series| {
+                                   let null_point_count = series.points
+                                                                .iter()
+                                                                .fold(0, |count, point| {
+                                                                    if point.val.is_none() {
+                                                                        count + 1
+                                                                    } else {
+                                                                        count
+                                                                    }
+                                                                });
+                                   !series.points.is_empty() &&
+                                   null_point_count != series.points.len()
+                               })
+                               .collect::<Vec<GraphiteData>>();
 
     if series_with_data.is_empty() {
         println!("{}: Graphite found {} series but returned only null datapoints for them",
-                 no_data_status, matched_len);
+                 no_data_status,
+                 matched_len);
         Err(no_data_status)
     } else {
         Ok(series_with_data)
     }
 }
 
-fn do_check(
-    series_with_data: &[GraphiteData],
-    op: &str,
-    op_is_negated: NegOp,
-    threshold: f64,
-    error_condition: PointAssertion,
-    status: Status
-) -> Status {
+fn do_check(series_with_data: &[GraphiteData],
+            op: &str,
+            op_is_negated: NegOp,
+            threshold: f64,
+            error_condition: PointAssertion,
+            status: Status)
+            -> Status {
     let comparator = operator_string_to_func(op, op_is_negated, threshold);
     // We want to create a vec of series' that only have (existing) invalid
     // points. The first element is the original length of the vector of points
     let with_invalid = match error_condition {
         // Here, invalid points can exist anywhere
-        PointAssertion::Ratio(error_ratio) => series_with_data.iter()
-            .map(|series| FilteredGraphiteData {
-                original: &series,
-                points: series.invalid_points(&comparator)
-            })
-            .filter(|invalid| {
-                if error_ratio == 0.0 {
-                    !invalid.points.is_empty()
-                } else {
-                    let filtered = invalid.points.len() as f64;
-                    let original = invalid.original.points.len() as f64;
-                    filtered / original >= error_ratio
-                }
-            })
-            .collect::<Vec<FilteredGraphiteData>>(),
+        PointAssertion::Ratio(error_ratio) =>
+            series_with_data.iter()
+                            .map(|series| {
+                                FilteredGraphiteData {
+                                    original: &series,
+                                    points: series.invalid_points(&comparator),
+                                }
+                            })
+                            .filter(|invalid| {
+                                if error_ratio == 0.0 {
+                                    !invalid.points.is_empty()
+                                } else {
+                                    let filtered = invalid.points.len() as f64;
+                                    let original = invalid.original.points.len() as f64;
+                                    filtered / original >= error_ratio
+                                }
+                            })
+                            .collect::<Vec<FilteredGraphiteData>>(),
         PointAssertion::Recent(count) => series_with_data.iter()
-            .map(|ref series| FilteredGraphiteData {
+                                                         .map(|ref series| {
+                                                             FilteredGraphiteData {
                 original: &series,
                 points: series.last_invalid_points(count, &comparator)
-            })
-            .filter(|ref invalid| !invalid.is_empty())
-            .collect::<Vec<(FilteredGraphiteData)>>()
+            }
+                                                         })
+                                                         .filter(|ref invalid| !invalid.is_empty())
+                                                         .collect::<Vec<(FilteredGraphiteData)>>(),
     };
 
-    let nostr = if op_is_negated == NegOp::Yes { " not" } else { "" };
+    let nostr = if op_is_negated == NegOp::Yes {
+        " not"
+    } else {
+        ""
+    };
     if !with_invalid.is_empty() {
         match error_condition {
             PointAssertion::Ratio(ratio) => {
@@ -398,16 +438,22 @@ fn do_check(
                         print!("{}: ", status)
                     } else if ratio == 0.0 {
                         println!("{}: All {} matched paths have invalid datapoints:",
-                                 status, with_invalid.len())
+                                 status,
+                                 with_invalid.len())
                     } else {
-                        println!(
-                            "{}: All {} matched paths have at least {:.0}% invalid datapoints:",
-                            status, with_invalid.len(), ratio * 100.0)
+                        println!("{}: All {} matched paths have at least {:.0}% invalid \
+                                  datapoints:",
+                                 status,
+                                 with_invalid.len(),
+                                 ratio * 100.0)
                     }
                 } else {
-                    println!("{}: Of {} paths with data, \
-                             {} have at least {:.1}% invalid datapoints:",
-                         status, series_with_data.len(), with_invalid.len(), ratio * 100.0);
+                    println!("{}: Of {} paths with data, {} have at least {:.1}% invalid \
+                              datapoints:",
+                             status,
+                             series_with_data.len(),
+                             with_invalid.len(),
+                             ratio * 100.0);
                 }
                 for series in &with_invalid {
                     let prefix = if with_invalid.len() == 1 {
@@ -415,30 +461,43 @@ fn do_check(
                     } else {
                         "       ->"
                     };
-                    println!(
-                        "{} {} has {} points ({:.1}%) that are{} {} {}: {}",
-                        prefix,
-                        series.original.target, series.points.len(),
-                        series.percent_matched(),
-                        nostr, op, threshold,
-                        series.points.iter().map(|gv| format!("{}", gv))
-                            .join(", "));
+                    println!("{} {} has {} points ({:.1}%) that are{} {} {}: {}",
+                             prefix,
+                             series.original.target,
+                             series.points.len(),
+                             series.percent_matched(),
+                             nostr,
+                             op,
+                             threshold,
+                             series.points
+                                   .iter()
+                                   .map(|gv| format!("{}", gv))
+                                   .join(", "));
                 }
-            },
+            }
             PointAssertion::Recent(count) => {
                 println!("{}: Of {} paths with data, {} have the last {} points invalid:",
-                         status, series_with_data.len(), with_invalid.len(), count);
+                         status,
+                         series_with_data.len(),
+                         with_invalid.len(),
+                         count);
                 for series in &with_invalid {
                     let descriptor = if count == 1 {
                         "point is"
                     } else {
                         "points are"
                     };
-                    println!(
-                        "       -> {} last {} {}{} {} {}: {}",
-                        series.original.target, count, descriptor, nostr, op, threshold,
-                        series.points.iter().map(|gv| format!("{}", gv))
-                            .join(", "));
+                    println!("       -> {} last {} {}{} {} {}: {}",
+                             series.original.target,
+                             count,
+                             descriptor,
+                             nostr,
+                             op,
+                             threshold,
+                             series.points
+                                   .iter()
+                                   .map(|gv| format!("{}", gv))
+                                   .join(", "));
                 }
             }
         }
@@ -447,24 +506,35 @@ fn do_check(
         match error_condition {
             PointAssertion::Ratio(percent) => {
                 let amount;
-                if percent == 0.0 { amount = "any".to_owned() } else { amount = format!("at least {:.1}% of", percent * 100.0) }
-                println!(
-                    "OK: Found {} paths with data, none had {} datapoints{} {} {:.2}.",
-                    series_with_data.len(), amount, nostr, op, threshold);
-            },
-            PointAssertion::Recent(count) => {
-                println!(
-                    "OK: Found {} paths with data, none had their last {} datapoints{} {} {}.",
-                    series_with_data.len(), count, nostr, op, threshold
-                    );
+                if percent == 0.0 {
+                    amount = "any".to_owned()
+                } else {
+                    amount = format!("at least {:.1}% of", percent * 100.0)
+                }
+                println!("OK: Found {} paths with data, none had {} datapoints{} {} {:.2}.",
+                         series_with_data.len(),
+                         amount,
+                         nostr,
+                         op,
+                         threshold);
             }
-        };
+            PointAssertion::Recent(count) => {
+                println!("OK: Found {} paths with data, none had their last {} datapoints{} {} \
+                          {}.",
+                         series_with_data.len(),
+                         count,
+                         nostr,
+                         op,
+                         threshold);
+            }
+        }
         for series in series_with_data.iter() {
             println!("    -> {}: {}",
                      series.target,
-                     series.points.iter()
-                     .map(|gv| format!("{}", gv))
-                     .join(", "))
+                     series.points
+                           .iter()
+                           .map(|gv| format!("{}", gv))
+                           .join(", "))
         }
         Status::Ok
     }
@@ -481,88 +551,124 @@ struct Args {
     print_url: bool,
 }
 
-static ASSERTION_EXAMPLES: &'static [&'static str] = &[
-    "critical if any point is > 0",
-    "critical if any point in at least 40% of series is > 0",
-    "critical if any point is not > 0",
-    "warning if any point is == 9",
-    "critical if all points are > 100.0",
-    "critical if at least 20% of points are > 100",
-    "critical if most recent point is > 5",
-    "critical if most recent point in all series are == 0",
-    ];
+static ASSERTION_EXAMPLES: &'static [&'static str] = &["critical if any point is > 0",
+                                                       "critical if any point in at least 40% of \
+                                                        series is > 0",
+                                                       "critical if any point is not > 0",
+                                                       "warning if any point is == 9",
+                                                       "critical if all points are > 100.0",
+                                                       "critical if at least 20% of points are > \
+                                                        100",
+                                                       "critical if most recent point is > 5",
+                                                       "critical if most recent point in all \
+                                                        series are == 0"];
 
 fn parse_args() -> Args {
     let allowed_no_data = Status::str_values(); // block-local var for borrowck
     let args = clap::App::new("check-graphite")
-        .version("0.1.0")
-        .author("Brandon W Maister <quodlibetor@gmail.com>")
-        .about("Query graphite and exit based on predicates")
-        .args_from_usage(
-            "<URL>                 'The domain to query graphite. Must include scheme (http/s)'
-             <PATH>                'The graphite path to query. For example: \"collectd.*.cpu\"'
-             <ASSERTION>...        'The assertion to make against the PATH. See Below.'
-             -w --window=[MINUTES] 'How many minutes of data to test. Default 10.'
-             --retries=[COUNT]     'How many times to retry reaching graphite. Default 4.
-             --print-url           'Unconditionally print the graphite url queried'
-             --verify-assertions   'Just check assertion syntax, do not query urls'")
-        .arg(clap::Arg::with_name("NO_DATA_STATUS")
-                       .long("--no-data")
-                       .help("What to do with no data.
-                              Choices: ok, warn, critical, unknown.
-                              This is the value to use for the assertion 'if all values are null'
+                   .version("0.1.0")
+                   .author("Brandon W Maister <quodlibetor@gmail.com>")
+                   .about("Query graphite and exit based on predicates")
+                   .args_from_usage("<URL>                 'The domain to query graphite. Must \
+                                     include scheme (http/s)'
+             <PATH>                \
+                                     'The graphite path to query. For example: \
+                                     \"collectd.*.cpu\"'
+             <ASSERTION>...        'The \
+                                     assertion to make against the PATH. See Below.'
+             \
+                                     -w --window=[MINUTES] 'How many minutes of data to test. \
+                                     Default 10.'
+             --retries=[COUNT]     'How many \
+                                     times to retry reaching graphite. Default 4.
+             \
+                                     --print-url           'Unconditionally print the graphite \
+                                     url queried'
+             --verify-assertions   'Just check \
+                                     assertion syntax, do not query urls'")
+                   .arg(clap::Arg::with_name("NO_DATA_STATUS")
+                            .long("--no-data")
+                            .help("What to do with no data.
+                              \
+                                   Choices: ok, warn, critical, unknown.
+                              \
+                                   This is the value to use for the assertion 'if all values \
+                                   are null'
                               Default: warn.")
-                       .takes_value(true)
-                       .possible_values(&allowed_no_data)
-             )
-        .arg(clap::Arg::with_name("GRAPHITE_ERROR_STATUS")
-                       .long("--graphite-error")
-                       .help("What to do with no data.
-                              Choices: ok, warn, critical, unknown.
-                              What to say if graphite returns a 500 or invalid JSON
-                              Default: unknown.")
-                       .takes_value(true)
-                       .possible_values(&allowed_no_data)
-             )
-        .after_help(&format!("About Assertions:
+                            .takes_value(true)
+                            .possible_values(&allowed_no_data))
+                   .arg(clap::Arg::with_name("GRAPHITE_ERROR_STATUS")
+                            .long("--graphite-error")
+                            .help("What to do with no data.
+                              \
+                                   Choices: ok, warn, critical, unknown.
+                              \
+                                   What to say if graphite returns a 500 or invalid JSON
+                              \
+                                   Default: unknown.")
+                            .takes_value(true)
+                            .possible_values(&allowed_no_data))
+                   .after_help(&format!("About Assertions:
 
-    Assertions look like 'critical if any point in any series is > 5'.
+    Assertions look like 'critical \
+                                         if any point in any series is > 5'.
 
-    They describe what you care about in your graphite data. The structure of
+    They describe \
+                                         what you care about in your graphite data. The \
+                                         structure of
     an assertion is as follows:
 
-        <errorkind> if <point spec> [in <series spec>] is|are [not] <operator> <threshold>
+        \
+                                         <errorkind> if <point spec> [in <series spec>] is|are \
+                                         [not] <operator> <threshold>
 
     Where:
 
-        - `errorkind` is either `critical` or `warning`
-        - `point spec` can be one of:
-            - `any point`
+        - \
+                                         `errorkind` is either `critical` or `warning`
+        \
+                                         - `point spec` can be one of:
+            - `any \
+                                         point`
             - `all points`
-            - `at least <N>% of points`
-            - `most recent point`
-        - `series spec` (optional) can be one of:
+            - `at \
+                                         least <N>% of points`
+            - `most recent \
+                                         point`
+        - `series spec` (optional) can be one \
+                                         of:
             - `any series`
-            - `all series`
+            - `all \
+                                         series`
             - `at least <N>% of series`
-        - `not` is optional, and inverts the following operator
-        - `operator` is one of: `==` `!=` `<` `>` `<=` `>=`
-        - `threshold` is a floating-point value (e.g. 100, 78.0)
+        \
+                                         - `not` is optional, and inverts the following \
+                                         operator
+        - `operator` is one of: `==` `!=` `<` \
+                                         `>` `<=` `>=`
+        - `threshold` is a \
+                                         floating-point value (e.g. 100, 78.0)
 
-    Here are some example assertions:
+    Here are \
+                                         some example assertions:
 
-        - `{}`\n", ASSERTION_EXAMPLES.join("`\n        - `")))
-     .get_matches();
+        - `{}`\n",
+                                        ASSERTION_EXAMPLES.join("`\n        - `")))
+                   .get_matches();
 
-    let assertions = args.values_of("ASSERTION").unwrap()
-        .iter().map(|assertion_str|
-                    match parse_assertion(assertion_str) {
-                        Ok(a) => a,
-                        Err(e) => {
-                            println!("Error `{}` in assertion `{}`", e, assertion_str);
-                            Status::Critical.exit();
-                        }
-                    }).collect();
+    let assertions = args.values_of("ASSERTION")
+                         .unwrap()
+                         .iter()
+                         .map(|assertion_str| {
+                             match parse_assertion(assertion_str) {
+                                 Ok(a) => a,
+                                 Err(e) => {
+                                     println!("Error `{}` in assertion `{}`", e, assertion_str);
+                                     Status::Critical.exit();
+                                 }
+                             }
+                         })
+                         .collect();
 
     if args.is_present("verify-assertions") {
         Status::Ok.exit();
@@ -576,9 +682,11 @@ fn parse_args() -> Args {
         window: value_t!(args.value_of("MINUTES"), i64).unwrap_or(10),
         retries: value_t!(args.value_of("COUNT"), u8).unwrap_or(4),
         graphite_error: Status::from_str(args.value_of("GRAPHITE_ERROR_STATUS")
-                                         .unwrap_or("unknown")).unwrap(),
+                                             .unwrap_or("unknown"))
+                            .unwrap(),
         no_data: Status::from_str(args.value_of("NO_DATA_STATUS")
-                                  .unwrap_or("warning")).unwrap(),
+                                      .unwrap_or("warning"))
+                     .unwrap(),
         print_url: args.is_present("print-url"),
     }
 }
@@ -590,7 +698,7 @@ struct Assertion {
     threshold: f64,
     point_assertion: PointAssertion,
     series_ratio: f64,
-    failure_status: Status
+    failure_status: Status,
 }
 
 enum AssertionState {
@@ -605,7 +713,7 @@ enum AssertionState {
     /// We're looking for a threshold
     Threshold,
     /// Unknown state
-    Open
+    Open,
 }
 
 #[derive(Debug)]
@@ -616,7 +724,7 @@ enum ParseError {
     InvalidThreshold(String),
     NoRatioSpecifier(String),
     NoStatusSpecifier(String),
-    SyntaxError(String)
+    SyntaxError(String),
 }
 
 impl fmt::Display for ParseError {
@@ -629,7 +737,7 @@ impl fmt::Display for ParseError {
             InvalidThreshold(ref msg) |
             NoRatioSpecifier(ref msg) |
             NoStatusSpecifier(ref msg) |
-            SyntaxError(ref msg) => msg
+            SyntaxError(ref msg) => msg,
         };
         write!(f, "{}", msg)
     }
@@ -638,12 +746,12 @@ impl fmt::Display for ParseError {
 #[derive(Debug, PartialEq)]
 enum PointAssertion {
     Ratio(f64),
-    Recent(usize)
+    Recent(usize),
 }
 
 /// convert "all" -> 1, "at least 70% (points|series)" -> 0.7
 fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<PointAssertion, ParseError>
-    where I: Iterator<Item=&'a str>
+    where I: Iterator<Item = &'a str>
 {
     use PointAssertion::*;
     let ratio;
@@ -659,56 +767,68 @@ fn parse_ratio<'a, 'b, I>(it: &'b mut I, word: &str) -> Result<PointAssertion, P
     } else if word == "at" {
         let mut rat = None;
         while let Some(word) = it.next() {
-            if word == "least" { /* 'at least' */ }
-            else if word.find('%') == Some(word.len() - 1) {
+            if word == "least" {
+                // 'at least'
+            } else if word.find('%') == Some(word.len() - 1) {
                 rat = word[..word.len() - 1].parse::<f64>().ok();
                 break;
             } else if word == "points" || word == "point" {
-                return Err(ParseError::NoPointSpecifier(
-                    format!("Expected ratio specifier before '{}'", word)));
+                return Err(ParseError::NoPointSpecifier(format!("Expected ratio specifier \
+                                                                 before '{}'",
+                                                                word)));
             } else if word == "series" {
-                return Err(ParseError::NoSeriesSpecifier(
-                    format!("Expected ratio specifier before '{}'", word)));
+                return Err(ParseError::NoSeriesSpecifier(format!("Expected ratio specifier \
+                                                                  before '{}'",
+                                                                 word)));
             } else {
-                return Err(ParseError::NoRatioSpecifier(
-                    format!("This shouldn't happen: {}, word.find('%'): {:?}, len: {}",
-                            word, word.find('%'), word.len())));
+                return Err(ParseError::NoRatioSpecifier(format!("This shouldn't happen: {}, \
+                                                                 word.find('%'): {:?}, len: {}",
+                                                                word,
+                                                                word.find('%'),
+                                                                word.len())));
             }
         }
         ratio = Ok(Ratio(rat.expect("Couldn't find ratio for blah") / 100f64))
     } else if word == "most" {
         match it.next() {
-            Some(word) if word == "recent" => { /* yay */ },
-            Some(word) => return Err(ParseError::SyntaxError(
-                format!("Expected 'most recent' found 'most {}'",
-                        word))),
-            None => return Err(ParseError::SyntaxError(
-                "Expected 'most recent' found trailing 'most'".to_owned()))
-        };
+            Some(word) if word == "recent" => {
+                // yay
+            }
+            Some(word) => return Err(ParseError::SyntaxError(format!("Expected 'most recent' \
+                                                                      found 'most {}'",
+                                                                     word))),
+            None =>
+                return Err(ParseError::SyntaxError("Expected 'most recent' found trailing 'most'"
+                                                       .to_owned())),
+        }
         match it.next() {
             Some(word) if word == "point" => return Ok(Recent(1)),
-            Some(word) => return Err(ParseError::SyntaxError(
-                format!("Expected 'most recent point' found 'most recent {}'",
-                        word))),
-            None => return Err(ParseError::SyntaxError(
-                "Expected 'most recent point' found trailing 'most recent'".to_owned()))
+            Some(word) =>
+                return Err(ParseError::SyntaxError(format!("Expected 'most recent point' found \
+                                                            'most recent {}'",
+                                                           word))),
+            None => return Err(ParseError::SyntaxError("Expected 'most recent point' found \
+                                                        trailing 'most recent'"
+                                                           .to_owned())),
         }
     } else {
-        ratio = Err(ParseError::SyntaxError(
-            format!("Expected 'any', 'all', 'most' or 'at least', found '{}'", word)))
+        ratio = Err(ParseError::SyntaxError(format!("Expected 'any', 'all', 'most' or 'at \
+                                                     least', found '{}'",
+                                                    word)))
     }
 
     if ratio.is_ok() {
         // chew stop words
         for word in it {
             // chew through terminators
-            if word == "of" { continue; }
-            else if word == "points" || word == "point" || word == "series" {
+            if word == "of" {
+                continue;
+            } else if word == "points" || word == "point" || word == "series" {
                 break;
-            }
-            else {
-                return Err(ParseError::SyntaxError(
-                    format!("Expected 'of points|series', found '{}'", word)))
+            } else {
+                return Err(ParseError::SyntaxError(format!("Expected 'of points|series', found \
+                                                            '{}'",
+                                                           word)));
             }
         }
     }
@@ -722,7 +842,7 @@ enum NegOp {
     // For situations like `are not`
     Yes,
     // Just `are`
-    No
+    No,
 }
 
 fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
@@ -741,24 +861,30 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                 status = match word {
                     "critical" => Some(Status::Critical),
                     "warning" => Some(Status::Warning),
-                    _ => return Err(ParseError::NoStatusSpecifier(format!(
-                        "Expect assertion to start with 'critical' or 'warning', not '{}'", word)))
+                    _ =>
+                        return Err(ParseError::NoStatusSpecifier(format!("Expect assertion to \
+                                                                          start with 'critical' \
+                                                                          or 'warning', not '{}'",
+                                                                         word))),
                 };
                 if let Some(next) = it.next() {
                     if next != "if" {
-                        return Err(ParseError::SyntaxError(format!(
-                                "Expected 'if' to follow '{}', found '{}'", word, next)));
+                        return Err(ParseError::SyntaxError(format!("Expected 'if' to follow \
+                                                                    '{}', found '{}'",
+                                                                   word,
+                                                                   next)));
                     }
                 } else {
-                    return Err(ParseError::SyntaxError(format!(
-                                "Unexpected end of input after '{}'", word)));
+                    return Err(ParseError::SyntaxError(format!("Unexpected end of input after \
+                                                                '{}'",
+                                                               word)));
                 }
                 state = AssertionState::Points;
-            },
+            }
             AssertionState::Points => {
                 point_assertion = Some(try!(parse_ratio(&mut it, word)));
                 state = AssertionState::Open;
-            },
+            }
             AssertionState::Open => {
                 if word == "in" {
                     state = AssertionState::Series
@@ -769,49 +895,53 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                     }
                     state = AssertionState::Operator
                 } else {
-                    return Err(ParseError::SyntaxError(
-                        format!("Expected 'in' or 'is'/'are' (series spec or operator), found '{}'", word)))
+                    return Err(ParseError::SyntaxError(format!("Expected 'in' or 'is'/'are' \
+                                                                (series spec or operator), \
+                                                                found '{}'",
+                                                               word)));
                 }
-            },
+            }
             AssertionState::Series => {
                 if let PointAssertion::Ratio(r) = try!(parse_ratio(&mut it, word)) {
                     series_ratio = r;
                 } else {
-                    return Err(ParseError::SyntaxError(
-                        "You can't specify a most recent series, \
-                         it doesn't make sense.".to_owned()));
+                    return Err(ParseError::SyntaxError("You can't specify a most recent series, \
+                                                        it doesn't make sense."
+                                                           .to_owned()));
                 }
                 state = AssertionState::Open;
-            },
+            }
             AssertionState::Operator => {
-                if word == "be" {}
-                else {
-                    if let Some(word) = ["<", "<=", ">", ">=", "==", "!="].iter()
-                                        .find(|&&op| op == word) {
+                if word == "be" {} else {
+                    if let Some(word) = ["<", "<=", ">", ">=", "==", "!="]
+                                            .iter()
+                                            .find(|&&op| op == word) {
                         operator = Some(word);
                         state = AssertionState::Threshold;
                     } else {
-                        return Err(ParseError::InvalidOperator(format!(
-                            "Expected a comparison operator (e.g. >=), not '{}'",
-                            word.to_owned())))
+                        return Err(ParseError::InvalidOperator(format!("Expected a comparison \
+                                                                        operator (e.g. >=), \
+                                                                        not '{}'",
+                                                                       word.to_owned())));
                     }
                 }
-            },
+            }
             AssertionState::Threshold => {
                 if let Ok(thresh) = word.parse::<f64>() {
                     threshold = Some(thresh)
                 } else {
-                    return Err(ParseError::InvalidThreshold(format!(
-                        "Couldn't parse float from '{}'", word)))
+                    return Err(ParseError::InvalidThreshold(format!("Couldn't parse float from \
+                                                                     '{}'",
+                                                                    word)));
                 }
             }
         }
     }
 
     if threshold.is_none() {
-        return Err(ParseError::InvalidThreshold(
-            format!("No threshold found (e.g. '{0} N', not '{0}')",
-                    operator.unwrap_or(">="))));
+        return Err(ParseError::InvalidThreshold(format!("No threshold found (e.g. '{0} N', not \
+                                                         '{0}')",
+                                                        operator.unwrap_or(">="))));
     }
 
     Ok(Assertion {
@@ -820,16 +950,19 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
         threshold: threshold.expect("No threshold found in predicate"),
         point_assertion: point_assertion.expect("No point ratio found in predicate"),
         series_ratio: series_ratio,
-        failure_status: status.expect("Needed to start with an exit status")
+        failure_status: status.expect("Needed to start with an exit status"),
     })
 }
 
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
     let args = parse_args();
-    let data = match fetch_data(
-        &args.url, &args.path, args.window, args.retries, &args.graphite_error,
-        args.print_url) {
+    let data = match fetch_data(&args.url,
+                                &args.path,
+                                args.window,
+                                args.retries,
+                                &args.graphite_error,
+                                args.print_url) {
         Ok(data) => data,
         Err(e) => {
             println!("{}", e);
@@ -868,8 +1001,8 @@ mod test {
     use tabin_plugins::Status;
 
     use super::{Assertion, GraphiteData, DataPoint, operator_string_to_func,
-                graphite_result_to_vec, do_check, ParseError, NegOp,
-                filter_to_with_data, parse_assertion, ASSERTION_EXAMPLES};
+                graphite_result_to_vec, do_check, ParseError, NegOp, filter_to_with_data,
+                parse_assertion, ASSERTION_EXAMPLES};
     use super::PointAssertion::*;
 
     #[test]
@@ -892,18 +1025,26 @@ mod test {
                 "target": "test.path.some-data"
             }
         ]
-        "#).unwrap()
+        "#)
+            .unwrap()
     }
 
     fn valid_data_from_json_two_sets() -> Vec<GraphiteData> {
         vec![GraphiteData {
-            points: vec![DataPoint { val: Some(1_f64),
-                                     time: dt(11150) },
-                         DataPoint { val: None,
-                                     time: dt(11160) },
-                         DataPoint { val: Some(3_f64),
-                                     time: dt(11170) }],
-            target: "test.path.some-data".to_owned() }]
+                 points: vec![DataPoint {
+                                  val: Some(1_f64),
+                                  time: dt(11150),
+                              },
+                              DataPoint {
+                                  val: None,
+                                  time: dt(11160),
+                              },
+                              DataPoint {
+                                  val: Some(3_f64),
+                                  time: dt(11170),
+                              }],
+                 target: "test.path.some-data".to_owned(),
+             }]
     }
 
     #[test]
@@ -912,7 +1053,9 @@ mod test {
         assert_eq!(vec.len(), 2)
     }
 
-    fn dt(t: i64) -> NaiveDateTime { NaiveDateTime::from_timestamp(t, 0) }
+    fn dt(t: i64) -> NaiveDateTime {
+        NaiveDateTime::from_timestamp(t, 0)
+    }
 
     #[test]
     fn operator_string_to_func_returns_a_good_filter() {
@@ -928,7 +1071,7 @@ mod test {
         let expected = valid_data_from_json_two_sets();
         match result {
             Ok(actual) => assert_eq!(actual, expected),
-            Err(_) => panic!("wha")
+            Err(_) => panic!("wha"),
         }
     }
 
@@ -941,7 +1084,7 @@ mod test {
                               Ratio(0.0),
                               Status::Critical);
         if let Status::Critical = result {
-             /* expected */
+            // expected
         } else {
             panic!("Expected an Status::Critical, got: {:?}", result)
         }
@@ -956,7 +1099,7 @@ mod test {
                               Ratio(1.0),
                               Status::Critical);
         if let Status::Ok = result {
-            /* expected */
+            // expected
         } else {
             panic!("Expected an Status::Ok, got: {:?}", result)
         }
@@ -967,7 +1110,7 @@ mod test {
         let result = parse_assertion("any point is not < 100");
         if let &Err(ref e) = &result {
             if let &ParseError::NoStatusSpecifier(_) = e {
-                /* expected */
+                // expected
             } else {
                 panic!("Unexpected result: {:?}", result)
             }
@@ -1006,7 +1149,8 @@ mod test {
                     "target": "test.path.has-data"
                 }
             ]
-        "#).unwrap()
+        "#)
+            .unwrap()
     }
 
     #[test]
@@ -1019,8 +1163,8 @@ mod test {
                               assertion.threshold,
                               assertion.point_assertion,
                               assertion.failure_status);
-        if let Status::Critical = result  {
-             /* expected */
+        if let Status::Critical = result {
+            // expected
         } else {
             panic!("Expected Critical status, not '{:?}'", result)
         }
@@ -1029,16 +1173,16 @@ mod test {
     #[test]
     fn parse_series() {
         let assertion = parse_assertion("critical if any point in any series is not >= 5.5")
-            .unwrap();
+                            .unwrap();
         assert_eq!(assertion.point_assertion, Ratio(0.0));
         assert_eq!(assertion.series_ratio, 0.0);
     }
 
     #[test]
     fn parse_some_series() {
-        let assertion = parse_assertion(
-            "critical if any point in at least 20% of series is not >= 5.5")
-            .unwrap();
+        let assertion = parse_assertion("critical if any point in at least 20% of series is not \
+                                         >= 5.5")
+                            .unwrap();
         assert_eq!(assertion.point_assertion, Ratio(0.0));
         assert_eq!(assertion.series_ratio, 0.2_f64);
     }
@@ -1051,14 +1195,13 @@ mod test {
                     "target": "test.path.has-data"
                 }
             ]
-        "#).unwrap()
+        "#)
+            .unwrap()
     }
 
     #[test]
     fn parse_all_points_and_critical() {
-        let assertion = parse_assertion(
-            "critical if all points are > 5")
-            .unwrap();
+        let assertion = parse_assertion("critical if all points are > 5").unwrap();
         assert_eq!(assertion.point_assertion, Ratio(1.0));
 
         let graphite_data = graphite_result_to_vec(&json_all_points_above_5());
@@ -1073,9 +1216,7 @@ mod test {
 
     #[test]
     fn parse_all_points_and_ok() {
-        let assertion = parse_assertion(
-            "critical if all points are > 5")
-            .unwrap();
+        let assertion = parse_assertion("critical if all points are > 5").unwrap();
         assert_eq!(assertion.point_assertion, Ratio(1.0));
 
         let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
@@ -1090,9 +1231,7 @@ mod test {
 
     #[test]
     fn parse_most_recent_point() {
-        let assertion = parse_assertion(
-            "critical if most recent point is > 5"
-            ).unwrap();
+        let assertion = parse_assertion("critical if most recent point is > 5").unwrap();
         assert_eq!(assertion,
                    Assertion {
                        operator: ">".into(),
@@ -1100,7 +1239,7 @@ mod test {
                        threshold: 5.0,
                        point_assertion: Recent(1),
                        series_ratio: 0.0,
-                       failure_status: Status::Critical
+                       failure_status: Status::Critical,
                    })
     }
 
@@ -1112,7 +1251,8 @@ mod test {
                     "target": "test.path.has-data"
                 }
             ]
-        "#).unwrap()
+        "#)
+            .unwrap()
     }
 
     fn json_last_existing_point_is_5() -> Json {
@@ -1123,7 +1263,8 @@ mod test {
                     "target": "test.path.has-data"
                 }
             ]
-        "#).unwrap()
+        "#)
+            .unwrap()
     }
 
     #[test]
@@ -1194,14 +1335,14 @@ mod test {
                     "target": "test.path.has-data"
                 }
             ]
-        "#).unwrap()
+        "#)
+            .unwrap()
     }
 
     #[test]
     fn parse_some_series_and_correctly_alerts() {
-        let assertion = parse_assertion(
-            "critical if at least 80% of of points are not >= 5.5")
-            .unwrap();
+        let assertion = parse_assertion("critical if at least 80% of of points are not >= 5.5")
+                            .unwrap();
         let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
         let result = do_check(&graphite_data,
                               &assertion.operator,
@@ -1214,9 +1355,7 @@ mod test {
 
     #[test]
     fn parse_some_series_positive_assertion_and_correctly_allows() {
-        let assertion = parse_assertion(
-            "critical if at least 79% of of points are < 6")
-            .unwrap();
+        let assertion = parse_assertion("critical if at least 79% of of points are < 6").unwrap();
         let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
         let result = do_check(&graphite_data,
                               &assertion.operator,
@@ -1229,9 +1368,7 @@ mod test {
 
     #[test]
     fn parse_some_series_positive_assertion__and_correctly_allows_all_points() {
-        let assertion = parse_assertion(
-            "critical if at least 79% of of points are < 6")
-            .unwrap();
+        let assertion = parse_assertion("critical if at least 79% of of points are < 6").unwrap();
         let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
         let result = do_check(&graphite_data,
                               &assertion.operator,
@@ -1244,18 +1381,17 @@ mod test {
 
     #[test]
     fn parse_some_points() {
-        let assertion = parse_assertion(
-            "critical if at least 20% of points are not >= 5.5")
-            .unwrap();
+        let assertion = parse_assertion("critical if at least 20% of points are not >= 5.5")
+                            .unwrap();
         assert_eq!(assertion.point_assertion, Ratio(0.2));
         assert_eq!(assertion.series_ratio, 0.0);
     }
 
     #[test]
     fn parse_some_points_and_some_series() {
-        let assertion = parse_assertion(
-            "critical if at least 80% of points in at least 90% of series are not >= 5.5")
-            .unwrap();
+        let assertion = parse_assertion("critical if at least 80% of points in at least 90% of \
+                                         series are not >= 5.5")
+                            .unwrap();
         assert_eq!(assertion.point_assertion, Ratio(0.8));
         assert_eq!(assertion.series_ratio, 0.9_f64);
     }
