@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
+    
 
     
     
@@ -43,22 +44,22 @@
 
     <section id='main' class="content trait">
 <h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>linux</a>::<wbr><a class='trait' href=''>Ratio</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-258' class='srclink' href='../../src/tabin_plugins/linux.rs.html#162-164' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait Ratio&lt;Rhs = Self&gt; {
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/tabin_plugins/linux.rs.html#162-164' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait Ratio&lt;Rhs&nbsp;=&nbsp;Self&gt; {
     fn <a href='#tymethod.ratio' class='fnname'>ratio</a>(&amp;self, rhs: &amp;Rhs) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>;
 }</pre>
             <h2 id='required-methods'>Required Methods</h2>
             <div class='methods'>
-        <h3 id='tymethod.ratio' class='method stab '><code>fn <a href='#tymethod.ratio' class='fnname'>ratio</a>(&amp;self, rhs: &amp;Rhs) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code></h3></div>
+        <h3 id='tymethod.ratio' class='method stab '><span id='ratio.v' class='invisible'><code>fn <a href='#tymethod.ratio' class='fnname'>ratio</a>(&amp;self, rhs: &amp;Rhs) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code></span></h3></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
-    <li><code>impl <a class='trait' href='../../tabin_plugins/linux/trait.Ratio.html' title='tabin_plugins::linux::Ratio'>Ratio</a> for <a class='struct' href='https://doc.rust-lang.org/nightly/std/time/duration/struct.Duration.html' title='std::time::duration::Duration'>Duration</a></code></li>
+    <li><code>impl Ratio for <a class='struct' href='https://doc.rust-lang.org/nightly/std/time/duration/struct.Duration.html' title='std::time::duration::Duration'>Duration</a></code></li>
 </ul><script type="text/javascript" async
-                              src="../../implementors/tabin_plugins/linux/trait.Ratio.js">
-                      </script></section>
+                         src="../../implementors/tabin_plugins/linux/trait.Ratio.js">
+                 </script></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -81,6 +82,8 @@
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
@@ -101,7 +104,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -112,11 +115,9 @@
     <script>
         window.rootPath = "../../";
         window.currentCrate = "tabin_plugins";
-        window.playgroundUrl = "";
     </script>
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
-    
     <script defer src="../../search-index.js"></script>
 </body>
 </html>

@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../../../main.css">
+    
 
     
     
@@ -43,10 +44,10 @@
 
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='../../../../index.html'>tabin_plugins</a>::<wbr><a href='../../../index.html'>sys</a>::<wbr><a href='../../index.html'>fs</a>::<wbr><a href='../index.html'>cgroup</a>::<wbr><a href='index.html'>memory</a>::<wbr><a class='struct' href=''>Stat</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-1142' class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#99-110' title='goto source code'>[src]</a></span></h1>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#99-110' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Stat {
     pub cache: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>,
     pub rss: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>,
@@ -56,21 +57,31 @@
 
 <p>All values are in bytes, contrary to the same file from procfs
 which reports everything in pages</p>
-</div><h2 class='fields'>Fields</h2>
-<table><tr class='stab '>
-                                  <td id='structfield.cache'><code>cache</code></td><td><div class='docblock'><p>Memory used, including the filesystem page cache. This
+</div><h2 class='fields'>Fields</h2><span id='structfield.cache' class='structfield'>
+                           <span id='cache.v' class='invisible'>
+                           <code>cache: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code>
+                           </span></span><span class='stab '></span><div class='docblock'><p>Memory used, including the filesystem page cache. This
 number will never decrease unless memory presure gets
 applied from outside the cgroup.</p>
-</div></td></tr><tr class='stab '>
-                                  <td id='structfield.rss'><code>rss</code></td><td><div class='docblock'><p>Actual memory being used by the cgroup</p>
-</div></td></tr><tr class='stab '>
-                                  <td id='structfield.rss_huge'><code>rss_huge</code></td><td><div class='docblock'><p>Only hugetables. This is included in rss</p>
-</div></td></tr><tr class='stab '>
-                                  <td id='structfield.swap'><code>swap</code></td><td><div class='docblock'><p>Number of bytes that have been swapped out to disk</p>
-</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../../../tabin_plugins/sys/fs/cgroup/memory/struct.Stat.html' title='tabin_plugins::sys::fs::cgroup::memory::Stat'>Stat</a></code></h3><div class='impl-items'><h4 id='method.load' class='method'><code>fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../../../tabin_plugins/sys/fs/cgroup/memory/struct.Stat.html' title='tabin_plugins::sys::fs::cgroup::memory::Stat'>Stat</a>, <a class='struct' href='https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html' title='std::io::error::Error'>Error</a>&gt;</code></h4>
+</div><span id='structfield.rss' class='structfield'>
+                           <span id='rss.v' class='invisible'>
+                           <code>rss: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code>
+                           </span></span><span class='stab '></span><div class='docblock'><p>Actual memory being used by the cgroup</p>
+</div><span id='structfield.rss_huge' class='structfield'>
+                           <span id='rss_huge.v' class='invisible'>
+                           <code>rss_huge: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code>
+                           </span></span><span class='stab '></span><div class='docblock'><p>Only hugetables. This is included in rss</p>
+</div><span id='structfield.swap' class='structfield'>
+                           <span id='swap.v' class='invisible'>
+                           <code>swap: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code>
+                           </span></span><span class='stab '></span><div class='docblock'><p>Number of bytes that have been swapped out to disk</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../../../../../tabin_plugins/sys/fs/cgroup/memory/struct.Stat.html' title='tabin_plugins::sys::fs::cgroup::memory::Stat'>Stat</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#112-142' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.load' class='method'><span id='load.v' class='invisible'><code>fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../../../tabin_plugins/sys/fs/cgroup/memory/struct.Stat.html' title='tabin_plugins::sys::fs::cgroup::memory::Stat'>Stat</a>, <a class='struct' href='https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html' title='std::io::error::Error'>Error</a>&gt;</code></span></h4>
 <div class='docblock'><p>Read information from the filesystem and create a new <code>Stat</code></p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../../../../tabin_plugins/sys/fs/cgroup/memory/struct.Stat.html' title='tabin_plugins::sys::fs::cgroup::memory::Stat'>Stat</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
-</div></section>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../../../../tabin_plugins/sys/fs/cgroup/memory/struct.Stat.html' title='tabin_plugins::sys::fs::cgroup::memory::Stat'>Stat</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#98' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class='method'><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -93,6 +104,8 @@ applied from outside the cgroup.</p>
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
@@ -113,7 +126,7 @@ applied from outside the cgroup.</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -124,11 +137,9 @@ applied from outside the cgroup.</p>
     <script>
         window.rootPath = "../../../../../";
         window.currentCrate = "tabin_plugins";
-        window.playgroundUrl = "";
     </script>
     <script src="../../../../../jquery.js"></script>
     <script src="../../../../../main.js"></script>
-    
     <script defer src="../../../../../search-index.js"></script>
 </body>
 </html>

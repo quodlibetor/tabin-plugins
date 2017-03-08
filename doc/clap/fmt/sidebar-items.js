@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Format","Defines styles for different types of error messages. Defaults to Error=Red, Warning=Yellow, and Good=Green"]]});

@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
+    
 
     
     
@@ -43,32 +44,35 @@
 
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>clap</a>::<wbr><a class='struct' href=''>SubCommand</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-3224' class='srclink' href='../src/clap/args/subcommand.rs.html#27-32' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct SubCommand&lt;'n, 'a&gt; {
-    // some fields omitted
-}</pre><div class='docblock'><p>The abstract representation of a command line subcommand used by the consumer of the library.</p>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/clap/args/subcommand.rs.html#27-32' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct SubCommand&lt;'n, 'a&gt; { /* fields omitted */ }</pre><div class='docblock'><p>The abstract representation of a command line subcommand used by the consumer of the library.</p>
 
 <p>This struct is used by the library consumer and describes all the valid options of the
 subcommand for their program. SubCommands are treated like &quot;sub apps&quot; and contain all the same
 possibilities (such as their own arguments and subcommands).</p>
 
-<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1><pre class='rust rust-example-rendered'>
+<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
+<pre class='rust rust-example-rendered'>
 <span class='ident'>SubCommand</span>::<span class='ident'>with_name</span>(<span class='string'>&quot;config&quot;</span>)
                .<span class='ident'>about</span>(<span class='string'>&quot;Used for configuration&quot;</span>)
                .<span class='ident'>arg</span>(<span class='ident'>Arg</span>::<span class='ident'>with_name</span>(<span class='string'>&quot;config_file&quot;</span>)
                           .<span class='ident'>help</span>(<span class='string'>&quot;The configuration file to use&quot;</span>)
                           .<span class='ident'>index</span>(<span class='number'>1</span>))</pre>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;'n, 'a&gt; <a class='struct' href='../clap/struct.SubCommand.html' title='clap::SubCommand'>SubCommand</a>&lt;'n, 'a&gt;</code></h3><div class='impl-items'><h4 id='method.with_name' class='method'><code>fn <a href='#method.with_name' class='fnname'>with_name</a>&lt;'au, 'v, 'ab, 'u, 'h, 'ar&gt;(name: &amp;'ar <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='../clap/struct.App.html' title='clap::App'>App</a>&lt;'au, 'v, 'ab, 'u, 'h, 'ar&gt;</code></h4>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'n, 'a&gt; <a class='struct' href='../clap/struct.SubCommand.html' title='clap::SubCommand'>SubCommand</a>&lt;'n, 'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/clap/args/subcommand.rs.html#34-63' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.with_name' class='method'><span id='with_name.v' class='invisible'><code>fn <a href='#method.with_name' class='fnname'>with_name</a>&lt;'au, 'v, 'ab, 'u, 'h, 'ar&gt;(name: &amp;'ar <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='struct' href='../clap/struct.App.html' title='clap::App'>App</a>&lt;'au, 'v, 'ab, 'u, 'h, 'ar&gt;</code></span></h4>
 <div class='docblock'><p>Creates a new instance of a subcommand requiring a name. Will be displayed
 to the user when they print version or help and usage information.</p>
 
-<h1 id='examples-1' class='section-header'><a href='#examples-1'>Examples</a></h1><pre class='rust rust-example-rendered'>
+<h1 id='examples-1' class='section-header'><a href='#examples-1'>Examples</a></h1>
+<pre class='rust rust-example-rendered'>
 <span class='ident'>SubCommand</span>::<span class='ident'>with_name</span>(<span class='string'>&quot;config&quot;</span>)</pre>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl&lt;'n, 'a&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../clap/struct.SubCommand.html' title='clap::SubCommand'>SubCommand</a>&lt;'n, 'a&gt;</code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
-</div></section>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'n, 'a&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../clap/struct.SubCommand.html' title='clap::SubCommand'>SubCommand</a>&lt;'n, 'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/clap/args/subcommand.rs.html#26' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class='method'><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -91,6 +95,8 @@ to the user when they print version or help and usage information.</p>
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
@@ -111,7 +117,7 @@ to the user when they print version or help and usage information.</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -122,11 +128,9 @@ to the user when they print version or help and usage information.</p>
     <script>
         window.rootPath = "../";
         window.currentCrate = "clap";
-        window.playgroundUrl = "";
     </script>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
-    
     <script defer src="../search-index.js"></script>
 </body>
 </html>

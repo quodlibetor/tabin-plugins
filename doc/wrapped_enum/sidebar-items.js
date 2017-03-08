@@ -1,1 +1,1 @@
-initSidebarItems({"macro":[["wrapped_enum!",""]]});
+initSidebarItems({"macro":[["wrapped_enum",""]]});

@@ -1,5 +1,10 @@
 (function() {var implementors = {};
-implementors['openssl'] = [];implementors['regex_syntax'] = [];implementors['hyper'] = [];
+implementors["chrono"] = [];
+implementors["hyper"] = [];
+implementors["libc"] = [];
+implementors["nix"] = [];
+implementors["num"] = [];
+implementors["regex_syntax"] = [];
 
             if (window.register_implementors) {
                 window.register_implementors(implementors);

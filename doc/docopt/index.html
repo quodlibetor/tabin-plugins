@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
+    
 
     
     
@@ -43,10 +44,10 @@
 
     <section id='main' class="content mod">
 <h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>docopt</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-0' class='srclink' href='../src/docopt/lib.rs.html#1-241' title='goto source code'>[src]</a></span></h1>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/docopt/lib.rs.html#1-242' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Docopt for Rust. This implementation conforms to the
 <a href="http://docopt.org/">official description of Docopt</a> and
 <a href="https://github.com/docopt/docopt/pull/201">passes its test suite</a>.</p>
@@ -56,6 +57,7 @@
 <p>Fundamentally, Docopt is a command line argument parser. The detail that
 distinguishes it from most parsers is that the parser is derived from the
 usage string. Here&#39;s a simple example:</p>
+
 <pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>docopt</span>::<span class='ident'>Docopt</span>;
 
@@ -90,6 +92,7 @@ standard Docopt interface can be inconvenient for this purpose, because
 you&#39;ll need to convert all of the values explicitly. Instead, this crate
 provides a <code>Decoder</code> that converts an <code>ArgvMap</code> to your custom struct.
 Here is the same example as above using type based decoding:</p>
+
 <pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>docopt</span>::<span class='ident'>Docopt</span>;
 
@@ -125,6 +128,7 @@ Options:
 <h1 id='command-line-arguments-for-rustc' class='section-header'><a href='#command-line-arguments-for-rustc'>Command line arguments for <code>rustc</code></a></h1>
 <p>Here&#39;s an example with a subset of <code>rustc</code>&#39;s command line arguments that
 shows more of Docopt and some of the benefits of type based decoding.</p>
+
 <pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>docopt</span>::<span class='ident'>Docopt</span>;
 
@@ -205,6 +209,7 @@ string will be caught at compile time. Stated differently, your program
 will not compile with an invalid Docopt usage string.</p>
 
 <p>The example above using type based decoding can be simplified to this:</p>
+
 <pre class='rust rust-example-rendered'>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>plugin</span>)]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>plugin</span>(<span class='ident'>docopt_macros</span>)]</span>
@@ -238,52 +243,42 @@ Options:
 }</pre>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.ArgvMap.html'
-                               title='docopt::ArgvMap'>ArgvMap</a></td>
-                        <td class='docblock short'>
-                             <p>A map containing matched values from command line arguments.</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.Decoder.html'
-                               title='docopt::Decoder'>Decoder</a></td>
-                        <td class='docblock short'>
-                             <p>Decoder for <code>ArgvMap</code> into your own <code>Decodable</code> types.</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.Docopt.html'
-                               title='docopt::Docopt'>Docopt</a></td>
-                        <td class='docblock short'>
-                             <p>The main Docopt type, which is constructed with a Docopt usage string.</p>
-
-                        </td>
-                    </tr>
-                </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.ArgvMap.html'
+                                  title='docopt::ArgvMap'>ArgvMap</a></td>
+                           <td class='docblock-short'>
+                                <p>A map containing matched values from command line arguments.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.Decoder.html'
+                                  title='docopt::Decoder'>Decoder</a></td>
+                           <td class='docblock-short'>
+                                <p>Decoder for <code>ArgvMap</code> into your own <code>Decodable</code> types.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.Docopt.html'
+                                  title='docopt::Docopt'>Docopt</a></td>
+                           <td class='docblock-short'>
+                                <p>The main Docopt type, which is constructed with a Docopt usage string.</p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
-                    <tr class=' module-item'>
-                        <td><a class='enum' href='enum.Error.html'
-                               title='docopt::Error'>Error</a></td>
-                        <td class='docblock short'>
-                             <p>Represents the different types of Docopt errors.</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='enum' href='enum.Value.html'
-                               title='docopt::Value'>Value</a></td>
-                        <td class='docblock short'>
-                             <p>A matched command line value.</p>
-
-                        </td>
-                    </tr>
-                </table></section>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Error.html'
+                                  title='docopt::Error'>Error</a></td>
+                           <td class='docblock-short'>
+                                <p>Represents the different types of Docopt errors.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Value.html'
+                                  title='docopt::Value'>Value</a></td>
+                           <td class='docblock-short'>
+                                <p>A matched command line value.</p>
+                           </td>
+                       </tr></table></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -306,6 +301,8 @@ Options:
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
@@ -326,7 +323,7 @@ Options:
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -337,11 +334,9 @@ Options:
     <script>
         window.rootPath = "../";
         window.currentCrate = "docopt";
-        window.playgroundUrl = "";
     </script>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
-    
     <script defer src="../search-index.js"></script>
 </body>
 </html>

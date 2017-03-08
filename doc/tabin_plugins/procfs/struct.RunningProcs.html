@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
+    
 
     
     
@@ -43,14 +44,15 @@
 
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>procfs</a>::<wbr><a class='struct' href=''>RunningProcs</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-503' class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#59' title='goto source code'>[src]</a></span></h1>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#59' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct RunningProcs(pub <a class='type' href='../../tabin_plugins/procfs/type.ProcMap.html' title='tabin_plugins::procfs::ProcMap'>ProcMap</a>);</pre><div class='docblock'><p>All the processes that are running</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../tabin_plugins/procfs/struct.RunningProcs.html' title='tabin_plugins::procfs::RunningProcs'>RunningProcs</a></code></h3><div class='impl-items'><h4 id='method.currently_running' class='method'><code>fn <a href='#method.currently_running' class='fnname'>currently_running</a>() -&gt; <a class='type' href='../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a class='struct' href='../../tabin_plugins/procfs/struct.RunningProcs.html' title='tabin_plugins::procfs::RunningProcs'>RunningProcs</a>&gt;</code></h4>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../../tabin_plugins/procfs/struct.RunningProcs.html' title='tabin_plugins::procfs::RunningProcs'>RunningProcs</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#61-110' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.currently_running' class='method'><span id='currently_running.v' class='invisible'><code>fn <a href='#method.currently_running' class='fnname'>currently_running</a>() -&gt; <a class='type' href='../../tabin_plugins/procfs/type.Result.html' title='tabin_plugins::procfs::Result'>Result</a>&lt;<a class='struct' href='../../tabin_plugins/procfs/struct.RunningProcs.html' title='tabin_plugins::procfs::RunningProcs'>RunningProcs</a>&gt;</code></span></h4>
 <div class='docblock'><p>Load the currently running processes from /proc/[pid]/*</p>
-</div><h4 id='method.percent_cpu_util_since' class='method'><code>fn <a href='#method.percent_cpu_util_since' class='fnname'>percent_cpu_util_since</a>&lt;'a&gt;(&amp;self, start: &amp;'a <a class='struct' href='../../tabin_plugins/procfs/struct.RunningProcs.html' title='tabin_plugins::procfs::RunningProcs'>RunningProcs</a>, total_cpu: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>) -&gt; <a class='struct' href='../../tabin_plugins/procfs/struct.ProcUsages.html' title='tabin_plugins::procfs::ProcUsages'>ProcUsages</a>&lt;'a&gt;</code></h4>
+</div><h4 id='method.percent_cpu_util_since' class='method'><span id='percent_cpu_util_since.v' class='invisible'><code>fn <a href='#method.percent_cpu_util_since' class='fnname'>percent_cpu_util_since</a>&lt;'a&gt;(&amp;self,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; start: &amp;'a <a class='struct' href='../../tabin_plugins/procfs/struct.RunningProcs.html' title='tabin_plugins::procfs::RunningProcs'>RunningProcs</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_cpu: <a class='struct' href='../../tabin_plugins/linux/struct.Jiffies.html' title='tabin_plugins::linux::Jiffies'>Jiffies</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='struct' href='../../tabin_plugins/procfs/struct.ProcUsages.html' title='tabin_plugins::procfs::ProcUsages'>ProcUsages</a>&lt;'a&gt;</code></span></h4>
 <div class='docblock'><p>Collect CPU usage for each proc as compared to the total active CPU
 time for the system.</p>
 
@@ -79,6 +81,8 @@ two <code>Calculations::total()</code>s from each other.</p>
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
@@ -99,7 +103,7 @@ two <code>Calculations::total()</code>s from each other.</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -110,11 +114,9 @@ two <code>Calculations::total()</code>s from each other.</p>
     <script>
         window.rootPath = "../../";
         window.currentCrate = "tabin_plugins";
-        window.playgroundUrl = "";
     </script>
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
-    
     <script defer src="../../search-index.js"></script>
 </body>
 </html>

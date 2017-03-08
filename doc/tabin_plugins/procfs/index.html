@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
+    
 
     
     
@@ -43,134 +44,112 @@
 
     <section id='main' class="content mod">
 <h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>tabin_plugins</a>::<wbr><a class='mod' href=''>procfs</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-269' class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#1-894' title='goto source code'>[src]</a></span></h1>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#1-894' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Structs and impls for the various files from the /proc filesystem</p>
 
 <p>Each file gets a struct to represent its data, with an associated <code>load</code>
 function.</p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
-                    <tr class=' module-item'>
-                        <td><a class='mod' href='pid/index.html'
-                               title='tabin_plugins::procfs::pid'>pid</a></td>
-                        <td class='docblock short'>
-                             <p>Data structures related to the /proc/<pid>/* files</p>
-
-                        </td>
-                    </tr>
-                </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+                       <tr class=' module-item'>
+                           <td><a class='mod' href='pid/index.html'
+                                  title='tabin_plugins::procfs::pid'>pid</a></td>
+                           <td class='docblock-short'>
+                                <p>Data structures related to the /proc/<pid>/* files</p>
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.Calculations.html'
-                               title='tabin_plugins::procfs::Calculations'>Calculations</a></td>
-                        <td class='docblock short'>
-                             <p>The number of calculations that have occured on this computer in a time
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.Calculations.html'
+                                  title='tabin_plugins::procfs::Calculations'>Calculations</a></td>
+                           <td class='docblock-short'>
+                                <p>The number of calculations that have occured on this computer in a time
 period</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.LoadAvg.html'
-                               title='tabin_plugins::procfs::LoadAvg'>LoadAvg</a></td>
-                        <td class='docblock short'>
-                             <p>The load average of the system</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.MemInfo.html'
-                               title='tabin_plugins::procfs::MemInfo'>MemInfo</a></td>
-                        <td class='docblock short'>
-                             <p>A struct that represents overall memory usage on the system.</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.Mount.html'
-                               title='tabin_plugins::procfs::Mount'>Mount</a></td>
-                        <td class='docblock short'>
-                             
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.ProcUsage.html'
-                               title='tabin_plugins::procfs::ProcUsage'>ProcUsage</a></td>
-                        <td class='docblock short'>
-                             <p>Represent the percent CPU utilization of a specific process over a specific
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.LoadAvg.html'
+                                  title='tabin_plugins::procfs::LoadAvg'>LoadAvg</a></td>
+                           <td class='docblock-short'>
+                                <p>The load average of the system</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.MemInfo.html'
+                                  title='tabin_plugins::procfs::MemInfo'>MemInfo</a></td>
+                           <td class='docblock-short'>
+                                <p>A struct that represents overall memory usage on the system.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.Mount.html'
+                                  title='tabin_plugins::procfs::Mount'>Mount</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.ProcUsage.html'
+                                  title='tabin_plugins::procfs::ProcUsage'>ProcUsage</a></td>
+                           <td class='docblock-short'>
+                                <p>Represent the percent CPU utilization of a specific process over a specific
 time period</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.ProcUsages.html'
-                               title='tabin_plugins::procfs::ProcUsages'>ProcUsages</a></td>
-                        <td class='docblock short'>
-                             
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.RunningProcs.html'
-                               title='tabin_plugins::procfs::RunningProcs'>RunningProcs</a></td>
-                        <td class='docblock short'>
-                             <p>All the processes that are running</p>
-
-                        </td>
-                    </tr>
-                </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.ProcUsages.html'
+                                  title='tabin_plugins::procfs::ProcUsages'>ProcUsages</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.RunningProcs.html'
+                                  title='tabin_plugins::procfs::RunningProcs'>RunningProcs</a></td>
+                           <td class='docblock-short'>
+                                <p>All the processes that are running</p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
-                    <tr class=' module-item'>
-                        <td><a class='enum' href='enum.ProcFsError.html'
-                               title='tabin_plugins::procfs::ProcFsError'>ProcFsError</a></td>
-                        <td class='docblock short'>
-                             <p>ProcFs errors</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='enum' href='enum.WorkSource.html'
-                               title='tabin_plugins::procfs::WorkSource'>WorkSource</a></td>
-                        <td class='docblock short'>
-                             <p>A kind of CPU usage</p>
-
-                        </td>
-                    </tr>
-                </table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.ProcFsError.html'
+                                  title='tabin_plugins::procfs::ProcFsError'>ProcFsError</a></td>
+                           <td class='docblock-short'>
+                                <p>ProcFs errors</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.WorkSource.html'
+                                  title='tabin_plugins::procfs::WorkSource'>WorkSource</a></td>
+                           <td class='docblock-short'>
+                                <p>A kind of CPU usage</p>
+                           </td>
+                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
 <table>
-                    <tr class=' module-item'>
-                        <td><a class='type' href='type.ProcMap.html'
-                               title='tabin_plugins::procfs::ProcMap'>ProcMap</a></td>
-                        <td class='docblock short'>
-                             
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='type' href='type.Result.html'
-                               title='tabin_plugins::procfs::Result'>Result</a></td>
-                        <td class='docblock short'>
-                             <p>All the results are results with <code>ProcFsError</code>s</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='type' href='type.Usages.html'
-                               title='tabin_plugins::procfs::Usages'>Usages</a></td>
-                        <td class='docblock short'>
-                             
-                        </td>
-                    </tr>
-                </table></section>
+                       <tr class=' module-item'>
+                           <td><a class='type' href='type.ProcMap.html'
+                                  title='tabin_plugins::procfs::ProcMap'>ProcMap</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='type' href='type.Result.html'
+                                  title='tabin_plugins::procfs::Result'>Result</a></td>
+                           <td class='docblock-short'>
+                                <p>All the results are results with <code>ProcFsError</code>s</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='type' href='type.Usages.html'
+                                  title='tabin_plugins::procfs::Usages'>Usages</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -193,6 +172,8 @@ time period</p>
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
@@ -213,7 +194,7 @@ time period</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -224,11 +205,9 @@ time period</p>
     <script>
         window.rootPath = "../../";
         window.currentCrate = "tabin_plugins";
-        window.playgroundUrl = "";
     </script>
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
-    
     <script defer src="../../search-index.js"></script>
 </body>
 </html>
