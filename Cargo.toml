@@ -15,7 +15,7 @@ bitflags = "0.3.3"
 chrono = "0.2"
 clippy = {version = "0.0.61", optional = true}
 docopt = "0.6"
-hyper = "0.6"
+hyper = "0.10"
 itertools = "0.4"
 lazy_static = "0.1"
 libc = "0.1.12"
