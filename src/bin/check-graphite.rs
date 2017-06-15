@@ -570,7 +570,7 @@ static ASSERTION_EXAMPLES: &'static [&'static str] = &["critical if any point is
 fn parse_args() -> Args {
     let allowed_no_data = Status::str_values(); // block-local var for borrowck
     let args = clap::App::new("check-graphite")
-                   .version("0.1.0")
+                   .version(env!("CARGO_PKG_VERSION"))
                    .author("Brandon W Maister <quodlibetor@gmail.com>")
                    .about("Query graphite and exit based on predicates")
                    .args_from_usage("<URL>                 'The domain to query graphite. Must \
