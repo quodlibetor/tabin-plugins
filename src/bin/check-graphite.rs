@@ -650,10 +650,10 @@ fn parse_args() -> Args {
 
         - `errorkind` is either `critical` or `warning`
         - `point spec` can be one of:
-        - `any point`
-        - `all points`
-        - `at least <N>% of points`
-        - `most recent point`
+            - `any point`
+            - `all points`
+            - `at least <N>% of points`
+            - `most recent point`
         - `series spec` (optional) can be one of:
             - `any series`
             - `all series`
