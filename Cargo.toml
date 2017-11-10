@@ -13,7 +13,6 @@ keywords = ["linux", "pseudo-fs", "nagios"]
 [dependencies]
 bitflags = "1.0"
 chrono = "0.4"
-clippy = {version = "0.0.61", optional = true}
 docopt = "0.6"
 hyper = "0.10"
 itertools = "0.7"
