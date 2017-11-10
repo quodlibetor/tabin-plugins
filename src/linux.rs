@@ -4,8 +4,8 @@ use std::fmt;
 use std::ops;
 use std::time::Duration;
 
-use libc::consts::os::sysconf::{_SC_CLK_TCK, _SC_PAGESIZE};
-use libc::funcs::posix88::unistd::sysconf;
+use libc::{_SC_CLK_TCK, _SC_PAGESIZE};
+use libc::sysconf;
 
 lazy_static!(
     pub static ref USER_HZ: u64 = unsafe { sysconf(_SC_CLK_TCK) } as u64;

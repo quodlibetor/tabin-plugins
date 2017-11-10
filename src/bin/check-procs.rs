@@ -10,7 +10,7 @@ extern crate rustc_serialize;
 extern crate tabin_plugins;
 
 use docopt::Docopt;
-use nix::unistd::{getpid, getppid};
+use nix::unistd::{getpid, getppid, Pid};
 use regex::Regex;
 
 use tabin_plugins::Status;
@@ -64,8 +64,10 @@ fn main() {
     let matches = procs
         .0
         .into_iter()
-        .filter_map(|(pid, process): (i32, Process)| {
-            if re.is_match(&process.useful_cmdline()) && !(pid == me || pid == parent) {
+        .filter_map(|(pid, process)| {
+            if re.is_match(&process.useful_cmdline())
+                && !(Pid::from_raw(pid) == me || Pid::from_raw(pid) == parent)
+            {
                 Some((pid, process))
             } else {
                 None

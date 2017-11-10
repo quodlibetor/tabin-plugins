@@ -859,10 +859,9 @@ where
             } else if word == "points" || word == "point" || word == "series" {
                 break;
             } else {
-                return Err(ParseError::SyntaxError(format!(
-                    "Expected 'of points|series', found '{}'",
-                    word
-                )));
+                return Err(ParseError::SyntaxError(
+                    format!("Expected 'of points|series', found '{}'", word),
+                ));
             }
         }
     }
@@ -912,10 +911,9 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                         )));
                     }
                 } else {
-                    return Err(ParseError::SyntaxError(format!(
-                        "Unexpected end of input after '{}'",
-                        word
-                    )));
+                    return Err(ParseError::SyntaxError(
+                        format!("Unexpected end of input after '{}'", word),
+                    ));
                 }
                 state = AssertionState::Points;
             }
