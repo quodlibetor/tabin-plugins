@@ -1,7 +1,7 @@
 //! Check RAM usage of the currently-running container
 
-extern crate rustc_serialize;
 extern crate docopt;
+extern crate rustc_serialize;
 
 extern crate tabin_plugins;
 
@@ -11,9 +11,9 @@ use std::cmp::max;
 use docopt::Docopt;
 
 use tabin_plugins::Status;
-use tabin_plugins::sys::fs::cgroup::memory::{Stat, limit_in_bytes};
-use tabin_plugins::linux::{pages_to_human_size, bytes_to_human_size};
-use tabin_plugins::procfs::{RunningProcs, MemInfo};
+use tabin_plugins::sys::fs::cgroup::memory::{limit_in_bytes, Stat};
+use tabin_plugins::linux::{bytes_to_human_size, pages_to_human_size};
+use tabin_plugins::procfs::{MemInfo, RunningProcs};
 
 static USAGE: &'static str = "
 Usage:
@@ -45,19 +45,19 @@ struct Args {
     flag_crit: f64,
 
     flag_invalid_limit: Status,
-    flag_show_hogs: u32
+    flag_show_hogs: u32,
 }
 
 enum Limit {
     CGroup,
-    System
+    System,
 }
 
 impl fmt::Display for Limit {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Limit::CGroup => write!(f, "cgroup limit"),
-            Limit::System => write!(f, "system ram")
+            Limit::System => write!(f, "system ram"),
         }
     }
 }
@@ -74,10 +74,12 @@ fn main() {
     let system_bytes = mem.total.unwrap() * 1024;
     if limit > system_bytes {
         if args.flag_invalid_limit != Status::Ok {
-            println!("{}: CGroup memory limit is greater than system memory ({} > {})",
-                     args.flag_invalid_limit,
-                     bytes_to_human_size(limit as u64),
-                     bytes_to_human_size(system_bytes as u64));
+            println!(
+                "{}: CGroup memory limit is greater than system memory ({} > {})",
+                args.flag_invalid_limit,
+                bytes_to_human_size(limit as u64),
+                bytes_to_human_size(system_bytes as u64)
+            );
             status = args.flag_invalid_limit;
         }
         limit = system_bytes;
@@ -89,16 +91,31 @@ fn main() {
     let percent = ratio * 100.0;
 
     if percent > args.flag_crit {
-        println!("CRITICAL: cgroup is using {:.1}% of {} {} (greater than {}%)",
-                 percent, bytes_to_human_size(limit as u64), limit_type, args.flag_crit);
+        println!(
+            "CRITICAL: cgroup is using {:.1}% of {} {} (greater than {}%)",
+            percent,
+            bytes_to_human_size(limit as u64),
+            limit_type,
+            args.flag_crit
+        );
         status = Status::Critical;
     } else if percent > args.flag_warn {
-        println!("WARNING: cgroup is using {:.1}% of {} {} (greater than {}%)",
-                 percent, bytes_to_human_size(limit as u64), limit_type, args.flag_warn);
+        println!(
+            "WARNING: cgroup is using {:.1}% of {} {} (greater than {}%)",
+            percent,
+            bytes_to_human_size(limit as u64),
+            limit_type,
+            args.flag_warn
+        );
         status = max(status, Status::Warning);
     } else {
-        println!("OK: cgroup is using {:.1}% of {} {} (less than {}%)",
-                 percent, bytes_to_human_size(limit as u64), limit_type, args.flag_warn);
+        println!(
+            "OK: cgroup is using {:.1}% of {} {} (less than {}%)",
+            percent,
+            bytes_to_human_size(limit as u64),
+            limit_type,
+            args.flag_warn
+        );
     }
 
     if args.flag_show_hogs > 0 {
@@ -108,11 +125,13 @@ fn main() {
         println!("INFO [check-container-ram]: ram hogs");
         for process in procs.iter().take(args.flag_show_hogs as usize) {
             let percent = process.percent_ram(limit);
-            println!("[{:>6}]{:>5.1}% {:>6}: {}",
-                     process.stat.pid,
-                     percent,
-                     pages_to_human_size(process.stat.rss),
-                     process.useful_cmdline());
+            println!(
+                "[{:>6}]{:>5.1}% {:>6}: {}",
+                process.stat.pid,
+                percent,
+                pages_to_human_size(process.stat.rss),
+                process.useful_cmdline()
+            );
         }
     }
     status.exit();
@@ -123,7 +142,7 @@ mod unit {
 
     use docopt::Docopt;
     use tabin_plugins::Status;
-    use super::{USAGE, Args};
+    use super::{Args, USAGE};
 
     #[test]
     fn usage_is_valid() {
@@ -131,10 +150,11 @@ mod unit {
         assert_eq!(args.flag_crit, 95.0);
         assert_eq!(args.flag_invalid_limit, Status::Ok);
         let args: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "--crit", "80", "--warn", "20"].into_iter())
-                      .decode())
+            .and_then(|d| {
+                d.argv(vec!["arg0", "--crit", "80", "--warn", "20"].into_iter())
+                    .decode()
+            })
             .unwrap();
         assert_eq!(args.flag_crit, 80.0);
-
     }
 }

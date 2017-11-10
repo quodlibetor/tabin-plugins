@@ -1,7 +1,7 @@
 //! Check that we can write to disk
 
-extern crate rustc_serialize;
 extern crate docopt;
+extern crate rustc_serialize;
 
 use std::fs;
 use std::io::Write;
@@ -33,7 +33,7 @@ Options:
 
 #[derive(RustcDecodable)]
 struct Args {
-    arg_filename: String
+    arg_filename: String,
 }
 
 impl Args {
@@ -51,30 +51,34 @@ fn check_file_writeable(filename: String) -> Result<String, String> {
     let child = thread::spawn(move || {
         let path = Path::new(&filename);
         match fs::File::create(&path) {
-            Err(ref e) => {
-                match e.kind() {
-                    ErrorKind::NotFound => {
-                        let dir = path.parent().unwrap_or(Path::new("/"));
-                        tx.send(Err(format!(
-                            "CRITICAL: directory {} does not exist.",
-                            dir.display()))).unwrap();
-                    },
-                    _ => tx.send(Err(format!(
-                        "CRITICAL: unexpected error writing to {}: {}",
-                        path.display(), e))).unwrap()
+            Err(ref e) => match e.kind() {
+                ErrorKind::NotFound => {
+                    let dir = path.parent().unwrap_or(Path::new("/"));
+                    tx.send(Err(format!(
+                        "CRITICAL: directory {} does not exist.",
+                        dir.display()
+                    ))).unwrap();
                 }
+                _ => tx.send(Err(format!(
+                    "CRITICAL: unexpected error writing to {}: {}",
+                    path.display(),
+                    e
+                ))).unwrap(),
             },
             Ok(mut f) => {
                 f.write_all(b"t").unwrap();
                 match f.flush() {
-                    Ok(()) => {},
-                    Err(_) => tx.send(Err(
-                        format!("CRITICAL: Couldn't flush bytes to {}", path.display()))).unwrap()
+                    Ok(()) => {}
+                    Err(_) => tx.send(Err(format!(
+                        "CRITICAL: Couldn't flush bytes to {}",
+                        path.display()
+                    ))).unwrap(),
                 }
                 fs::remove_file(&path).unwrap();
             }
         }
-        tx.send(Ok(format!("OK: wrote some bytes to {}", path.display()))).unwrap()
+        tx.send(Ok(format!("OK: wrote some bytes to {}", path.display())))
+            .unwrap()
     });
 
     if let Err(kind) = child.join() {
@@ -83,10 +87,11 @@ fn check_file_writeable(filename: String) -> Result<String, String> {
     match rx.recv() {
         Ok(join_result) => {
             return join_result;
-        },
+        }
         Err(_) => {
             return Err(format!(
-                "UNKNOWN: unexpected status receiving info about file writing."));
+                "UNKNOWN: unexpected status receiving info about file writing."
+            ));
         }
     };
 }
@@ -109,13 +114,15 @@ fn main() {
 
 #[cfg(test)]
 mod test {
-    use super::{USAGE, Args};
+    use super::{Args, USAGE};
     use docopt::Docopt;
 
     #[test]
     fn can_parse_args() {
         let _: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "/tmp"].into_iter()).help(true).decode())
+            .and_then(|d| {
+                d.argv(vec!["arg0", "/tmp"].into_iter()).help(true).decode()
+            })
             .unwrap();
     }
 }

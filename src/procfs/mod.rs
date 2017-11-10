@@ -3,7 +3,7 @@
 //! Each file gets a struct to represent its data, with an associated `load`
 //! function.
 
-use std::collections::{HashMap, hash_map};
+use std::collections::{hash_map, HashMap};
 use std::fs::{self, File};
 use std::io::{self, Read};
 use std::ops::{Div, Sub};
@@ -84,19 +84,24 @@ impl RunningProcs {
     ///
     /// The value for `total_cpu` should probably be the result of subtracting
     /// two `Calculations::total()`s from each other.
-    pub fn percent_cpu_util_since<'a>(&self,
-                                      start: &'a RunningProcs,
-                                      total_cpu: Jiffies)
-                                      -> ProcUsages<'a> {
+    pub fn percent_cpu_util_since<'a>(
+        &self,
+        start: &'a RunningProcs,
+        total_cpu: Jiffies,
+    ) -> ProcUsages<'a> {
         let me = &self.0;
         let mut usages = Usages::new();
         for (_start_pid, start_process) in start.iter() {
             if let Some(end_process) = me.get(&start_process.stat.pid) {
                 let (start_ps, end_ps) = (&start_process.stat, &end_process.stat);
-                let user = 100.0 *
-                           (end_ps.utime - start_ps.utime).duration().ratio(&total_cpu.duration());
-                let sys = 100.0 *
-                          (end_ps.stime - start_ps.stime).duration().ratio(&total_cpu.duration());
+                let user = 100.0
+                    * (end_ps.utime - start_ps.utime)
+                        .duration()
+                        .ratio(&total_cpu.duration());
+                let sys = 100.0
+                    * (end_ps.stime - start_ps.stime)
+                        .duration()
+                        .ratio(&total_cpu.duration());
                 usages.push(ProcUsage {
                     process: &start_process,
                     upercent: user,
@@ -209,22 +214,25 @@ impl Calculations {
 
     /// Create a Vec of Calculations for each individual cpu in a stat file
     fn per_cpu(contents: &str) -> Result<Vec<Calculations>> {
-        contents.lines()
-                .skip(1)
-                .filter(|line| line.starts_with("cpu"))
-                .map(Calculations::from_line)
-                .collect::<StdResult<Vec<_>, _>>()
+        contents
+            .lines()
+            .skip(1)
+            .filter(|line| line.starts_with("cpu"))
+            .map(Calculations::from_line)
+            .collect::<StdResult<Vec<_>, _>>()
     }
 
     /// Convert a single line from /proc/stat
     fn from_line(line: &str) -> Result<Calculations> {
         assert!(line.starts_with("cpu"));
 
-        let usages = try!(line.split(' ')
-                              .skip(1)
-                              .filter(|part| part.len() > 0)
-                              .map(|part| part.parse())
-                              .collect::<StdResult<Vec<u64>, _>>());
+        let usages = try!(
+            line.split(' ')
+                .skip(1)
+                .filter(|part| part.len() > 0)
+                .map(|part| part.parse())
+                .collect::<StdResult<Vec<u64>, _>>()
+        );
         Ok(Calculations {
             user: Jiffies::new(usages[0]),
             nice: Jiffies::new(usages[1]),
@@ -259,7 +267,7 @@ impl Calculations {
     ///
     /// This is included in `active()` by the nature of the way that
     /// /proc/stats reports things, so don't add this to that when totalling.
-    #[allow(dead_code)]  // this mostly exists as documentation of what `guest` means
+    #[allow(dead_code)] // this mostly exists as documentation of what `guest` means
     pub fn virt(&self) -> Jiffies {
         self.guest + self.guest_nice.unwrap_or_else(|| Jiffies::new(0))
     }
@@ -275,8 +283,9 @@ impl Calculations {
     pub fn percent_util_since(&self, kind: &WorkSource, start: &Calculations) -> f64 {
         let (start_val, end_val) = match *kind {
             WorkSource::Active => (start.active(), self.active()),
-            WorkSource::ActivePlusIoWait =>
-                (start.active() + start.iowait, self.active() + self.iowait),
+            WorkSource::ActivePlusIoWait => {
+                (start.active() + start.iowait, self.active() + self.iowait)
+            }
             WorkSource::ActiveMinusNice => (start.active() - start.nice, self.active() - self.nice),
             WorkSource::User => (start.user, self.user),
             WorkSource::IoWait => (start.iowait, self.iowait),
@@ -287,8 +296,10 @@ impl Calculations {
             WorkSource::SoftIrq => (start.softirq, self.softirq),
             WorkSource::Steal => (start.steal, self.steal),
             WorkSource::Guest => (start.guest, self.guest),
-            WorkSource::GuestNice => (start.guest_nice.unwrap_or_else(|| Jiffies::new(0)),
-                                      self.guest_nice.unwrap_or_else(|| Jiffies::new(0))),
+            WorkSource::GuestNice => (
+                start.guest_nice.unwrap_or_else(|| Jiffies::new(0)),
+                self.guest_nice.unwrap_or_else(|| Jiffies::new(0)),
+            ),
         };
         assert!(self.total() >= start.total());
         let total = (end_val - start_val) / (self.total() - start.total());
@@ -301,10 +312,13 @@ impl FromStr for Calculations {
     /// Parse the entire /proc/stat file into a single `Calculations` object
     /// for total CPU
     fn from_str(contents: &str) -> Result<Calculations> {
-        let mut calcs = try!(contents.lines()
-                                     .take(1)
-                                     .map(Self::from_line)
-                                     .collect::<StdResult<Vec<_>, _>>());
+        let mut calcs = try!(
+            contents
+                .lines()
+                .take(1)
+                .map(Self::from_line)
+                .collect::<StdResult<Vec<_>, _>>()
+        );
         Ok(calcs.remove(0))
     }
 }
@@ -355,19 +369,22 @@ impl fmt::Display for Calculations {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let total = self.total();
         let p = |v: Jiffies| 100 * v / total;
-        write!(f,
-               "user={:.1} system={:.1} nice={:.1} irq={:.1} softirq={:.1} | idle={:.1} \
-                iowait={:.1} | steal={:.1} guest={:.1} guest_nice={}",
-               p(self.user),
-               p(self.system),
-               p(self.nice),
-               p(self.irq),
-               p(self.softirq),
-               p(self.idle),
-               p(self.iowait),
-               p(self.steal),
-               p(self.guest),
-               self.guest_nice.map_or("unknown".into(), |v| format!("{}", v)))
+        write!(
+            f,
+            "user={:.1} system={:.1} nice={:.1} irq={:.1} softirq={:.1} | idle={:.1} \
+             iowait={:.1} | steal={:.1} guest={:.1} guest_nice={}",
+            p(self.user),
+            p(self.system),
+            p(self.nice),
+            p(self.irq),
+            p(self.softirq),
+            p(self.idle),
+            p(self.iowait),
+            p(self.steal),
+            p(self.guest),
+            self.guest_nice
+                .map_or("unknown".into(), |v| format!("{}", v),)
+        )
     }
 }
 
@@ -413,18 +430,23 @@ impl MemInfo {
     /// [almost certain to be incorrect]: https://github.com/torvalds/linux/commit/34e431b0ae398fc54ea69ff85ec700722c9da773
     pub fn percent_free(&self) -> Result<f64> {
         match *self {
-            MemInfo { total: Some(t), available: Some(a), .. } => {
-                Ok(a as f64 / t as f64 * 100.0)
-            }
-            MemInfo { total: Some(t), free: Some(f), cached: Some(c), ..} => {
-                Ok((f + c) as f64 / t as f64 * 100.0)
-            }
-            _ => {
-                Err(ProcFsError::InsufficientData(format!("/proc/meminfo is missing one of \
-                                                           total, available, free, or cached: \
-                                                           {:?}",
-                                                          self)))
-            }
+            MemInfo {
+                total: Some(t),
+                available: Some(a),
+                ..
+            } => Ok(a as f64 / t as f64 * 100.0),
+            MemInfo {
+                total: Some(t),
+                free: Some(f),
+                cached: Some(c),
+                ..
+            } => Ok((f + c) as f64 / t as f64 * 100.0),
+            _ => Err(ProcFsError::InsufficientData(format!(
+                "/proc/meminfo is missing one of \
+                 total, available, free, or cached: \
+                 {:?}",
+                self
+            ))),
         }
     }
 
@@ -501,11 +523,11 @@ impl FromStr for MemInfo {
                         Currently::Unknown => {
                             // don't care
                         }
-                        Currently::None => {
-                            panic!("Unexpectedly parsed a number before figuring out where I am: \
-                                    {}",
-                                   amount)
-                        }
+                        Currently::None => panic!(
+                            "Unexpectedly parsed a number before figuring out where I am: \
+                             {}",
+                            amount
+                        ),
                     }
                 }
                 _ => {
@@ -557,10 +579,12 @@ impl FromStr for LoadAvg {
 
     fn from_str(contents: &str) -> Result<LoadAvg> {
         let pat = Regex::new(r"[ ,]").unwrap();
-        let fields = try!(pat.split(contents)
-                             .take(3)
-                             .map(|load| load.parse())
-                             .collect::<StdResult<Vec<f64>, _>>());
+        let fields = try!(
+            pat.split(contents)
+                .take(3)
+                .map(|load| load.parse())
+                .collect::<StdResult<Vec<f64>, _>>()
+        );
         Ok(LoadAvg {
             one: fields[0],
             five: fields[1],
@@ -571,7 +595,13 @@ impl FromStr for LoadAvg {
 
 impl fmt::Display for LoadAvg {
     fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
-        try!(write!(f, "{:.1} {:.1} {:.1}", self.one, self.five, self.fifteen));
+        try!(write!(
+            f,
+            "{:.1} {:.1} {:.1}",
+            self.one,
+            self.five,
+            self.fifteen
+        ));
         Ok(())
     }
 }
@@ -593,7 +623,9 @@ fn next(parts: &mut Split<char>) -> Result<String> {
     if let Some(part) = parts.next() {
         Ok(part.to_owned())
     } else {
-        Err(ProcFsError::InsufficientData("Missing part from mount".to_owned()))
+        Err(ProcFsError::InsufficientData(
+            "Missing part from mount".to_owned(),
+        ))
     }
 }
 
@@ -604,12 +636,12 @@ fn mount_from_line(line: &str) -> Result<Mount> {
         spec: try!(next(&mut parts)),
         file: try!(next(&mut parts)),
         vfstype: try!(next(&mut parts)),
-        mntops: try!(parts.next()
-                          .map_or(Err(InsufficientData("Missing mnt ops from mount".to_owned())),
-                                  Ok))
-                    .split(',')
-                    .map(|part| part.to_owned())
-                    .collect::<Vec<_>>(),
+        mntops: try!(parts.next().map_or(
+            Err(InsufficientData("Missing mnt ops from mount".to_owned(),)),
+            Ok,
+        )).split(',')
+            .map(|part| part.to_owned())
+            .collect::<Vec<_>>(),
         freq: parts.next().map(|v| v.parse().unwrap()),
         passno: parts.next().map(|v| v.parse().unwrap()),
     })
@@ -624,7 +656,10 @@ impl Mount {
     }
 
     fn parse_str(mounts: &str) -> Result<Vec<Mount>> {
-        mounts.lines().map(mount_from_line).collect::<Result<Vec<_>>>()
+        mounts
+            .lines()
+            .map(mount_from_line)
+            .collect::<Result<Vec<_>>>()
     }
 
     pub fn load_all() -> Result<Vec<Mount>> {
@@ -731,18 +766,22 @@ btime 143
 
     #[test]
     fn parse_meminfo() {
-        assert_eq!(MemInfo::from_str(concat!("Useless: 898\n",
-                                             "MemTotal: 500\n",
-                                             "MemAvailable: 20\n",
-                                             "MemFree: 280\n",
-                                             "Meaningless: 777\n",
-                                             "Cached: 200\n")).unwrap(),
-                   MemInfo {
-                       total: Some(500),
-                       available: Some(20),
-                       free: Some(280),
-                       cached: Some(200),
-                   })
+        assert_eq!(
+            MemInfo::from_str(concat!(
+                "Useless: 898\n",
+                "MemTotal: 500\n",
+                "MemAvailable: 20\n",
+                "MemFree: 280\n",
+                "Meaningless: 777\n",
+                "Cached: 200\n"
+            )).unwrap(),
+            MemInfo {
+                total: Some(500),
+                available: Some(20),
+                free: Some(280),
+                cached: Some(200),
+            }
+        )
     }
 
     #[test]
@@ -767,33 +806,39 @@ btime 143
     #[test]
     fn loadavg_can_parse_space_str() {
         let avg = LoadAvg::from_str("0.1 1.5 21 5/23 938").unwrap();
-        assert_eq!(avg,
-                   LoadAvg {
-                       one: 0.1,
-                       five: 1.5,
-                       fifteen: 21.0,
-                   });
+        assert_eq!(
+            avg,
+            LoadAvg {
+                one: 0.1,
+                five: 1.5,
+                fifteen: 21.0,
+            }
+        );
     }
 
     #[test]
     fn loadavg_can_parse_comma_str() {
         let avg = LoadAvg::from_str("0.1,1.5,21").unwrap();
-        assert_eq!(avg,
-                   LoadAvg {
-                       one: 0.1,
-                       five: 1.5,
-                       fifteen: 21.0,
-                   });
+        assert_eq!(
+            avg,
+            LoadAvg {
+                one: 0.1,
+                five: 1.5,
+                fifteen: 21.0,
+            }
+        );
     }
 
     #[test]
     fn loadavg_display() {
-        let string = format!("{}",
-                             LoadAvg {
-                                 one: 0.888,
-                                 five: 1.0,
-                                 fifteen: 0.1,
-                             });
+        let string = format!(
+            "{}",
+            LoadAvg {
+                one: 0.888,
+                five: 1.0,
+                fifteen: 0.1,
+            }
+        );
         // ooh, rounding
         assert_eq!(&string, "0.9 1.0 0.1");
     }
@@ -807,20 +852,23 @@ btime 143
         fn s(st: &str) -> String {
             st.to_owned()
         }
-        assert_eq!(mount,
-                   Mount {
-                       spec: s("none"),
-                       file: s("/data/docker/aufs/mnt/b6e1b"),
-                       vfstype: s("aufs"),
-                       mntops: vec![s("rw"),
-                                    s("relatime"),
-                                    s("si=5c1d022653bfa828"),
-                                    s("dio"),
-                                    s("dirperm1"),
-                                    ],
-                       freq: Some(0),
-                       passno: Some(0),
-                   })
+        assert_eq!(
+            mount,
+            Mount {
+                spec: s("none"),
+                file: s("/data/docker/aufs/mnt/b6e1b"),
+                vfstype: s("aufs"),
+                mntops: vec![
+                    s("rw"),
+                    s("relatime"),
+                    s("si=5c1d022653bfa828"),
+                    s("dio"),
+                    s("dirperm1"),
+                ],
+                freq: Some(0),
+                passno: Some(0),
+            }
+        )
     }
 
     #[test]
@@ -833,32 +881,33 @@ btime 143
         fn s(st: &str) -> String {
             st.to_owned()
         }
-        assert_eq!(mounts,
-                   vec![
-                       Mount {
-                           spec: s("none"),
-                           file: s("/data/docker/aufs/mnt/b6e1b"),
-                           vfstype: s("aufs"),
-                           mntops: vec![s("rw"),
-                                        s("relatime"),
-                                        s("si=5c1d022653bfa828"),
-                                        s("dio"),
-                                        s("dirperm1"),
-                                        ],
-                           freq: Some(0),
-                           passno: Some(0),
-                       },
-                       Mount {
-                           spec: s("some"),
-                           file: s("/"),
-                           vfstype: s("ext4"),
-                           mntops: vec![s("rw"),
-                                        s("relatime"),
-                                        ],
-                           freq: Some(0),
-                           passno: None,
-                       },
-                       ])
+        assert_eq!(
+            mounts,
+            vec![
+                Mount {
+                    spec: s("none"),
+                    file: s("/data/docker/aufs/mnt/b6e1b"),
+                    vfstype: s("aufs"),
+                    mntops: vec![
+                        s("rw"),
+                        s("relatime"),
+                        s("si=5c1d022653bfa828"),
+                        s("dio"),
+                        s("dirperm1"),
+                    ],
+                    freq: Some(0),
+                    passno: Some(0),
+                },
+                Mount {
+                    spec: s("some"),
+                    file: s("/"),
+                    vfstype: s("ext4"),
+                    mntops: vec![s("rw"), s("relatime")],
+                    freq: Some(0),
+                    passno: None,
+                },
+            ]
+        )
     }
 
 
@@ -867,7 +916,7 @@ btime 143
 #[cfg(test)]
 #[cfg(target_os = "linux")]
 mod integration {
-    use super::{RunningProcs, MemInfo, LoadAvg, Mount};
+    use super::{LoadAvg, MemInfo, Mount, RunningProcs};
 
     #[test]
     fn can_read_all_procs() {
@@ -878,8 +927,10 @@ mod integration {
     #[test]
     fn meminfo_can_load() {
         let info = MemInfo::load();
-        assert_eq!(info.percent_free().unwrap() + info.percent_used().unwrap(),
-                   100.0)
+        assert_eq!(
+            info.percent_free().unwrap() + info.percent_used().unwrap(),
+            100.0
+        )
     }
 
     #[test]

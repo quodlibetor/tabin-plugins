@@ -7,7 +7,7 @@ use docopt::Docopt;
 
 use tabin_plugins::linux::pages_to_human_size;
 use tabin_plugins::Status;
-use tabin_plugins::procfs::{RunningProcs, MemInfo};
+use tabin_plugins::procfs::{MemInfo, RunningProcs};
 
 static USAGE: &'static str = "
 Usage: check-ram [options]
@@ -25,24 +25,22 @@ Options:
 #[derive(RustcDecodable, Debug)]
 struct Args {
     flag_help: bool,
-    flag_warn:  f64,
-    flag_crit:  f64,
+    flag_warn: f64,
+    flag_crit: f64,
     flag_show_hogs: usize,
 }
 
 fn compare_status(crit: f64, warn: f64, mem: &MemInfo) -> Status {
     match mem.percent_used() {
-        Ok(percent) => {
-            if percent > crit {
-                println!("CRITICAL [check-ram]: {:.1}% > {}%", percent, crit);
-                Status::Critical
-            } else if percent > warn {
-                println!("WARNING [check-ram]: {:.1}% > {}%", percent, warn);
-                Status::Warning
-            } else {
-                println!("OK [check-ram]: {:.1}% < {}%", percent, warn);
-                Status::Ok
-            }
+        Ok(percent) => if percent > crit {
+            println!("CRITICAL [check-ram]: {:.1}% > {}%", percent, crit);
+            Status::Critical
+        } else if percent > warn {
+            println!("WARNING [check-ram]: {:.1}% > {}%", percent, warn);
+            Status::Warning
+        } else {
+            println!("OK [check-ram]: {:.1}% < {}%", percent, warn);
+            Status::Ok
         },
         Err(e) => {
             println!("UNKNOWN [check-ram]: UNEXPECTED ERROR {:?}", e);
@@ -66,11 +64,13 @@ fn main() {
         for process in procs.iter().take(args.flag_show_hogs) {
             let system_kb = mem.total.unwrap();
             let percent = process.percent_ram(system_kb * 1024);
-            println!("[{:>6}]{:>5.1}% {:>6}: {}",
-                     process.stat.pid,
-                     percent,
-                     pages_to_human_size(process.stat.rss),
-                     process.useful_cmdline());
+            println!(
+                "[{:>6}]{:>5.1}% {:>6}: {}",
+                process.stat.pid,
+                percent,
+                pages_to_human_size(process.stat.rss),
+                process.useful_cmdline()
+            );
         }
     };
     status.exit();
@@ -79,7 +79,7 @@ fn main() {
 #[cfg(test)]
 mod test {
     use docopt::Docopt;
-    use super::{USAGE, Args, compare_status};
+    use super::{compare_status, Args, USAGE};
     use tabin_plugins::Status;
     use tabin_plugins::procfs::MemInfo;
 
@@ -92,9 +92,9 @@ mod test {
     fn alerts_when_told_to() {
         let mem = MemInfo {
             total: Some(100),
-            available: Some(15),  // 15% free means 85% used
+            available: Some(15), // 15% free means 85% used
             free: None,
-            cached: None
+            cached: None,
         };
         let crit_threshold = 80.0;
 

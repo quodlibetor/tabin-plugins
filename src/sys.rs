@@ -77,7 +77,7 @@ pub mod fs {
             //! [memory.txt](https://www.kernel.org/doc/Documentation/cgroups/memory.txt)
             //! file.
 
-            use std::collections::{HashSet, HashMap};
+            use std::collections::{HashMap, HashSet};
             use std::io;
 
             use sys::read_file;
@@ -115,9 +115,9 @@ pub mod fs {
                     let contents = try!(read_file("/sys/fs/cgroup/memory/memory.stat"));
                     let mut fields: HashMap<String, usize> = HashMap::new();
                     let needed: HashSet<_> = ["cache", "rss", "rss_huge", "swap"]
-                                                 .iter()
-                                                 .cloned()
-                                                 .collect();
+                        .iter()
+                        .cloned()
+                        .collect();
                     let mut found = 0;
                     for line in contents.lines() {
                         let mut parts = line.split(' ');

@@ -17,7 +17,7 @@
 //!
 //! ```plain
 //! $ check-graphite --help
-//! check-graphite 0.1.0
+//! check-graphite 0.2.3
 //! Brandon W Maister <quodlibetor@gmail.com>
 //! Query graphite and exit based on predicates
 //!
