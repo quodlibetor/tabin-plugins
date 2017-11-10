@@ -9,6 +9,7 @@
 
     <title>wrapped_enum - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc mod">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'></p><script>window.sidebarCurrent = {name: 'wrapped_enum', ty: 'mod', relpath: '../'};</script>
+        <p class='location'>Crate wrapped_enum</p><div class="block items"><ul><li><a href="#macros">Macros</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'wrapped_enum', ty: 'mod', relpath: '../'};</script>
     </nav>
 
     <nav class="sub">
@@ -42,8 +43,8 @@
         </form>
     </nav>
 
-    <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>wrapped_enum</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>wrapped_enum</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
@@ -55,44 +56,44 @@ simply to just work on an enum of known types.</p>
 
 <p>Documentation is required when using public enums</p>
 
-<pre class='rust rust-example-rendered'>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>TestError</span> {
-    <span class='ident'>ErrorA</span>,
-    <span class='ident'>ErrorB</span>(<span class='ident'>u8</span>, <span class='ident'>u16</span>),
-    <span class='ident'>ErrorC</span>(<span class='ident'>String</span>),
+<pre class="rust rust-example-rendered">
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TestError</span> {
+    <span class="ident">ErrorA</span>,
+    <span class="ident">ErrorB</span>(<span class="ident">u8</span>, <span class="ident">u16</span>),
+    <span class="ident">ErrorC</span>(<span class="ident">String</span>),
 }
 
-<span class='macro'>wrapped_enum</span><span class='macro'>!</span>{
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-    <span class='doccomment'>/// Document your pub enums</span>
-    <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>DocumentedEnum</span> {
-        <span class='doccomment'>/// Variants too</span>
-        <span class='ident'>Io</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>),
-        <span class='doccomment'>/// Documentation is required for pub enums</span>
-        <span class='ident'>Test</span>(<span class='ident'>TestError</span>),
-        <span class='doccomment'>/// Unknown error</span>
-        <span class='ident'>Unknown</span>(()),
+<span class="macro">wrapped_enum</span><span class="macro">!</span>{
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+    <span class="doccomment">/// Document your pub enums</span>
+    <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">DocumentedEnum</span> {
+        <span class="doccomment">/// Variants too</span>
+        <span class="ident">Io</span>(<span class="ident">io</span>::<span class="ident">Error</span>),
+        <span class="doccomment">/// Documentation is required for pub enums</span>
+        <span class="ident">Test</span>(<span class="ident">TestError</span>),
+        <span class="doccomment">/// Unknown error</span>
+        <span class="ident">Unknown</span>(()),
     }
 }
 
-<span class='macro'>wrapped_enum</span><span class='macro'>!</span>{
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
-    <span class='doccomment'>/// You can&#39;t document private variants</span>
-    <span class='kw'>enum</span> <span class='ident'>UndocumentedEnum</span> {
-        <span class='comment'>// However, there is nothing wrong with normal comments</span>
-        <span class='ident'>Byte</span>(<span class='ident'>u8</span>),        <span class='comment'>// 00-FF</span>
-        <span class='ident'>DoubleByte</span>(<span class='ident'>u16</span>), <span class='comment'>// 0000-FFFF</span>
+<span class="macro">wrapped_enum</span><span class="macro">!</span>{
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
+    <span class="doccomment">/// You can&#39;t document private variants</span>
+    <span class="kw">enum</span> <span class="ident">UndocumentedEnum</span> {
+        <span class="comment">// However, there is nothing wrong with normal comments</span>
+        <span class="ident">Byte</span>(<span class="ident">u8</span>),        <span class="comment">// 00-FF</span>
+        <span class="ident">DoubleByte</span>(<span class="ident">u16</span>), <span class="comment">// 0000-FFFF</span>
     }
 }
  
-<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>UndocumentedEnum</span>::<span class='ident'>from</span>(<span class='number'>0u8</span>) <span class='op'>==</span> <span class='ident'>UndocumentedEnum</span>::<span class='ident'>Byte</span>(<span class='number'>0</span>));
-<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>UndocumentedEnum</span>::<span class='ident'>from</span>(<span class='number'>0u16</span>) <span class='op'>==</span> <span class='ident'>UndocumentedEnum</span>::<span class='ident'>DoubleByte</span>(<span class='number'>0</span>));</pre>
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UndocumentedEnum</span>::<span class="ident">from</span>(<span class="number">0u8</span>) <span class="op">==</span> <span class="ident">UndocumentedEnum</span>::<span class="ident">Byte</span>(<span class="number">0</span>));
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UndocumentedEnum</span>::<span class="ident">from</span>(<span class="number">0u16</span>) <span class="op">==</span> <span class="ident">UndocumentedEnum</span>::<span class="ident">DoubleByte</span>(<span class="number">0</span>));</pre>
 </div><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='macro' href='macro.wrapped_enum.html'
-                                  title='wrapped_enum::wrapped_enum'>wrapped_enum</a></td>
+                           <td><a class="macro" href="macro.wrapped_enum.html"
+                                  title='macro wrapped_enum::wrapped_enum'>wrapped_enum</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
@@ -153,7 +154,6 @@ simply to just work on an enum of known types.</p>
         window.rootPath = "../";
         window.currentCrate = "wrapped_enum";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

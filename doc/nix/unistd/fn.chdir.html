@@ -9,6 +9,7 @@
 
     <title>nix::unistd::chdir - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc fn">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,13 +43,18 @@
         </form>
     </nav>
 
-    <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a>::<wbr><a class='fn' href=''>chdir</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a>::<wbr><a class="fn" href=''>chdir</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/nix/unistd.rs.html#171-181' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn chdir&lt;P:&nbsp;?<a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='../../nix/trait.NixPath.html' title='nix::NixPath'>NixPath</a>&gt;(path: &amp;P) -&gt; <a class='type' href='../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</pre></section>
+               </span><a class='srclink' href='../../src/nix/unistd.rs.html#376-382' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn chdir&lt;P:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> + <a class="trait" href="../../nix/trait.NixPath.html" title="trait nix::NixPath">NixPath</a>&gt;(path: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>P) -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</pre><div class='docblock'><p>Change the current working directory of the calling process (see
+<a href="http://man7.org/linux/man-pages/man2/chdir.2.html">chdir(2)</a>).</p>
+
+<p>This function may fail in a number of different scenarios.  See the man
+pages for additional details on possible failure cases.</p>
+</div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -105,7 +111,6 @@
         window.rootPath = "../../";
         window.currentCrate = "nix";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>

@@ -9,6 +9,7 @@
 
     <title>nix::sys::mman::mmap - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc fn">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,13 +43,13 @@
         </form>
     </nav>
 
-    <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'>Function <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>mman</a>::<wbr><a class='fn' href=''>mmap</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Function <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>mman</a>::<wbr><a class="fn" href=''>mmap</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/nix/sys/mman.rs.html#209-217' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn mmap(addr: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut </a><a class='enum' href='../../../nix/enum.c_void.html' title='nix::c_void'>c_void</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; length: <a class='type' href='../../../libc/types/os/arch/c95/type.size_t.html' title='libc::types::os::arch::c95::size_t'>size_t</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; prot: <a class='type' href='../../../nix/sys/mman/type.MmapProt.html' title='nix::sys::mman::MmapProt'>MmapProt</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flags: <a class='type' href='../../../nix/sys/mman/type.MmapFlag.html' title='nix::sys::mman::MmapFlag'>MmapFlag</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fd: <a class='type' href='https://doc.rust-lang.org/nightly/std/sys/imp/ext/io/type.RawFd.html' title='std::sys::imp::ext::io::RawFd'>RawFd</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; offset: <a class='type' href='../../../libc/types/os/arch/posix88/type.off_t.html' title='libc::types::os::arch::posix88::off_t'>off_t</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='type' href='../../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut </a><a class='enum' href='../../../nix/enum.c_void.html' title='nix::c_void'>c_void</a>&gt;</pre><div class='docblock'><p>Calls to mmap are inherently unsafe, so they must be made in an unsafe block. Typically
+               </span><a class='srclink' href='../../../src/nix/sys/mman.rs.html#204-212' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub unsafe fn mmap(<br>&nbsp;&nbsp;&nbsp;&nbsp;addr: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="enum" href="../../../libc/enum.c_void.html" title="enum libc::c_void">c_void</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;length: <a class="type" href="../../../libc/type.size_t.html" title="type libc::size_t">size_t</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;prot: <a class="struct" href="../../../nix/sys/mman/struct.ProtFlags.html" title="struct nix::sys::mman::ProtFlags">ProtFlags</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;flags: <a class="struct" href="../../../nix/sys/mman/struct.MapFlags.html" title="struct nix::sys::mman::MapFlags">MapFlags</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;fd: <a class="type" href="https://doc.rust-lang.org/nightly/std/sys/imp/ext/io/type.RawFd.html" title="type std::sys::imp::ext::io::RawFd">RawFd</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;offset: <a class="type" href="../../../libc/unix/notbsd/linux/other/b64/type.off_t.html" title="type libc::unix::notbsd::linux::other::b64::off_t">off_t</a><br>) -&gt; <a class="type" href="../../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="enum" href="../../../libc/enum.c_void.html" title="enum libc::c_void">c_void</a>&gt;</pre><div class='docblock'><p>Calls to mmap are inherently unsafe, so they must be made in an unsafe block. Typically
 a higher-level abstraction will hide the unsafe interactions with the mmap&#39;d region.</p>
 </div></section>
     <section id='search' class="content hidden"></section>
@@ -107,7 +108,6 @@ a higher-level abstraction will hide the unsafe interactions with the mmap&#39;d
         window.rootPath = "../../../";
         window.currentCrate = "nix";
     </script>
-    <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     <script defer src="../../../search-index.js"></script>
 </body>

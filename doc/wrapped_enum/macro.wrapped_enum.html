@@ -9,6 +9,7 @@
 
     <title>wrapped_enum::wrapped_enum - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc macro">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,27 +43,27 @@
         </form>
     </nav>
 
-    <section id='main' class="content macro">
-<h1 class='fqn'><span class='in-band'>Macro <a href='index.html'>wrapped_enum</a>::<wbr><a class='macro' href=''>wrapped_enum</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Macro <a href='index.html'>wrapped_enum</a>::<wbr><a class="macro" href=''>wrapped_enum</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../src/wrapped_enum/lib.rs.html#48-78' title='goto source code'>[src]</a></span></h1>
-<pre class='rust macro'>
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>wrapped_enum</span> {
-    ($(<span class='attribute'>#[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>attr</span>:<span class='ident'>meta</span>]</span>)<span class='op'>*</span>
-     <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_name</span>:<span class='ident'>ident</span> {
-         $($(<span class='attribute'>#[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>variant_attr</span>:<span class='ident'>meta</span>]</span>)<span class='op'>+</span>
-         <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_variant_name</span>:<span class='ident'>ident</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span>:<span class='ident'>ty</span>)),<span class='op'>+</span>
-         $(,)<span class='op'>*</span>
+<pre class="rust macro">
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">wrapped_enum</span> {
+    ($(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">attr</span>:<span class="ident">meta</span>]</span>)<span class="op">*</span>
+     <span class="kw">pub</span> <span class="kw">enum</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">enum_name</span>:<span class="ident">ident</span> {
+         $($(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant_attr</span>:<span class="ident">meta</span>]</span>)<span class="op">+</span>
+         <span class="macro-nonterminal">$</span><span class="macro-nonterminal">enum_variant_name</span>:<span class="ident">ident</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ty</span>)),<span class="op">+</span>
+         $(,)<span class="op">*</span>
      }
-    ) <span class='op'>=&gt;</span> { ... };
-    ($(<span class='attribute'>#[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>attr</span>:<span class='ident'>meta</span>]</span>)<span class='op'>*</span>
-     <span class='kw'>enum</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_name</span>:<span class='ident'>ident</span> {
-         $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>enum_variant_name</span>:<span class='ident'>ident</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ty</span>:<span class='ident'>ty</span>)),<span class='op'>+</span>
-         $(,)<span class='op'>*</span>
+    ) <span class="op">=&gt;</span> { ... };
+    ($(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">attr</span>:<span class="ident">meta</span>]</span>)<span class="op">*</span>
+     <span class="kw">enum</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">enum_name</span>:<span class="ident">ident</span> {
+         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">enum_variant_name</span>:<span class="ident">ident</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ty</span>)),<span class="op">+</span>
+         $(,)<span class="op">*</span>
      }
-    ) <span class='op'>=&gt;</span> { ... };
+    ) <span class="op">=&gt;</span> { ... };
 }</pre>
 </section>
     <section id='search' class="content hidden"></section>
@@ -121,7 +122,6 @@
         window.rootPath = "../";
         window.currentCrate = "wrapped_enum";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

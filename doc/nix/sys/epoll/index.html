@@ -9,6 +9,7 @@
 
     <title>nix::sys::epoll - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc mod">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a></p><script>window.sidebarCurrent = {name: 'epoll', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        <p class='location'>Module epoll</p><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a></p><script>window.sidebarCurrent = {name: 'epoll', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,153 +43,181 @@
         </form>
     </nav>
 
-    <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a class='mod' href=''>epoll</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a class="mod" href=''>epoll</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/nix/sys/epoll.rs.html#1-103' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../../src/nix/sys/epoll.rs.html#1-112' title='goto source code'>[src]</a></span></h1>
 <h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='struct' href='struct.EpollEvent.html'
-                                  title='nix::sys::epoll::EpollEvent'>EpollEvent</a></td>
+                           <td><a class="struct" href="struct.EpollCreateFlags.html"
+                                  title='struct nix::sys::epoll::EpollCreateFlags'>EpollCreateFlags</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='struct' href='struct.EpollEventKind.html'
-                                  title='nix::sys::epoll::EpollEventKind'>EpollEventKind</a></td>
+                           <td><a class="struct" href="struct.EpollEvent.html"
+                                  title='struct nix::sys::epoll::EpollEvent'>EpollEvent</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.EpollFlags.html"
+                                  title='struct nix::sys::epoll::EpollFlags'>EpollFlags</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='enum' href='enum.EpollOp.html'
-                                  title='nix::sys::epoll::EpollOp'>EpollOp</a></td>
+                           <td><a class="enum" href="enum.EpollOp.html"
+                                  title='enum nix::sys::epoll::EpollOp'>EpollOp</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLERR.html'
-                                  title='nix::sys::epoll::EPOLLERR'>EPOLLERR</a></td>
+                           <td><a class="constant" href="constant.EPOLLERR.html"
+                                  title='constant nix::sys::epoll::EPOLLERR'>EPOLLERR</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLET.html'
-                                  title='nix::sys::epoll::EPOLLET'>EPOLLET</a></td>
+                           <td><a class="constant" href="constant.EPOLLET.html"
+                                  title='constant nix::sys::epoll::EPOLLET'>EPOLLET</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLHUP.html'
-                                  title='nix::sys::epoll::EPOLLHUP'>EPOLLHUP</a></td>
+                           <td><a class="constant" href="constant.EPOLLEXCLUSIVE.html"
+                                  title='constant nix::sys::epoll::EPOLLEXCLUSIVE'>EPOLLEXCLUSIVE</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLIN.html'
-                                  title='nix::sys::epoll::EPOLLIN'>EPOLLIN</a></td>
+                           <td><a class="constant" href="constant.EPOLLHUP.html"
+                                  title='constant nix::sys::epoll::EPOLLHUP'>EPOLLHUP</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLMSG.html'
-                                  title='nix::sys::epoll::EPOLLMSG'>EPOLLMSG</a></td>
+                           <td><a class="constant" href="constant.EPOLLIN.html"
+                                  title='constant nix::sys::epoll::EPOLLIN'>EPOLLIN</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLONESHOT.html'
-                                  title='nix::sys::epoll::EPOLLONESHOT'>EPOLLONESHOT</a></td>
+                           <td><a class="constant" href="constant.EPOLLMSG.html"
+                                  title='constant nix::sys::epoll::EPOLLMSG'>EPOLLMSG</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLOUT.html'
-                                  title='nix::sys::epoll::EPOLLOUT'>EPOLLOUT</a></td>
+                           <td><a class="constant" href="constant.EPOLLONESHOT.html"
+                                  title='constant nix::sys::epoll::EPOLLONESHOT'>EPOLLONESHOT</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLPRI.html'
-                                  title='nix::sys::epoll::EPOLLPRI'>EPOLLPRI</a></td>
+                           <td><a class="constant" href="constant.EPOLLOUT.html"
+                                  title='constant nix::sys::epoll::EPOLLOUT'>EPOLLOUT</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLRDBAND.html'
-                                  title='nix::sys::epoll::EPOLLRDBAND'>EPOLLRDBAND</a></td>
+                           <td><a class="constant" href="constant.EPOLLPRI.html"
+                                  title='constant nix::sys::epoll::EPOLLPRI'>EPOLLPRI</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLRDHUP.html'
-                                  title='nix::sys::epoll::EPOLLRDHUP'>EPOLLRDHUP</a></td>
+                           <td><a class="constant" href="constant.EPOLLRDBAND.html"
+                                  title='constant nix::sys::epoll::EPOLLRDBAND'>EPOLLRDBAND</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLRDNORM.html'
-                                  title='nix::sys::epoll::EPOLLRDNORM'>EPOLLRDNORM</a></td>
+                           <td><a class="constant" href="constant.EPOLLRDHUP.html"
+                                  title='constant nix::sys::epoll::EPOLLRDHUP'>EPOLLRDHUP</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLWAKEUP.html'
-                                  title='nix::sys::epoll::EPOLLWAKEUP'>EPOLLWAKEUP</a></td>
+                           <td><a class="constant" href="constant.EPOLLRDNORM.html"
+                                  title='constant nix::sys::epoll::EPOLLRDNORM'>EPOLLRDNORM</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLWRBAND.html'
-                                  title='nix::sys::epoll::EPOLLWRBAND'>EPOLLWRBAND</a></td>
+                           <td><a class="constant" href="constant.EPOLLWAKEUP.html"
+                                  title='constant nix::sys::epoll::EPOLLWAKEUP'>EPOLLWAKEUP</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='constant' href='constant.EPOLLWRNORM.html'
-                                  title='nix::sys::epoll::EPOLLWRNORM'>EPOLLWRNORM</a></td>
+                           <td><a class="constant" href="constant.EPOLLWRBAND.html"
+                                  title='constant nix::sys::epoll::EPOLLWRBAND'>EPOLLWRBAND</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.EPOLLWRNORM.html"
+                                  title='constant nix::sys::epoll::EPOLLWRNORM'>EPOLLWRNORM</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.EPOLL_CLOEXEC.html"
+                                  title='constant nix::sys::epoll::EPOLL_CLOEXEC'>EPOLL_CLOEXEC</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.epoll_create.html'
-                                  title='nix::sys::epoll::epoll_create'>epoll_create</a></td>
+                           <td><a class="fn" href="fn.epoll_create.html"
+                                  title='fn nix::sys::epoll::epoll_create'>epoll_create</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.epoll_ctl.html'
-                                  title='nix::sys::epoll::epoll_ctl'>epoll_ctl</a></td>
+                           <td><a class="fn" href="fn.epoll_create1.html"
+                                  title='fn nix::sys::epoll::epoll_create1'>epoll_create1</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.epoll_wait.html'
-                                  title='nix::sys::epoll::epoll_wait'>epoll_wait</a></td>
+                           <td><a class="fn" href="fn.epoll_ctl.html"
+                                  title='fn nix::sys::epoll::epoll_ctl'>epoll_ctl</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.epoll_wait.html"
+                                  title='fn nix::sys::epoll::epoll_wait'>epoll_wait</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
@@ -249,7 +278,6 @@
         window.rootPath = "../../../";
         window.currentCrate = "nix";
     </script>
-    <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     <script defer src="../../../search-index.js"></script>
 </body>

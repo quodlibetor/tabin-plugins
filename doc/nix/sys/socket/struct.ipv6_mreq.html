@@ -9,6 +9,7 @@
 
     <title>nix::sys::socket::ipv6_mreq - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc struct">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>socket</a></p><script>window.sidebarCurrent = {name: 'ipv6_mreq', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct ipv6_mreq</p><div class="block items"><ul><li><a href="#fields">Fields</a></li><li><a href="#methods">Methods</a></li></ul></div><p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>socket</a></p><script>window.sidebarCurrent = {name: 'ipv6_mreq', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,23 +43,28 @@
         </form>
     </nav>
 
-    <section id='main' class="content struct">
-<h1 class='fqn'><span class='in-band'>Struct <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>socket</a>::<wbr><a class='struct' href=''>ipv6_mreq</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>socket</a>::<wbr><a class="struct" href=''>ipv6_mreq</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../../../src/nix/sys/socket/multicast.rs.html#28-31' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct ipv6_mreq {
-    pub ipv6mr_multiaddr: <a class='struct' href='../../../nix/sys/socket/struct.in6_addr.html' title='nix::sys::socket::in6_addr'>in6_addr</a>,
-    pub ipv6mr_interface: <a class='type' href='../../../libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a>,
-}</pre><h2 class='fields'>Fields</h2><span id='structfield.ipv6mr_multiaddr' class='structfield'>
+    pub ipv6mr_multiaddr: <a class="struct" href="../../../nix/sys/socket/struct.in6_addr.html" title="struct nix::sys::socket::in6_addr">in6_addr</a>,
+    pub ipv6mr_interface: <a class="type" href="../../../libc/type.c_uint.html" title="type libc::c_uint">c_uint</a>,
+}</pre><h2 id='fields' class='fields small-section-header'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id='structfield.ipv6mr_multiaddr' class="structfield">
                            <span id='ipv6mr_multiaddr.v' class='invisible'>
-                           <code>ipv6mr_multiaddr: <a class='struct' href='../../../nix/sys/socket/struct.in6_addr.html' title='nix::sys::socket::in6_addr'>in6_addr</a></code>
-                           </span></span><span class='stab '></span><span id='structfield.ipv6mr_interface' class='structfield'>
+                           <code>ipv6mr_multiaddr: <a class="struct" href="../../../nix/sys/socket/struct.in6_addr.html" title="struct nix::sys::socket::in6_addr">in6_addr</a></code>
+                           </span></span><span id='structfield.ipv6mr_interface' class="structfield">
                            <span id='ipv6mr_interface.v' class='invisible'>
-                           <code>ipv6mr_interface: <a class='type' href='../../../libc/types/os/arch/c95/type.c_uint.html' title='libc::types::os::arch::c95::c_uint'>c_uint</a></code>
-                           </span></span><span class='stab '></span><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../../../nix/sys/socket/struct.ipv6_mreq.html' title='nix::sys::socket::ipv6_mreq'>ipv6_mreq</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/multicast.rs.html#33-40' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.new' class='method'><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(group: <a class='struct' href='../../../nix/sys/socket/struct.Ipv6Addr.html' title='nix::sys::socket::Ipv6Addr'>Ipv6Addr</a>) -&gt; <a class='struct' href='../../../nix/sys/socket/struct.ipv6_mreq.html' title='nix::sys::socket::ipv6_mreq'>ipv6_mreq</a></code></span></h4>
+                           <code>ipv6mr_interface: <a class="type" href="../../../libc/type.c_uint.html" title="type libc::c_uint">c_uint</a></code>
+                           </span></span>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../../../nix/sys/socket/struct.ipv6_mreq.html" title="struct nix::sys::socket::ipv6_mreq">ipv6_mreq</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/multicast.rs.html#33-40' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(group: <a class="struct" href="../../../nix/sys/socket/struct.Ipv6Addr.html" title="struct nix::sys::socket::Ipv6Addr">Ipv6Addr</a>) -&gt; <a class="struct" href="../../../nix/sys/socket/struct.ipv6_mreq.html" title="struct nix::sys::socket::ipv6_mreq">ipv6_mreq</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/multicast.rs.html#34-39' title='goto source code'>[src]</a></span></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -116,7 +122,6 @@
         window.rootPath = "../../../";
         window.currentCrate = "nix";
     </script>
-    <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     <script defer src="../../../search-index.js"></script>
 </body>

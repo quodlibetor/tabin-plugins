@@ -1,5 +1,4 @@
 (function() {var implementors = {};
-implementors["hyper"] = [];
 implementors["rustc_serialize"] = [];
 
             if (window.register_implementors) {

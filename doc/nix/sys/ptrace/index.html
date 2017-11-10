@@ -9,6 +9,7 @@
 
     <title>nix::sys::ptrace - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc mod">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a></p><script>window.sidebarCurrent = {name: 'ptrace', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        <p class='location'>Module ptrace</p><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a></p><script>window.sidebarCurrent = {name: 'ptrace', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,34 +43,56 @@
         </form>
     </nav>
 
-    <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a class='mod' href=''>ptrace</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a class="mod" href=''>ptrace</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/nix/sys/ptrace.rs.html#1-109' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../../src/nix/sys/ptrace.rs.html#1-142' title='goto source code'>[src]</a></span></h1>
 <h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='ptrace/index.html'
-                                  title='nix::sys::ptrace::ptrace'>ptrace</a></td>
+                           <td><a class="mod" href="ptrace/index.html"
+                                  title='mod nix::sys::ptrace::ptrace'>ptrace</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.ptrace.html'
-                                  title='nix::sys::ptrace::ptrace'>ptrace</a></td>
+                           <td><a class="fn" href="fn.ptrace.html"
+                                  title='fn nix::sys::ptrace::ptrace'>ptrace</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Performs a ptrace request. If the request in question is provided by a specialised function
+this function will return an unsupported operation error.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.ptrace_setoptions.html'
-                                  title='nix::sys::ptrace::ptrace_setoptions'>ptrace_setoptions</a></td>
+                           <td><a class="fn" href="fn.ptrace_getevent.html"
+                                  title='fn nix::sys::ptrace::ptrace_getevent'>ptrace_getevent</a></td>
                            <td class='docblock-short'>
-                                <p>Set options, as with ptrace(PTRACE_SETOPTIONS,...).</p>
+                                <p>Gets a ptrace event as described by <code>ptrace(PTRACE_GETEVENTMSG,...)</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ptrace_getsiginfo.html"
+                                  title='fn nix::sys::ptrace::ptrace_getsiginfo'>ptrace_getsiginfo</a></td>
+                           <td class='docblock-short'>
+                                <p>Get siginfo as with <code>ptrace(PTRACE_GETSIGINFO,...)</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ptrace_setoptions.html"
+                                  title='fn nix::sys::ptrace::ptrace_setoptions'>ptrace_setoptions</a></td>
+                           <td class='docblock-short'>
+                                <p>Set options, as with <code>ptrace(PTRACE_SETOPTIONS,...)</code>.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ptrace_setsiginfo.html"
+                                  title='fn nix::sys::ptrace::ptrace_setsiginfo'>ptrace_setsiginfo</a></td>
+                           <td class='docblock-short'>
+                                <p>Set siginfo as with <code>ptrace(PTRACE_SETSIGINFO,...)</code></p>
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
@@ -128,7 +151,6 @@
         window.rootPath = "../../../";
         window.currentCrate = "nix";
     </script>
-    <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     <script defer src="../../../search-index.js"></script>
 </body>

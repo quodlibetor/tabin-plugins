@@ -9,6 +9,7 @@
 
     <title>nix::sys::socket::IpAddr - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc enum">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>socket</a></p><script>window.sidebarCurrent = {name: 'IpAddr', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Enum IpAddr</p><div class="block items"><ul><li><a href="#variants">Variants</a></li><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>socket</a></p><script>window.sidebarCurrent = {name: 'IpAddr', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,28 +43,37 @@
         </form>
     </nav>
 
-    <section id='main' class="content enum">
-<h1 class='fqn'><span class='in-band'>Enum <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>socket</a>::<wbr><a class='enum' href=''>IpAddr</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Enum <a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>socket</a>::<wbr><a class="enum" href=''>IpAddr</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/nix/sys/socket/addr.rs.html#159-162' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../../src/nix/sys/socket/addr.rs.html#184-187' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum IpAddr {
-    V4(<a class='struct' href='../../../nix/sys/socket/struct.Ipv4Addr.html' title='nix::sys::socket::Ipv4Addr'>Ipv4Addr</a>),
-    V6(<a class='struct' href='../../../nix/sys/socket/struct.Ipv6Addr.html' title='nix::sys::socket::Ipv6Addr'>Ipv6Addr</a>),
-}</pre><h2 class='variants'>Variants</h2>
-<span id='variant.V4' class='variant'><span id='V4.v' class='invisible'><code>V4(<a class='struct' href='../../../nix/sys/socket/struct.Ipv4Addr.html' title='nix::sys::socket::Ipv4Addr'>Ipv4Addr</a>)</code></span></span><span id='variant.V6' class='variant'><span id='V6.v' class='invisible'><code>V6(<a class='struct' href='../../../nix/sys/socket/struct.Ipv6Addr.html' title='nix::sys::socket::Ipv6Addr'>Ipv6Addr</a>)</code></span></span><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='enum' href='../../../nix/sys/socket/enum.IpAddr.html' title='nix::sys::socket::IpAddr'>IpAddr</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/addr.rs.html#164-194' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.new_v4' class='method'><span id='new_v4.v' class='invisible'><code>fn <a href='#method.new_v4' class='fnname'>new_v4</a>(a: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>, b: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>, c: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>, d: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>) -&gt; <a class='enum' href='../../../nix/sys/socket/enum.IpAddr.html' title='nix::sys::socket::IpAddr'>IpAddr</a></code></span></h4>
+    V4(<a class="struct" href="../../../nix/sys/socket/struct.Ipv4Addr.html" title="struct nix::sys::socket::Ipv4Addr">Ipv4Addr</a>),
+    V6(<a class="struct" href="../../../nix/sys/socket/struct.Ipv6Addr.html" title="struct nix::sys::socket::Ipv6Addr">Ipv6Addr</a>),
+}</pre><h2 id='variants' class='variants small-section-header'>
+                   Variants<a href='#variants' class='anchor'></a></h2>
+<span id='variant.V4' class='variant'><span id='V4.v' class='invisible'><code>V4(<a class="struct" href="../../../nix/sys/socket/struct.Ipv4Addr.html" title="struct nix::sys::socket::Ipv4Addr">Ipv4Addr</a>)</code></span></span><span id='variant.V6' class='variant'><span id='V6.v' class='invisible'><code>V6(<a class="struct" href="../../../nix/sys/socket/struct.Ipv6Addr.html" title="struct nix::sys::socket::Ipv6Addr">Ipv6Addr</a>)</code></span></span>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="enum" href="../../../nix/sys/socket/enum.IpAddr.html" title="enum nix::sys::socket::IpAddr">IpAddr</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/addr.rs.html#189-219' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new_v4' class="method"><span id='new_v4.v' class='invisible'><code>fn <a href='#method.new_v4' class='fnname'>new_v4</a>(a: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>, b: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>, c: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>, d: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>) -&gt; <a class="enum" href="../../../nix/sys/socket/enum.IpAddr.html" title="enum nix::sys::socket::IpAddr">IpAddr</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/addr.rs.html#193-195' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Create a new IpAddr that contains an IPv4 address.</p>
 
 <p>The result will represent the IP address a.b.c.d</p>
-</div><h4 id='method.new_v6' class='method'><span id='new_v6.v' class='invisible'><code>fn <a href='#method.new_v6' class='fnname'>new_v6</a>(a: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; c: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; d: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; h: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='enum' href='../../../nix/sys/socket/enum.IpAddr.html' title='nix::sys::socket::IpAddr'>IpAddr</a></code></span></h4>
+</div><h4 id='method.new_v6' class="method"><span id='new_v6.v' class='invisible'><code>fn <a href='#method.new_v6' class='fnname'>new_v6</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;a: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;b: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;c: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;d: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;e: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;f: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;g: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;h: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a><br>) -&gt; <a class="enum" href="../../../nix/sys/socket/enum.IpAddr.html" title="enum nix::sys::socket::IpAddr">IpAddr</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/addr.rs.html#200-202' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Create a new IpAddr that contains an IPv6 address.</p>
 
 <p>The result will represent the IP address a:b:c:d:e:f</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html' title='core::fmt::Display'>Display</a> for <a class='enum' href='../../../nix/sys/socket/enum.IpAddr.html' title='nix::sys::socket::IpAddr'>IpAddr</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/addr.rs.html#196-203' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.fmt' class='method'><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></span></h4>
-<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Display' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html" title="trait core::fmt::Display">Display</a> for <a class="enum" href="../../../nix/sys/socket/enum.IpAddr.html" title="enum nix::sys::socket::IpAddr">IpAddr</a></code><a href='#impl-Display' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/addr.rs.html#221-228' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/nix/sys/socket/addr.rs.html#222-227' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html#tymethod.fmt">Read more</a></p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 
@@ -121,7 +131,6 @@
         window.rootPath = "../../../";
         window.currentCrate = "nix";
     </script>
-    <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     <script defer src="../../../search-index.js"></script>
 </body>

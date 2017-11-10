@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["fstatfs",""],["statfs",""]],"mod":[["vfs",""]]});
+initSidebarItems({"fn":[["fstatfs",""],["statfs",""]]});

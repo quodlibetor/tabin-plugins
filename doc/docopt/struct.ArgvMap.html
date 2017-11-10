@@ -9,6 +9,7 @@
 
     <title>docopt::ArgvMap - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc struct">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='index.html'>docopt</a></p><script>window.sidebarCurrent = {name: 'ArgvMap', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct ArgvMap</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>docopt</a></p><script>window.sidebarCurrent = {name: 'ArgvMap', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,8 +43,8 @@
         </form>
     </nav>
 
-    <section id='main' class="content struct">
-<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>docopt</a>::<wbr><a class='struct' href=''>ArgvMap</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>docopt</a>::<wbr><a class="struct" href=''>ArgvMap</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
@@ -54,8 +55,12 @@
 <code>-f</code> for a short flag. (If <code>-f</code> is a synonym for <code>--flag</code>, then either
 key will work.) <code>ARG</code> or <code>&lt;arg&gt;</code> specify a positional argument and <code>cmd</code>
 specifies a command.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../docopt/struct.ArgvMap.html' title='docopt::ArgvMap'>ArgvMap</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#328-497' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.decode' class='method'><span id='decode.v' class='invisible'><code>fn <a href='#method.decode' class='fnname'>decode</a>&lt;T:&nbsp;<a class='trait' href='../rustc_serialize/serialize/trait.Decodable.html' title='rustc_serialize::serialize::Decodable'>Decodable</a>&gt;(self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;T, <a class='enum' href='../docopt/enum.Error.html' title='docopt::Error'>Error</a>&gt;</code></span></h4>
+</div>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../docopt/struct.ArgvMap.html" title="struct docopt::ArgvMap">ArgvMap</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#328-497' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.decode' class="method"><span id='decode.v' class='invisible'><code>fn <a href='#method.decode' class='fnname'>decode</a>&lt;T:&nbsp;<a class="trait" href="../rustc_serialize/serialize/trait.Decodable.html" title="trait rustc_serialize::serialize::Decodable">Decodable</a>&gt;(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;T, <a class="enum" href="../docopt/enum.Error.html" title="enum docopt::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#378-380' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Tries to decode the map of values into a struct.</p>
 
 <p>This method should always be called to decode a <code>ArgvMap</code> into
@@ -68,10 +73,10 @@ correspond to short/long flags, positional arguments and commands.</p>
 <p>If a Docopt item has a <code>-</code> in its name, then it is converted to an <code>_</code>.</p>
 
 <h1 id='example' class='section-header'><a href='#example'>Example</a></h1>
-<pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>docopt</span>::<span class='ident'>Docopt</span>;
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">docopt</span>::<span class="ident">Docopt</span>;
 
-<span class='kw'>const</span> <span class='ident'>USAGE</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span> <span class='op'>=</span> <span class='string'>&quot;
+<span class="kw">const</span> <span class="ident">USAGE</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;
 Usage: cargo [options] (build | test)
        cargo --help
 
@@ -79,52 +84,56 @@ Options: -v, --verbose
          -h, --help
 &quot;</span>;
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>RustcDecodable</span>)]</span>
-<span class='kw'>struct</span> <span class='ident'>Args</span> {
-  <span class='ident'>cmd_build</span>: <span class='ident'>bool</span>,
-  <span class='ident'>cmd_test</span>: <span class='ident'>bool</span>,
-  <span class='ident'>flag_verbose</span>: <span class='ident'>bool</span>,
-  <span class='ident'>flag_h</span>: <span class='ident'>bool</span>,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">RustcDecodable</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Args</span> {
+  <span class="ident">cmd_build</span>: <span class="ident">bool</span>,
+  <span class="ident">cmd_test</span>: <span class="ident">bool</span>,
+  <span class="ident">flag_verbose</span>: <span class="ident">bool</span>,
+  <span class="ident">flag_h</span>: <span class="ident">bool</span>,
 }
 
-<span class='kw'>let</span> <span class='ident'>argv</span> <span class='op'>=</span> <span class='op'>||</span> <span class='macro'>vec</span><span class='macro'>!</span>[<span class='string'>&quot;cargo&quot;</span>, <span class='string'>&quot;build&quot;</span>, <span class='string'>&quot;-v&quot;</span>].<span class='ident'>into_iter</span>();
-<span class='kw'>let</span> <span class='ident'>args</span>: <span class='ident'>Args</span> <span class='op'>=</span> <span class='ident'>Docopt</span>::<span class='ident'>new</span>(<span class='ident'>USAGE</span>)
-                        .<span class='ident'>and_then</span>(<span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>d</span>.<span class='ident'>argv</span>(<span class='ident'>argv</span>()).<span class='ident'>decode</span>())
-                        .<span class='ident'>unwrap_or_else</span>(<span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>e</span>.<span class='ident'>exit</span>());
-<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>args</span>.<span class='ident'>cmd_build</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='ident'>args</span>.<span class='ident'>cmd_test</span>
-        <span class='op'>&amp;&amp;</span> <span class='ident'>args</span>.<span class='ident'>flag_verbose</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='ident'>args</span>.<span class='ident'>flag_h</span>);</pre>
+<span class="kw">let</span> <span class="ident">argv</span> <span class="op">=</span> <span class="op">||</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;cargo&quot;</span>, <span class="string">&quot;build&quot;</span>, <span class="string">&quot;-v&quot;</span>].<span class="ident">into_iter</span>();
+<span class="kw">let</span> <span class="ident">args</span>: <span class="ident">Args</span> <span class="op">=</span> <span class="ident">Docopt</span>::<span class="ident">new</span>(<span class="ident">USAGE</span>)
+                        .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">argv</span>(<span class="ident">argv</span>()).<span class="ident">decode</span>())
+                        .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">exit</span>());
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">args</span>.<span class="ident">cmd_build</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">args</span>.<span class="ident">cmd_test</span>
+        <span class="op">&amp;&amp;</span> <span class="ident">args</span>.<span class="ident">flag_verbose</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">args</span>.<span class="ident">flag_h</span>);</pre>
 
 <p>Note that in the above example, <code>flag_h</code> is used but <code>flag_help</code>
 could also be used. (In fact, both could be used at the same time.)</p>
 
 <p>In this example, only the <code>bool</code> type was used, but any type satisfying
 the <code>Decodable</code> trait is valid.</p>
-</div><h4 id='method.get_bool' class='method'><span id='get_bool.v' class='invisible'><code>fn <a href='#method.get_bool' class='fnname'>get_bool</a>(&amp;self, key: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></span></h4>
+</div><h4 id='method.get_bool' class="method"><span id='get_bool.v' class='invisible'><code>fn <a href='#method.get_bool' class='fnname'>get_bool</a>(&amp;self, key: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#384-386' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Finds the value corresponding to <code>key</code> and calls <code>as_bool()</code> on it.
 If the key does not exist, <code>false</code> is returned.</p>
-</div><h4 id='method.get_count' class='method'><span id='get_count.v' class='invisible'><code>fn <a href='#method.get_count' class='fnname'>get_count</a>(&amp;self, key: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a></code></span></h4>
+</div><h4 id='method.get_count' class="method"><span id='get_count.v' class='invisible'><code>fn <a href='#method.get_count' class='fnname'>get_count</a>(&amp;self, key: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#390-392' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Finds the value corresponding to <code>key</code> and calls <code>as_count()</code> on it.
 If the key does not exist, <code>0</code> is returned.</p>
-</div><h4 id='method.get_str' class='method'><span id='get_str.v' class='invisible'><code>fn <a href='#method.get_str' class='fnname'>get_str</a>(&amp;self, key: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a></code></span></h4>
+</div><h4 id='method.get_str' class="method"><span id='get_str.v' class='invisible'><code>fn <a href='#method.get_str' class='fnname'>get_str</a>(&amp;self, key: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#396-398' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Finds the value corresponding to <code>key</code> and calls <code>as_str()</code> on it.
 If the key does not exist, <code>&quot;&quot;</code> is returned.</p>
-</div><h4 id='method.get_vec' class='method'><span id='get_vec.v' class='invisible'><code>fn <a href='#method.get_vec' class='fnname'>get_vec</a>(&amp;self, key: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;&amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;</code></span></h4>
+</div><h4 id='method.get_vec' class="method"><span id='get_vec.v' class='invisible'><code>fn <a href='#method.get_vec' class='fnname'>get_vec</a>(&amp;self, key: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;&amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#402-404' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Finds the value corresponding to <code>key</code> and calls <code>as_vec()</code> on it.
 If the key does not exist, <code>vec!()</code> is returned.</p>
-</div><h4 id='method.find' class='method'><span id='find.v' class='invisible'><code>fn <a href='#method.find' class='fnname'>find</a>(&amp;self, key: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;<a class='enum' href='../docopt/enum.Value.html' title='docopt::Value'>Value</a>&gt;</code></span></h4>
+</div><h4 id='method.find' class="method"><span id='find.v' class='invisible'><code>fn <a href='#method.find' class='fnname'>find</a>(&amp;self, key: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;<a class="enum" href="../docopt/enum.Value.html" title="enum docopt::Value">Value</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#410-412' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Return the raw value corresponding to some <code>key</code>.</p>
 
 <p><code>key</code> should be a string in the traditional Docopt format. e.g.,
 <code>&lt;arg&gt;</code> or <code>--flag</code>.</p>
-</div><h4 id='method.len' class='method'><span id='len.v' class='invisible'><code>fn <a href='#method.len' class='fnname'>len</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code></span></h4>
+</div><h4 id='method.len' class="method"><span id='len.v' class='invisible'><code>fn <a href='#method.len' class='fnname'>len</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#415-417' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Return the number of values, not including synonyms.</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../docopt/struct.ArgvMap.html' title='docopt::ArgvMap'>ArgvMap</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#322' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.clone' class='method'><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../docopt/struct.ArgvMap.html' title='docopt::ArgvMap'>ArgvMap</a></code></span></h4>
+</div></div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../docopt/struct.ArgvMap.html" title="struct docopt::ArgvMap">ArgvMap</a></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#322' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../docopt/struct.ArgvMap.html" title="struct docopt::ArgvMap">ArgvMap</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#322' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
-</div><h4 id='method.clone_from' class='method'><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self)</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/core/clone.rs.html#112-114' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../docopt/struct.ArgvMap.html' title='docopt::ArgvMap'>ArgvMap</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#499-525' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.fmt' class='method'><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></span></h4>
+</div></div><h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../docopt/struct.ArgvMap.html" title="struct docopt::ArgvMap">ArgvMap</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#499-525' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#500-524' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Formats the value using the given formatter.</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
@@ -183,7 +192,6 @@ If the key does not exist, <code>vec!()</code> is returned.</p>
         window.rootPath = "../";
         window.currentCrate = "docopt";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

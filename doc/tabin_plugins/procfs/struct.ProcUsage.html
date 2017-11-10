@@ -9,6 +9,7 @@
 
     <title>tabin_plugins::procfs::ProcUsage - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc struct">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>procfs</a></p><script>window.sidebarCurrent = {name: 'ProcUsage', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct ProcUsage</p><div class="block items"><ul><li><a href="#fields">Fields</a></li></ul></div><p class='location'><a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>procfs</a></p><script>window.sidebarCurrent = {name: 'ProcUsage', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,35 +43,36 @@
         </form>
     </nav>
 
-    <section id='main' class="content struct">
-<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>procfs</a>::<wbr><a class='struct' href=''>ProcUsage</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>procfs</a>::<wbr><a class="struct" href=''>ProcUsage</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#44-53' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct ProcUsage&lt;'a&gt; {
-    pub process: &amp;'a <a class='struct' href='../../tabin_plugins/procfs/pid/struct.Process.html' title='tabin_plugins::procfs::pid::Process'>Process</a>,
-    pub upercent: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>,
-    pub spercent: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>,
-    pub total: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>,
+    pub process: &amp;'a <a class="struct" href="../../tabin_plugins/procfs/pid/struct.Process.html" title="struct tabin_plugins::procfs::pid::Process">Process</a>,
+    pub upercent: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a>,
+    pub spercent: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a>,
+    pub total: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a>,
 }</pre><div class='docblock'><p>Represent the percent CPU utilization of a specific process over a specific
 time period</p>
-</div><h2 class='fields'>Fields</h2><span id='structfield.process' class='structfield'>
+</div><h2 id='fields' class='fields small-section-header'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id='structfield.process' class="structfield">
                            <span id='process.v' class='invisible'>
-                           <code>process: &amp;'a <a class='struct' href='../../tabin_plugins/procfs/pid/struct.Process.html' title='tabin_plugins::procfs::pid::Process'>Process</a></code>
-                           </span></span><span class='stab '></span><div class='docblock'><p>The process we&#39;re reporting on</p>
-</div><span id='structfield.upercent' class='structfield'>
+                           <code>process: &amp;'a <a class="struct" href="../../tabin_plugins/procfs/pid/struct.Process.html" title="struct tabin_plugins::procfs::pid::Process">Process</a></code>
+                           </span></span><div class='docblock'><p>The process we&#39;re reporting on</p>
+</div><span id='structfield.upercent' class="structfield">
                            <span id='upercent.v' class='invisible'>
-                           <code>upercent: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code>
-                           </span></span><span class='stab '></span><div class='docblock'><p>Percent time spent in user mode</p>
-</div><span id='structfield.spercent' class='structfield'>
+                           <code>upercent: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a></code>
+                           </span></span><div class='docblock'><p>Percent time spent in user mode</p>
+</div><span id='structfield.spercent' class="structfield">
                            <span id='spercent.v' class='invisible'>
-                           <code>spercent: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code>
-                           </span></span><span class='stab '></span><div class='docblock'><p>Percent time spent in system mode</p>
-</div><span id='structfield.total' class='structfield'>
+                           <code>spercent: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a></code>
+                           </span></span><div class='docblock'><p>Percent time spent in system mode</p>
+</div><span id='structfield.total' class="structfield">
                            <span id='total.v' class='invisible'>
-                           <code>total: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code>
-                           </span></span><span class='stab '></span><div class='docblock'><p>upercent + spercent</p>
+                           <code>total: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a></code>
+                           </span></span><div class='docblock'><p>upercent + spercent</p>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -128,7 +130,6 @@ time period</p>
         window.rootPath = "../../";
         window.currentCrate = "tabin_plugins";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>

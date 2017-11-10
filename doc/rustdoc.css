@@ -1,5 +1,3 @@
-@import "normalize.css";
-
 /**
  * Copyright 2013 The Rust Project Developers. See the COPYRIGHT
  * file at the top-level directory of this distribution and at
@@ -91,7 +89,7 @@ h2 {
 h3 {
 	font-size: 1.3em;
 }
-h1, h2, h3:not(.impl):not(.method):not(.type):not(.tymethod), h4:not(.method):not(.type):not(.tymethod) {
+h1, h2, h3:not(.impl):not(.method):not(.type):not(.tymethod), h4:not(.method):not(.type):not(.tymethod):not(.associatedconstant) {
 	font-weight: 500;
 	margin: 20px 0 15px 0;
 	padding-bottom: 6px;
@@ -101,10 +99,10 @@ h1.fqn {
 	margin-top: 0;
 	position: relative;
 }
-h2, h3:not(.impl):not(.method):not(.type):not(.tymethod), h4:not(.method):not(.type):not(.tymethod) {
+h2, h3:not(.impl):not(.method):not(.type):not(.tymethod), h4:not(.method):not(.type):not(.tymethod):not(.associatedconstant) {
 	border-bottom: 1px solid;
 }
-h3.impl, h3.method, h4.method, h3.type, h4.type {
+h3.impl, h3.method, h4.method, h3.type, h4.type, h4.associatedconstant {
 	font-weight: 600;
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -128,6 +126,10 @@ p {
 	margin: 0 0 .6em 0;
 }
 
+summary {
+	outline: none;
+}
+
 code, pre {
 	font-family: "Source Code Pro", Menlo, Monaco, Consolas, "DejaVu Sans Mono", Inconsolata, monospace;
 	white-space: pre-wrap;
@@ -143,7 +145,7 @@ pre {
 	padding: 14px;
 }
 
-.source pre {
+.source .content pre {
 	padding: 20px;
 }
 
@@ -151,7 +153,7 @@ img {
 	max-width: 100%;
 }
 
-.content.source {
+.source .content {
 	margin-top: 50px;
 	max-width: none;
 	overflow: visible;
@@ -172,6 +174,10 @@ nav.sub {
 	min-height: 100%;
 }
 
+.sidebar .current {
+	margin-right: -20px;
+}
+
 .content, nav { max-width: 960px; }
 
 /* Everything else */
@@ -187,9 +193,15 @@ nav.sub {
 }
 
 .sidebar .location {
+	border: 1px solid;
 	font-size: 17px;
 	margin: 30px 0 20px 0;
 	text-align: center;
+	word-wrap: break-word;
+}
+
+.location:empty {
+	border: none;
 }
 
 .location a:first-child { font-weight: 500; }
@@ -224,10 +236,13 @@ nav.sub {
 	padding: 15px 0;
 }
 
-.content.source pre.rust {
+.source .content pre.rust {
 	white-space: pre;
 	overflow: auto;
 	padding-left: 0;
+}
+#search {
+	margin-left: 230px;
 }
 .content pre.line-numbers {
 	float: left;
@@ -263,9 +278,13 @@ nav.sub {
 	border-bottom: 1px solid;
 }
 
-.docblock h1 { font-size: 1.3em; }
-.docblock h2 { font-size: 1.15em; }
-.docblock h3, .docblock h4, .docblock h5 { font-size: 1em; }
+#main > .docblock h1 { font-size: 1.3em; }
+#main > .docblock h2 { font-size: 1.15em; }
+#main > .docblock h3, #main > .docblock h4, #main > .docblock h5 { font-size: 1em; }
+
+.docblock h1 { font-size: 1em; }
+.docblock h2 { font-size: 0.95em; }
+.docblock h3, .docblock h4, .docblock h5 { font-size: 0.9em; }
 
 .docblock {
 	margin-left: 24px;
@@ -284,6 +303,10 @@ nav.sub {
 
 h3.impl > .out-of-band {
 	font-size: 21px;
+}
+
+h4.method > .out-of-band {
+	font-size: 19px;
 }
 
 h4 > code, h3 > code, .invisible > code {
@@ -370,13 +393,9 @@ h4 > code, h3 > code, .invisible > code {
 .content .method .where,
 .content .fn .where,
 .content .where.fmt-newline {
-    display: block;
-}
-/* Bit of whitespace to indent it */
-.content .method .where::before,
-.content .fn .where::before,
-.content .where.fmt-newline::before {
-    content: '  ';
+	display: block;
+	color: #4E4C4C;
+	font-size: 0.8em;
 }
 
 .content .methods > div { margin-left: 40px; }
@@ -384,17 +403,12 @@ h4 > code, h3 > code, .invisible > code {
 .content .impl-items .docblock, .content .impl-items .stability {
 	margin-left: 40px;
 }
-.content .impl-items .method, .content .impl-items > .type {
+.content .impl-items .method, .content .impl-items > .type, .impl-items > .associatedconstant {
 	margin-left: 20px;
 }
 
 .content .stability code {
 	font-size: 90%;
-}
-
-/* Shift where in trait listing down a line */
-pre.trait .where::before {
-	content: '\a         ';
 }
 
 nav {
@@ -428,14 +442,24 @@ a {
 	background: transparent;
 }
 
+.small-section-header:hover > .anchor {
+	display: initial;
+}
+
+.in-band:hover > .anchor {
+	display: initial;
+}
+.anchor {
+	display: none;
+}
+.anchor:after {
+	content: '\2002\00a7\2002';
+}
+
 .docblock a:hover, .docblock-short a:hover, .stability a {
 	text-decoration: underline;
 }
 
-.content span.enum, .content a.enum, .block a.current.enum { color: #5e9766; }
-.content span.struct, .content a.struct, .block a.current.struct { color: #df3600; }
-.content span.type, .content a.type, .block a.current.type { color: #e57300; }
-.content span.macro, .content a.macro, .block a.current.macro { color: #068000; }
 .block a.current.crate { font-weight: 500; }
 
 .search-input {
@@ -499,17 +523,15 @@ body.blur > :not(#help) {
 }
 #help > div {
 	flex: 0 0 auto;
-	background: #e9e9e9;
 	box-shadow: 0 0 6px rgba(0,0,0,.2);
 	width: 550px;
 	height: 330px;
-	border: 1px solid #bfbfbf;
+	border: 1px solid;
 }
 #help dt {
 	float: left;
 	border-radius: 4px;
-	border: 1px solid #bfbfbf;
-	background: #fff;
+	border: 1px solid;
 	width: 23px;
 	text-align: center;
 	clear: left;
@@ -525,20 +547,28 @@ body.blur > :not(#help) {
 	padding: 20px;
 }
 
-em.stab {
-	display: inline-block;
+.stab {
+	display: table;
 	border-width: 1px;
 	border-style: solid;
 	padding: 3px;
 	margin-bottom: 5px;
 	font-size: 90%;
-	font-style: normal;
 }
-em.stab p {
+.stab p {
 	display: inline;
 }
 
+.stab summary {
+	display: list-item;
+}
+
+.stab .microscope {
+	font-size: 1.5em;
+}
+
 .module-item .stab {
+	display: inline;
 	border-width: 0;
 	padding: 0;
 	margin: 0;
@@ -552,7 +582,6 @@ em.stab p {
 .since {
 	font-weight: normal;
 	font-size: initial;
-	color: grey;
 	position: absolute;
 	right: 0;
 	top: 0;
@@ -574,24 +603,12 @@ td.summary-column {
 	padding-right: 0px;
 }
 
-.line-numbers :target { background-color: transparent; }
-
-/* Code highlighting */
-pre.rust .kw { color: #8959A8; }
-pre.rust .kw-2, pre.rust .prelude-ty { color: #4271AE; }
-pre.rust .number, pre.rust .string { color: #718C00; }
-pre.rust .self, pre.rust .bool-val, pre.rust .prelude-val,
-pre.rust .attribute, pre.rust .attribute .ident { color: #C82829; }
-pre.rust .macro, pre.rust .macro-nonterminal { color: #3E999F; }
-pre.rust .lifetime { color: #B76514; }
 pre.rust .question-mark {
-	color: #ff9011;
 	font-weight: bold;
 }
 
 pre.rust { position: relative; }
 a.test-arrow {
-	background-color: rgba(78, 139, 202, 0.2);
 	display: inline-block;
 	position: absolute;
 	padding: 5px 10px 5px 10px;
@@ -601,7 +618,6 @@ a.test-arrow {
 	right: 5px;
 }
 a.test-arrow:hover{
-	background-color: #4e8bca;
 	text-decoration: none;
 }
 
@@ -625,6 +641,11 @@ a.test-arrow:hover{
 	top: 0;
 }
 
+h3 > .collapse-toggle, h4 > .collapse-toggle {
+	font-size: 0.8em;
+	top: 5px;
+}
+
 .toggle-wrapper > .collapse-toggle {
 	left: -24px;
 	margin-top: 0px;
@@ -645,10 +666,6 @@ a.test-arrow:hover{
 	text-align: center;
 }
 
-.toggle-label {
-	color: #999;
-}
-
 .ghost {
 	display: none;
 }
@@ -663,6 +680,11 @@ a.test-arrow:hover{
 	padding-left: 10px;
 }
 
+.item-spacer {
+	width: 100%;
+	height: 12px;
+}
+
 span.since {
 	position: initial;
 	font-size: 20px;
@@ -671,6 +693,10 @@ span.since {
 
 .toggle-wrapper > .collapse-toggle {
 	left: 0;
+}
+
+.variant + .toggle-wrapper + .docblock > p {
+	margin-top: 5px;
 }
 
 .variant + .toggle-wrapper > a {
@@ -691,7 +717,7 @@ span.since {
 	margin-bottom: 25px;
 }
 
-.enum .variant, .struct .structfield {
+#main > .variant, #main > .structfield {
 	display: block;
 }
 
@@ -704,8 +730,7 @@ span.since {
 }
 
 :target > code {
-   background: #FDFFD3;
-   opacity: 1;
+	opacity: 1;
 }
 
 /* Media Queries */

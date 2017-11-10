@@ -9,6 +9,7 @@
 
     <title>tabin_plugins::linux::Ratio - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc trait">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>linux</a></p><script>window.sidebarCurrent = {name: 'Ratio', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Trait Ratio</p><div class="block items"><ul><li><a href="#required-methods">Required Methods</a></li><li><a href="#implementors">Implementors</a></li></ul></div><p class='location'><a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>linux</a></p><script>window.sidebarCurrent = {name: 'Ratio', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,21 +43,25 @@
         </form>
     </nav>
 
-    <section id='main' class="content trait">
-<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>linux</a>::<wbr><a class='trait' href=''>Ratio</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>tabin_plugins</a>::<wbr><a href='index.html'>linux</a>::<wbr><a class="trait" href=''>Ratio</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/tabin_plugins/linux.rs.html#162-164' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/tabin_plugins/linux.rs.html#167-169' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Ratio&lt;Rhs&nbsp;=&nbsp;Self&gt; {
-    fn <a href='#tymethod.ratio' class='fnname'>ratio</a>(&amp;self, rhs: &amp;Rhs) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>;
+    fn <a href='#tymethod.ratio' class='fnname'>ratio</a>(&amp;self, rhs: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Rhs) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a>;
 }</pre>
-            <h2 id='required-methods'>Required Methods</h2>
+            <h2 id='required-methods' class='small-section-header'>
+              Required Methods<a href='#required-methods' class='anchor'></a>
+            </h2>
             <div class='methods'>
-        <h3 id='tymethod.ratio' class='method stab '><span id='ratio.v' class='invisible'><code>fn <a href='#tymethod.ratio' class='fnname'>ratio</a>(&amp;self, rhs: &amp;Rhs) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code></span></h3></div>
-        <h2 id='implementors'>Implementors</h2>
+        <h3 id='tymethod.ratio' class='method'><span id='ratio.v' class='invisible'><code>fn <a href='#tymethod.ratio' class='fnname'>ratio</a>(&amp;self, rhs: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Rhs) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a></code></span></h3></div>
+        <h2 id='implementors' class='small-section-header'>
+          Implementors<a href='#implementors' class='anchor'></a>
+        </h2>
         <ul class='item-list' id='implementors-list'>
-    <li><code>impl Ratio for <a class='struct' href='https://doc.rust-lang.org/nightly/std/time/duration/struct.Duration.html' title='std::time::duration::Duration'>Duration</a></code></li>
+    <li><code>impl Ratio for <a class="struct" href="https://doc.rust-lang.org/nightly/std/time/duration/struct.Duration.html" title="struct std::time::duration::Duration">Duration</a></code></li>
 </ul><script type="text/javascript" async
                          src="../../implementors/tabin_plugins/linux/trait.Ratio.js">
                  </script></section>
@@ -116,7 +121,6 @@
         window.rootPath = "../../";
         window.currentCrate = "tabin_plugins";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>

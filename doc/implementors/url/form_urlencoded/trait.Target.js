@@ -1,5 +1,4 @@
 (function() {var implementors = {};
-implementors["hyper"] = [];
 implementors["url"] = [];
 
             if (window.register_implementors) {

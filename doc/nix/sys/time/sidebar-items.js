@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["TimeVal",""]]});
+initSidebarItems({"struct":[["TimeSpec",""],["TimeVal",""]],"trait":[["TimeValLike",""]]});

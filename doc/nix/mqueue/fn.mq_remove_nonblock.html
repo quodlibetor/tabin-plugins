@@ -9,6 +9,7 @@
 
     <title>nix::mqueue::mq_remove_nonblock - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc fn">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,14 +43,14 @@
         </form>
     </nav>
 
-    <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>mqueue</a>::<wbr><a class='fn' href=''>mq_remove_nonblock</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>mqueue</a>::<wbr><a class="fn" href=''>mq_remove_nonblock</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/nix/mqueue.rs.html#157-161' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn mq_remove_nonblock(mqd: <a class='type' href='../../nix/mqueue/type.MQd.html' title='nix::mqueue::MQd'>MQd</a>) -&gt; <a class='type' href='../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a class='struct' href='../../nix/mqueue/struct.MqAttr.html' title='nix::mqueue::MqAttr'>MqAttr</a>&gt;</pre><div class='docblock'><p>Convenience function.
-Removes O_NONBLOCK attribute for a given message queue descriptor
+               </span><a class='srclink' href='../../src/nix/mqueue.rs.html#146-153' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn mq_remove_nonblock(mqd: <a class="type" href="../../libc/unix/notbsd/linux/type.mqd_t.html" title="type libc::unix::notbsd::linux::mqd_t">mqd_t</a>) -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="struct" href="../../nix/mqueue/struct.MqAttr.html" title="struct nix::mqueue::MqAttr">MqAttr</a>&gt;</pre><div class='docblock'><p>Convenience function.
+Removes <code>O_NONBLOCK</code> attribute for a given message queue descriptor
 Returns the old attributes</p>
 </div></section>
     <section id='search' class="content hidden"></section>
@@ -108,7 +109,6 @@ Returns the old attributes</p>
         window.rootPath = "../../";
         window.currentCrate = "nix";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>

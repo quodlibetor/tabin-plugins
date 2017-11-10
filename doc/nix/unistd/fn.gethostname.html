@@ -9,6 +9,7 @@
 
     <title>nix::unistd::gethostname - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc fn">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,13 +43,32 @@
         </form>
     </nav>
 
-    <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a>::<wbr><a class='fn' href=''>gethostname</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a>::<wbr><a class="fn" href=''>gethostname</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/nix/unistd.rs.html#239-245' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn gethostname(name: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;mut [</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='type' href='../../nix/type.Result.html' title='nix::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</pre></section>
+               </span><a class='srclink' href='../../src/nix/unistd.rs.html#674-683' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn gethostname&lt;'a&gt;(buffer: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;'a mut [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;&amp;'a <a class="struct" href="https://doc.rust-lang.org/nightly/std/ffi/c_str/struct.CStr.html" title="struct std::ffi::c_str::CStr">CStr</a>&gt;</pre><div class='docblock'><p>Get the host name and store it in the provided buffer, returning a pointer
+the CStr in that buffer on success (see
+<a href="http://man7.org/linux/man-pages/man2/gethostname.2.html">gethostname(2)</a>).</p>
+
+<p>This function call attempts to get the host name for the running system and
+store it in a provided buffer.  The buffer will be populated with bytes up
+to the length of the provided slice including a NUL terminating byte.  If
+the hostname is longer than the length provided, no error will be provided.
+The posix specification does not specify whether implementations will
+null-terminate in this case, but the nix implementation will ensure that the
+buffer is null terminated in this case.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">nix</span>::<span class="ident">unistd</span>;
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0u8</span>; <span class="number">64</span>];
+<span class="kw">let</span> <span class="ident">hostname_cstr</span> <span class="op">=</span> <span class="ident">unistd</span>::<span class="ident">gethostname</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>).<span class="ident">expect</span>(<span class="string">&quot;Failed getting hostname&quot;</span>);
+<span class="kw">let</span> <span class="ident">hostname</span> <span class="op">=</span> <span class="ident">hostname_cstr</span>.<span class="ident">to_str</span>().<span class="ident">expect</span>(<span class="string">&quot;Hostname wasn&#39;t valid UTF-8&quot;</span>);
+<span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Hostname: {}&quot;</span>, <span class="ident">hostname</span>);</pre>
+</div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -105,7 +125,6 @@
         window.rootPath = "../../";
         window.currentCrate = "nix";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>
