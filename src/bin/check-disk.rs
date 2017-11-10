@@ -291,15 +291,19 @@ mod unit {
 
     #[test]
     fn check_maybe_regex() {
-        assert_eq!(
-            maybe_regex(&Some("[hello".to_owned())),
-            Err(ErrorMsg {
-                msg: "Unable to filter disks like \"[hello\": \
-                      Error parsing regex near \'hello\' at character offset 6: \
-                      Character class was not closed before the end of the regex \
-                      (missing a \']\')."
-                    .to_owned(),
-            })
-        )
+        if let Err(emsg) = maybe_regex(&Some("[hello".to_owned())) {
+            assert_eq!(
+                emsg,
+                ErrorMsg {
+                    msg: "Unable to filter disks like \"[hello\": \
+                          Error parsing regex near \'hello\' at character offset 6: \
+                          Character class was not closed before the end of the regex \
+                          (missing a \']\')."
+                        .to_owned(),
+                }
+            )
+        } else {
+            panic!("Should have gotten an error");
+        }
     }
 }

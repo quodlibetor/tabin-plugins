@@ -16,7 +16,7 @@ use std::str::FromStr;
 use std::time::Duration;
 use std::thread::sleep;
 
-use chrono::naive::datetime::NaiveDateTime;
+use chrono::naive::NaiveDateTime;
 use hyper::error::Error as HyperError;
 use itertools::Itertools;
 use rustc_serialize::json::{self, Json};
@@ -635,8 +635,9 @@ fn parse_args() -> Args {
                 .takes_value(true)
                 .possible_values(&allowed_no_data),
         )
-        .after_help(&format!(
-            "About Assertions:
+        .after_help(
+            format!(
+                "About Assertions:
 
     Assertions look like 'critical if any point in any series is > 5'.
 
@@ -664,13 +665,13 @@ fn parse_args() -> Args {
     Here are some example assertions:
 
         - `{}`\n",
-            ASSERTION_EXAMPLES.join("`\n        - `")
-        ))
+                ASSERTION_EXAMPLES.join("`\n        - `")
+            ).as_ref(),
+        )
         .get_matches();
 
     let assertions = args.values_of("ASSERTION")
         .unwrap()
-        .iter()
         .map(|assertion_str| match parse_assertion(assertion_str) {
             Ok(a) => a,
             Err(e) => {
@@ -1045,7 +1046,7 @@ fn main() {
 #[cfg(test)]
 #[allow(non_snake_case)]
 mod test {
-    use chrono::naive::datetime::NaiveDateTime;
+    use chrono::naive::NaiveDateTime;
     use rustc_serialize::json::Json;
 
     use tabin_plugins::Status;

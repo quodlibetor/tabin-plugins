@@ -28,7 +28,6 @@ extern crate regex;
 extern crate rustc_serialize;
 
 use std::process;
-use std::cmp::Ord;
 use std::fmt;
 use std::str::FromStr;
 
