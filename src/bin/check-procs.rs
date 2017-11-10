@@ -39,7 +39,7 @@ Options:
 struct Args {
     arg_pattern: String,
     flag_crit_under: Option<usize>,
-    flag_crit_over: Option<usize>
+    flag_crit_over: Option<usize>,
 }
 
 impl Args {
@@ -61,30 +61,39 @@ fn main() {
     let me = getpid();
     let parent = getppid();
 
-    let matches = procs.0.into_iter()
-        .filter_map(
-            |(pid, process): (i32, Process)|
-            if re.is_match(&process.useful_cmdline()) &&
-                !(pid == me || pid == parent) {
-                    Some((pid, process))
-                } else {
-                    None
-                })
+    let matches = procs
+        .0
+        .into_iter()
+        .filter_map(|(pid, process): (i32, Process)| {
+            if re.is_match(&process.useful_cmdline()) && !(pid == me || pid == parent) {
+                Some((pid, process))
+            } else {
+                None
+            }
+        })
         .collect::<Vec<(i32, Process)>>();
 
     let mut status = Status::Ok;
     if let Some(crit_over) = args.flag_crit_over {
         if matches.len() > crit_over {
             status = Status::Critical;
-            println!("CRITICAL: there are {} process that match {:?} (greater than {})",
-                     matches.len(), args.arg_pattern, crit_over);
+            println!(
+                "CRITICAL: there are {} process that match {:?} (greater than {})",
+                matches.len(),
+                args.arg_pattern,
+                crit_over
+            );
         }
     };
     if let Some(crit_under) = args.flag_crit_under {
         if matches.len() < crit_under {
             status = Status::Critical;
-            println!("CRITICAL: there are {} process that match {:?} (less than {})",
-                     matches.len(), args.arg_pattern, crit_under);
+            println!(
+                "CRITICAL: there are {} process that match {:?} (less than {})",
+                matches.len(),
+                args.arg_pattern,
+                crit_under
+            );
         }
     }
 
@@ -92,13 +101,20 @@ fn main() {
         match (args.flag_crit_over, args.flag_crit_under) {
             (Some(o), Some(u)) => println!(
                 "OKAY: There are {} matching procs (between {} and {})",
-                matches.len(), o, u),
+                matches.len(),
+                o,
+                u
+            ),
             (Some(o), None) => println!(
                 "OKAY: There are {} matching procs (less than {})",
-                matches.len(), o),
+                matches.len(),
+                o
+            ),
             (None, Some(u)) => println!(
                 "OKAY: There are {} matching procs (greater than {})",
-                matches.len(), u),
+                matches.len(),
+                u
+            ),
             (None, None) => unreachable!(),
         }
     }
@@ -123,9 +139,10 @@ mod unit {
     #[test]
     fn validate_docstring() {
         let args: Args = Docopt::new(USAGE)
-            .and_then(|d| d
-                      .argv(vec!["c-p", "some.*proc", "--crit-under=1"].into_iter())
-                      .decode())
+            .and_then(|d| {
+                d.argv(vec!["c-p", "some.*proc", "--crit-under=1"].into_iter())
+                    .decode()
+            })
             .unwrap();
     }
 }

@@ -1,7 +1,7 @@
 //! Check CPU usage of the currently-running container
 
-extern crate rustc_serialize;
 extern crate docopt;
+extern crate rustc_serialize;
 
 extern crate tabin_plugins;
 
@@ -92,7 +92,9 @@ struct Args {
 // These all should be extremely similar to each other, so just taking the
 // middle one should be safe
 fn find_median_jiffies_used(start: &[Calculations], end: &[Calculations]) -> Jiffies {
-    let mut jiffies: Vec<_> = start.iter().zip(end)
+    let mut jiffies: Vec<_> = start
+        .iter()
+        .zip(end)
         .map(|(start, end)| end.total() - start.total())
         .collect();
     jiffies.sort();
@@ -128,8 +130,7 @@ fn main() {
     let median_jiffies = find_median_jiffies_used(&start_cpu, &end_cpu);
 
     let container_usage = end_container.unwrap().total() - start_container.unwrap().total();
-    let percent = container_usage.duration()
-        .ratio(&median_jiffies.duration());
+    let percent = container_usage.duration().ratio(&median_jiffies.duration());
 
     let mut status = Status::Ok;
     let mut cpu_msg = String::new();
@@ -139,30 +140,47 @@ fn main() {
         percent_msg = " of 1"
     }
     if percent > crit as f64 {
-        println!("CRITICAL: Container is using {}%{} CPU (> {}%{})",
-                 percent, percent_msg, args.flag_crit, cpu_msg);
+        println!(
+            "CRITICAL: Container is using {}%{} CPU (> {}%{})",
+            percent,
+            percent_msg,
+            args.flag_crit,
+            cpu_msg
+        );
         status = Status::Critical;
     } else if percent > warn as f64 {
-        println!("WARNING: Container is using {}%{} CPU (> {}%{})",
-                 percent, percent_msg, args.flag_warn, cpu_msg);
+        println!(
+            "WARNING: Container is using {}%{} CPU (> {}%{})",
+            percent,
+            percent_msg,
+            args.flag_warn,
+            cpu_msg
+        );
         status = Status::Warning;
     } else {
-        println!("OK: Container is using {}%{} CPU (< {}%{})",
-                 percent, percent_msg, args.flag_warn, cpu_msg);
+        println!(
+            "OK: Container is using {}%{} CPU (< {}%{})",
+            percent,
+            percent_msg,
+            args.flag_warn,
+            cpu_msg
+        );
     }
     if args.flag_show_hogs > 0 {
         let end_per_proc = RunningProcs::currently_running().unwrap();
         let start_per_proc = start_per_proc.unwrap();
-        let mut per_proc = end_per_proc.percent_cpu_util_since(
-            &start_per_proc,
-            median_jiffies);
-        per_proc.0.sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
+        let mut per_proc = end_per_proc.percent_cpu_util_since(&start_per_proc, median_jiffies);
+        per_proc
+            .0
+            .sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
         println!("INFO [check-container-cpu]: hogs");
         for usage in per_proc.0.iter().take(args.flag_show_hogs) {
-            println!("[{:>5}]{:>5.1}%: {}",
-                     usage.process.stat.pid,
-                     usage.total,
-                     usage.process.useful_cmdline());
+            println!(
+                "[{:>5}]{:>5.1}%: {}",
+                usage.process.stat.pid,
+                usage.total,
+                usage.process.useful_cmdline()
+            );
         }
     }
     status.exit();
@@ -171,22 +189,26 @@ fn main() {
 #[cfg(test)]
 mod unit {
     use docopt::Docopt;
-    use tabin_plugins::procfs::{Calculations}; //, RunningProcs};
+    use tabin_plugins::procfs::Calculations; //, RunningProcs};
     use tabin_plugins::linux::Jiffies;
-    use super::{USAGE, Args, find_median_jiffies_used};
+    use super::{find_median_jiffies_used, Args, USAGE};
 
     #[test]
     fn opts_parse() {
         let args: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "--crit", "480", "--warn", "20"].into_iter())
-                      .decode())
+            .and_then(|d| {
+                d.argv(vec!["arg0", "--crit", "480", "--warn", "20"].into_iter())
+                    .decode()
+            })
             .unwrap();
         assert_eq!(args.flag_crit, 480);
         assert_eq!(args.flag_shares_per_cpu, None);
 
         let args: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "--crit", "480", "--shares-per-cpu", "100"].into_iter())
-                      .decode())
+            .and_then(|d| {
+                d.argv(vec!["arg0", "--crit", "480", "--shares-per-cpu", "100"].into_iter())
+                    .decode()
+            })
             .unwrap();
         assert_eq!(args.flag_crit, 480);
         assert_eq!(args.flag_shares_per_cpu, Some(100));
@@ -209,14 +231,13 @@ mod unit {
 
     #[test]
     fn median_jiffies_works_with_single_cpu() {
-        let start = vec![
-            start(),
-            ];
+        let start = vec![start()];
         let end = vec![
             Calculations {
                 user: Jiffies::new(110),
                 ..start[0]
-            }];
+            },
+        ];
 
         let median = find_median_jiffies_used(&start, &end);
 
@@ -225,12 +246,7 @@ mod unit {
 
     #[test]
     fn median_jiffies_works_with_several_cpus() {
-        let mut start_calcs = vec![
-            start(),
-            start(),
-            start(),
-            start(),
-            ];
+        let mut start_calcs = vec![start(), start(), start(), start()];
         let mut end = vec![
             Calculations {
                 user: Jiffies::new(109),
@@ -248,7 +264,7 @@ mod unit {
                 user: Jiffies::new(109),
                 ..start_calcs[0]
             },
-            ];
+        ];
 
         let median = find_median_jiffies_used(&start_calcs, &end);
 

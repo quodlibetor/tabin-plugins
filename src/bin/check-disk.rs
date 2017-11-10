@@ -91,9 +91,11 @@ fn maybe_regex(pattern: &Option<String>) -> DiskResult<Option<Regex>> {
     if let Some(ref pattern) = *pattern {
         let re = match Regex::new(&pattern) {
             Ok(re) => re,
-            Err(e) => return Err(ErrorMsg {
-                msg: format!("Unable to filter disks like {:?}: {}", pattern, e)
-            })
+            Err(e) => {
+                return Err(ErrorMsg {
+                    msg: format!("Unable to filter disks like {:?}: {}", pattern, e),
+                })
+            }
         };
         Ok(Some(re))
     } else {
@@ -175,53 +177,74 @@ fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
         let pcnt = percent(ms.stat.f_bavail, ms.stat.f_blocks);
         if pcnt > args.flag_crit {
             status = Status::Critical;
-            println!("CRITICAL: {} has {:.1}% of its {}B used (> {:.1}%)",
-                     ms.mount.file,
-                     pcnt,
-                     bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
-                     args.flag_crit)
+            println!(
+                "CRITICAL: {} has {:.1}% of its {}B used (> {:.1}%)",
+                ms.mount.file,
+                pcnt,
+                bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
+                args.flag_crit
+            )
         } else if pcnt > args.flag_warn {
             status = max(status, Status::Warning);
-            println!("WARNING: {} has {:.1}% of its {}B used (> {:.1}%)",
-                     ms.mount.file,
-                     pcnt,
-                     bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
-                     args.flag_warn)
+            println!(
+                "WARNING: {} has {:.1}% of its {}B used (> {:.1}%)",
+                ms.mount.file,
+                pcnt,
+                bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
+                args.flag_warn
+            )
         }
 
         let ipcnt = percent(ms.stat.f_favail, ms.stat.f_files);
         if ipcnt > args.flag_crit_inodes {
             status = Status::Critical;
-            println!("CRITICAL: {} has {:.1}% of its {} inodes used (> {:.1}%)",
-                     ms.mount.file,
-                     ipcnt,
-                     bytes_to_human_size(ms.stat.f_files),
-                     args.flag_crit_inodes);
+            println!(
+                "CRITICAL: {} has {:.1}% of its {} inodes used (> {:.1}%)",
+                ms.mount.file,
+                ipcnt,
+                bytes_to_human_size(ms.stat.f_files),
+                args.flag_crit_inodes
+            );
         } else if ipcnt > args.flag_warn_inodes {
             status = max(status, Status::Warning);
-            println!("WARNING: {} has {:.1}% of its {} inodes used (> {:.1}%)",
-                     ms.mount.file,
-                     ipcnt,
-                     bytes_to_human_size(ms.stat.f_files),
-                     args.flag_warn_inodes);
+            println!(
+                "WARNING: {} has {:.1}% of its {} inodes used (> {:.1}%)",
+                ms.mount.file,
+                ipcnt,
+                bytes_to_human_size(ms.stat.f_files),
+                args.flag_warn_inodes
+            );
         }
     }
     if status == Status::Ok {
-        println!("OKAY: {} filesystems checked, none are above {}% disk or {}% inode usage",
-                 mountstats.len(), args.flag_warn, args.flag_warn_inodes);
+        println!(
+            "OKAY: {} filesystems checked, none are above {}% disk or {}% inode usage",
+            mountstats.len(),
+            args.flag_warn,
+            args.flag_warn_inodes
+        );
     }
 
     if args.flag_info {
-        println!("{:<15} {:>7} {:>5}% {:>7} {:>5}% {:<20}",
-                 "Filesystem", "Size", "Use", "INodes", "IUse", "Mounted on");
+        println!(
+            "{:<15} {:>7} {:>5}% {:>7} {:>5}% {:<20}",
+            "Filesystem",
+            "Size",
+            "Use",
+            "INodes",
+            "IUse",
+            "Mounted on"
+        );
         for ms in mountstats {
-            println!("{:<15} {:>7} {:>5.1}% {:>7} {:>5.1}% {:<20}",
-                     ms.mount.spec,
-                     bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
-                     percent(ms.stat.f_bavail, ms.stat.f_blocks),
-                     bytes_to_human_size(ms.stat.f_files),
-                     percent(ms.stat.f_favail, ms.stat.f_files),
-                     ms.mount.file);
+            println!(
+                "{:<15} {:>7} {:>5.1}% {:>7} {:>5.1}% {:<20}",
+                ms.mount.spec,
+                bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
+                percent(ms.stat.f_bavail, ms.stat.f_blocks),
+                bytes_to_human_size(ms.stat.f_files),
+                percent(ms.stat.f_favail, ms.stat.f_files),
+                ms.mount.file
+            );
         }
     }
 
@@ -248,30 +271,35 @@ fn main() {
 
 #[cfg(test)]
 mod unit {
-    use super::{Args, USAGE, maybe_regex, ErrorMsg};
+    use super::{maybe_regex, Args, ErrorMsg, USAGE};
     use docopt::Docopt;
 
     #[test]
     fn validate_docstring() {
         let args: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "--crit", "5"].into_iter())
-                      .decode())
+            .and_then(|d| d.argv(vec!["arg0", "--crit", "5"].into_iter()).decode())
             .unwrap();
         assert_eq!(args.flag_crit, 5.0);
         let args: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "--pattern", "hello"].into_iter()).decode())
+            .and_then(|d| {
+                d.argv(vec!["arg0", "--pattern", "hello"].into_iter())
+                    .decode()
+            })
             .unwrap();
         assert_eq!(args.flag_pattern.unwrap(), "hello");
     }
 
     #[test]
     fn check_maybe_regex() {
-        assert_eq!(maybe_regex(&Some("[hello".to_owned())),
-                   Err(ErrorMsg {
-                       msg: "Unable to filter disks like \"[hello\": \
-                             Error parsing regex near \'hello\' at character offset 6: \
-                             Character class was not closed before the end of the regex \
-                             (missing a \']\').".to_owned()
-                   }))
+        assert_eq!(
+            maybe_regex(&Some("[hello".to_owned())),
+            Err(ErrorMsg {
+                msg: "Unable to filter disks like \"[hello\": \
+                      Error parsing regex near \'hello\' at character offset 6: \
+                      Character class was not closed before the end of the regex \
+                      (missing a \']\')."
+                    .to_owned(),
+            })
+        )
     }
 }

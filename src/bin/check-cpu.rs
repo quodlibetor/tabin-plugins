@@ -69,10 +69,20 @@ struct Args {
 }
 
 fn print_errors_and_status<T: Display, V: PartialOrd<V> + Display>(
-    flag: T, total: V, critical: V, warning: V, mut exit_status: Status) -> Status {
+    flag: T,
+    total: V,
+    critical: V,
+    warning: V,
+    mut exit_status: Status,
+) -> Status {
     if total > critical {
         exit_status = std::cmp::max(exit_status, Status::Critical);
-        println!("CRITICAL [check-cpu]: {} {:.2} > {}%", flag, total, critical);
+        println!(
+            "CRITICAL [check-cpu]: {} {:.2} > {}%",
+            flag,
+            total,
+            critical,
+        );
     } else if total > warning {
         exit_status = std::cmp::max(exit_status, Status::Warning);
         println!("WARNING [check-cpu]: {} {:.2} > {}%", flag, total, warning);
@@ -87,10 +97,7 @@ fn print_errors_and_status<T: Display, V: PartialOrd<V> + Display>(
 /// The *cstat parameters, if present, mean that in addition to performing the
 /// standard checks we check the currently-running container against the same
 /// thresholds.
-fn do_comparison<'a>(args: &Args,
-                     start: &'a Calculations,
-                     end: &'a Calculations
-) -> Status {
+fn do_comparison<'a>(args: &Args, start: &'a Calculations, end: &'a Calculations) -> Status {
     let mut exit_status = Status::Ok;
 
     for flag in &args.flag_type {
@@ -98,24 +105,40 @@ fn do_comparison<'a>(args: &Args,
         exit_status = std::cmp::max(
             exit_status,
             print_errors_and_status(
-                flag, total, args.flag_crit.into(), args.flag_warn, exit_status));
+                flag,
+                total,
+                args.flag_crit.into(),
+                args.flag_warn,
+                exit_status,
+            ),
+        );
     }
     println!("INFO [check-cpu]: Usage breakdown: {}", end - start);
 
     exit_status
 }
 
-fn determine_status_per_cpu(args: &Args, start: &[Calculations], end: &[Calculations])
--> Vec<Status> {
-    start.iter().enumerate()
-        .map(|(i, val)|
-             do_comparison(&args, &val, &end[i]))
+fn determine_status_per_cpu(
+    args: &Args,
+    start: &[Calculations],
+    end: &[Calculations],
+) -> Vec<Status> {
+    start
+        .iter()
+        .enumerate()
+        .map(|(i, val)| do_comparison(&args, &val, &end[i]))
         .collect::<Vec<_>>()
 }
 
 fn determine_exit(args: &Args, statuses: &[Status]) -> Status {
-    let crit = statuses.iter().filter(|status| **status == Status::Critical).collect::<Vec<_>>();
-    let warn = statuses.iter().filter(|status| **status == Status::Warning).collect::<Vec<_>>();
+    let crit = statuses
+        .iter()
+        .filter(|status| **status == Status::Critical)
+        .collect::<Vec<_>>();
+    let warn = statuses
+        .iter()
+        .filter(|status| **status == Status::Warning)
+        .collect::<Vec<_>>();
     if crit.len() >= args.flag_cpu_count as usize {
         Status::Critical
     } else if warn.len() >= args.flag_cpu_count as usize {
@@ -154,16 +177,19 @@ fn main() {
         let start_per_proc = start_per_proc.unwrap();
         let single_start = &start[0];
         let single_end = &end[0];
-        let mut per_proc = end_per_proc.percent_cpu_util_since(
-            &start_per_proc,
-            single_end.total() - single_start.total());
-        per_proc.0.sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
+        let mut per_proc = end_per_proc
+            .percent_cpu_util_since(&start_per_proc, single_end.total() - single_start.total());
+        per_proc
+            .0
+            .sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
         println!("INFO [check-cpu]: hogs");
         for usage in per_proc.0.iter().take(args.flag_show_hogs) {
-            println!("[{:>5}]{:>5.1}%: {}",
-                     usage.process.stat.pid,
-                     usage.total,
-                     usage.process.useful_cmdline());
+            println!(
+                "[{:>5}]{:>5.1}%: {}",
+                usage.process.stat.pid,
+                usage.total,
+                usage.process.useful_cmdline()
+            );
         }
     }
 
@@ -173,7 +199,7 @@ fn main() {
 #[cfg(test)]
 mod unit {
     use docopt::Docopt;
-    use super::{Args, USAGE, do_comparison, determine_exit, determine_status_per_cpu};
+    use super::{determine_exit, determine_status_per_cpu, do_comparison, Args, USAGE};
 
     use tabin_plugins::Status;
     use tabin_plugins::procfs::{Calculations, WorkSource};
@@ -182,15 +208,24 @@ mod unit {
     #[test]
     fn validate_docstring() {
         let _: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "--per-cpu"].into_iter()).help(true).decode())
+            .and_then(|d| {
+                d.argv(vec!["arg0", "--per-cpu"].into_iter())
+                    .help(true)
+                    .decode()
+            })
             .unwrap();
         let args: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "--per-cpu", "--cpu-count", "2"].into_iter())
-                      .decode())
+            .and_then(|d| {
+                d.argv(vec!["arg0", "--per-cpu", "--cpu-count", "2"].into_iter())
+                    .decode()
+            })
             .unwrap();
         assert_eq!(args.flag_per_cpu, true);
         let args: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "--show-hogs", "5"].into_iter()).decode())
+            .and_then(|d| {
+                d.argv(vec!["arg0", "--show-hogs", "5"].into_iter())
+                    .decode()
+            })
             .unwrap();
         assert_eq!(args.flag_per_cpu, false);
         assert_eq!(args.flag_show_hogs, 5);
@@ -287,7 +322,17 @@ mod unit {
 
     #[test]
     fn does_alert() {
-        let argv = || vec!["check-cpu", "-c", "49", "--type", "active", "--type", "steal"];
+        let argv = || {
+            vec![
+                "check-cpu",
+                "-c",
+                "49",
+                "--type",
+                "active",
+                "--type",
+                "steal",
+            ]
+        };
         let start = start();
         let end = Calculations {
             user: Jiffies::new(110),
@@ -298,20 +343,31 @@ mod unit {
             .and_then(|d| d.argv(argv().into_iter()).decode())
             .unwrap();
 
-        assert_eq!(do_comparison(&args, &start, &end),
-                   Status::Critical);
+        assert_eq!(do_comparison(&args, &start, &end), Status::Critical);
     }
 
     // Exactly the same as does_alert, but also validate the determine* functions
     #[test]
     fn does_alert_per_cpu() {
-        let argv = || vec!["check-cpu", "-c", "49", "--type", "active", "--type", "steal"];
+        let argv = || {
+            vec![
+                "check-cpu",
+                "-c",
+                "49",
+                "--type",
+                "active",
+                "--type",
+                "steal",
+            ]
+        };
         let start = vec![start()];
-        let end = vec![Calculations {
-            user: Jiffies::new(110),
-            idle: Jiffies::new(110),
-            ..start[0]
-        }];
+        let end = vec![
+            Calculations {
+                user: Jiffies::new(110),
+                idle: Jiffies::new(110),
+                ..start[0]
+            },
+        ];
         let args: super::Args = Docopt::new(USAGE)
             .and_then(|d| d.argv(argv().into_iter()).decode())
             .unwrap();
@@ -322,8 +378,18 @@ mod unit {
 
     #[test]
     fn does_alert_per_cpu_with_some_ok() {
-        let argv = || vec!["check-cpu", "-c", "49", "--type", "active",
-                           "--per-cpu", "--cpu-count", "2"];
+        let argv = || {
+            vec![
+                "check-cpu",
+                "-c",
+                "49",
+                "--type",
+                "active",
+                "--per-cpu",
+                "--cpu-count",
+                "2",
+            ]
+        };
         let start = vec![start(), start(), start()];
         let mut end = vec![
             Calculations {
@@ -341,7 +407,7 @@ mod unit {
                 idle: Jiffies::new(110),
                 ..start[0]
             },
-            ];
+        ];
         let args: super::Args = Docopt::new(USAGE)
             .and_then(|d| d.argv(argv().into_iter()).decode())
             .unwrap();
@@ -351,15 +417,18 @@ mod unit {
 
 
         end[1] = Calculations {
-                user: Jiffies::new(110),
-                idle: Jiffies::new(110),
-                ..start[0]
-            };
+            user: Jiffies::new(110),
+            idle: Jiffies::new(110),
+            ..start[0]
+        };
         let args: super::Args = Docopt::new(USAGE)
             .and_then(|d| d.argv(argv().into_iter()).decode())
             .unwrap();
         let statuses = determine_status_per_cpu(&args, &start, &end);
-        assert_eq!(statuses, vec![Status::Critical, Status::Critical, Status::Ok]);
+        assert_eq!(
+            statuses,
+            vec![Status::Critical, Status::Critical, Status::Ok]
+        );
         assert_eq!(determine_exit(&args, &statuses), Status::Critical);
     }
 }

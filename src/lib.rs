@@ -84,13 +84,15 @@ impl FromStr for Status {
 
     /// Primarily useful to construct from argv
     fn from_str(s: &str) -> TurbineResult<Status> {
-        use Status::{Warning, Critical, Unknown};
+        use Status::{Critical, Unknown, Warning};
         match s {
             "ok" => Ok(Status::Ok),
             "warning" => Ok(Warning),
             "critical" => Ok(Critical),
             "unknown" => Ok(Unknown),
-            _ => Err(TurbineError::UnknownValue(format!("Unexpected exit status: {}", s))),
+            _ => Err(TurbineError::UnknownValue(
+                format!("Unexpected exit status: {}", s),
+            )),
         }
     }
 }

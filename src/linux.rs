@@ -41,17 +41,22 @@ pub fn bytes_to_human_size(bytes: u64) -> String {
 
 #[test]
 fn bytes_to_human_size_produces_shortest() {
-    let reprs = [(999, "999.0"),
-                 (9_999, "9.8K"),
-                 (9_999_999, "9.5M"),
-                 (35_999_999, "34.3M"),
-                 (9_999_999_999, "9.3G"),
-                 (9_999_999_999_999, "9.1T"),
-                 (90_999_999_999_999_999, "80.8P")];
+    let reprs = [
+        (999, "999.0"),
+        (9_999, "9.8K"),
+        (9_999_999, "9.5M"),
+        (35_999_999, "34.3M"),
+        (9_999_999_999, "9.3G"),
+        (9_999_999_999_999, "9.1T"),
+        (90_999_999_999_999_999, "80.8P"),
+    ];
 
-    reprs.iter()
-         .map(|&(raw, repr): &(u64, &str)| assert_eq!(bytes_to_human_size(raw), repr))
-         .collect::<Vec<_>>();
+    reprs
+        .iter()
+        .map(|&(raw, repr): &(u64, &str)| {
+            assert_eq!(bytes_to_human_size(raw), repr)
+        })
+        .collect::<Vec<_>>();
 }
 
 /// A value that is in USER_HZ units
