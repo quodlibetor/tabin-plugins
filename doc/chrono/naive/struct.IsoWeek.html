@@ -60,7 +60,7 @@ via the <a href="../trait.Datelike.html#tymethod.iso_week"><code>Datelike::iso_w
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../../chrono/naive/struct.IsoWeek.html" title="struct chrono::naive::IsoWeek">IsoWeek</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chrono/naive/isoweek.rs.html#46-105' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.year' class="method"><span id='year.v' class='invisible'><code>fn <a href='#method.year' class='fnname'>year</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chrono/naive/isoweek.rs.html#68-70' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.year' class="method"><span id='year.v' class='invisible'><code>pub fn <a href='#method.year' class='fnname'>year</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chrono/naive/isoweek.rs.html#68-70' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the year number for this ISO week.</p>
 
 <h1 id='example' class='section-header'><a href='#example'>Example</a></h1>
@@ -76,7 +76,7 @@ Continuing the example...</p>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">d</span>.<span class="ident">year</span>(), <span class="number">2014</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">d</span>, <span class="ident">NaiveDate</span>::<span class="ident">from_ymd</span>(<span class="number">2014</span>, <span class="number">12</span>, <span class="number">29</span>));</pre>
-</div><h4 id='method.week' class="method"><span id='week.v' class='invisible'><code>fn <a href='#method.week' class='fnname'>week</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chrono/naive/isoweek.rs.html#85-87' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.week' class="method"><span id='week.v' class='invisible'><code>pub fn <a href='#method.week' class='fnname'>week</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chrono/naive/isoweek.rs.html#85-87' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the ISO week number starting from 1.</p>
 
 <p>The return value ranges from 1 to 53. (The last week of year differs by years.)</p>
@@ -87,7 +87,7 @@ Continuing the example...</p>
 
 <span class="kw">let</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">NaiveDate</span>::<span class="ident">from_isoywd</span>(<span class="number">2015</span>, <span class="number">15</span>, <span class="ident">Weekday</span>::<span class="ident">Mon</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">d</span>.<span class="ident">iso_week</span>().<span class="ident">week</span>(), <span class="number">15</span>);</pre>
-</div><h4 id='method.week0' class="method"><span id='week0.v' class='invisible'><code>fn <a href='#method.week0' class='fnname'>week0</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chrono/naive/isoweek.rs.html#102-104' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.week0' class="method"><span id='week0.v' class='invisible'><code>pub fn <a href='#method.week0' class='fnname'>week0</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chrono/naive/isoweek.rs.html#102-104' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the ISO week number starting from 0.</p>
 
 <p>The return value ranges from 0 to 52. (The last week of year differs by years.)</p>

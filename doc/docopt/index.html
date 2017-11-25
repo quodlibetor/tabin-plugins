@@ -211,9 +211,9 @@ will not compile with an invalid Docopt usage string.</p>
 
 <p>The example above using type based decoding can be simplified to this:</p>
 
-<pre class="rust rust-example-rendered">
-<span class="attribute">#<span class="op">!</span>[<span class="ident">feature</span>(<span class="ident">plugin</span>)]</span>
-<span class="attribute">#<span class="op">!</span>[<span class="ident">plugin</span>(<span class="ident">docopt_macros</span>)]</span>
+<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<span class="attribute">#![<span class="ident">feature</span>(<span class="ident">plugin</span>)]</span>
+<span class="attribute">#![<span class="ident">plugin</span>(<span class="ident">docopt_macros</span>)]</span>
 
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">rustc_serialize</span>;
 

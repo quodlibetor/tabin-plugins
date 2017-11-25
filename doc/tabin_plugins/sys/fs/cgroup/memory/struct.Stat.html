@@ -59,22 +59,26 @@
 <p>All values are in bytes, contrary to the same file from procfs
 which reports everything in pages</p>
 </div><h2 id='fields' class='fields small-section-header'>
-                       Fields<a href='#fields' class='anchor'></a></h2><span id='structfield.cache' class="structfield">
-                           <span id='cache.v' class='invisible'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id="structfield.cache" class="structfield small-section-header">
+                           <a href="#structfield.cache" class="anchor field"></a>
+                           <span id="cache.v" class='invisible'>
                            <code>cache: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code>
                            </span></span><div class='docblock'><p>Memory used, including the filesystem page cache. This
 number will never decrease unless memory presure gets
 applied from outside the cgroup.</p>
-</div><span id='structfield.rss' class="structfield">
-                           <span id='rss.v' class='invisible'>
+</div><span id="structfield.rss" class="structfield small-section-header">
+                           <a href="#structfield.rss" class="anchor field"></a>
+                           <span id="rss.v" class='invisible'>
                            <code>rss: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code>
                            </span></span><div class='docblock'><p>Actual memory being used by the cgroup</p>
-</div><span id='structfield.rss_huge' class="structfield">
-                           <span id='rss_huge.v' class='invisible'>
+</div><span id="structfield.rss_huge" class="structfield small-section-header">
+                           <a href="#structfield.rss_huge" class="anchor field"></a>
+                           <span id="rss_huge.v" class='invisible'>
                            <code>rss_huge: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code>
                            </span></span><div class='docblock'><p>Only hugetables. This is included in rss</p>
-</div><span id='structfield.swap' class="structfield">
-                           <span id='swap.v' class='invisible'>
+</div><span id="structfield.swap" class="structfield small-section-header">
+                           <a href="#structfield.swap" class="anchor field"></a>
+                           <span id="swap.v" class='invisible'>
                            <code>swap: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code>
                            </span></span><div class='docblock'><p>Number of bytes that have been swapped out to disk</p>
 </div>
@@ -82,7 +86,7 @@ applied from outside the cgroup.</p>
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/memory/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::memory::Stat">Stat</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#112-142' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.load' class="method"><span id='load.v' class='invisible'><code>fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/memory/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::memory::Stat">Stat</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#114-141' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.load' class="method"><span id='load.v' class='invisible'><code>pub fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/memory/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::memory::Stat">Stat</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#114-141' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Read information from the filesystem and create a new <code>Stat</code></p>
 </div></div>
             <h2 id='implementations' class='small-section-header'>

@@ -83,30 +83,30 @@ Usage: ...
                   .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">exit</span>());</pre>
 </div><h2 id='variants' class='variants small-section-header'>
                    Variants<a href='#variants' class='anchor'></a></h2>
-<span id='variant.Usage' class='variant'><span id='Usage.v' class='invisible'><code>Usage(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>Parsing the usage string failed.</p>
+<span id="variant.Usage" class="variant small-section-header"><a href="#variant.Usage" class="anchor field"></a><span id='Usage.v' class='invisible'><code>Usage(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>Parsing the usage string failed.</p>
 
 <p>This error can only be triggered by the programmer, i.e., the writer
 of the Docopt usage string. This error is usually indicative of a bug
 in your program.</p>
-</div><span id='variant.Argv' class='variant'><span id='Argv.v' class='invisible'><code>Argv(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>Parsing the argv specified failed.</p>
+</div><span id="variant.Argv" class="variant small-section-header"><a href="#variant.Argv" class="anchor field"></a><span id='Argv.v' class='invisible'><code>Argv(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>Parsing the argv specified failed.</p>
 
 <p>The payload is a string describing why the arguments provided could not
 be parsed.</p>
 
 <p>This is distinct from <code>NoMatch</code> because it will catch errors like
 using flags that aren&#39;t defined in the usage string.</p>
-</div><span id='variant.NoMatch' class='variant'><span id='NoMatch.v' class='invisible'><code>NoMatch</code></span></span><div class='docblock'><p>The given argv parsed successfully, but it did not match any example
+</div><span id="variant.NoMatch" class="variant small-section-header"><a href="#variant.NoMatch" class="anchor field"></a><span id='NoMatch.v' class='invisible'><code>NoMatch</code></span></span><div class='docblock'><p>The given argv parsed successfully, but it did not match any example
 usage of the program.</p>
 
 <p>Regrettably, there is no descriptive message describing <em>why</em> the
 given argv didn&#39;t match any of the usage strings.</p>
-</div><span id='variant.Decode' class='variant'><span id='Decode.v' class='invisible'><code>Decode(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>This indicates a problem decoding a successful argv match into a
+</div><span id="variant.Decode" class="variant small-section-header"><a href="#variant.Decode" class="anchor field"></a><span id='Decode.v' class='invisible'><code>Decode(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>This indicates a problem decoding a successful argv match into a
 decodable value.</p>
-</div><span id='variant.WithProgramUsage' class='variant'><span id='WithProgramUsage.v' class='invisible'><code>WithProgramUsage(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;<a class="enum" href="../docopt/enum.Error.html" title="enum docopt::Error">Error</a>&gt;,&nbsp;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>Parsing failed, and the program usage should be printed next to the
+</div><span id="variant.WithProgramUsage" class="variant small-section-header"><a href="#variant.WithProgramUsage" class="anchor field"></a><span id='WithProgramUsage.v' class='invisible'><code>WithProgramUsage(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;<a class="enum" href="../docopt/enum.Error.html" title="enum docopt::Error">Error</a>&gt;,&nbsp;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>Parsing failed, and the program usage should be printed next to the
 failure message. Typically this wraps <code>Argv</code> and <code>NoMatch</code> errors.</p>
-</div><span id='variant.Help' class='variant'><span id='Help.v' class='invisible'><code>Help</code></span></span><div class='docblock'><p>Decoding or parsing failed because the command line specified that the
+</div><span id="variant.Help" class="variant small-section-header"><a href="#variant.Help" class="anchor field"></a><span id='Help.v' class='invisible'><code>Help</code></span></span><div class='docblock'><p>Decoding or parsing failed because the command line specified that the
 help message should be printed.</p>
-</div><span id='variant.Version' class='variant'><span id='Version.v' class='invisible'><code>Version(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>Decoding or parsing failed because the command line specified that the
+</div><span id="variant.Version" class="variant small-section-header"><a href="#variant.Version" class="anchor field"></a><span id='Version.v' class='invisible'><code>Version(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>)</code></span></span><div class='docblock'><p>Decoding or parsing failed because the command line specified that the
 version should be printed</p>
 
 <p>The version is included as a payload to this variant.</p>
@@ -115,13 +115,13 @@ version should be printed</p>
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="enum" href="../docopt/enum.Error.html" title="enum docopt::Error">Error</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#86-115' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.fatal' class="method"><span id='fatal.v' class='invisible'><code>fn <a href='#method.fatal' class='fnname'>fatal</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#92-98' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.fatal' class="method"><span id='fatal.v' class='invisible'><code>pub fn <a href='#method.fatal' class='fnname'>fatal</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#92-98' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Return whether this was a fatal error or not.</p>
 
 <p>Non-fatal errors include requests to print the help or version
 information of a program, while fatal errors include those such as
 failing to decode or parse.</p>
-</div><h4 id='method.exit' class="method"><span id='exit.v' class='invisible'><code>fn <a href='#method.exit' class='fnname'>exit</a>(&amp;self) -&gt; !</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#106-114' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.exit' class="method"><span id='exit.v' class='invisible'><code>pub fn <a href='#method.exit' class='fnname'>exit</a>(&amp;self) -&gt; !</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#106-114' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Print this error and immediately exit the program.</p>
 
 <p>If the error is non-fatal (e.g., <code>Help</code> or <code>Version</code>), then the

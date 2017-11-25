@@ -54,20 +54,22 @@
     pub system: <a class="struct" href="../../../../../tabin_plugins/linux/struct.UserHz.html" title="struct tabin_plugins::linux::UserHz">UserHz</a>,
 }</pre><div class='docblock'><p>Similar to /proc/stat, but shows toatal CPU usage by the cgroup</p>
 </div><h2 id='fields' class='fields small-section-header'>
-                       Fields<a href='#fields' class='anchor'></a></h2><span id='structfield.user' class="structfield">
-                           <span id='user.v' class='invisible'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id="structfield.user" class="structfield small-section-header">
+                           <a href="#structfield.user" class="anchor field"></a>
+                           <span id="user.v" class='invisible'>
                            <code>user: <a class="struct" href="../../../../../tabin_plugins/linux/struct.UserHz.html" title="struct tabin_plugins::linux::UserHz">UserHz</a></code>
-                           </span></span><span id='structfield.system' class="structfield">
-                           <span id='system.v' class='invisible'>
+                           </span></span><span id="structfield.system" class="structfield small-section-header">
+                           <a href="#structfield.system" class="anchor field"></a>
+                           <span id="system.v" class='invisible'>
                            <code>system: <a class="struct" href="../../../../../tabin_plugins/linux/struct.UserHz.html" title="struct tabin_plugins::linux::UserHz">UserHz</a></code>
                            </span></span>
                     <h2 id='methods' class='small-section-header'>
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#53-70' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.load' class="method"><span id='load.v' class='invisible'><code>fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#55-65' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.load' class="method"><span id='load.v' class='invisible'><code>pub fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#55-65' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Create a new <code>Stat</code> with values for the cgroup fs</p>
-</div><h4 id='method.total' class="method"><span id='total.v' class='invisible'><code>fn <a href='#method.total' class='fnname'>total</a>(&amp;self) -&gt; <a class="struct" href="../../../../../tabin_plugins/linux/struct.UserHz.html" title="struct tabin_plugins::linux::UserHz">UserHz</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#67-69' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.total' class="method"><span id='total.v' class='invisible'><code>pub fn <a href='#method.total' class='fnname'>total</a>(&amp;self) -&gt; <a class="struct" href="../../../../../tabin_plugins/linux/struct.UserHz.html" title="struct tabin_plugins::linux::UserHz">UserHz</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#67-69' title='goto source code'>[src]</a></span></h4>
 </div>
             <h2 id='implementations' class='small-section-header'>
               Trait Implementations<a href='#implementations' class='anchor'></a>

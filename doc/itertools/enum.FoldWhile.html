@@ -57,16 +57,16 @@
 <p>See <a href="trait.Itertools.html#method.fold_while"><code>.fold_while()</code></a> for more information.</p>
 </div><h2 id='variants' class='variants small-section-header'>
                    Variants<a href='#variants' class='anchor'></a></h2>
-<span id='variant.Continue' class='variant'><span id='Continue.v' class='invisible'><code>Continue(T)</code></span></span><div class='docblock'><p>Continue folding with this value</p>
-</div><span id='variant.Done' class='variant'><span id='Done.v' class='invisible'><code>Done(T)</code></span></span><div class='docblock'><p>Fold is complete and will return this value</p>
+<span id="variant.Continue" class="variant small-section-header"><a href="#variant.Continue" class="anchor field"></a><span id='Continue.v' class='invisible'><code>Continue(T)</code></span></span><div class='docblock'><p>Continue folding with this value</p>
+</div><span id="variant.Done" class="variant small-section-header"><a href="#variant.Done" class="anchor field"></a><span id='Done.v' class='invisible'><code>Done(T)</code></span></span><div class='docblock'><p>Fold is complete and will return this value</p>
 </div>
                     <h2 id='methods' class='small-section-header'>
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl&lt;T&gt; <a class="enum" href="../itertools/enum.FoldWhile.html" title="enum itertools::FoldWhile">FoldWhile</a>&lt;T&gt;</code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/itertools/lib.rs.html#1850-1865' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.into_inner' class="method"><span id='into_inner.v' class='invisible'><code>fn <a href='#method.into_inner' class='fnname'>into_inner</a>(self) -&gt; T</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/itertools/lib.rs.html#1852-1856' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.into_inner' class="method"><span id='into_inner.v' class='invisible'><code>pub fn <a href='#method.into_inner' class='fnname'>into_inner</a>(self) -&gt; T</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/itertools/lib.rs.html#1852-1856' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Return the value in the continue or done.</p>
-</div><h4 id='method.is_done' class="method"><span id='is_done.v' class='invisible'><code>fn <a href='#method.is_done' class='fnname'>is_done</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/itertools/lib.rs.html#1859-1864' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.is_done' class="method"><span id='is_done.v' class='invisible'><code>pub fn <a href='#method.is_done' class='fnname'>is_done</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/itertools/lib.rs.html#1859-1864' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Return true if <code>self</code> is <code>Done</code>, false if it is <code>Continue</code>.</p>
 </div></div>
             <h2 id='implementations' class='small-section-header'>

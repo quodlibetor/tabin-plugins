@@ -63,17 +63,17 @@ of strings.</p>
 to values without destructuring manually.</p>
 </div><h2 id='variants' class='variants small-section-header'>
                    Variants<a href='#variants' class='anchor'></a></h2>
-<span id='variant.Switch' class='variant'><span id='Switch.v' class='invisible'><code>Switch(<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>)</code></span></span><div class='docblock'><p>A boolean value from a flag that has no argument.</p>
+<span id="variant.Switch" class="variant small-section-header"><a href="#variant.Switch" class="anchor field"></a><span id='Switch.v' class='invisible'><code>Switch(<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>)</code></span></span><div class='docblock'><p>A boolean value from a flag that has no argument.</p>
 
 <p>The presence of a flag means <code>true</code> and the absence of a flag
 means <code>false</code>.</p>
-</div><span id='variant.Counted' class='variant'><span id='Counted.v' class='invisible'><code>Counted(<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>)</code></span></span><div class='docblock'><p>The number of occurrences of a repeated flag.</p>
-</div><span id='variant.Plain' class='variant'><span id='Plain.v' class='invisible'><code>Plain(<a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;)</code></span></span><div class='docblock'><p>A positional or flag argument.</p>
+</div><span id="variant.Counted" class="variant small-section-header"><a href="#variant.Counted" class="anchor field"></a><span id='Counted.v' class='invisible'><code>Counted(<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>)</code></span></span><div class='docblock'><p>The number of occurrences of a repeated flag.</p>
+</div><span id="variant.Plain" class="variant small-section-header"><a href="#variant.Plain" class="anchor field"></a><span id='Plain.v' class='invisible'><code>Plain(<a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;)</code></span></span><div class='docblock'><p>A positional or flag argument.</p>
 
 <p>This is <code>None</code> when the positional argument or flag is not present.
 Note that it is possible to have <code>Some(&quot;&quot;)</code> for a present but empty
 argument.</p>
-</div><span id='variant.List' class='variant'><span id='List.v' class='invisible'><code>List(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;)</code></span></span><div class='docblock'><p>A List of positional or flag arguments.</p>
+</div><span id="variant.List" class="variant small-section-header"><a href="#variant.List" class="anchor field"></a><span id='List.v' class='invisible'><code>List(<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;)</code></span></span><div class='docblock'><p>A List of positional or flag arguments.</p>
 
 <p>This list may be empty when no arguments or flags are present.</p>
 </div>
@@ -81,23 +81,23 @@ argument.</p>
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="enum" href="../docopt/enum.Value.html" title="enum docopt::Value">Value</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#558-610' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.as_bool' class="method"><span id='as_bool.v' class='invisible'><code>fn <a href='#method.as_bool' class='fnname'>as_bool</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#564-572' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.as_bool' class="method"><span id='as_bool.v' class='invisible'><code>pub fn <a href='#method.as_bool' class='fnname'>as_bool</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#564-572' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the value as a bool.</p>
 
 <p>Counted repetitions are <code>false</code> if <code>0</code> and <code>true</code> otherwise.
 Plain strings are <code>true</code> if present and <code>false</code> otherwise.
 Lists are <code>true</code> if non-empty and <code>false</code> otherwise.</p>
-</div><h4 id='method.as_count' class="method"><span id='as_count.v' class='invisible'><code>fn <a href='#method.as_count' class='fnname'>as_count</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#579-587' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.as_count' class="method"><span id='as_count.v' class='invisible'><code>pub fn <a href='#method.as_count' class='fnname'>as_count</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#579-587' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the value as a count of the number of times it occurred.</p>
 
 <p>Booleans are <code>1</code> if <code>true</code> and <code>0</code> otherwise.
 Plain strings are <code>1</code> if present and <code>0</code> otherwise.
 Lists correspond to its length.</p>
-</div><h4 id='method.as_str' class="method"><span id='as_str.v' class='invisible'><code>fn <a href='#method.as_str' class='fnname'>as_str</a>(&amp;self) -&gt; &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#592-597' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.as_str' class="method"><span id='as_str.v' class='invisible'><code>pub fn <a href='#method.as_str' class='fnname'>as_str</a>(&amp;self) -&gt; &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#592-597' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the value as a string.</p>
 
 <p>All values return an empty string except for a non-empty plain string.</p>
-</div><h4 id='method.as_vec' class="method"><span id='as_vec.v' class='invisible'><code>fn <a href='#method.as_vec' class='fnname'>as_vec</a>(&amp;self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;&amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#603-609' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.as_vec' class="method"><span id='as_vec.v' class='invisible'><code>pub fn <a href='#method.as_vec' class='fnname'>as_vec</a>(&amp;self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;&amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/docopt/dopt.rs.html#603-609' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the value as a list of strings.</p>
 
 <p>Booleans, repetitions and empty strings correspond to an empty list.
