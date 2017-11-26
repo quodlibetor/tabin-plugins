@@ -1435,4 +1435,45 @@ mod test {
         assert_eq!(assertion.point_assertion, Ratio(0.8));
         assert_eq!(assertion.series_ratio, 0.9_f64);
     }
+
+    fn json_all_points_are_0_and_40p_of_points_are_null() -> &'static str {
+        r#"
+        [
+            {
+                "datapoints": [[0, 20], [0, 30], [0, 40], [null, 50], [null, 60]],
+                "target": "test.path.has-data"
+            }
+        ]
+        "#
+    }
+
+    #[test]
+    fn null_points_count_towards_percent() {
+        let assertion = parse_assertion("critical if at least 61% of points are == 0").unwrap();
+        let graphite_data = deser(json_all_points_are_0_and_40p_of_points_are_null());
+        let result = do_check(
+            &graphite_data,
+            &assertion.operator,
+            assertion.op_is_negated,
+            assertion.threshold,
+            assertion.point_assertion,
+            assertion.failure_status,
+        );
+        assert_eq!(result, Status::Ok);
+    }
+
+    #[test]
+    fn null_points_count_towards_percent_crit() {
+        let assertion = parse_assertion("critical if at least 60% of points are == 0").unwrap();
+        let graphite_data = deser(json_all_points_are_0_and_40p_of_points_are_null());
+        let result = do_check(
+            &graphite_data,
+            &assertion.operator,
+            assertion.op_is_negated,
+            assertion.threshold,
+            assertion.point_assertion,
+            assertion.failure_status,
+        );
+        assert_eq!(result, Status::Critical);
+    }
 }
