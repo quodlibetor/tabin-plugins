@@ -1,8 +1,8 @@
 extern crate chrono;
 #[macro_use]
 extern crate clap;
-extern crate hyper;
 extern crate itertools;
+extern crate reqwest;
 extern crate url;
 
 extern crate serde;
@@ -21,7 +21,7 @@ use std::thread::sleep;
 
 use chrono::naive::NaiveDateTime;
 use chrono::naive::serde::ts_seconds::deserialize as from_ts_seconds;
-use hyper::error::Error as HyperError;
+use reqwest::Error as ReqwestError;
 use itertools::Itertools;
 
 use tabin_plugins::Status;
@@ -59,8 +59,7 @@ impl fmt::Display for DataPoint {
 /// All the data for one fully-resolved target
 #[derive(PartialEq, Debug, Deserialize)]
 struct GraphiteData {
-    #[serde(rename = "datapoints")]
-    points: Vec<DataPoint>,
+    #[serde(rename = "datapoints")] points: Vec<DataPoint>,
     target: String,
 }
 
@@ -152,7 +151,7 @@ impl DoubleEndedIterator for GraphiteIterator {
 }
 
 enum GraphiteError {
-    HttpError(HyperError),
+    HttpError(ReqwestError),
     JsonError(String),
     IoError(String),
 }
@@ -160,15 +159,15 @@ enum GraphiteError {
 impl GraphiteError {
     fn short_display(&self) -> String {
         match *self {
-            GraphiteError::HttpError(ref e) => e.description().to_owned(),
+            GraphiteError::HttpError(ref e) => e.to_string(),
             GraphiteError::JsonError(_) => "Error parsing json".to_owned(),
             GraphiteError::IoError(_) => "Error reading stream from graphite".to_owned(),
         }
     }
 }
 
-impl From<HyperError> for GraphiteError {
-    fn from(e: HyperError) -> Self {
+impl From<ReqwestError> for GraphiteError {
+    fn from(e: ReqwestError) -> Self {
         GraphiteError::HttpError(e)
     }
 }
@@ -208,26 +207,29 @@ fn get_graphite(
         window,
         start_at
     );
-    let c = hyper::Client::new();
+    let c = reqwest::Client::builder()
+        .timeout(Duration::from_secs(10))
+        .build()
+        .unwrap();
     if print_url {
         println!("INFO: querying {}", full_path);
     }
-    let mut result = try!(c.get(&full_path).send());
+    let mut result = c.get(&full_path).send()?;
     let mut s = String::new();
-    try!(result.read_to_string(&mut s));
+    result.read_to_string(&mut s)?;
     match serde_json::from_str(&s) {
         Ok(data) => Ok(GraphiteResponse {
             result: data,
-            url: result.url.clone(),
+            url: result.url().clone(),
         }),
         Err(e) => if e.is_syntax() || e.is_data() {
             Err(GraphiteError::JsonError(format!(
-                "{}: Graphite returned invalid \
-                 json:\n{}\n=========================\nThe \
-                 full url queried was: {}",
+                "{}: Graphite returned invalid json:\n\
+                 {}\n=========================\n\
+                 The full url queried was: {}",
                 graphite_error,
                 s,
-                result.url
+                result.url()
             )))
         } else {
             Err(GraphiteError::JsonError(
@@ -239,7 +241,7 @@ fn get_graphite(
 
 struct GraphiteResponse {
     result: Vec<GraphiteData>,
-    url: hyper::Url,
+    url: reqwest::Url,
 }
 
 /// Load data from graphite
@@ -1004,9 +1006,8 @@ mod test {
 
     use tabin_plugins::Status;
 
-    use super::{do_check, filter_to_with_data, operator_string_to_func,
-                parse_assertion, Assertion, DataPoint, GraphiteData, NegOp, ParseError,
-                ASSERTION_EXAMPLES};
+    use super::{do_check, filter_to_with_data, operator_string_to_func, parse_assertion,
+                Assertion, DataPoint, GraphiteData, NegOp, ParseError, ASSERTION_EXAMPLES};
     use super::PointAssertion::*;
 
     #[test]
