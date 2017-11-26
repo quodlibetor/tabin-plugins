@@ -46,7 +46,7 @@ pub enum TabinError {
 impl fmt::Display for TabinError {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         match self {
-            &TabinError::UnknownValue(ref msg) => write!(f, "Unknown Value: {}", msg)
+            &TabinError::UnknownValue(ref msg) => write!(f, "Unknown Value: {}", msg),
         }
     }
 }
