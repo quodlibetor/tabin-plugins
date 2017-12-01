@@ -1,11 +1,14 @@
 extern crate chrono;
 #[macro_use]
 extern crate clap;
-extern crate hyper;
 extern crate itertools;
-extern crate rustc_serialize;
+extern crate reqwest;
 extern crate url;
 
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 extern crate tabin_plugins;
 
 use std::cmp::max;
@@ -17,48 +20,21 @@ use std::time::Duration;
 use std::thread::sleep;
 
 use chrono::naive::NaiveDateTime;
-use hyper::error::Error as HyperError;
+use chrono::naive::serde::ts_seconds::deserialize as from_ts_seconds;
+use reqwest::Error as ReqwestError;
 use itertools::Itertools;
-use rustc_serialize::json::{self, Json};
 
 use tabin_plugins::Status;
+
 
 /// One of the datapoints that graphite has returned.
 ///
 /// Graphite always returns all values in its time range, even if it hasn't got
 /// any data for them, so the val might not exist.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Deserialize, PartialEq, Clone)]
 struct DataPoint {
     val: Option<f64>,
-    time: NaiveDateTime,
-}
-
-impl<'a> From<&'a Json> for DataPoint {
-    /// Convert a [value, timestamp] json list into a datapoint
-    /// Exits the process with a critical status if data is malformed.
-    fn from(point: &Json) -> DataPoint {
-        DataPoint {
-            val: match point[0] {
-                Json::Null => None,
-                Json::F64(n) => Some(n),
-                Json::U64(n) => Some(n as f64),
-                Json::I64(n) => Some(n as f64),
-                _ => {
-                    println!(
-                        "Unable to convert data value into floating point: {:?}",
-                        point[0]
-                    );
-                    Status::Critical.exit();
-                }
-            },
-            time: if let Json::U64(n) = point[1] {
-                NaiveDateTime::from_timestamp(n as i64, 0)
-            } else {
-                println!("Timestamp does not look like an integer: {:?}", point[1]);
-                Status::Critical.exit();
-            },
-        }
-    }
+    #[serde(deserialize_with = "from_ts_seconds")] time: NaiveDateTime,
 }
 
 impl fmt::Display for DataPoint {
@@ -81,9 +57,9 @@ impl fmt::Display for DataPoint {
 }
 
 /// All the data for one fully-resolved target
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Deserialize)]
 struct GraphiteData {
-    points: Vec<DataPoint>,
+    #[serde(rename = "datapoints")] points: Vec<DataPoint>,
     target: String,
 }
 
@@ -95,24 +71,6 @@ struct FilteredGraphiteData<'a> {
 }
 
 impl GraphiteData {
-    fn from_json_obj(obj: &Json) -> GraphiteData {
-        let dl = obj.find("datapoints")
-            .expect("Could not find datapoints in obj")
-            .as_array()
-            .expect("Graphite did not return an array")
-            .into_iter()
-            .map(DataPoint::from)
-            .collect();
-        GraphiteData {
-            points: dl,
-            target: obj.find("target")
-                .expect("Couldn't find target in graphite data")
-                .as_string()
-                .expect("Couldn't convert target to string")
-                .to_owned(),
-        }
-    }
-
     /// References to the points that exist and do not satisfy the comparator
     // comparator is a box closure, which is not allows in map_or
     fn invalid_points(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
@@ -192,16 +150,8 @@ impl DoubleEndedIterator for GraphiteIterator {
     }
 }
 
-fn graphite_result_to_vec(data: &Json) -> Vec<GraphiteData> {
-    data.as_array()
-        .expect("Graphite should return an array")
-        .iter()
-        .map(GraphiteData::from_json_obj)
-        .collect()
-}
-
 enum GraphiteError {
-    HttpError(HyperError),
+    HttpError(ReqwestError),
     JsonError(String),
     IoError(String),
 }
@@ -209,15 +159,15 @@ enum GraphiteError {
 impl GraphiteError {
     fn short_display(&self) -> String {
         match *self {
-            GraphiteError::HttpError(ref e) => e.description().to_owned(),
+            GraphiteError::HttpError(ref e) => e.to_string(),
             GraphiteError::JsonError(_) => "Error parsing json".to_owned(),
             GraphiteError::IoError(_) => "Error reading stream from graphite".to_owned(),
         }
     }
 }
 
-impl From<HyperError> for GraphiteError {
-    fn from(e: HyperError) -> Self {
+impl From<ReqwestError> for GraphiteError {
+    fn from(e: ReqwestError) -> Self {
         GraphiteError::HttpError(e)
     }
 }
@@ -257,37 +207,41 @@ fn get_graphite(
         window,
         start_at
     );
-    let c = hyper::Client::new();
+    let c = reqwest::Client::builder()
+        .timeout(Duration::from_secs(10))
+        .build()
+        .unwrap();
     if print_url {
         println!("INFO: querying {}", full_path);
     }
-    let mut result = try!(c.get(&full_path).send());
+    let mut result = c.get(&full_path).send()?;
     let mut s = String::new();
-    try!(result.read_to_string(&mut s));
-    match json::Json::from_str(&s) {
+    result.read_to_string(&mut s)?;
+    match serde_json::from_str(&s) {
         Ok(data) => Ok(GraphiteResponse {
             result: data,
-            url: result.url.clone(),
+            url: result.url().clone(),
         }),
-        Err(e) => match e {
-            json::ParserError::SyntaxError(..) => Err(GraphiteError::JsonError(format!(
-                "{}: Graphite returned invalid \
-                 json:\n{}\n=========================\nThe \
-                 full url queried was: {}",
+        Err(e) => if e.is_syntax() || e.is_data() {
+            Err(GraphiteError::JsonError(format!(
+                "{}: Graphite returned invalid json:\n\
+                 {}\n=========================\n\
+                 The full url queried was: {}",
                 graphite_error,
                 s,
-                result.url
-            ))),
-            _ => Err(GraphiteError::JsonError(
+                result.url()
+            )))
+        } else {
+            Err(GraphiteError::JsonError(
                 format!("{}: {}", graphite_error, e),
-            )),
+            ))
         },
     }
 }
 
 struct GraphiteResponse {
-    result: Json,
-    url: hyper::Url,
+    result: Vec<GraphiteData>,
+    url: reqwest::Url,
 }
 
 /// Load data from graphite
@@ -357,13 +311,16 @@ fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f
     }
 }
 
-/// Take a `Json` value and make sure that at least one series has real data
+/// Make sure that at least one series has real data
+///
+/// This returns all points in the series that have any data -- it does not
+/// filter out null points, it only filters out series that contain *only* null
+/// points.
 fn filter_to_with_data(
     path: &str,
-    data: Json,
+    data: Vec<GraphiteData>,
     no_data_status: Status,
 ) -> Result<Vec<GraphiteData>, Status> {
-    let data = graphite_result_to_vec(&data);
     let matched_len = data.len();
     if data.is_empty() {
         println!(
@@ -742,13 +699,13 @@ impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use ParseError::*;
         let msg = match *self {
-            NoPointSpecifier(ref msg) |
-            NoSeriesSpecifier(ref msg) |
-            InvalidOperator(ref msg) |
-            InvalidThreshold(ref msg) |
-            NoRatioSpecifier(ref msg) |
-            NoStatusSpecifier(ref msg) |
-            SyntaxError(ref msg) => msg,
+            NoPointSpecifier(ref msg)
+            | NoSeriesSpecifier(ref msg)
+            | InvalidOperator(ref msg)
+            | InvalidThreshold(ref msg)
+            | NoRatioSpecifier(ref msg)
+            | NoStatusSpecifier(ref msg)
+            | SyntaxError(ref msg) => msg,
         };
         write!(f, "{}", msg)
     }
@@ -1045,13 +1002,12 @@ fn main() {
 #[allow(non_snake_case)]
 mod test {
     use chrono::naive::NaiveDateTime;
-    use rustc_serialize::json::Json;
+    use serde_json;
 
     use tabin_plugins::Status;
 
-    use super::{do_check, filter_to_with_data, graphite_result_to_vec, operator_string_to_func,
-                parse_assertion, Assertion, DataPoint, GraphiteData, NegOp, ParseError,
-                ASSERTION_EXAMPLES};
+    use super::{do_check, filter_to_with_data, operator_string_to_func, parse_assertion,
+                Assertion, DataPoint, GraphiteData, NegOp, ParseError, ASSERTION_EXAMPLES};
     use super::PointAssertion::*;
 
     #[test]
@@ -1062,9 +1018,8 @@ mod test {
         }
     }
 
-    fn json_two_sets_of_graphite_data() -> Json {
-        Json::from_str(
-            r#"
+    fn json_two_sets_of_graphite_data() -> &'static str {
+        r#"
         [
             {
                 "datapoints": [[null, 11110], [null, 11130]],
@@ -1075,8 +1030,7 @@ mod test {
                 "target": "test.path.some-data"
             }
         ]
-        "#,
-        ).unwrap()
+        "#
     }
 
     fn valid_data_from_json_two_sets() -> Vec<GraphiteData> {
@@ -1103,7 +1057,7 @@ mod test {
 
     #[test]
     fn graphite_result_to_vec_creates_a_vec_of_GraphiteData() {
-        let vec = graphite_result_to_vec(&json_two_sets_of_graphite_data());
+        let vec: Vec<GraphiteData> = deser(json_two_sets_of_graphite_data());
         assert_eq!(vec.len(), 2)
     }
 
@@ -1121,7 +1075,7 @@ mod test {
     fn filtered_to_with_data_returns_valid_data() {
         let result = filter_to_with_data(
             "test.path",
-            json_two_sets_of_graphite_data(),
+            deser(json_two_sets_of_graphite_data()),
             Status::Unknown,
         );
         let expected = valid_data_from_json_two_sets();
@@ -1197,9 +1151,8 @@ mod test {
         assert_eq!(predicates.point_assertion, Ratio(0.));
     }
 
-    fn json_one_point_is_below_5_5() -> Json {
-        Json::from_str(
-            r#"
+    fn json_one_point_is_below_5_5() -> &'static str {
+        r#"
             [
                 {
                     "datapoints": [[6, 60], [7, 70], [8, 80]],
@@ -1210,14 +1163,18 @@ mod test {
                     "target": "test.path.has-data"
                 }
             ]
-        "#,
-        ).unwrap()
+        "#
+    }
+
+    fn deser(s: &str) -> Vec<GraphiteData> {
+        let result = serde_json::from_str(s);
+        result.unwrap()
     }
 
     #[test]
     fn parse_assertion_finds_per_point_description2_and_correctly_alerts() {
         let assertion = parse_assertion("critical if any point is not >= 5.5").unwrap();
-        let graphite_data = graphite_result_to_vec(&json_one_point_is_below_5_5());
+        let graphite_data = deser(json_one_point_is_below_5_5());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1251,17 +1208,15 @@ mod test {
         assert_eq!(assertion.series_ratio, 0.2_f64);
     }
 
-    fn json_all_points_above_5() -> Json {
-        Json::from_str(
-            r#"
+    fn json_all_points_above_5() -> &'static str {
+        r#"
             [
                 {
                     "datapoints": [[6, 60], [7, 70], [8, 80], [9, 90]],
                     "target": "test.path.has-data"
                 }
             ]
-        "#,
-        ).unwrap()
+        "#
     }
 
     #[test]
@@ -1269,7 +1224,7 @@ mod test {
         let assertion = parse_assertion("critical if all points are > 5").unwrap();
         assert_eq!(assertion.point_assertion, Ratio(1.0));
 
-        let graphite_data = graphite_result_to_vec(&json_all_points_above_5());
+        let graphite_data = deser(json_all_points_above_5());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1286,7 +1241,7 @@ mod test {
         let assertion = parse_assertion("critical if all points are > 5").unwrap();
         assert_eq!(assertion.point_assertion, Ratio(1.0));
 
-        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
+        let graphite_data = deser(json_80p_of_points_are_below_6());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1314,36 +1269,32 @@ mod test {
         )
     }
 
-    fn json_last_point_is_5() -> Json {
-        Json::from_str(
-            r#"
+    fn json_last_point_is_5() -> &'static str {
+        r#"
             [
                 {
                     "datapoints": [[2, 20], [3, 30], [4, 40], [5, 50]],
                     "target": "test.path.has-data"
                 }
             ]
-        "#,
-        ).unwrap()
+        "#
     }
 
-    fn json_last_existing_point_is_5() -> Json {
-        Json::from_str(
-            r#"
+    fn json_last_existing_point_is_5() -> &'static str {
+        r#"
             [
                 {
                     "datapoints": [[4, 40], [5, 50], [null, 60], [null, 70]],
                     "target": "test.path.has-data"
                 }
             ]
-        "#,
-        ).unwrap()
+        "#
     }
 
     #[test]
     fn most_recent_is_non_empty_works() {
         let assertion = parse_assertion("critical if most recent point is > 5").unwrap();
-        let graphite_data = graphite_result_to_vec(&json_last_point_is_5());
+        let graphite_data = deser(&json_last_point_is_5());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1355,7 +1306,7 @@ mod test {
         assert_eq!(result, Status::Ok);
 
         let assertion = parse_assertion("critical if most recent point is > 4").unwrap();
-        let graphite_data = graphite_result_to_vec(&json_last_point_is_5());
+        let graphite_data = deser(json_last_point_is_5());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1370,7 +1321,7 @@ mod test {
     #[test]
     fn most_recent_is_empty_works() {
         let assertion = parse_assertion("critical if most recent point is > 5").unwrap();
-        let graphite_data = graphite_result_to_vec(&json_last_existing_point_is_5());
+        let graphite_data = deser(json_last_existing_point_is_5());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1382,7 +1333,7 @@ mod test {
         assert_eq!(result, Status::Ok);
 
         let assertion = parse_assertion("critical if most recent point is > 4").unwrap();
-        let graphite_data = graphite_result_to_vec(&json_last_existing_point_is_5());
+        let graphite_data = deser(json_last_existing_point_is_5());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1397,7 +1348,7 @@ mod test {
     #[test]
     fn most_recent_finds_okay_values_after_invalid() {
         let assertion = parse_assertion("critical if most recent point is == 4").unwrap();
-        let graphite_data = graphite_result_to_vec(&json_last_point_is_5());
+        let graphite_data = deser(json_last_point_is_5());
 
         let result = do_check(
             &graphite_data,
@@ -1410,24 +1361,22 @@ mod test {
         assert_eq!(result, Status::Ok);
     }
 
-    fn json_80p_of_points_are_below_6() -> Json {
-        Json::from_str(
-            r#"
+    fn json_80p_of_points_are_below_6() -> &'static str {
+        r#"
             [
                 {
                     "datapoints": [[2, 20], [3, 30], [4, 40], [5, 50], [6, 60]],
                     "target": "test.path.has-data"
                 }
             ]
-        "#,
-        ).unwrap()
+        "#
     }
 
     #[test]
     fn parse_some_series_and_correctly_alerts() {
         let assertion =
             parse_assertion("critical if at least 80% of of points are not >= 5.5").unwrap();
-        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
+        let graphite_data = deser(json_80p_of_points_are_below_6());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1442,7 +1391,7 @@ mod test {
     #[test]
     fn parse_some_series_positive_assertion_and_correctly_allows() {
         let assertion = parse_assertion("critical if at least 79% of of points are < 6").unwrap();
-        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
+        let graphite_data = deser(json_80p_of_points_are_below_6());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1457,7 +1406,7 @@ mod test {
     #[test]
     fn parse_some_series_positive_assertion__and_correctly_allows_all_points() {
         let assertion = parse_assertion("critical if at least 79% of of points are < 6").unwrap();
-        let graphite_data = graphite_result_to_vec(&json_80p_of_points_are_below_6());
+        let graphite_data = deser(json_80p_of_points_are_below_6());
         let result = do_check(
             &graphite_data,
             &assertion.operator,
@@ -1485,5 +1434,46 @@ mod test {
         ).unwrap();
         assert_eq!(assertion.point_assertion, Ratio(0.8));
         assert_eq!(assertion.series_ratio, 0.9_f64);
+    }
+
+    fn json_all_points_are_0_and_40p_of_points_are_null() -> &'static str {
+        r#"
+        [
+            {
+                "datapoints": [[0, 20], [0, 30], [0, 40], [null, 50], [null, 60]],
+                "target": "test.path.has-data"
+            }
+        ]
+        "#
+    }
+
+    #[test]
+    fn null_points_count_towards_percent() {
+        let assertion = parse_assertion("critical if at least 61% of points are == 0").unwrap();
+        let graphite_data = deser(json_all_points_are_0_and_40p_of_points_are_null());
+        let result = do_check(
+            &graphite_data,
+            &assertion.operator,
+            assertion.op_is_negated,
+            assertion.threshold,
+            assertion.point_assertion,
+            assertion.failure_status,
+        );
+        assert_eq!(result, Status::Ok);
+    }
+
+    #[test]
+    fn null_points_count_towards_percent_crit() {
+        let assertion = parse_assertion("critical if at least 60% of points are == 0").unwrap();
+        let graphite_data = deser(json_all_points_are_0_and_40p_of_points_are_null());
+        let result = do_check(
+            &graphite_data,
+            &assertion.operator,
+            assertion.op_is_negated,
+            assertion.threshold,
+            assertion.point_assertion,
+            assertion.failure_status,
+        );
+        assert_eq!(result, Status::Critical);
     }
 }

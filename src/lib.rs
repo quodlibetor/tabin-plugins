@@ -36,15 +36,23 @@ pub mod procfs;
 pub mod sys;
 pub mod scripts;
 
-/// All errors are TurbineErrors
+/// All errors are TabinErrors
 #[derive(Debug)]
-pub enum TurbineError {
+pub enum TabinError {
     /// Represents an incorrect value passed in to a function
     UnknownValue(String),
 }
 
-/// All results are TurbineResults
-pub type TurbineResult<T> = Result<T, TurbineError>;
+impl fmt::Display for TabinError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        match self {
+            &TabinError::UnknownValue(ref msg) => write!(f, "Unknown Value: {}", msg),
+        }
+    }
+}
+
+/// All results are TabinResults
+pub type TabinResult<T> = Result<T, TabinError>;
 
 /// Represent the nagios-ish error status of a script.
 #[must_use]
@@ -79,17 +87,17 @@ impl Status {
 }
 
 impl FromStr for Status {
-    type Err = TurbineError;
+    type Err = TabinError;
 
     /// Primarily useful to construct from argv
-    fn from_str(s: &str) -> TurbineResult<Status> {
+    fn from_str(s: &str) -> TabinResult<Status> {
         use Status::{Critical, Unknown, Warning};
         match s {
             "ok" => Ok(Status::Ok),
             "warning" => Ok(Warning),
             "critical" => Ok(Critical),
             "unknown" => Ok(Unknown),
-            _ => Err(TurbineError::UnknownValue(
+            _ => Err(TabinError::UnknownValue(
                 format!("Unexpected exit status: {}", s),
             )),
         }
