@@ -49,7 +49,12 @@
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span></span></h1>
-<pre class='rust const'>pub const SSL_MODE_ENABLE_PARTIAL_WRITE: <a class="struct" href="../../openssl/ssl/struct.SslMode.html" title="struct openssl::ssl::SslMode">SslMode</a><code> = </code><code>SslMode{bits: ffi::SSL_MODE_ENABLE_PARTIAL_WRITE,}</code></pre></section>
+<pre class='rust const'>pub const SSL_MODE_ENABLE_PARTIAL_WRITE: <a class="struct" href="../../openssl/ssl/struct.SslMode.html" title="struct openssl::ssl::SslMode">SslMode</a><code> = </code><code>SslMode{bits: ffi::SSL_MODE_ENABLE_PARTIAL_WRITE,}</code></pre><div class='docblock'><p>Enables &quot;short writes&quot;.</p>
+
+<p>Normally, a write in OpenSSL will always write out all of the requested data, even if it
+requires more than one TLS record or write to the underlying stream. This option will
+cause a write to return after writing a single TLS record instead.</p>
+</div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

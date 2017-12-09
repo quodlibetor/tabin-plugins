@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `URL_SAFE_NO_PAD` static in crate `base64`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, URL_SAFE_NO_PAD">
+    <meta name="description" content="API documentation for the Rust `MIME` constant in crate `base64`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, MIME">
 
-    <title>base64::URL_SAFE_NO_PAD - Rust</title>
+    <title>base64::MIME - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc static">
+<body class="rustdoc constant">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='index.html'>base64</a></p><script>window.sidebarCurrent = {name: 'URL_SAFE_NO_PAD', ty: 'static', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='index.html'>base64</a></p><script>window.sidebarCurrent = {name: 'MIME', ty: 'constant', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -44,15 +44,16 @@
     </nav>
 
     <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Static <a href='index.html'>base64</a>::<wbr><a class="static" href=''>URL_SAFE_NO_PAD</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Constant <a href='index.html'>base64</a>::<wbr><a class="constant" href=''>MIME</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/base64/lib.rs.html#112-117' title='goto source code'>[src]</a></span></h1>
-<pre class='rust static'>pub static URL_SAFE_NO_PAD: <a class="struct" href="../base64/struct.Config.html" title="struct base64::Config">Config</a><code> = </code><code>Config{char_set: CharacterSet::UrlSafe,
-       pad: false,
-       strip_whitespace: false,
-       line_wrap: LineWrap::NoWrap,}</code></pre></section>
+               </span><a class='srclink' href='../src/base64/lib.rs.html#168-173' title='goto source code'>[src]</a></span></h1>
+<pre class='rust const'>pub const MIME: <a class="struct" href="../base64/struct.Config.html" title="struct base64::Config">Config</a><code> = </code><code>Config{char_set: CharacterSet::Standard,
+       pad: true,
+       strip_whitespace: true,
+       line_wrap: LineWrap::Wrap(76, LineEnding::CRLF),}</code></pre><div class='docblock'><p>As per standards for MIME encoded messages</p>
+</div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
