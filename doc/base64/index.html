@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/base64/lib.rs.html#1-927' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/base64/lib.rs.html#1-206' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'>
 <h1 id='configs' class='section-header'><a href='#configs'>Configs</a></h1>
 <p>There isn&#39;t just one type of Base64; that would be too simple. You need to choose a character
@@ -58,6 +58,11 @@ The <code>Config</code> struct encapsulates this info. There are some common con
 
 <p>The functions that don&#39;t have <code>config</code> in the name (e.g. <code>encode()</code> and <code>decode()</code>) use the
 <code>STANDARD</code> config .</p>
+
+<p>The functions that write to a slice (the ones that end in <code>_slice</code>) are generally the fastest
+because they don&#39;t need to resize anything. If it fits in your workflow and you care about
+performance, keep using the same buffer (growing as need be) and use the <code>_slice</code> methods for
+the best performance.</p>
 
 <h1 id='encoding' class='section-header'><a href='#encoding'>Encoding</a></h1>
 <p>Several different encoding functions are available to you depending on your desire for
@@ -101,6 +106,10 @@ convenience vs performance.</p>
 <h1 id='decoding' class='section-header'><a href='#decoding'>Decoding</a></h1>
 <p>Just as for encoding, there are different decoding functions available.</p>
 
+<p>Note that all decode functions that take a config will allocate a copy of the input if you
+specify a config that requires whitespace to be stripped. If you care about speed, don&#39;t use
+formats that line wrap and then require whitespace stripping.</p>
+
 <table>
 <thead>
 <tr>
@@ -126,18 +135,25 @@ convenience vs performance.</p>
 <td>Appends to provided <code>Vec&lt;u8&gt;</code></td>
 <td>Only if <code>Vec</code> needs to grow</td>
 </tr>
+<tr>
+<td><code>decode_config_slice</code></td>
+<td>Writes to provided <code>&amp;[u8]</code></td>
+<td>Never</td>
+</tr>
 </tbody>
 </table>
 
 <p>Unlike encoding, where all possible input is valid, decoding can fail (see <code>DecodeError</code>).</p>
 
 <p>Input can be invalid because it has invalid characters or invalid padding. (No padding at all is
-valid, but incorrect padding is not.)</p>
+valid, but excess padding is not.)</p>
 
 <p>Whitespace in the input is invalid unless <code>strip_whitespace</code> is enabled in the <code>Config</code> used.</p>
 
 <h1 id='panics' class='section-header'><a href='#panics'>Panics</a></h1>
 <p>If length calculations result in overflowing <code>usize</code>, a panic will result.</p>
+
+<p>The <code>_slice</code> flavors of encode or decode will panic if the provided output slice is too small,</p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
@@ -245,6 +261,13 @@ Returns a Result containing a Vec<u8>.</p>
                                 <p>Decode from string reference as octets.
 Writes into the supplied buffer to avoid allocation.
 Returns a Result containing an empty tuple, aka ().</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.decode_config_slice.html"
+                                  title='fn base64::decode_config_slice'>decode_config_slice</a></td>
+                           <td class='docblock-short'>
+                                <p>Decode the input into the provided output slice.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
