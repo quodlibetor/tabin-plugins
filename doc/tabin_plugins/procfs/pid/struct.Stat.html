@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct Stat</p><div class="block items"><ul><li><a href="#fields">Fields</a></li><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../../index.html'>tabin_plugins</a>::<wbr><a href='../index.html'>procfs</a>::<wbr><a href='index.html'>pid</a></p><script>window.sidebarCurrent = {name: 'Stat', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Stat</p><div class="block items"><a class="sidebar-title" href="#fields">Fields</a><div class="sidebar-links"><a href="#structfield.pid">pid</a><a href="#structfield.comm">comm</a><a href="#structfield.state">state</a><a href="#structfield.ppid">ppid</a><a href="#structfield.pgrp">pgrp</a><a href="#structfield.session">session</a><a href="#structfield.tty_nr">tty_nr</a><a href="#structfield.tpgid">tpgid</a><a href="#structfield.flags">flags</a><a href="#structfield.minflt">minflt</a><a href="#structfield.cminflt">cminflt</a><a href="#structfield.majflt">majflt</a><a href="#structfield.cmajflt">cmajflt</a><a href="#structfield.utime">utime</a><a href="#structfield.stime">stime</a><a href="#structfield.cutime">cutime</a><a href="#structfield.cstime">cstime</a><a href="#structfield.priority">priority</a><a href="#structfield.nice">nice</a><a href="#structfield.num_threads">num_threads</a><a href="#structfield.starttime">starttime</a><a href="#structfield.vsize">vsize</a><a href="#structfield.rss">rss</a></div><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.from_pid">from_pid</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Default">Default</a><a href="#impl-FromStr">FromStr</a></div></div><p class='location'><a href='../../index.html'>tabin_plugins</a>::<wbr><a href='../index.html'>procfs</a>::<wbr><a href='index.html'>pid</a></p><script>window.sidebarCurrent = {name: 'Stat', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -181,7 +181,7 @@
             </h2>
         <h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../../tabin_plugins/procfs/pid/struct.Stat.html" title="struct tabin_plugins::procfs::pid::Stat">Stat</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/tabin_plugins/procfs/pid.rs.html#49' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/tabin_plugins/procfs/pid.rs.html#49' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Formats the value using the given formatter.</p>
+<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
 </div></div><h3 id='impl-Default' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../../../tabin_plugins/procfs/pid/struct.Stat.html" title="struct tabin_plugins::procfs::pid::Stat">Stat</a></code><a href='#impl-Default' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/tabin_plugins/procfs/pid.rs.html#86-114' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.default' class="method"><span id='default.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default' class='fnname'>default</a>() -&gt; <a class="struct" href="../../../tabin_plugins/procfs/pid/struct.Stat.html" title="struct tabin_plugins::procfs::pid::Stat">Stat</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/tabin_plugins/procfs/pid.rs.html#87-113' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the &quot;default value&quot; for a type. <a href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default">Read more</a></p>
@@ -207,13 +207,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

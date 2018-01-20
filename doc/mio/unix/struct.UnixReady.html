@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct UnixReady</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#deref-methods">Methods from Deref&lt;Target=Ready&gt;</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>mio</a>::<wbr><a href='index.html'>unix</a></p><script>window.sidebarCurrent = {name: 'UnixReady', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct UnixReady</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.error">error</a><a href="#method.hup">hup</a><a href="#method.is_error">is_error</a><a href="#method.is_hup">is_hup</a></div><a class="sidebar-title" href="#deref-methods">Methods from Deref&lt;Target=Ready&gt;</a><div class="sidebar-links"><a href="#method.is_empty">is_empty</a><a href="#method.is_readable">is_readable</a><a href="#method.is_writable">is_writable</a><a href="#method.contains">contains</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Copy">Copy</a><a href="#impl-PartialEq">PartialEq</a><a href="#impl-Eq">Eq</a><a href="#impl-Clone">Clone</a><a href="#impl-PartialOrd">PartialOrd</a><a href="#impl-Ord">Ord</a><a href="#impl-From%3CReady%3E">From&lt;Ready&gt;</a><a href="#impl-From%3CUnixReady%3E">From&lt;UnixReady&gt;</a><a href="#impl-Deref">Deref</a><a href="#impl-DerefMut">DerefMut</a><a href="#impl-BitOr">BitOr</a><a href="#impl-BitXor">BitXor</a><a href="#impl-BitAnd">BitAnd</a><a href="#impl-Sub">Sub</a><a href="#impl-Debug">Debug</a></div></div><p class='location'><a href='../index.html'>mio</a>::<wbr><a href='index.html'>unix</a></p><script>window.sidebarCurrent = {name: 'UnixReady', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -124,20 +124,8 @@ examples.</p>
                     <h2 id='methods' class='small-section-header'>
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
-                <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#99-249' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.aio' class="method"><span id='aio.v' class='invisible'><code>pub fn <a href='#method.aio' class='fnname'>aio</a>() -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#116-118' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Returns a <code>Ready</code> representing AIO completion readiness</p>
-
-<p>See <a href="../struct.Poll.html"><code>Poll</code></a> for more documentation on polling.</p>
-
-<h1 id='examples-1' class='section-header'><a href='#examples-1'>Examples</a></h1>
-<pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">unix</span>::<span class="ident">UnixReady</span>;
-
-<span class="kw">let</span> <span class="ident">ready</span> <span class="op">=</span> <span class="ident">UnixReady</span>::<span class="ident">aio</span>();
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">ready</span>.<span class="ident">is_aio</span>());</pre>
-</div><h4 id='method.error' class="method"><span id='error.v' class='invisible'><code>pub fn <a href='#method.error' class='fnname'>error</a>() -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#142-144' title='goto source code'>[src]</a></span></h4>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#103-314' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.error' class="method"><span id='error.v' class='invisible'><code>pub fn <a href='#method.error' class='fnname'>error</a>() -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#156-158' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns a <code>Ready</code> representing error readiness.</p>
 
 <p><strong>Note that only readable and writable readiness is guaranteed to be
@@ -147,14 +135,14 @@ poll documentation.</p>
 
 <p>See <a href="../struct.Poll.html"><code>Poll</code></a> for more documentation on polling.</p>
 
-<h1 id='examples-2' class='section-header'><a href='#examples-2'>Examples</a></h1>
+<h1 id='examples-1' class='section-header'><a href='#examples-1'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">unix</span>::<span class="ident">UnixReady</span>;
 
 <span class="kw">let</span> <span class="ident">ready</span> <span class="op">=</span> <span class="ident">UnixReady</span>::<span class="ident">error</span>();
 
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">ready</span>.<span class="ident">is_error</span>());</pre>
-</div><h4 id='method.hup' class="method"><span id='hup.v' class='invisible'><code>pub fn <a href='#method.hup' class='fnname'>hup</a>() -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#171-173' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.hup' class="method"><span id='hup.v' class='invisible'><code>pub fn <a href='#method.hup' class='fnname'>hup</a>() -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#185-187' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns a <code>Ready</code> representing HUP readiness.</p>
 
 <p>A HUP (or hang-up) signifies that a stream socket <strong>peer</strong> closed the
@@ -167,26 +155,14 @@ poll documentation.</p>
 
 <p>See <a href="../struct.Poll.html"><code>Poll</code></a> for more documentation on polling.</p>
 
-<h1 id='examples-3' class='section-header'><a href='#examples-3'>Examples</a></h1>
+<h1 id='examples-2' class='section-header'><a href='#examples-2'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">unix</span>::<span class="ident">UnixReady</span>;
 
 <span class="kw">let</span> <span class="ident">ready</span> <span class="op">=</span> <span class="ident">UnixReady</span>::<span class="ident">hup</span>();
 
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">ready</span>.<span class="ident">is_hup</span>());</pre>
-</div><h4 id='method.is_aio' class="method"><span id='is_aio.v' class='invisible'><code>pub fn <a href='#method.is_aio' class='fnname'>is_aio</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#191-193' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Returns true if <code>Ready</code> contains AIO readiness</p>
-
-<p>See <a href="../struct.Poll.html"><code>Poll</code></a> for more documentation on polling.</p>
-
-<h1 id='examples-4' class='section-header'><a href='#examples-4'>Examples</a></h1>
-<pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">unix</span>::<span class="ident">UnixReady</span>;
-
-<span class="kw">let</span> <span class="ident">ready</span> <span class="op">=</span> <span class="ident">UnixReady</span>::<span class="ident">aio</span>();
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">ready</span>.<span class="ident">is_aio</span>());</pre>
-</div><h4 id='method.is_error' class="method"><span id='is_error.v' class='invisible'><code>pub fn <a href='#method.is_error' class='fnname'>is_error</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#217-219' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.is_error' class="method"><span id='is_error.v' class='invisible'><code>pub fn <a href='#method.is_error' class='fnname'>is_error</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#263-265' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns true if the value includes error readiness</p>
 
 <p><strong>Note that only readable and writable readiness is guaranteed to be
@@ -196,14 +172,14 @@ documentation.</p>
 
 <p>See <a href="../struct.Poll.html"><code>Poll</code></a> for more documentation on polling.</p>
 
-<h1 id='examples-5' class='section-header'><a href='#examples-5'>Examples</a></h1>
+<h1 id='examples-3' class='section-header'><a href='#examples-3'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">unix</span>::<span class="ident">UnixReady</span>;
 
 <span class="kw">let</span> <span class="ident">ready</span> <span class="op">=</span> <span class="ident">UnixReady</span>::<span class="ident">error</span>();
 
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">ready</span>.<span class="ident">is_error</span>());</pre>
-</div><h4 id='method.is_hup' class="method"><span id='is_hup.v' class='invisible'><code>pub fn <a href='#method.is_hup' class='fnname'>is_hup</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#246-248' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.is_hup' class="method"><span id='is_hup.v' class='invisible'><code>pub fn <a href='#method.is_hup' class='fnname'>is_hup</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#292-294' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns true if the value includes HUP readiness</p>
 
 <p>A HUP (or hang-up) signifies that a stream socket <strong>peer</strong> closed the
@@ -216,7 +192,7 @@ poll documentation.</p>
 
 <p>See <a href="../struct.Poll.html"><code>Poll</code></a> for more documentation on polling.</p>
 
-<h1 id='examples-6' class='section-header'><a href='#examples-6'>Examples</a></h1>
+<h1 id='examples-4' class='section-header'><a href='#examples-4'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">unix</span>::<span class="ident">UnixReady</span>;
 
@@ -232,7 +208,7 @@ poll documentation.</p>
 
 <p>See [<code>Poll</code>] for more documentation on polling.</p>
 
-<h1 id='examples-7' class='section-header'><a href='#examples-7'>Examples</a></h1>
+<h1 id='examples-5' class='section-header'><a href='#examples-5'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">Ready</span>;
 
@@ -243,7 +219,7 @@ poll documentation.</p>
 
 <p>See <a href="struct.Poll.html"><code>Poll</code></a> for more documentation on polling.</p>
 
-<h1 id='examples-8' class='section-header'><a href='#examples-8'>Examples</a></h1>
+<h1 id='examples-6' class='section-header'><a href='#examples-6'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">Ready</span>;
 
@@ -255,7 +231,7 @@ poll documentation.</p>
 
 <p>See <a href="struct.Poll.html"><code>Poll</code></a> for more documentation on polling.</p>
 
-<h1 id='examples-9' class='section-header'><a href='#examples-9'>Examples</a></h1>
+<h1 id='examples-7' class='section-header'><a href='#examples-7'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">Ready</span>;
 
@@ -267,7 +243,7 @@ poll documentation.</p>
 
 <p>This is equivalent to <code>*self = *self | other</code>.</p>
 
-<h1 id='examples-10' class='section-header'><a href='#examples-10'>Examples</a></h1>
+<h1 id='examples-8' class='section-header'><a href='#examples-8'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">Ready</span>;
 
@@ -280,7 +256,7 @@ poll documentation.</p>
 
 <p>This is equivalent to <code>*self = *self &amp; !other</code>.</p>
 
-<h1 id='examples-11' class='section-header'><a href='#examples-11'>Examples</a></h1>
+<h1 id='examples-9' class='section-header'><a href='#examples-9'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">Ready</span>;
 
@@ -297,7 +273,7 @@ specified in <code>other</code>.</p>
 
 <p>See <a href="struct.Poll.html"><code>Poll</code></a> for more documentation on polling.</p>
 
-<h1 id='examples-12' class='section-header'><a href='#examples-12'>Examples</a></h1>
+<h1 id='examples-10' class='section-header'><a href='#examples-10'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">mio</span>::<span class="ident">Ready</span>;
 
@@ -355,40 +331,43 @@ specified in <code>other</code>.</p>
 <div class='docblock'><p>Compares and returns the maximum of two values. <a href="https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html#method.max">Read more</a></p>
 </div><h4 id='method.min' class="method"><span id='min.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html#method.min' class='fnname'>min</a>(self, other: Self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.21.0'>1.21.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/core/cmp.rs.html#476-479' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Compares and returns the minimum of two values. <a href="https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html#method.min">Read more</a></p>
-</div></div><h3 id='impl-From&lt;Ready&gt;' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.From.html" title="trait core::convert::From">From</a>&lt;<a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a>&gt; for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-From&lt;Ready&gt;' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#251-255' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.from' class="method"><span id='from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#tymethod.from' class='fnname'>from</a>(src: <a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#252-254' title='goto source code'>[src]</a></span></h4>
+</div></div><h3 id='impl-From%3CReady%3E' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.From.html" title="trait core::convert::From">From</a>&lt;<a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a>&gt; for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-From%3CReady%3E' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#316-320' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.from' class="method"><span id='from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#tymethod.from' class='fnname'>from</a>(src: <a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#317-319' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Performs the conversion.</p>
-</div></div><h3 id='impl-Deref' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/deref/trait.Deref.html" title="trait core::ops::deref::Deref">Deref</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-Deref' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#263-269' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 id='impl-From%3CUnixReady%3E' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.From.html" title="trait core::convert::From">From</a>&lt;<a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>&gt; for <a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a></code><a href='#impl-From%3CUnixReady%3E' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#322-326' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.from-1' class="method"><span id='from.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#tymethod.from' class='fnname'>from</a>(src: <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>) -&gt; <a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#323-325' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Performs the conversion.</p>
+</div></div><h3 id='impl-Deref' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/deref/trait.Deref.html" title="trait core::ops::deref::Deref">Deref</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-Deref' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#328-334' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Target' class="type"><span id='Target.t' class='invisible'><code>type <a href='https://doc.rust-lang.org/nightly/core/ops/deref/trait.Deref.html#associatedtype.Target' class="type">Target</a> = <a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a></code></span></h4>
 <div class='docblock'><p>The resulting type after dereferencing.</p>
-</div><h4 id='method.deref' class="method"><span id='deref.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/deref/trait.Deref.html#tymethod.deref' class='fnname'>deref</a>(&amp;self) -&gt; &amp;<a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#266-268' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.deref' class="method"><span id='deref.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/deref/trait.Deref.html#tymethod.deref' class='fnname'>deref</a>(&amp;self) -&gt; &amp;<a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#331-333' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Dereferences the value.</p>
-</div></div><h3 id='impl-DerefMut' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/deref/trait.DerefMut.html" title="trait core::ops::deref::DerefMut">DerefMut</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-DerefMut' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#271-275' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.deref_mut' class="method"><span id='deref_mut.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/deref/trait.DerefMut.html#tymethod.deref_mut' class='fnname'>deref_mut</a>(&amp;mut self) -&gt; &amp;mut <a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#272-274' title='goto source code'>[src]</a></span></h4>
+</div></div><h3 id='impl-DerefMut' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/deref/trait.DerefMut.html" title="trait core::ops::deref::DerefMut">DerefMut</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-DerefMut' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#336-340' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.deref_mut' class="method"><span id='deref_mut.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/deref/trait.DerefMut.html#tymethod.deref_mut' class='fnname'>deref_mut</a>(&amp;mut self) -&gt; &amp;mut <a class="struct" href="../../mio/struct.Ready.html" title="struct mio::Ready">Ready</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#337-339' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Mutably dereferences the value.</p>
-</div></div><h3 id='impl-BitOr' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitOr.html" title="trait core::ops::bit::BitOr">BitOr</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-BitOr' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#277-284' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 id='impl-BitOr' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitOr.html" title="trait core::ops::bit::BitOr">BitOr</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-BitOr' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#342-349' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Output' class="type"><span id='Output.t' class='invisible'><code>type <a href='https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitOr.html#associatedtype.Output' class="type">Output</a> = <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span></h4>
 <div class='docblock'><p>The resulting type after applying the <code>|</code> operator.</p>
-</div><h4 id='method.bitor' class="method"><span id='bitor.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitOr.html#tymethod.bitor' class='fnname'>bitor</a>(self, other: <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#281-283' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.bitor' class="method"><span id='bitor.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitOr.html#tymethod.bitor' class='fnname'>bitor</a>(self, other: <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#346-348' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Performs the <code>|</code> operation.</p>
-</div></div><h3 id='impl-BitXor' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitXor.html" title="trait core::ops::bit::BitXor">BitXor</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-BitXor' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#286-293' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 id='impl-BitXor' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitXor.html" title="trait core::ops::bit::BitXor">BitXor</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-BitXor' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#351-358' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Output-1' class="type"><span id='Output.t-1' class='invisible'><code>type <a href='https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitXor.html#associatedtype.Output' class="type">Output</a> = <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span></h4>
 <div class='docblock'><p>The resulting type after applying the <code>^</code> operator.</p>
-</div><h4 id='method.bitxor' class="method"><span id='bitxor.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitXor.html#tymethod.bitxor' class='fnname'>bitxor</a>(self, other: <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#290-292' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.bitxor' class="method"><span id='bitxor.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitXor.html#tymethod.bitxor' class='fnname'>bitxor</a>(self, other: <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#355-357' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Performs the <code>^</code> operation.</p>
-</div></div><h3 id='impl-BitAnd' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitAnd.html" title="trait core::ops::bit::BitAnd">BitAnd</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-BitAnd' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#295-302' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 id='impl-BitAnd' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitAnd.html" title="trait core::ops::bit::BitAnd">BitAnd</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-BitAnd' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#360-367' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Output-2' class="type"><span id='Output.t-2' class='invisible'><code>type <a href='https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitAnd.html#associatedtype.Output' class="type">Output</a> = <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span></h4>
 <div class='docblock'><p>The resulting type after applying the <code>&amp;</code> operator.</p>
-</div><h4 id='method.bitand' class="method"><span id='bitand.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitAnd.html#tymethod.bitand' class='fnname'>bitand</a>(self, other: <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#299-301' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.bitand' class="method"><span id='bitand.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/bit/trait.BitAnd.html#tymethod.bitand' class='fnname'>bitand</a>(self, other: <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#364-366' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Performs the <code>&amp;</code> operation.</p>
-</div></div><h3 id='impl-Sub' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/arith/trait.Sub.html" title="trait core::ops::arith::Sub">Sub</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-Sub' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#304-311' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 id='impl-Sub' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/arith/trait.Sub.html" title="trait core::ops::arith::Sub">Sub</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-Sub' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#369-376' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Output-3' class="type"><span id='Output.t-3' class='invisible'><code>type <a href='https://doc.rust-lang.org/nightly/core/ops/arith/trait.Sub.html#associatedtype.Output' class="type">Output</a> = <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span></h4>
 <div class='docblock'><p>The resulting type after applying the <code>-</code> operator.</p>
-</div><h4 id='method.sub' class="method"><span id='sub.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/arith/trait.Sub.html#tymethod.sub' class='fnname'>sub</a>(self, other: <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#308-310' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.sub' class="method"><span id='sub.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/arith/trait.Sub.html#tymethod.sub' class='fnname'>sub</a>(self, other: <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a>) -&gt; <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#373-375' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Performs the <code>-</code> operation.</p>
-</div></div><h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#325-350' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, fmt: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#326-349' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div><h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../mio/unix/struct.UnixReady.html" title="struct mio::unix::UnixReady">UnixReady</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#390-416' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, fmt: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/mio/sys/unix/ready.rs.html#391-415' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 
@@ -406,13 +385,15 @@ specified in <code>other</code>.</p>
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

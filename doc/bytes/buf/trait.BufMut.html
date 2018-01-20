@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Trait BufMut</p><div class="block items"><ul><li><a href="#required-methods">Required Methods</a></li><li><a href="#provided-methods">Provided Methods</a></li><li><a href="#foreign-impls">Implementations on Foreign Types</a></li><li><a href="#implementors">Implementors</a></li></ul></div><p class='location'><a href='../index.html'>bytes</a>::<wbr><a href='index.html'>buf</a></p><script>window.sidebarCurrent = {name: 'BufMut', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Trait BufMut</p><div class="block items"><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.remaining_mut">remaining_mut</a><a href="#tymethod.advance_mut">advance_mut</a><a href="#tymethod.bytes_mut">bytes_mut</a></div><a class="sidebar-title" href="#provided-methods">Provided Methods</a><div class="sidebar-links"><a href="#method.has_remaining_mut">has_remaining_mut</a><a href="#method.bytes_vec_mut">bytes_vec_mut</a><a href="#method.put">put</a><a href="#method.put_slice">put_slice</a><a href="#method.put_u8">put_u8</a><a href="#method.put_i8">put_i8</a><a href="#method.put_u16">put_u16</a><a href="#method.put_i16">put_i16</a><a href="#method.put_u32">put_u32</a><a href="#method.put_i32">put_i32</a><a href="#method.put_u64">put_u64</a><a href="#method.put_i64">put_i64</a><a href="#method.put_uint">put_uint</a><a href="#method.put_int">put_int</a><a href="#method.put_f32">put_f32</a><a href="#method.put_f64">put_f64</a><a href="#method.by_ref">by_ref</a><a href="#method.writer">writer</a></div><a class="sidebar-title" href="#foreign-impls">Implementations on Foreign Types</a><div class="sidebar-links"><a href="#impl-BufMut">&amp;&#39;a mut T</a><a href="#impl-BufMut">Box&lt;T&gt;</a><a href="#impl-BufMut">Cursor&lt;T&gt;</a><a href="#impl-BufMut">Vec&lt;u8&gt;</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='../index.html'>bytes</a>::<wbr><a href='index.html'>buf</a></p><script>window.sidebarCurrent = {name: 'BufMut', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -504,7 +504,7 @@ return with <code>Err</code>.</p>
 
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">buf</span>, <span class="string">b&quot;hello world&quot;</span>[..]);</pre>
 </div></div>
-                <h2 id='foreign-impls' class='section-header'>
+                <h2 id='foreign-impls' class='small-section-header'>
                   Implementations on Foreign Types<a href='#foreign-impls' class='anchor'></a>
                 </h2>
             <h3 id='impl-BufMut' class='impl'><span class='in-band'><code>impl&lt;'a, T:&nbsp;<a class="trait" href="../../bytes/buf/trait.BufMut.html" title="trait bytes::buf::BufMut">BufMut</a> + ?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>&gt; <a class="trait" href="../../bytes/buf/trait.BufMut.html" title="trait bytes::buf::BufMut">BufMut</a> for <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;'a mut </a>T</code><a href='#impl-BufMut' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/bytes/buf/buf_mut.rs.html#639-655' title='goto source code'>[src]</a></span></h3>
@@ -606,7 +606,7 @@ length between 0 and <code>BufMut::remaining()</code>.</p>
         </h2>
         <ul class='item-list' id='implementors-list'>
     <li><div class='out-of-band'><a class='srclink' href='../../src/bytes/buf/chain.rs.html#187-226' title='goto source code'>[src]</a></div><code>impl&lt;T, U&gt; BufMut for <a class="struct" href="../../bytes/buf/struct.Chain.html" title="struct bytes::buf::Chain">Chain</a>&lt;T, U&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="../../bytes/buf/trait.BufMut.html" title="trait bytes::buf::BufMut">BufMut</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;U: <a class="trait" href="../../bytes/buf/trait.BufMut.html" title="trait bytes::buf::BufMut">BufMut</a>,&nbsp;</span></code></li>
-<li><div class='out-of-band'><a class='srclink' href='../../src/bytes/bytes.rs.html#1333-1376' title='goto source code'>[src]</a></div><code>impl BufMut for <a class="struct" href="../../bytes/struct.BytesMut.html" title="struct bytes::BytesMut">BytesMut</a></code></li>
+<li><div class='out-of-band'><a class='srclink' href='../../src/bytes/bytes.rs.html#1436-1479' title='goto source code'>[src]</a></div><code>impl BufMut for <a class="struct" href="../../bytes/struct.BytesMut.html" title="struct bytes::BytesMut">BytesMut</a></code></li>
 </ul><script type="text/javascript" async
                          src="../../implementors/bytes/buf/trait.BufMut.js">
                  </script></section>
@@ -626,13 +626,15 @@ length between 0 and <code>BufMut::remaining()</code>.</p>
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

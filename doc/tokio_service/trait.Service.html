@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Trait Service</p><div class="block items"><ul><li><a href="#associated-types">Associated Types</a></li><li><a href="#required-methods">Required Methods</a></li><li><a href="#foreign-impls">Implementations on Foreign Types</a></li><li><a href="#implementors">Implementors</a></li></ul></div><p class='location'><a href='index.html'>tokio_service</a></p><script>window.sidebarCurrent = {name: 'Service', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Trait Service</p><div class="block items"><a class="sidebar-title" href="#associated-types">Associated Types</a><div class="sidebar-links"><a href="#associatedtype.Request">Request</a><a href="#associatedtype.Response">Response</a><a href="#associatedtype.Error">Error</a><a href="#associatedtype.Future">Future</a></div><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.call">call</a></div><a class="sidebar-title" href="#foreign-impls">Implementations on Foreign Types</a><div class="sidebar-links"><a href="#impl-Service">Box&lt;S&gt;</a><a href="#impl-Service">Rc&lt;S&gt;</a><a href="#impl-Service">Arc&lt;S&gt;</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='index.html'>tokio_service</a></p><script>window.sidebarCurrent = {name: 'Service', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -79,7 +79,7 @@ server value. The returned response is sent back over the network.</p>
 
 <p>As an example, here is how an HTTP request is processed by a server:</p>
 
-<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="kw">impl</span> <span class="ident">Service</span> <span class="kw">for</span> <span class="ident">HelloWorld</span> {
     <span class="kw">type</span> <span class="ident">Request</span> <span class="op">=</span> <span class="ident">http</span>::<span class="ident">Request</span>;
     <span class="kw">type</span> <span class="ident">Response</span> <span class="op">=</span> <span class="ident">http</span>::<span class="ident">Response</span>;
@@ -103,7 +103,7 @@ It then receives the response by waiting for the returned future.</p>
 
 <p>As an example, here is how a Redis request would be issued:</p>
 
-<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="kw">let</span> <span class="ident">client</span> <span class="op">=</span> <span class="ident">redis</span>::<span class="ident">Client</span>::<span class="ident">new</span>()
     .<span class="ident">connect</span>(<span class="string">&quot;127.0.0.1:6379&quot;</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>())
     .<span class="ident">unwrap</span>();
@@ -122,7 +122,7 @@ reusable way.</p>
 
 <p>For example, take timeouts as an example:</p>
 
-<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="kw">use</span> <span class="ident">tokio</span>::<span class="ident">Service</span>;
 <span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">Future</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
@@ -187,7 +187,7 @@ same timeout middleware could be used in either a client or a server.</p>
             <div class='methods'>
         <h3 id='tymethod.call' class='method'><span id='call.v' class='invisible'><code>fn <a href='#tymethod.call' class='fnname'>call</a>(&amp;self, req: Self::<a class="type" href="../tokio_service/trait.Service.html#associatedtype.Request" title="type tokio_service::Service::Request">Request</a>) -&gt; Self::<a class="type" href="../tokio_service/trait.Service.html#associatedtype.Future" title="type tokio_service::Service::Future">Future</a></code></span></h3><div class='docblock'><p>Process the request and return the response asynchronously.</p>
 </div></div>
-                <h2 id='foreign-impls' class='section-header'>
+                <h2 id='foreign-impls' class='small-section-header'>
                   Implementations on Foreign Types<a href='#foreign-impls' class='anchor'></a>
                 </h2>
             <h3 id='impl-Service' class='impl'><span class='in-band'><code>impl&lt;S:&nbsp;<a class="trait" href="../tokio_service/trait.Service.html" title="trait tokio_service::Service">Service</a> + ?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>&gt; <a class="trait" href="../tokio_service/trait.Service.html" title="trait tokio_service::Service">Service</a> for <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;S&gt;</code><a href='#impl-Service' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_service/lib.rs.html#212-221' title='goto source code'>[src]</a></span></h3>
@@ -232,13 +232,15 @@ same timeout middleware could be used in either a client or a server.</p>
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
