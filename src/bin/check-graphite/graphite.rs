@@ -24,6 +24,17 @@ pub struct GraphiteResponse {
     pub url: reqwest::Url,
 }
 
+impl GraphiteResponse {
+    pub fn filter_to_series_with_data(&mut self) {
+        self.result.retain(|gd| {
+            gd.points
+                .iter()
+                .filter(|point| !point.val.is_none())
+                .count() > 0
+        })
+    }
+}
+
 /// All the data for one fully-resolved target
 ///
 /// Any given graphite api call can result in getting data for multiple targets
@@ -277,66 +288,26 @@ fn get_graphite(
     }
 }
 
-/// Make sure that at least one series has real data
-///
-/// This returns all points in the series that have any data -- it does not
-/// filter out null points, it only filters out series that contain *only* null
-/// points.
-pub fn filter_to_with_data(
-    path: &str,
-    data: Vec<GraphiteData>,
-    no_data_status: Status,
-) -> Result<Vec<GraphiteData>, Status> {
-    let matched_len = data.len();
-    if data.is_empty() {
-        println!(
-            "{}: Graphite returned no matching series for pattern '{}'",
-            no_data_status, path
-        );
-        return Err(no_data_status);
-    }
-    let series_with_data = data.into_iter()
-        .filter(|series| {
-            let null_point_count = series.points.iter().fold(0, |count, point| {
-                if point.val.is_none() {
-                    count + 1
-                } else {
-                    count
-                }
-            });
-            !series.points.is_empty() && null_point_count != series.points.len()
-        })
-        .collect::<Vec<GraphiteData>>();
-
-    if series_with_data.is_empty() {
-        println!(
-            "{}: Graphite found {} series but returned only null datapoints for them",
-            no_data_status, matched_len
-        );
-        Err(no_data_status)
-    } else {
-        Ok(series_with_data)
-    }
-}
-
 #[cfg(test)]
 #[allow(non_snake_case)]
 mod test {
-    use tabin_plugins::Status;
-
     use super::*;
 
-    use test::{deser, valid_data_from_json_two_sets};
+    use test::deser;
 
-    fn json_two_sets_of_graphite_data() -> &'static str {
+    fn json_three_sets_of_graphite_data() -> &'static str {
         r#"
         [
             {
-                "datapoints": [[null, 11110], [null, 11130]],
+                "datapoints": [],
                 "target": "test.path.no-data"
             },
             {
-                "datapoints": [[1, 11150], [null, 11160], [3, 11170]],
+                "datapoints": [[null, 10]],
+                "target": "test.path.null-data"
+            },
+            {
+                "datapoints": [[1, 50]],
                 "target": "test.path.some-data"
             }
         ]
@@ -344,22 +315,45 @@ mod test {
     }
 
     #[test]
-    fn graphite_result_to_vec_creates_a_vec_of_GraphiteData() {
-        let vec: Vec<GraphiteData> = deser(json_two_sets_of_graphite_data());
-        assert_eq!(vec.len(), 2)
+    fn deserialization_works() {
+        let result = deser(json_three_sets_of_graphite_data());
+        assert_eq!(
+            result,
+            vec![
+                GraphiteData {
+                    points: vec![],
+                    target: "test.path.no-data".into(),
+                },
+                GraphiteData {
+                    points: vec![
+                        DataPoint {
+                            val: None,
+                            time: NaiveDateTime::from_timestamp(10, 0),
+                        },
+                    ],
+                    target: "test.path.null-data".into(),
+                },
+                GraphiteData {
+                    points: vec![
+                        DataPoint {
+                            val: Some(1.0),
+                            time: NaiveDateTime::from_timestamp(50, 0),
+                        },
+                    ],
+                    target: "test.path.some-data".into(),
+                },
+            ]
+        )
     }
 
     #[test]
-    fn filtered_to_with_data_returns_valid_data() {
-        let result = filter_to_with_data(
-            "test.path",
-            deser(json_two_sets_of_graphite_data()),
-            Status::Unknown,
-        );
-        let expected = valid_data_from_json_two_sets();
-        match result {
-            Ok(actual) => assert_eq!(actual, expected),
-            Err(_) => panic!("wha"),
-        }
+    fn filter_to_series_with_data_retails_valid() {
+        let mut raw = GraphiteResponse {
+            result: deser(json_three_sets_of_graphite_data()),
+            url: "https://blah".parse().unwrap(),
+        };
+
+        raw.filter_to_series_with_data();
+        assert_eq!(raw.result.len(), 1, "we should strip empty GraphiteData");
     }
 }

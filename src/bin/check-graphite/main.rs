@@ -19,12 +19,12 @@ use std::cmp::max;
 use tabin_plugins::Status;
 
 use args::Args;
-use graphite::{fetch_data, filter_to_with_data};
+use graphite::{fetch_data, GraphiteResponse};
 
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
     let args = Args::parse();
-    let data = match fetch_data(
+    let mut data = match fetch_data(
         &args.url,
         &args.path,
         args.window,
@@ -40,30 +40,41 @@ fn main() {
         }
     };
 
-    let filtered = filter_to_with_data(&args.path, data.result, args.no_data);
-    let with_data = match filtered {
-        Ok(data) => data,
-        Err(status) => {
-            println!("INFO: Full query: {}", data.url);
-            status.exit();
-        }
-    };
+    bail_if_no_data(&mut data, &args.path, args.no_data);
 
     let mut status = Status::Ok;
     for assertion in args.assertions {
-        status = max(
-            status,
-            do_check(
-                &with_data,
-                &assertion.operator,
-                assertion.op_is_negated,
-                assertion.threshold,
-                assertion.point_assertion,
-                assertion.failure_status,
-            ),
-        );
+        status = max(status, assertion.check(&data.result));
     }
     status.exit();
+}
+
+/// Check if we have any graphite data
+///
+/// If there is nothing to do, exit
+fn bail_if_no_data(response: &mut GraphiteResponse, path: &str, no_data_status: Status) {
+    let mut bail = false;
+    if response.result.is_empty() {
+        println!(
+            "{}: Graphite returned no matching series for pattern '{}'",
+            no_data_status, path
+        );
+        bail = true;
+    }
+    let original_len = response.result.len();
+    response.filter_to_series_with_data();
+    if response.result.is_empty() {
+        println!(
+            "{}: Graphite found {} series but returned only null datapoints for them",
+            no_data_status, original_len
+        );
+        bail = true;
+    }
+
+    if bail {
+        println!("INFO: Full query: {}", response.url);
+        no_data_status.exit();
+    }
 }
 
 #[cfg(test)]

@@ -3,7 +3,7 @@ use std::str::FromStr;
 use clap;
 use tabin_plugins::Status;
 
-use assertions::{parse_assertion, Assertion};
+use assertions::Assertion;
 
 pub(crate) struct Args {
     pub url: String,
@@ -117,7 +117,7 @@ impl Args {
 
         let assertions = args.values_of("ASSERTION")
             .unwrap()
-            .map(|assertion_str| match parse_assertion(assertion_str) {
+            .map(|assertion_str| match Assertion::from_str(assertion_str) {
                 Ok(a) => a,
                 Err(e) => {
                     println!("Error `{}` in assertion `{}`", e, assertion_str);
@@ -157,7 +157,7 @@ mod test {
     fn all_examples_are_accurate() {
         for assertion in ASSERTION_EXAMPLES {
             println!("testing `{}`", assertion);
-            parse_assertion(assertion).unwrap();
+            Assertion::from_str(assertion).unwrap();
         }
     }
 }
