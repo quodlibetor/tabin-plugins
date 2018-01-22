@@ -79,9 +79,7 @@ fn print_errors_and_status<T: Display, V: PartialOrd<V> + Display>(
         exit_status = std::cmp::max(exit_status, Status::Critical);
         println!(
             "CRITICAL [check-cpu]: {} {:.2} > {}%",
-            flag,
-            total,
-            critical,
+            flag, total, critical,
         );
     } else if total > warning {
         exit_status = std::cmp::max(exit_status, Status::Warning);
@@ -414,7 +412,6 @@ mod unit {
         let statuses = determine_status_per_cpu(&args, &start, &end);
         assert_eq!(statuses, vec![Status::Critical, Status::Ok, Status::Ok]);
         assert_eq!(determine_exit(&args, &statuses), Status::Ok);
-
 
         end[1] = Calculations {
             user: Jiffies::new(110),

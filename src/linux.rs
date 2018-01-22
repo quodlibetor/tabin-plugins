@@ -12,7 +12,6 @@ lazy_static!(
     pub static ref PAGESIZE: u64 = unsafe { sysconf(_SC_PAGESIZE) } as u64;
 );
 
-
 pub fn pages_to_human_size(pages: u64) -> String {
     let bytes = pages * (*PAGESIZE);
     bytes_to_human_size(bytes)
@@ -53,9 +52,7 @@ fn bytes_to_human_size_produces_shortest() {
 
     reprs
         .iter()
-        .map(|&(raw, repr): &(u64, &str)| {
-            assert_eq!(bytes_to_human_size(raw), repr)
-        })
+        .map(|&(raw, repr): &(u64, &str)| assert_eq!(bytes_to_human_size(raw), repr))
         .collect::<Vec<_>>();
 }
 

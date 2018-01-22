@@ -17,7 +17,6 @@ use tabin_plugins::Status;
 use tabin_plugins::procfs::RunningProcs;
 use tabin_plugins::procfs::pid::Process;
 
-
 static USAGE: &'static str = "
 Usage:
     check-procs <pattern> (--crit-under <N> | --crit-over <N>)

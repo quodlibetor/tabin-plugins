@@ -30,7 +30,6 @@ Options:
     -h, --help            Show this message and exit
 ";
 
-
 #[derive(RustcDecodable)]
 struct Args {
     arg_filename: String,
@@ -120,9 +119,7 @@ mod test {
     #[test]
     fn can_parse_args() {
         let _: Args = Docopt::new(USAGE)
-            .and_then(|d| {
-                d.argv(vec!["arg0", "/tmp"].into_iter()).help(true).decode()
-            })
+            .and_then(|d| d.argv(vec!["arg0", "/tmp"].into_iter()).help(true).decode())
             .unwrap();
     }
 }

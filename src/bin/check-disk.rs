@@ -228,12 +228,7 @@ fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
     if args.flag_info {
         println!(
             "{:<15} {:>7} {:>5}% {:>7} {:>5}% {:<20}",
-            "Filesystem",
-            "Size",
-            "Use",
-            "INodes",
-            "IUse",
-            "Mounted on"
+            "Filesystem", "Size", "Use", "INodes", "IUse", "Mounted on"
         );
         for ms in mountstats {
             println!(

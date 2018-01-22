@@ -15,7 +15,6 @@
 //! * Some way of easily standardizing command-line args
 //! * Much of the code is hideous, and should not be
 
-
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
@@ -97,9 +96,10 @@ impl FromStr for Status {
             "warning" => Ok(Warning),
             "critical" => Ok(Critical),
             "unknown" => Ok(Unknown),
-            _ => Err(TabinError::UnknownValue(
-                format!("Unexpected exit status: {}", s),
-            )),
+            _ => Err(TabinError::UnknownValue(format!(
+                "Unexpected exit status: {}",
+                s
+            ))),
         }
     }
 }

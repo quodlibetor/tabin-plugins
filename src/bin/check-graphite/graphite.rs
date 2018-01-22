@@ -40,7 +40,8 @@ impl GraphiteResponse {
 /// Any given graphite api call can result in getting data for multiple targets
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct GraphiteData {
-    #[serde(rename = "datapoints")] pub points: Vec<DataPoint>,
+    #[serde(rename = "datapoints")]
+    pub points: Vec<DataPoint>,
     pub target: String,
 }
 
@@ -109,7 +110,8 @@ impl<'a> FilteredGraphiteData<'a> {
 #[derive(Debug, Deserialize, PartialEq, Clone)]
 pub struct DataPoint {
     pub val: Option<f64>,
-    #[serde(deserialize_with = "from_ts_seconds")] pub time: NaiveDateTime,
+    #[serde(deserialize_with = "from_ts_seconds")]
+    pub time: NaiveDateTime,
 }
 
 impl fmt::Display for DataPoint {

@@ -142,28 +142,19 @@ fn main() {
     if percent > crit as f64 {
         println!(
             "CRITICAL: Container is using {}%{} CPU (> {}%{})",
-            percent,
-            percent_msg,
-            args.flag_crit,
-            cpu_msg
+            percent, percent_msg, args.flag_crit, cpu_msg
         );
         status = Status::Critical;
     } else if percent > warn as f64 {
         println!(
             "WARNING: Container is using {}%{} CPU (> {}%{})",
-            percent,
-            percent_msg,
-            args.flag_warn,
-            cpu_msg
+            percent, percent_msg, args.flag_warn, cpu_msg
         );
         status = Status::Warning;
     } else {
         println!(
             "OK: Container is using {}%{} CPU (< {}%{})",
-            percent,
-            percent_msg,
-            args.flag_warn,
-            cpu_msg
+            percent, percent_msg, args.flag_warn, cpu_msg
         );
     }
     if args.flag_show_hogs > 0 {

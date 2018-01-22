@@ -36,7 +36,6 @@ Threshold Behavior:
                            system.
 ";
 
-
 #[derive(RustcDecodable, Debug)]
 struct RawArgs {
     flag_warn: String,
@@ -86,26 +85,20 @@ fn do_check(args: &Args, actual: LoadAvg, num_cpus: usize, per_cpu: bool) -> Sta
     if actual > args.flag_crit {
         println!(
             "[check-load] CRITICAL: load average{} is {} (> {})",
-            cpu_str,
-            actual,
-            args.flag_crit
+            cpu_str, actual, args.flag_crit
         );
         Status::Critical
     } else if actual > args.flag_warn {
         println!(
             "[check-load] WARNING: load average{} is {} (> {})",
-            cpu_str,
-            actual,
-            args.flag_warn
+            cpu_str, actual, args.flag_warn
         );
         Status::Warning
     } else {
         if args.flag_verbose {
             println!(
                 "[check-load] OK: load average{} is {} (< {})",
-                cpu_str,
-                actual,
-                args.flag_warn
+                cpu_str, actual, args.flag_warn
             );
         }
         Status::Ok
@@ -126,7 +119,6 @@ fn main() {
     let status = do_check(&args, LoadAvg::load().unwrap(), num_cpus, args.flag_per_cpu);
     status.exit();
 }
-
 
 #[cfg(test)]
 mod test {

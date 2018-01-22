@@ -598,9 +598,7 @@ impl fmt::Display for LoadAvg {
         try!(write!(
             f,
             "{:.1} {:.1} {:.1}",
-            self.one,
-            self.five,
-            self.fifteen
+            self.one, self.five, self.fifteen
         ));
         Ok(())
     }
@@ -755,7 +753,6 @@ btime 143
                         }]);
     }
 
-
     #[test]
     fn can_parse_stat_for_process() {
         let stat = "1 (init) S 0 1 1 0 -1 4219136 40326 5752369 36 3370 16 41 25846 8061 20 0 1 0 \
@@ -909,7 +906,6 @@ btime 143
             ]
         )
     }
-
 
 }
 
