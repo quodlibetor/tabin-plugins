@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/futures/sink/mod.rs.html#1-475' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/futures/sink/mod.rs.html#1-489' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Asynchronous sinks</p>
 
 <p>This module contains the <code>Sink</code> trait, along with a number of adapter types
@@ -64,6 +64,13 @@ https://tokio.rs</a></p>
                            <td class='docblock-short'>
                                 <p>Sink for the <code>Sink::buffer</code> combinator, which buffers up to some fixed
 number of values when the underlying sink is unable to accept them.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Fanout.html"
+                                  title='struct futures::sink::Fanout'>Fanout</a></td>
+                           <td class='docblock-short'>
+                                <p>Sink that clones incoming items and forwards them to two sinks at the same time.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>

@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Module stream</p><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>futures</a></p><script>window.sidebarCurrent = {name: 'stream', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        <p class='location'>Module stream</p><div class="block items"><ul><li><a href="#reexports">Reexports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>futures</a></p><script>window.sidebarCurrent = {name: 'stream', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/futures/stream/mod.rs.html#1-1104' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/futures/stream/mod.rs.html#1-1145' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Asynchronous streams</p>
 
 <p>This module contains the <code>Stream</code> trait and a number of adaptors for this
@@ -63,7 +63,16 @@ ready as well.</p>
 
 <p>You can find more information/tutorials about streams <a href="https://tokio.rs/docs/getting-started/streams-and-sinks/">online at
 https://tokio.rs</a></p>
-</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>pub use self::<a class="mod" href="./futures_unordered/index.html">futures_unordered</a>::<a class="struct" href="../../futures/stream/futures_unordered/struct.FuturesUnordered.html" title="struct futures::stream::futures_unordered::FuturesUnordered">FuturesUnordered</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="futures_unordered/index.html"
+                                  title='mod futures::stream::futures_unordered'>futures_unordered</a></td>
+                           <td class='docblock-short'>
+                                <p>An unbounded set of futures.</p>
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.AndThen.html"
@@ -121,7 +130,7 @@ possible.</p>
                            <td><a class="struct" href="struct.Concat.html"
                                   title='struct futures::stream::Concat'>Concat</a></td>
                            <td class='docblock-short'>
-                                <p>A stream combinator to concatenate the results of a stream into the first
+                               [<div class='stab deprecated'>Deprecated</div>] <p>A stream combinator to concatenate the results of a stream into the first
 yielded item.</p>
                            </td>
                        </tr>
@@ -209,17 +218,17 @@ to a sink and then waits until the sink has fully flushed those values.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.FuturesUnordered.html"
-                                  title='struct futures::stream::FuturesUnordered'>FuturesUnordered</a></td>
-                           <td class='docblock-short'>
-                                <p>An unbounded set of futures.</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="struct" href="struct.Inspect.html"
                                   title='struct futures::stream::Inspect'>Inspect</a></td>
                            <td class='docblock-short'>
                                 <p>Do something with the items of a stream, passing it on.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.InspectErr.html"
+                                  title='struct futures::stream::InspectErr'>InspectErr</a></td>
+                           <td class='docblock-short'>
+                                <p>Do something with the error of a stream, passing it on.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
