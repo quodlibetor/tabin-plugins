@@ -28,8 +28,9 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Struct Body</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.sized">sized</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-From%3CVec%3Cu8%3E%3E">From&lt;Vec&lt;u8&gt;&gt;</a><a href="#impl-From%3CString%3E">From&lt;String&gt;</a><a href="#impl-From%3C%26%27static%20%5Bu8%5D%3E">From&lt;&amp;&#39;static [u8]&gt;</a><a href="#impl-From%3C%26%27static%20str%3E">From&lt;&amp;&#39;static str&gt;</a><a href="#impl-From%3CFile%3E">From&lt;File&gt;</a></div></div><p class='location'><a href='index.html'>reqwest</a></p><script>window.sidebarCurrent = {name: 'Body', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Body</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.sized">sized</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-From%3CVec%3Cu8%3E%3E">From&lt;Vec&lt;u8&gt;&gt;</a><a href="#impl-From%3CString%3E">From&lt;String&gt;</a><a href="#impl-From%3C%26%27static%20%5Bu8%5D%3E">From&lt;&amp;&#39;static [u8]&gt;</a><a href="#impl-From%3C%26%27static%20str%3E">From&lt;&amp;&#39;static str&gt;</a><a href="#impl-From%3CFile%3E">From&lt;File&gt;</a></div></div><p class='location'><a href='index.html'>reqwest</a></p><script>window.sidebarCurrent = {name: 'Body', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -82,8 +83,8 @@ it can be reused.</p>
 <span class="kw">let</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">Body</span>::<span class="ident">from</span>(<span class="ident">s</span>);</pre>
 </div><h4 id='method.sized' class="method"><span id='sized.v' class='invisible'><code>pub fn <a href='#method.sized' class='fnname'>sized</a>&lt;R:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + 'static&gt;(reader: R, len: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="struct" href="../reqwest/struct.Body.html" title="struct reqwest::Body">Body</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/reqwest/body.rs.html#75-79' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Create a <code>Body</code> from a <code>Read</code> where the size is known in advance
-advance, but the data should not be loaded in full to memory. This will
-set the <code>Content-Length</code> header, and stream from the <code>Read</code>.</p>
+but the data should not be fully loaded into memory. This will
+set the <code>Content-Length</code> header and stream from the <code>Read</code>.</p>
 
 <pre class="rust rust-example-rendered">
 <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">File</span>::<span class="ident">open</span>(<span class="string">&quot;a_large_file.txt&quot;</span>)<span class="question-mark">?</span>;

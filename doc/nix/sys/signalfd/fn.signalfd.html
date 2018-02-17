@@ -28,6 +28,7 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         
         <p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>signalfd</a></p><script>window.sidebarCurrent = {name: 'signalfd', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
@@ -49,7 +50,7 @@
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../../../src/nix/sys/signalfd.rs.html#49-53' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn signalfd(fd: <a class="type" href="https://doc.rust-lang.org/nightly/std/sys/imp/ext/io/type.RawFd.html" title="type std::sys::imp::ext::io::RawFd">RawFd</a>, mask: &amp;<a class="struct" href="../../../nix/sys/signal/struct.SigSet.html" title="struct nix::sys::signal::SigSet">SigSet</a>, flags: <a class="struct" href="../../../nix/sys/signalfd/struct.SfdFlags.html" title="struct nix::sys::signalfd::SfdFlags">SfdFlags</a>) -&gt; <a class="type" href="../../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="type" href="https://doc.rust-lang.org/nightly/std/sys/imp/ext/io/type.RawFd.html" title="type std::sys::imp::ext::io::RawFd">RawFd</a>&gt;</pre><div class='docblock'><p>Creates a new file descriptor for reading signals.</p>
+<pre class='rust fn'>pub fn signalfd(fd: <a class="type" href="https://doc.rust-lang.org/nightly/std/sys/unix/ext/io/type.RawFd.html" title="type std::sys::unix::ext::io::RawFd">RawFd</a>, mask: &amp;<a class="struct" href="../../../nix/sys/signal/struct.SigSet.html" title="struct nix::sys::signal::SigSet">SigSet</a>, flags: <a class="struct" href="../../../nix/sys/signalfd/struct.SfdFlags.html" title="struct nix::sys::signalfd::SfdFlags">SfdFlags</a>) -&gt; <a class="type" href="../../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="type" href="https://doc.rust-lang.org/nightly/std/sys/unix/ext/io/type.RawFd.html" title="type std::sys::unix::ext::io::RawFd">RawFd</a>&gt;</pre><div class='docblock'><p>Creates a new file descriptor for reading signals.</p>
 
 <p><strong>Important:</strong> please read the module level documentation about signal discarding before using
 this function!</p>

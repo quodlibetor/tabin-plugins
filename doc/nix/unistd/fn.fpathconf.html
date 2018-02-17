@@ -28,6 +28,7 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         
         <p class='location'><a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a></p><script>window.sidebarCurrent = {name: 'fpathconf', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
@@ -49,7 +50,7 @@
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../../src/nix/unistd.rs.html#1107-1121' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn fpathconf(fd: <a class="type" href="https://doc.rust-lang.org/nightly/std/sys/imp/ext/io/type.RawFd.html" title="type std::sys::imp::ext::io::RawFd">RawFd</a>, var: <a class="enum" href="../../nix/unistd/enum.PathconfVar.html" title="enum nix::unistd::PathconfVar">PathconfVar</a>) -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="../../libc/unix/notbsd/linux/other/b64/not_x32/type.c_long.html" title="type libc::unix::notbsd::linux::other::b64::not_x32::c_long">c_long</a>&gt;&gt;</pre><div class='docblock'><p>Like <code>pathconf</code>, but works with file descriptors instead of paths (see
+<pre class='rust fn'>pub fn fpathconf(fd: <a class="type" href="https://doc.rust-lang.org/nightly/std/sys/unix/ext/io/type.RawFd.html" title="type std::sys::unix::ext::io::RawFd">RawFd</a>, var: <a class="enum" href="../../nix/unistd/enum.PathconfVar.html" title="enum nix::unistd::PathconfVar">PathconfVar</a>) -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="../../libc/unix/notbsd/linux/other/b64/not_x32/type.c_long.html" title="type libc::unix::notbsd::linux::other::b64::not_x32::c_long">c_long</a>&gt;&gt;</pre><div class='docblock'><p>Like <code>pathconf</code>, but works with file descriptors instead of paths (see
 <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/pathconf.html">fpathconf(2)</a>)</p>
 
 <h1 id='parameters' class='section-header'><a href='#parameters'>Parameters</a></h1>

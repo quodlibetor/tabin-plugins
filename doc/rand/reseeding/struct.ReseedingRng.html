@@ -28,8 +28,9 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         <a href='../../rand/index.html'><img src='https://www.rust-lang.org/logos/rust-logo-128x128-blk.png' alt='logo' width='100'></a>
-        <p class='location'>Struct ReseedingRng</p><div class="block items"><a class="sidebar-title" href="#fields">Fields</a><div class="sidebar-links"><a href="#structfield.reseeder">reseeder</a></div><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.reseed_if_necessary">reseed_if_necessary</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Rng">Rng</a><a href="#impl-SeedableRng%3C(Rsdr%2C%20S)%3E">SeedableRng&lt;(Rsdr, S)&gt;</a></div></div><p class='location'><a href='../index.html'>rand</a>::<wbr><a href='index.html'>reseeding</a></p><script>window.sidebarCurrent = {name: 'ReseedingRng', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct ReseedingRng</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#fields">Fields</a><div class="sidebar-links"><a href="#structfield.reseeder">reseeder</a></div><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.reseed_if_necessary">reseed_if_necessary</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Rng">Rng</a><a href="#impl-SeedableRng%3C(Rsdr%2C%20S)%3E">SeedableRng&lt;(Rsdr, S)&gt;</a></div></div><p class='location'><a href='../index.html'>rand</a>::<wbr><a href='index.html'>reseeding</a></p><script>window.sidebarCurrent = {name: 'ReseedingRng', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -65,7 +66,7 @@ has generated a certain number of random bytes.</p>
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl&lt;R, Rsdr&gt; <a class="struct" href="../../rand/reseeding/struct.ReseedingRng.html" title="struct rand::reseeding::ReseedingRng">ReseedingRng</a>&lt;R, Rsdr&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;R: <a class="trait" href="../../rand/trait.Rng.html" title="trait rand::Rng">Rng</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;Rsdr: <a class="trait" href="../../rand/reseeding/trait.Reseeder.html" title="trait rand::reseeding::Reseeder">Reseeder</a>&lt;R&gt;,&nbsp;</span></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/rand/reseeding.rs.html#33-58' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;rng: R, <br>&nbsp;&nbsp;&nbsp;&nbsp;generation_threshold: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;reseeder: Rsdr<br>) -&gt; <a class="struct" href="../../rand/reseeding/struct.ReseedingRng.html" title="struct rand::reseeding::ReseedingRng">ReseedingRng</a>&lt;R, Rsdr&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/rand/reseeding.rs.html#41-48' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>pub fn <a href='#method.new' class='fnname'>new</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;rng: R, <br>&nbsp;&nbsp;&nbsp;&nbsp;generation_threshold: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;reseeder: Rsdr<br>) -&gt; <a class="struct" href="../../rand/reseeding/struct.ReseedingRng.html" title="struct rand::reseeding::ReseedingRng">ReseedingRng</a>&lt;R, Rsdr&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/rand/reseeding.rs.html#41-48' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Create a new <code>ReseedingRng</code> with the given parameters.</p>
 
 <h1 id='arguments' class='section-header'><a href='#arguments'>Arguments</a></h1>
@@ -74,7 +75,7 @@ has generated a certain number of random bytes.</p>
 <li><code>generation_threshold</code>: the number of bytes of entropy at which to reseed the RNG.</li>
 <li><code>reseeder</code>: the reseeding object to use.</li>
 </ul>
-</div><h4 id='method.reseed_if_necessary' class="method"><span id='reseed_if_necessary.v' class='invisible'><code>fn <a href='#method.reseed_if_necessary' class='fnname'>reseed_if_necessary</a>(&amp;mut self)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/rand/reseeding.rs.html#52-57' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.reseed_if_necessary' class="method"><span id='reseed_if_necessary.v' class='invisible'><code>pub fn <a href='#method.reseed_if_necessary' class='fnname'>reseed_if_necessary</a>(&amp;mut self)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/rand/reseeding.rs.html#52-57' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Reseed the internal RNG if the number of bytes that have been
 generated exceed the threshold.</p>
 </div></div>

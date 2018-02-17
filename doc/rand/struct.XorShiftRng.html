@@ -28,8 +28,9 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         <a href='../rand/index.html'><img src='https://www.rust-lang.org/logos/rust-logo-128x128-blk.png' alt='logo' width='100'></a>
-        <p class='location'>Struct XorShiftRng</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new_unseeded">new_unseeded</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Rand">Rand</a><a href="#impl-Rng">Rng</a><a href="#impl-SeedableRng%3C%5Bu32%3B%204%5D%3E">SeedableRng&lt;[u32; 4]&gt;</a><a href="#impl-Clone">Clone</a></div></div><p class='location'><a href='index.html'>rand</a></p><script>window.sidebarCurrent = {name: 'XorShiftRng', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct XorShiftRng</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new_unseeded">new_unseeded</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Rand">Rand</a><a href="#impl-Rng">Rng</a><a href="#impl-SeedableRng%3C%5Bu32%3B%204%5D%3E">SeedableRng&lt;[u32; 4]&gt;</a><a href="#impl-Clone">Clone</a></div></div><p class='location'><a href='index.html'>rand</a></p><script>window.sidebarCurrent = {name: 'XorShiftRng', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -64,7 +65,7 @@ Statistical Software</em>. Vol. 8 (Issue 14).</p>
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../rand/struct.XorShiftRng.html" title="struct rand::XorShiftRng">XorShiftRng</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/rand/prng/xorshift.rs.html#35-50' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.new_unseeded' class="method"><span id='new_unseeded.v' class='invisible'><code>fn <a href='#method.new_unseeded' class='fnname'>new_unseeded</a>() -&gt; <a class="struct" href="../rand/struct.XorShiftRng.html" title="struct rand::XorShiftRng">XorShiftRng</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/rand/prng/xorshift.rs.html#42-49' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.new_unseeded' class="method"><span id='new_unseeded.v' class='invisible'><code>pub fn <a href='#method.new_unseeded' class='fnname'>new_unseeded</a>() -&gt; <a class="struct" href="../rand/struct.XorShiftRng.html" title="struct rand::XorShiftRng">XorShiftRng</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/rand/prng/xorshift.rs.html#42-49' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Creates a new XorShiftRng instance which is not seeded.</p>
 
 <p>The initial values of this RNG are constants, so all generators created
