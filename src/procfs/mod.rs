@@ -163,7 +163,10 @@ impl RunningProcs {
         if errors.is_empty() {
             Ok(RunningProcs(procs))
         } else {
-            Err(LoadProcsError { procs: RunningProcs(procs), errors }.into())
+            Err(LoadProcsError {
+                procs: RunningProcs(procs),
+                errors,
+            }.into())
         }
     }
 

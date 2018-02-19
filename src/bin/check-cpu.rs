@@ -14,7 +14,7 @@ use std::time::Duration;
 
 use docopt::Docopt;
 use tabin_plugins::Status;
-use tabin_plugins::procfs::{Calculations, RunningProcs, WorkSource};
+use tabin_plugins::procfs::{Calculations, LoadProcsError, ProcFsError, RunningProcs, WorkSource};
 
 static USAGE: &'static str = "
 Usage:
@@ -157,9 +157,10 @@ fn main() {
     } else {
         vec![Calculations::load().unwrap()]
     };
+    let mut load_errors = vec![];
     let mut start_per_proc = None;
     if args.flag_show_hogs > 0 {
-        start_per_proc = Some(RunningProcs::currently_running().unwrap());
+        start_per_proc = Some(load_procs(&mut load_errors));
     }
     sleep(Duration::from_millis(args.flag_sample as u64 * 1000));
 
@@ -171,7 +172,7 @@ fn main() {
     let statuses = determine_status_per_cpu(&args, &start, &end);
 
     if args.flag_show_hogs > 0 {
-        let end_per_proc = RunningProcs::currently_running().unwrap();
+        let end_per_proc = load_procs(&mut load_errors);
         let start_per_proc = start_per_proc.unwrap();
         let single_start = &start[0];
         let single_end = &end[0];
@@ -189,9 +190,32 @@ fn main() {
                 usage.process.useful_cmdline()
             );
         }
+        if !load_errors.is_empty() {
+            eprintln!("Error loading some per-process information:");
+            for error in &load_errors {
+                eprintln!("    {}", error);
+            }
+        }
     }
 
     determine_exit(&args, &statuses).exit()
+}
+
+/// Load currently running procs, and die if there is a surprising error
+fn load_procs(load_errors: &mut Vec<ProcFsError>) -> RunningProcs {
+    match RunningProcs::currently_running() {
+        Ok(procs) => procs,
+        Err(e) => match e {
+            ProcFsError::LoadProcsError(LoadProcsError { procs, errors }) => {
+                load_errors.extend(errors.into_iter());
+                procs
+            }
+            err => {
+                eprintln!("Unexpected error loading procs: {}", err);
+                Status::Unknown.exit()
+            }
+        },
+    }
 }
 
 #[cfg(test)]
