@@ -30,6 +30,25 @@ wrapped_enum!{
         InvalidFloat(num::ParseFloatError),
         /// Happens when we try to parse an int from something in procfs
         InvalidInt(num::ParseIntError),
+        /// Happens when we try to parse a line from /proc/<pid>/stat and got an error
+        ParseStatError(ParseStatError),
+    }
+}
+
+#[derive(Debug)]
+pub struct ParseStatError {
+    pub line: String,
+    pub field_name: &'static str,
+    pub position: u8,
+}
+
+impl fmt::Display for ParseStatError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        write!(
+            f,
+            "unable to parse '{}' at position {} from line '{}'",
+            self.field_name, self.position, self.line
+        )
     }
 }
 

@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
 
-use super::{ProcFsError, Result};
+use super::{ParseStatError, ProcFsError, Result};
 
 use linux::{Jiffies, PAGESIZE};
 
@@ -113,6 +113,20 @@ impl Default for Stat {
     }
 }
 
+fn field<T>(val: Option<T>, field_name: &'static str, row: &str, position: u8) -> Result<T> {
+    match val {
+        Some(v) => Ok(v),
+        None => {
+            let row = row.to_string();
+            return Err(ParseStatError {
+                line: row,
+                field_name,
+                position,
+            }.into());
+        }
+    }
+}
+
 impl FromStr for Stat {
     type Err = ProcFsError;
     /// Parse the results of /proc/[pid]/stat into a `Stat`
@@ -171,29 +185,29 @@ impl FromStr for Stat {
             u64  /* rss */
         );
         Ok(Stat {
-            pid: pid.expect("unable to parse pid."),
-            comm: comm.expect("unable to parse comm."),
-            state: state.expect("unable to parse state."),
-            ppid: ppid.expect("unable to parse ppid."),
-            pgrp: pgrp.expect("unable to parse pgrp."),
-            session: session.expect("unable to parse session."),
-            tty_nr: tty_nr.expect("unable to parse tty_nr."),
-            tpgid: tpgid.expect("unable to parse tpgid."),
-            flags: flags.expect("unable to parse flags."),
-            minflt: minflt.expect("unable to parse minflt."),
-            cminflt: cminflt.expect("unable to parse cminflt."),
-            majflt: majflt.expect("unable to parse majflt."),
-            cmajflt: cmajflt.expect("unable to parse cmajflt."),
-            utime: utime.expect("unable to parse utime.").into(),
-            stime: stime.expect("unable to parse stime.").into(),
-            cutime: cutime.expect("unable to parse cutime.").into(),
-            cstime: cstime.expect("unable to parse cstime.").into(),
-            priority: priority.expect("unable to parse priority."),
-            nice: nice.expect("unable to parse nice."),
-            num_threads: num_threads.expect("unable to parse num_threads."),
-            starttime: starttime.expect("unable to parse starttime."),
-            vsize: vsize.expect("unable to parse vsize."),
-            rss: rss.expect("unable to parse rss."),
+            pid: field(pid, "pid", s, 0)?,
+            comm: field(comm, "comm", s, 1)?,
+            state: field(state, "state", s, 2)?,
+            ppid: field(ppid, "ppid", s, 3)?,
+            pgrp: field(pgrp, "pgrp", s, 4)?,
+            session: field(session, "session", s, 5)?,
+            tty_nr: field(tty_nr, "tty_nr", s, 6)?,
+            tpgid: field(tpgid, "tpgid", s, 7)?,
+            flags: field(flags, "flags", s, 8)?,
+            minflt: field(minflt, "minflt", s, 9)?,
+            cminflt: field(cminflt, "cminflt", s, 10)?,
+            majflt: field(majflt, "majflt", s, 11)?,
+            cmajflt: field(cmajflt, "cmajflt", s, 12)?,
+            utime: field(utime, "utime", s, 13)?.into(),
+            stime: field(stime, "stime", s, 14)?.into(),
+            cutime: field(cutime, "cutime", s, 15)?.into(),
+            cstime: field(cstime, "cstime", s, 16)?.into(),
+            priority: field(priority, "priority", s, 17)?,
+            nice: field(nice, "nice", s, 18)?,
+            num_threads: field(num_threads, "num_threads", s, 19)?,
+            starttime: field(starttime, "starttime", s, 20)?,
+            vsize: field(vsize, "vsize", s, 21)?,
+            rss: field(rss, "rss", s, 22)?,
         })
     }
 }
@@ -227,5 +241,31 @@ impl CmdLine {
 
     pub fn display(&self) -> String {
         self.line.join(" ")
+    }
+}
+
+#[cfg(test)]
+mod test {
+    mod cpu_stat {
+        use super::super::*;
+
+        #[test]
+        fn test_parse_cpuline() {
+            for (i, s) in [
+                "47 (migration/8) S 2 0 0 0 -1 66666668 0 0 0 0 0 14 0 0 -100 0 1 \
+                 0 25 0 0 18848888888888888888 0 0 0 0 0 0 0 2147483647 0 0 0 0 17 \
+                 8 99 1 0 0 0 0 0 0 0 0 0 0 0",
+                "122 (statsd /app/connection) S 103 103 181 0 -1 304 0626 0 \
+                 0 0 605 198 0 0 20 0 10 0 71025 1230417920 11878 18848888888888888888 \
+                 1 1 0 0 0 0 0 4096 16898 0 0 0 17 11 0 0 0 0 0 0 0 0 0 0 0 0 0",
+            ].iter()
+                .enumerate()
+            {
+                s.parse::<Stat>().unwrap_or_else(|e| match e {
+                    ProcFsError::ParseStatError(e) => panic!("line {}: {}", i, e),
+                    x => panic!("unexpected error: {:?}", x),
+                });
+            }
+        }
     }
 }
