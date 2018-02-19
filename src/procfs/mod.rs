@@ -32,6 +32,8 @@ wrapped_enum!{
         InvalidInt(num::ParseIntError),
         /// Happens when we try to parse a line from /proc/<pid>/stat and got an error
         ParseStatError(ParseStatError),
+        /// Happens when we get an invalid process state
+        ParseStateError(ParseStateError),
     }
 }
 
@@ -48,6 +50,21 @@ impl fmt::Display for ParseStatError {
             f,
             "unable to parse '{}' at position {} from line '{}'",
             self.field_name, self.position, self.line
+        )
+    }
+}
+
+#[derive(Debug)]
+pub struct ParseStateError {
+    state: String,
+}
+
+impl fmt::Display for ParseStateError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        write!(
+            f,
+            "String '{}' was not a valid state, expected one of RSDWTZ",
+            self.state
         )
     }
 }

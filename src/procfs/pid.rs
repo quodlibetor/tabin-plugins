@@ -1,14 +1,15 @@
-//! Data structures related to the /proc/<pid>/* files
+//! Data structures related to the `/proc/<pid>/*` files
 
 use std::fmt;
 use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
 
-use super::{ParseStatError, ProcFsError, Result};
+use super::{ParseStatError, ParseStateError, ProcFsError, Result};
 
 use linux::{Jiffies, PAGESIZE};
 
+/// Information about a running process
 pub struct Process {
     pub stat: Stat,
     pub cmdline: CmdLine,
@@ -43,14 +44,56 @@ fn pages_to_bytes(pages: u64) -> u64 {
     pages * (*PAGESIZE)
 }
 
-/// The status of a process
+/// The state of the process
 ///
-/// This represents much of the information in /proc/[pid]/stat
+/// See `man 5 proc` for details
+#[derive(Debug, PartialEq, Eq)]
+pub enum State {
+    /// `R`: Currently using the CPU
+    Running,
+    /// `S`: Sleeping on an interruptible wait
+    Sleeping,
+    /// `D`: Sleeping on an uninterruptible or disk sleep
+    UninterruptibleSleep,
+    /// `W`: Paging
+    Waiting,
+    /// `T`: Traced or Stopped on a signal
+    Stopped,
+    /// `Z`: No parent process has reaped this
+    Zombie,
+}
+
+impl FromStr for State {
+    type Err = ProcFsError;
+
+    fn from_str(s: &str) -> Result<State> {
+        use self::State::*;
+        match s {
+            "R" => Ok(Running),
+            "S" => Ok(Sleeping),
+            "D" => Ok(UninterruptibleSleep),
+            "W" => Ok(Waiting),
+            "T" => Ok(Stopped),
+            "Z" => Ok(Zombie),
+            _ => Err(ParseStateError {
+                state: s.to_string(),
+            }.into()),
+        }
+    }
+}
+
+/// The status of a `Process`
+///
+/// This represents much of the information in `/proc/[pid]/stat`, and is
+/// commonly access via a [`Process`](../struct.Process.html)
 #[derive(Debug)]
 pub struct Stat {
+    /// The process ID
     pub pid: i32,
+    /// The filename of the executable
     pub comm: String,
-    pub state: String,
+    /// The state of the process
+    pub state: State,
     pub ppid: i32,
     pub pgrp: i32,
     pub session: i32,
@@ -88,7 +131,7 @@ impl Default for Stat {
         Stat {
             pid: 0,
             comm: "init".to_owned(),
-            state: "R".to_owned(),
+            state: "R".parse().unwrap(),
             ppid: 0,
             pgrp: 0,
             session: 0,
@@ -161,7 +204,7 @@ impl FromStr for Stat {
              {} {} {} 0 {d} {d} {}",
             i32,    // pid
             String, // comm
-            String, // state
+            State,  // state
             i32,    // ppid
             i32,    // pgrp
             i32,    // session
