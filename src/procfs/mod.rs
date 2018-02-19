@@ -30,10 +30,50 @@ wrapped_enum!{
         InvalidFloat(num::ParseFloatError),
         /// Happens when we try to parse an int from something in procfs
         InvalidInt(num::ParseIntError),
+        /// When we receive an error loading an individual proc, we get this
+        LoadProcsError(LoadProcsError),
         /// Happens when we try to parse a line from /proc/<pid>/stat and got an error
         ParseStatError(ParseStatError),
         /// Happens when we get an invalid process state
         ParseStateError(ParseStateError),
+    }
+}
+
+impl fmt::Display for ProcFsError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        use self::ProcFsError::*;
+        match self {
+            &Io(ref e) => write!(f, "{}", e),
+            &InsufficientData(ref e) => write!(f, "{}", e),
+            &InvalidFloat(ref e) => write!(f, "{}", e),
+            &InvalidInt(ref e) => write!(f, "{}", e),
+            &LoadProcsError(ref e) => write!(f, "{}", e),
+            &ParseStatError(ref e) => write!(f, "{}", e),
+            &ParseStateError(ref e) => write!(f, "{}", e),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct LoadProcsError {
+    /// The data we successfully loaded
+    pub procs: RunningProcs,
+    /// The errors we got when loading
+    pub errors: Vec<ProcFsError>,
+}
+
+impl fmt::Display for LoadProcsError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        write!(
+            f,
+            "loaded {} processes correctly, but got {} errors:\n",
+            self.procs.len(),
+            self.errors.len()
+        )?;
+        for err in &self.errors {
+            write!(f, "    {}", err)?;
+        }
+        Ok(())
     }
 }
 
@@ -92,23 +132,39 @@ pub type ProcMap = HashMap<i32, pid::Process>;
 /// All the processes that are running
 // TODO: make this internal field private, and re-export the methods
 // on the vec.
+#[derive(Debug)]
 pub struct RunningProcs(pub ProcMap);
 
 impl RunningProcs {
     /// Load the currently running processes from /proc/[pid]/*
     pub fn currently_running() -> Result<RunningProcs> {
         let mut procs = ProcMap::new();
+        let mut errors = vec![];
         let is_digit = Regex::new(r"^[0-9]+$").unwrap();
         for entry in try!(fs::read_dir("/proc")) {
             if let Some(fname) = try!(entry).path().file_name() {
-                let fname_str = fname.to_str().unwrap();
-                if is_digit.is_match(fname_str) {
-                    let prc = try!(pid::Process::from_pid(fname_str));
-                    procs.insert(prc.stat.pid, prc);
-                }
+                fname
+                    .to_str()
+                    .map(|fname| {
+                        if !is_digit.is_match(fname) {
+                            // we only care about the pid files
+                            return;
+                        }
+                        match pid::Process::from_pid(fname) {
+                            Ok(prc) => {
+                                procs.insert(prc.stat.pid, prc);
+                            }
+                            Err(e) => errors.push(e),
+                        }
+                    })
+                    .unwrap(); // all /proc filenames should be legal
             }
         }
-        Ok(RunningProcs(procs))
+        if errors.is_empty() {
+            Ok(RunningProcs(procs))
+        } else {
+            Err(LoadProcsError { procs: RunningProcs(procs), errors }.into())
+        }
     }
 
     fn iter(&self) -> hash_map::Iter<i32, pid::Process> {
@@ -147,6 +203,10 @@ impl RunningProcs {
             }
         }
         ProcUsages(usages)
+    }
+
+    pub fn len(&self) -> usize {
+        self.0.len()
     }
 }
 

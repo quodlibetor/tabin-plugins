@@ -10,6 +10,7 @@ use super::{ParseStatError, ParseStateError, ProcFsError, Result};
 use linux::{Jiffies, PAGESIZE};
 
 /// Information about a running process
+#[derive(Debug)]
 pub struct Process {
     pub stat: Stat,
     pub cmdline: CmdLine,
