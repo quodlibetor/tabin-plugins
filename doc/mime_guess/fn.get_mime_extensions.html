@@ -50,11 +50,11 @@
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../src/mime_guess/lib.rs.html#108-110' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn get_mime_extensions(mime: &amp;<a class="struct" href="../mime_guess/struct.Mime.html" title="struct mime_guess::Mime">Mime</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;'static [</a>&amp;'static <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>&gt;</pre><div class='docblock'><p>Get a list of known extensions for a given <code>Mime</code>. </p>
+<pre class='rust fn'>pub fn get_mime_extensions(mime: &amp;<a class="struct" href="../mime_guess/struct.Mime.html" title="struct mime_guess::Mime">Mime</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;'static [</a>&amp;'static <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>&gt;</pre><div class='docblock'><p>Get a list of known extensions for a given <code>Mime</code>.</p>
 
 <p>Ignores parameters (only searches with <code>&lt;main type&gt;/&lt;subtype&gt;</code>). Case-insensitive (for extension types).</p>
 
-<p>Returns <code>None</code> if the MIME type is unknown. </p>
+<p>Returns <code>None</code> if the MIME type is unknown.</p>
 
 <h3 id='wildcards' class='section-header'><a href='#wildcards'>Wildcards</a></h3>
 <p>If the top-level of the MIME type is a wildcard (<code>*</code>), returns all extensions.</p>
