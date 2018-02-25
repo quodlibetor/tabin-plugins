@@ -12,7 +12,7 @@ use docopt::Docopt;
 
 use tabin_plugins::Status;
 use tabin_plugins::linux::{Jiffies, Ratio};
-use tabin_plugins::procfs::{Calculations, RunningProcs};
+use tabin_plugins::procfs::{Calculations, LoadProcsError, ProcFsError, RunningProcs};
 use tabin_plugins::sys::fs::cgroup::cpuacct::Stat as CGroupStat;
 use tabin_plugins::sys::fs::cgroup::cpu::shares;
 
@@ -118,8 +118,9 @@ fn main() {
         cpus = Some(available_cpus)
     }
 
+    let mut per_proc_errors = vec![];
     if args.flag_show_hogs > 0 {
-        start_per_proc = Some(RunningProcs::currently_running().unwrap());
+        start_per_proc = Some(load_procs(&mut per_proc_errors));
     }
 
     sleep(Duration::from_millis(args.flag_sample as u64 * 1000));
@@ -158,7 +159,7 @@ fn main() {
         );
     }
     if args.flag_show_hogs > 0 {
-        let end_per_proc = RunningProcs::currently_running().unwrap();
+        let end_per_proc = load_procs(&mut per_proc_errors);
         let start_per_proc = start_per_proc.unwrap();
         let mut per_proc = end_per_proc.percent_cpu_util_since(&start_per_proc, median_jiffies);
         per_proc
@@ -175,6 +176,21 @@ fn main() {
         }
     }
     status.exit();
+}
+
+/// Load currently running procs, and die if there is a surprising error
+fn load_procs(load_errors: &mut Vec<ProcFsError>) -> RunningProcs {
+    match RunningProcs::currently_running() {
+        Ok(procs) => procs,
+        Err(ProcFsError::LoadProcsError(LoadProcsError { procs, errors })) => {
+            load_errors.extend(errors.into_iter());
+            procs
+        }
+        Err(err) => {
+            eprintln!("Unexpected error loading procs: {}", err);
+            Status::Unknown.exit()
+        }
+    }
 }
 
 #[cfg(test)]

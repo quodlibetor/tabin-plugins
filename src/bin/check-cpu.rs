@@ -205,16 +205,14 @@ fn main() {
 fn load_procs(load_errors: &mut Vec<ProcFsError>) -> RunningProcs {
     match RunningProcs::currently_running() {
         Ok(procs) => procs,
-        Err(e) => match e {
-            ProcFsError::LoadProcsError(LoadProcsError { procs, errors }) => {
-                load_errors.extend(errors.into_iter());
-                procs
-            }
-            err => {
-                eprintln!("Unexpected error loading procs: {}", err);
-                Status::Unknown.exit()
-            }
-        },
+        Err(ProcFsError::LoadProcsError(LoadProcsError { procs, errors })) => {
+            load_errors.extend(errors.into_iter());
+            procs
+        }
+        Err(err) => {
+            eprintln!("Unexpected error loading procs: {}", err);
+            Status::Unknown.exit()
+        }
     }
 }
 

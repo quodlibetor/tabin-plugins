@@ -13,7 +13,7 @@ use docopt::Docopt;
 use tabin_plugins::Status;
 use tabin_plugins::sys::fs::cgroup::memory::{limit_in_bytes, Stat};
 use tabin_plugins::linux::{bytes_to_human_size, pages_to_human_size};
-use tabin_plugins::procfs::{MemInfo, RunningProcs};
+use tabin_plugins::procfs::{LoadProcsError, MemInfo, ProcFsError, RunningProcs};
 
 static USAGE: &'static str = "
 Usage:
@@ -119,7 +119,19 @@ fn main() {
     }
 
     if args.flag_show_hogs > 0 {
-        let per_proc = RunningProcs::currently_running().unwrap();
+        let mut load_errors = None;
+        let per_proc = match RunningProcs::currently_running() {
+            Ok(procs) => procs,
+            Err(ProcFsError::LoadProcsError(LoadProcsError { procs, errors })) => {
+                load_errors = Some(errors);
+                procs
+            }
+            Err(err) => {
+                eprintln!("UNKNOWN: Unexpected error loading procs: {}", err);
+                RunningProcs::empty()
+            }
+        };
+
         let mut procs = per_proc.0.values().collect::<Vec<_>>();
         procs.sort_by(|l, r| r.stat.rss.cmp(&l.stat.rss));
         println!("INFO [check-container-ram]: ram hogs");
@@ -132,6 +144,12 @@ fn main() {
                 pages_to_human_size(process.stat.rss),
                 process.useful_cmdline()
             );
+        }
+
+        if let Some(errors) = load_errors {
+            for err in errors {
+                eprintln!("UNKNOWN: error loading process: {}", err);
+            }
         }
     }
     status.exit();

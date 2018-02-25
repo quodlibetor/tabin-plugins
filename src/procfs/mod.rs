@@ -170,6 +170,10 @@ impl RunningProcs {
         }
     }
 
+    pub fn empty() -> RunningProcs {
+        RunningProcs(HashMap::new())
+    }
+
     fn iter(&self) -> hash_map::Iter<i32, pid::Process> {
         self.0.iter()
     }
