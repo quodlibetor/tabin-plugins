@@ -24,7 +24,9 @@ extern crate wrapped_enum;
 
 extern crate libc;
 extern crate regex;
-extern crate rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 
 use std::process;
 use std::fmt;
@@ -55,7 +57,7 @@ pub type TabinResult<T> = Result<T, TabinError>;
 
 /// Represent the nagios-ish error status of a script.
 #[must_use]
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, RustcDecodable)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Deserialize)]
 pub enum Status {
     /// Unexpected result
     Unknown,

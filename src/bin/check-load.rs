@@ -4,74 +4,36 @@
 //! due to IO or CPU constraints. The numbers used to check are the load averaged
 //! over 1, 5 and 15 minutes, respectively
 
-extern crate rustc_serialize;
-
-extern crate docopt;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate structopt;
 
 extern crate tabin_plugins;
 
-use docopt::Docopt;
+use structopt::StructOpt;
 use tabin_plugins::Status;
 use tabin_plugins::procfs::{Calculations, LoadAvg};
 
-static USAGE: &'static str = "
-Usage: check-load [options]
-       check-load -h | --help
-
-Check the load average of the system
-
-Load average is the number of processes *waiting* to do work in a queue, either
-due to IO or CPU constraints. The numbers used to check are the load averaged
-over 1, 5 and 15 minutes, respectively
-
-Options:
-    -h, --help              Show this message and exit
-    -v, --verbose           Print even when things are okay
-
-Threshold Behavior:
-    -w, --warn=<averages>   Averages to warn at         [default: 5,3.5,2.5]
-    -c, --crit=<averages>   Averages to go critical at  [default: 10,5,3]
-
-    --per-cpu              Divide the load average by the number of processors on the
-                           system.
-";
-
-#[derive(RustcDecodable, Debug)]
-struct RawArgs {
-    flag_warn: String,
-    flag_crit: String,
-    flag_per_cpu: bool,
-    flag_verbose: bool,
-}
-
-#[derive(Debug)]
+/// Check the load average of the system
+///
+/// Load average is the number of processes *waiting* to do work in a queue, either
+/// due to IO or CPU constraints. The numbers used to check are the load averaged
+/// over 1, 5 and 15 minutes, respectively
+#[derive(Deserialize, Debug, StructOpt)]
 struct Args {
-    flag_warn: LoadAvg,
-    flag_crit: LoadAvg,
-    flag_per_cpu: bool,
-    flag_verbose: bool,
-}
-
-impl From<RawArgs> for Args {
-    fn from(args: RawArgs) -> Args {
-        Args {
-            flag_warn: args.flag_warn.parse().ok().expect(&format!(
-                "--warn should look like 'n.m,n.m,n.m' not {}",
-                args.flag_warn
-            )),
-            flag_crit: args.flag_crit.parse().ok().expect(&format!(
-                "--crit should look like 'n.m,n.m,n.m' not {}",
-                args.flag_warn
-            )),
-            flag_per_cpu: args.flag_per_cpu,
-            flag_verbose: args.flag_verbose,
-        }
-    }
-}
-
-fn parse_args() -> Result<Args, docopt::Error> {
-    let args: RawArgs = try!(Docopt::new(USAGE).and_then(|d| d.help(true).decode()));
-    Ok(args.into())
+    #[structopt(short = "w", long = "warn", help = "Averages to warn at",
+                default_value = "5,3.5,2.5")]
+    warn: LoadAvg,
+    #[structopt(short = "c", long = "crit", help = "Averages to go critical at",
+                default_value = "10,5,3")]
+    crit: LoadAvg,
+    #[structopt(long = "per-cpu",
+                help = "Divide the load average by the number of processors on the \
+                        system.")]
+    per_cpu: bool,
+    #[structopt(short = "v", long = "verbose", help = "print info even if everything is okay")]
+    verbose: bool,
 }
 
 fn do_check(args: &Args, actual: LoadAvg, num_cpus: usize, per_cpu: bool) -> Status {
@@ -82,23 +44,23 @@ fn do_check(args: &Args, actual: LoadAvg, num_cpus: usize, per_cpu: bool) -> Sta
         String::new()
     };
 
-    if actual > args.flag_crit {
+    if actual > args.crit {
         println!(
             "[check-load] CRITICAL: load average{} is {} (> {})",
-            cpu_str, actual, args.flag_crit
+            cpu_str, actual, args.crit
         );
         Status::Critical
-    } else if actual > args.flag_warn {
+    } else if actual > args.warn {
         println!(
             "[check-load] WARNING: load average{} is {} (> {})",
-            cpu_str, actual, args.flag_warn
+            cpu_str, actual, args.warn
         );
         Status::Warning
     } else {
-        if args.flag_verbose {
+        if args.verbose {
             println!(
                 "[check-load] OK: load average{} is {} (< {})",
-                cpu_str, actual, args.flag_warn
+                cpu_str, actual, args.warn
             );
         }
         Status::Ok
@@ -107,110 +69,101 @@ fn do_check(args: &Args, actual: LoadAvg, num_cpus: usize, per_cpu: bool) -> Sta
 
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
-    let args = parse_args().unwrap_or_else(|e| e.exit());
+    let args = Args::from_args();
 
-    let num_cpus = if args.flag_per_cpu {
+    let num_cpus = if args.per_cpu {
         let cpus = Calculations::load_per_cpu().unwrap();
         cpus.len()
     } else {
         1
     };
 
-    let status = do_check(&args, LoadAvg::load().unwrap(), num_cpus, args.flag_per_cpu);
+    let status = do_check(&args, LoadAvg::load().unwrap(), num_cpus, args.per_cpu);
     status.exit();
 }
 
 #[cfg(test)]
 mod test {
-    use docopt::Docopt;
+    use structopt::StructOpt;
     use tabin_plugins::Status;
 
-    use super::{do_check, parse_args, Args, RawArgs, USAGE};
+    use super::{do_check, Args};
 
-    #[test] // one day syntax extensions won't require nightly.
-    fn parse_args_is_valid() {
-        parse_args().unwrap();
-    }
-
-    fn docopt(argv: Vec<&str>) -> Args {
-        Args::from(
-            Docopt::new(USAGE)
-                .and_then(|d| d.argv(argv.into_iter()).decode::<RawArgs>())
-                .unwrap(),
-        )
+    fn build_args(argv: Vec<&str>) -> Args {
+        Args::from_iter(argv.into_iter())
     }
 
     #[test]
     fn flags() {
-        let args = docopt(vec!["check-load", "--per-cpu"]);
-        assert_eq!(args.flag_per_cpu, true);
+        let args = build_args(vec!["check-load", "--per-cpu"]);
+        assert_eq!(args.per_cpu, true);
 
-        let args = docopt(vec!["check-load"]);
-        assert_eq!(args.flag_per_cpu, false);
+        let args = build_args(vec!["check-load"]);
+        assert_eq!(args.per_cpu, false);
     }
 
     #[test]
     fn one_core_statuses() {
-        let args = docopt(vec!["check-load", "-c", "1,2,3"]);
+        let args = build_args(vec!["check-load", "-c", "1,2,3"]);
         assert_eq!(
-            do_check(&args, "2 1 1".parse().unwrap(), 1, args.flag_per_cpu),
+            do_check(&args, "2 1 1".parse().unwrap(), 1, args.per_cpu),
             Status::Critical
         );
 
-        let args = docopt(vec!["check-load", "-w", "1,2,3"]);
+        let args = build_args(vec!["check-load", "-w", "1,2,3"]);
         assert_eq!(
-            do_check(&args, "1.1 1 1".parse().unwrap(), 1, args.flag_per_cpu),
+            do_check(&args, "1.1 1 1".parse().unwrap(), 1, args.per_cpu),
             Status::Warning
         );
 
-        let args = docopt(vec!["check-load"]);
+        let args = build_args(vec!["check-load"]);
         assert_eq!(
-            do_check(&args, "2 1 1".parse().unwrap(), 1, args.flag_per_cpu),
+            do_check(&args, "2 1 1".parse().unwrap(), 1, args.per_cpu),
             Status::Ok
         );
 
-        let args = docopt(vec!["check-load"]);
+        let args = build_args(vec!["check-load"]);
         assert_eq!(
-            do_check(&args, "12 1 1".parse().unwrap(), 1, args.flag_per_cpu),
+            do_check(&args, "12 1 1".parse().unwrap(), 1, args.per_cpu),
             Status::Critical
         );
 
-        let args = docopt(vec!["check-load", "-c", "2,3,4", "-w", "1,2,3"]);
+        let args = build_args(vec!["check-load", "-c", "2,3,4", "-w", "1,2,3"]);
         assert_eq!(
-            do_check(&args, ".5 .5 .5".parse().unwrap(), 1, args.flag_per_cpu),
+            do_check(&args, ".5 .5 .5".parse().unwrap(), 1, args.per_cpu),
             Status::Ok
         );
     }
 
     #[test]
     fn multi_cpu_statuses() {
-        let args = docopt(vec!["check-load", "-w", "7,2,2", "-v", "--per-cpu"]);
+        let args = build_args(vec!["check-load", "-w", "7,2,2", "-v", "--per-cpu"]);
         assert_eq!(
-            do_check(&args, "12 1 1".parse().unwrap(), 2, args.flag_per_cpu),
+            do_check(&args, "12 1 1".parse().unwrap(), 2, args.per_cpu),
             Status::Ok
         );
 
-        let args = docopt(vec!["check-load", "-w", "5,2,2", "-v", "--per-cpu"]);
+        let args = build_args(vec!["check-load", "-w", "5,2,2", "-v", "--per-cpu"]);
         assert_eq!(
-            do_check(&args, "12 1 1".parse().unwrap(), 2, args.flag_per_cpu),
+            do_check(&args, "12 1 1".parse().unwrap(), 2, args.per_cpu),
             Status::Warning
         );
 
-        let args = docopt(vec!["check-load", "-v", "--per-cpu"]);
+        let args = build_args(vec!["check-load", "-v", "--per-cpu"]);
         assert_eq!(
-            do_check(&args, "21 1 1".parse().unwrap(), 2, args.flag_per_cpu),
+            do_check(&args, "21 1 1".parse().unwrap(), 2, args.per_cpu),
             Status::Critical
         );
 
-        let args = docopt(vec!["check-load", "-v", "--per-cpu", "-c", "6,4,4"]);
+        let args = build_args(vec!["check-load", "-v", "--per-cpu", "-c", "6,4,4"]);
         assert_eq!(
-            do_check(&args, "13 1 1".parse().unwrap(), 2, args.flag_per_cpu),
+            do_check(&args, "13 1 1".parse().unwrap(), 2, args.per_cpu),
             Status::Critical
         );
 
-        let args = docopt(vec!["check-load", "-v", "--per-cpu", "-c", "2,1,1"]);
+        let args = build_args(vec!["check-load", "-v", "--per-cpu", "-c", "2,1,1"]);
         assert_eq!(
-            do_check(&args, "13 1 1".parse().unwrap(), 4, args.flag_per_cpu),
+            do_check(&args, "13 1 1".parse().unwrap(), 4, args.per_cpu),
             Status::Critical
         );
     }

@@ -1,7 +1,9 @@
 //! Check that we can write to disk
 
-extern crate docopt;
-extern crate rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate structopt;
 
 use std::fs;
 use std::io::Write;
@@ -11,36 +13,16 @@ use std::path::Path;
 use std::process;
 use std::sync::mpsc::channel;
 
-use docopt::Docopt;
+use structopt::StructOpt;
 
-static USAGE: &'static str = "
-Usage:
-    check-fs-writeable <filename>
-    check-fs-writeable -h | --help
-
-Check that we can write to a filesystem by writing a byte to a file. Does not
-try to create the directory, or do anything else. Just writes a single byte to
-a file.
-
-Arguments:
-
-    <filename>            The file to write to
-
-Options:
-    -h, --help            Show this message and exit
-";
-
-#[derive(RustcDecodable)]
+/// Check that we can write to a filesystem by writing a byte to a file.
+///
+/// Does not try to create the directory, or do anything else. Just writes a
+/// single byte to a file, errors if it cannot, and then deletes the file.
+#[derive(StructOpt, Deserialize)]
 struct Args {
-    arg_filename: String,
-}
-
-impl Args {
-    fn parse() -> Args {
-        Docopt::new(USAGE)
-            .and_then(|d| d.decode())
-            .unwrap_or_else(|e| e.exit())
-    }
+    #[structopt(help = "The file to write to")]
+    filename: String,
 }
 
 fn check_file_writeable(filename: String) -> Result<String, String> {
@@ -97,9 +79,9 @@ fn check_file_writeable(filename: String) -> Result<String, String> {
 
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
-    let args = Args::parse();
+    let args = Args::from_args();
     let mut exit_status = 0;
-    match check_file_writeable(args.arg_filename) {
+    match check_file_writeable(args.filename) {
         Ok(msg) => {
             println!("{}", msg);
         }
@@ -113,13 +95,11 @@ fn main() {
 
 #[cfg(test)]
 mod test {
-    use super::{Args, USAGE};
-    use docopt::Docopt;
+    use super::Args;
+    use structopt::StructOpt;
 
     #[test]
     fn can_parse_args() {
-        let _: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "/tmp"].into_iter()).help(true).decode())
-            .unwrap();
+        Args::from_iter(["arg0", "/tmp"].into_iter());
     }
 }

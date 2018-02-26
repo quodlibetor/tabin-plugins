@@ -2,60 +2,43 @@
 
 #![allow(unused_variables, dead_code)]
 
-extern crate docopt;
 extern crate nix;
 extern crate regex;
-extern crate rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate structopt;
 
 extern crate tabin_plugins;
 
-use docopt::Docopt;
 use nix::unistd::{getpid, getppid, Pid};
 use regex::Regex;
+use structopt::StructOpt;
 
 use tabin_plugins::Status;
 use tabin_plugins::procfs::RunningProcs;
 use tabin_plugins::procfs::pid::Process;
 
-static USAGE: &'static str = "
-Usage:
-    check-procs <pattern> (--crit-under <N> | --crit-over <N>)
-    check-procs -h | --help
-
-Check that an expected number of processes are running.
-
-Required Arguments:
-
-    pattern                Regex that command and its arguments must match
-
-Options:
-    -h, --help             Show this message and exit
-    --crit-under=<N>       Error if there are fewer than this pattern procs
-    --crit-over=<N>        Error if there are more than this pattern procs
-";
-
-#[derive(Debug, RustcDecodable)]
+#[derive(StructOpt, Debug, Deserialize)]
+/// Check that an expected number of processes are running.
 struct Args {
-    arg_pattern: String,
-    flag_crit_under: Option<usize>,
-    flag_crit_over: Option<usize>,
-}
-
-impl Args {
-    fn parse() -> Args {
-        Docopt::new(USAGE)
-            .and_then(|d| d.decode())
-            .unwrap_or_else(|e| e.exit())
-    }
+    #[structopt(help = "Regex that command and its arguments must match")]
+    pattern: String,
+    #[structopt(long = "crit-under",
+                help = "Error if there are fewer than this many procs matching <pattern>")]
+    crit_under: Option<usize>,
+    #[structopt(long = "crit-over",
+                help = "Error if there are more than this many procs matching <pattern>")]
+    crit_over: Option<usize>,
 }
 
 fn main() {
-    let args = Args::parse();
-    let procs = RunningProcs::currently_running().unwrap();
-    let re = Regex::new(&args.arg_pattern).unwrap_or_else(|e| {
-        println!("{}", e);
+    let args = Args::from_args();
+    let re = Regex::new(&args.pattern).unwrap_or_else(|e| {
+        println!("ERROR: invalid process pattern: {}", e);
         Status::Critical.exit()
     });
+    let procs = RunningProcs::currently_running().unwrap();
 
     let me = getpid();
     let parent = getppid();
@@ -75,31 +58,31 @@ fn main() {
         .collect::<Vec<(i32, Process)>>();
 
     let mut status = Status::Ok;
-    if let Some(crit_over) = args.flag_crit_over {
+    if let Some(crit_over) = args.crit_over {
         if matches.len() > crit_over {
             status = Status::Critical;
             println!(
                 "CRITICAL: there are {} process that match {:?} (greater than {})",
                 matches.len(),
-                args.arg_pattern,
+                args.pattern,
                 crit_over
             );
         }
     };
-    if let Some(crit_under) = args.flag_crit_under {
+    if let Some(crit_under) = args.crit_under {
         if matches.len() < crit_under {
             status = Status::Critical;
             println!(
                 "CRITICAL: there are {} process that match {:?} (less than {})",
                 matches.len(),
-                args.arg_pattern,
+                args.pattern,
                 crit_under
             );
         }
     }
 
     if status == Status::Ok {
-        match (args.flag_crit_over, args.flag_crit_under) {
+        match (args.crit_over, args.crit_under) {
             (Some(o), Some(u)) => println!(
                 "OKAY: There are {} matching procs (between {} and {})",
                 matches.len(),
@@ -133,17 +116,13 @@ fn main() {
 
 #[cfg(test)]
 mod unit {
-    use super::{Args, USAGE};
+    use super::Args;
 
-    use docopt::Docopt;
+    use structopt::StructOpt;
 
     #[test]
     fn validate_docstring() {
-        let args: Args = Docopt::new(USAGE)
-            .and_then(|d| {
-                d.argv(vec!["c-p", "some.*proc", "--crit-under=1"].into_iter())
-                    .decode()
-            })
-            .unwrap();
+        let args = Args::from_iter(["c-p", "some.*proc", "--crit-under=1"].into_iter());
+        assert_eq!(args.crit_under, Some(1));
     }
 }

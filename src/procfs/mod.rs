@@ -224,7 +224,8 @@ impl RunningProcs {
 ///
 /// Corresponds to the fields and functions in `Calculations`, q.v. for the
 /// definitions.
-#[derive(RustcDecodable, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
 pub enum WorkSource {
     Active,
     ActivePlusIoWait,
@@ -239,6 +240,36 @@ pub enum WorkSource {
     GuestNice,
     Idle,
     IoWait,
+}
+
+#[derive(Debug)]
+pub struct InvalidWorkSource(String);
+
+impl fmt::Display for InvalidWorkSource {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Invalid value for worksource: '{}'", self.0)
+    }
+}
+
+impl ::std::str::FromStr for WorkSource {
+    type Err = InvalidWorkSource;
+    fn from_str(s: &str) -> StdResult<WorkSource, InvalidWorkSource> {
+        match s {
+            "active" => Ok(WorkSource::Active),
+            "activeplusiowait" => Ok(WorkSource::ActivePlusIoWait),
+            "activeminusnice" => Ok(WorkSource::ActiveMinusNice),
+            "use" => Ok(WorkSource::User),
+            "nice" => Ok(WorkSource::Nice),
+            "system" => Ok(WorkSource::System),
+            "irq" => Ok(WorkSource::Irq),
+            "softirq" => Ok(WorkSource::SoftIrq),
+            "steal" => Ok(WorkSource::Steal),
+            "guest" => Ok(WorkSource::Guest),
+            "idle" => Ok(WorkSource::Idle),
+            "iowait" => Ok(WorkSource::IoWait),
+            _ => Err(InvalidWorkSource(s.to_string())),
+        }
+    }
 }
 
 impl fmt::Display for WorkSource {
@@ -647,7 +678,7 @@ impl FromStr for MemInfo {
 ///
 /// Load average is number of jobs in the run queue (state R) or waiting for
 /// disk I/O (state D) averaged over 1, 5, and 15 minutes.
-#[derive(PartialEq, PartialOrd, Debug)]
+#[derive(PartialEq, PartialOrd, Debug, Deserialize)]
 pub struct LoadAvg {
     pub one: f64,
     pub five: f64,
@@ -1010,6 +1041,28 @@ btime 143
         )
     }
 
+    #[test]
+    fn worksource_can_parse_from_str() {
+        for src in [
+            "active",
+            "activeplusiowait",
+            "activeminusnice",
+            "use",
+            "nice",
+            "system",
+            "irq",
+            "softirq",
+            "steal",
+            "guest",
+            "idle",
+            "iowait",
+        ].iter()
+        {
+            if let Err(e) = src.parse::<WorkSource>() {
+                panic!("Error parsing worksource for '{}': {}", src, e);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
