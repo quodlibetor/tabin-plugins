@@ -30,7 +30,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Module pid</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li></ul></div><p class='location'><a href='../../index.html'>tabin_plugins</a>::<wbr><a href='../index.html'>procfs</a></p><script>window.sidebarCurrent = {name: 'pid', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
+        <p class='location'>Module pid</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li></ul></div><p class='location'><a href='../../index.html'>tabin_plugins</a>::<wbr><a href='../index.html'>procfs</a></p><script>window.sidebarCurrent = {name: 'pid', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -49,8 +49,8 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/tabin_plugins/procfs/pid.rs.html#1-231' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>Data structures related to the /proc/<pid>/* files</p>
+               </span><a class='srclink' href='../../../src/tabin_plugins/procfs/pid.rs.html#1-318' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Data structures related to the <code>/proc/&lt;pid&gt;/*</code> files</p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
@@ -64,14 +64,22 @@
                            <td><a class="struct" href="struct.Process.html"
                                   title='struct tabin_plugins::procfs::pid::Process'>Process</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Information about a running process</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.Stat.html"
                                   title='struct tabin_plugins::procfs::pid::Stat'>Stat</a></td>
                            <td class='docblock-short'>
-                                <p>The status of a process</p>
+                                <p>The status of a <code>Process</code></p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.State.html"
+                                  title='enum tabin_plugins::procfs::pid::State'>State</a></td>
+                           <td class='docblock-short'>
+                                <p>The state of the process</p>
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
