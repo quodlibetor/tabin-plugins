@@ -30,6 +30,82 @@ wrapped_enum!{
         InvalidFloat(num::ParseFloatError),
         /// Happens when we try to parse an int from something in procfs
         InvalidInt(num::ParseIntError),
+        /// When we receive an error loading an individual proc, we get this
+        LoadProcsError(LoadProcsError),
+        /// Happens when we try to parse a line from /proc/<pid>/stat and got an error
+        ParseStatError(ParseStatError),
+        /// Happens when we get an invalid process state
+        ParseStateError(ParseStateError),
+    }
+}
+
+impl fmt::Display for ProcFsError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        use self::ProcFsError::*;
+        match self {
+            &Io(ref e) => write!(f, "{}", e),
+            &InsufficientData(ref e) => write!(f, "{}", e),
+            &InvalidFloat(ref e) => write!(f, "{}", e),
+            &InvalidInt(ref e) => write!(f, "{}", e),
+            &LoadProcsError(ref e) => write!(f, "{}", e),
+            &ParseStatError(ref e) => write!(f, "{}", e),
+            &ParseStateError(ref e) => write!(f, "{}", e),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct LoadProcsError {
+    /// The data we successfully loaded
+    pub procs: RunningProcs,
+    /// The errors we got when loading
+    pub errors: Vec<ProcFsError>,
+}
+
+impl fmt::Display for LoadProcsError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        write!(
+            f,
+            "loaded {} processes correctly, but got {} errors:\n",
+            self.procs.len(),
+            self.errors.len()
+        )?;
+        for err in &self.errors {
+            write!(f, "    {}", err)?;
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub struct ParseStatError {
+    pub line: String,
+    pub field_name: &'static str,
+    pub position: u8,
+}
+
+impl fmt::Display for ParseStatError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        write!(
+            f,
+            "unable to parse '{}' at position {} from line '{}'",
+            self.field_name, self.position, self.line
+        )
+    }
+}
+
+#[derive(Debug)]
+pub struct ParseStateError {
+    state: String,
+}
+
+impl fmt::Display for ParseStateError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        write!(
+            f,
+            "String '{}' was not a valid state, expected one of RSDWTZ",
+            self.state
+        )
     }
 }
 
@@ -56,23 +132,46 @@ pub type ProcMap = HashMap<i32, pid::Process>;
 /// All the processes that are running
 // TODO: make this internal field private, and re-export the methods
 // on the vec.
+#[derive(Debug)]
 pub struct RunningProcs(pub ProcMap);
 
 impl RunningProcs {
     /// Load the currently running processes from /proc/[pid]/*
     pub fn currently_running() -> Result<RunningProcs> {
         let mut procs = ProcMap::new();
+        let mut errors = vec![];
         let is_digit = Regex::new(r"^[0-9]+$").unwrap();
         for entry in try!(fs::read_dir("/proc")) {
             if let Some(fname) = try!(entry).path().file_name() {
-                let fname_str = fname.to_str().unwrap();
-                if is_digit.is_match(fname_str) {
-                    let prc = try!(pid::Process::from_pid(fname_str));
-                    procs.insert(prc.stat.pid, prc);
-                }
+                fname
+                    .to_str()
+                    .map(|fname| {
+                        if !is_digit.is_match(fname) {
+                            // we only care about the pid files
+                            return;
+                        }
+                        match pid::Process::from_pid(fname) {
+                            Ok(prc) => {
+                                procs.insert(prc.stat.pid, prc);
+                            }
+                            Err(e) => errors.push(e),
+                        }
+                    })
+                    .unwrap(); // all /proc filenames should be legal
             }
         }
-        Ok(RunningProcs(procs))
+        if errors.is_empty() {
+            Ok(RunningProcs(procs))
+        } else {
+            Err(LoadProcsError {
+                procs: RunningProcs(procs),
+                errors,
+            }.into())
+        }
+    }
+
+    pub fn empty() -> RunningProcs {
+        RunningProcs(HashMap::new())
     }
 
     fn iter(&self) -> hash_map::Iter<i32, pid::Process> {
@@ -112,6 +211,10 @@ impl RunningProcs {
         }
         ProcUsages(usages)
     }
+
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -121,7 +224,8 @@ impl RunningProcs {
 ///
 /// Corresponds to the fields and functions in `Calculations`, q.v. for the
 /// definitions.
-#[derive(RustcDecodable, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
 pub enum WorkSource {
     Active,
     ActivePlusIoWait,
@@ -136,6 +240,36 @@ pub enum WorkSource {
     GuestNice,
     Idle,
     IoWait,
+}
+
+#[derive(Debug)]
+pub struct InvalidWorkSource(String);
+
+impl fmt::Display for InvalidWorkSource {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Invalid value for worksource: '{}'", self.0)
+    }
+}
+
+impl ::std::str::FromStr for WorkSource {
+    type Err = InvalidWorkSource;
+    fn from_str(s: &str) -> StdResult<WorkSource, InvalidWorkSource> {
+        match s {
+            "active" => Ok(WorkSource::Active),
+            "activeplusiowait" => Ok(WorkSource::ActivePlusIoWait),
+            "activeminusnice" => Ok(WorkSource::ActiveMinusNice),
+            "use" => Ok(WorkSource::User),
+            "nice" => Ok(WorkSource::Nice),
+            "system" => Ok(WorkSource::System),
+            "irq" => Ok(WorkSource::Irq),
+            "softirq" => Ok(WorkSource::SoftIrq),
+            "steal" => Ok(WorkSource::Steal),
+            "guest" => Ok(WorkSource::Guest),
+            "idle" => Ok(WorkSource::Idle),
+            "iowait" => Ok(WorkSource::IoWait),
+            _ => Err(InvalidWorkSource(s.to_string())),
+        }
+    }
 }
 
 impl fmt::Display for WorkSource {
@@ -544,7 +678,7 @@ impl FromStr for MemInfo {
 ///
 /// Load average is number of jobs in the run queue (state R) or waiting for
 /// disk I/O (state D) averaged over 1, 5, and 15 minutes.
-#[derive(PartialEq, PartialOrd, Debug)]
+#[derive(PartialEq, PartialOrd, Debug, Deserialize)]
 pub struct LoadAvg {
     pub one: f64,
     pub five: f64,
@@ -907,6 +1041,28 @@ btime 143
         )
     }
 
+    #[test]
+    fn worksource_can_parse_from_str() {
+        for src in [
+            "active",
+            "activeplusiowait",
+            "activeminusnice",
+            "use",
+            "nice",
+            "system",
+            "irq",
+            "softirq",
+            "steal",
+            "guest",
+            "idle",
+            "iowait",
+        ].iter()
+        {
+            if let Err(e) = src.parse::<WorkSource>() {
+                panic!("Error parsing worksource for '{}': {}", src, e);
+            }
+        }
+    }
 }
 
 #[cfg(test)]

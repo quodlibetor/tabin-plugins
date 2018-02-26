@@ -1,73 +1,60 @@
 //! Check Disk usage
 
-extern crate docopt;
 extern crate nix;
 extern crate regex;
-extern crate rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate structopt;
 
 extern crate tabin_plugins;
 
 use std::collections::HashSet;
 use std::cmp::max;
 
-use docopt::Docopt;
+use structopt::StructOpt;
 use regex::Regex;
 use nix::sys::statvfs::vfs;
 use tabin_plugins::Status;
 use tabin_plugins::procfs::Mount;
 use tabin_plugins::linux::bytes_to_human_size;
 
-static USAGE: &'static str = "
-Usage:
-     check-disk [options] [thresholds] [filters]
-     check-disk -h | --help
-
-Check all mounted file systems for disk usage.
-
-For some reason this check generally generates values that are between 1% and
-3% higher than `df`, even though AFAICT we're both just calling statvfs a bunch
-of times.
-
-Options:
-    -h, --help            Show this message and exit
-    --info                Print information of all known filesystems.
-                          Similar to df.
-
-Thresholds:
-    -w, --warn=<percent>  Percent usage to warn at. [default: 80]
-    -c, --crit=<percent>  Percent usage to go critical at. [default: 90]
-    -W, --warn-inodes=<percent>
-                          Percent of inode usage to warn at. [default: 80]
-    -C, --crit-inodes=<percent>
-                          Percent of inode usage to go critical at. [default: 90]
-
-Filters:
-    --pattern=<regex>     Only check filesystems that match this regex.
-    --exclude-pattern=<regex>  Do not check filesystems that match this regex.
-    --type=<fs>           Only check filesystems that are of this type, e.g.
-                          ext4 or tmpfs. See 'man 8 mount' for more examples.
-    --exclude-type=<fs>   Do not check filesystems that are of this type.
-";
-
-#[derive(RustcDecodable)]
+/// Check all mounted file systems for disk usage.
+///
+/// For some reason this check generally generates values that are between 1% and
+/// 3% higher than `df`, even though AFAICT we're both just calling statvfs a bunch
+/// of times.
+#[derive(StructOpt, Deserialize, Debug)]
 struct Args {
-    flag_crit: f64,
-    flag_warn: f64,
-    flag_crit_inodes: f64,
-    flag_warn_inodes: f64,
-    flag_pattern: Option<String>,
-    flag_exclude_pattern: Option<String>,
-    flag_type: Option<String>,
-    flag_exclude_type: Option<String>,
-    flag_info: bool,
-}
+    #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "80")]
+    warn: f64,
+    #[structopt(short = "c", long = "crit", help = "Percent to go critical at",
+                default_value = "90")]
+    crit: f64,
+    #[structopt(short = "W", long = "warn-inodes", help = "Percent of inode usage to warn at",
+                default_value = "80")]
+    warn_inodes: f64,
+    #[structopt(short = "C", long = "crit-inodes",
+                help = "Percent of inode usage to go critical at", default_value = "90")]
+    crit_inodes: f64,
 
-impl Args {
-    fn parse() -> Args {
-        Docopt::new(USAGE)
-            .and_then(|d| d.decode())
-            .unwrap_or_else(|e| e.exit())
-    }
+    #[structopt(long = "pattern", name = "regex",
+                help = "Only check filesystems that match this regex")]
+    pattern: Option<String>,
+    #[structopt(long = "exclude-pattern", name = "exclude-regex",
+                help = "Only check filesystems that match this regex")]
+    exclude_pattern: Option<String>,
+    #[structopt(long = "type", name = "fs-type",
+                help = "Only check filesystems that are of this type, e.g. \
+                        ext4 or tmpfs. See 'man 8 mount' for more examples.")]
+    fs_type: Option<String>,
+    #[structopt(long = "exclude-type", name = "exclude-fs-type",
+                help = "Do not check filesystems that are of this type.")]
+    exclude_type: Option<String>,
+    #[structopt(long = "info",
+                help = "Print information of all known filesystems. \
+                        Similar to df.")]
+    info: bool,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -114,8 +101,8 @@ fn maybe_regex(pattern: &Option<String>) -> DiskResult<Option<Regex>> {
 /// * Applies the `pattern` and `type` filters
 fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
     let mut devices = HashSet::new();
-    let include_regex = try!(maybe_regex(&args.flag_pattern));
-    let exclude_regex = try!(maybe_regex(&args.flag_exclude_pattern));
+    let include_regex = try!(maybe_regex(&args.pattern));
+    let exclude_regex = try!(maybe_regex(&args.exclude_pattern));
     let ms = mounts.into_iter()
         .filter_map(|mount| {
             let stat = vfs::Statvfs::for_path(mount.file.as_bytes()).unwrap();
@@ -156,13 +143,13 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
                     true
                 })
         .filter(|ms|
-                if let Some(ref vfstype) = args.flag_type {
+                if let Some(ref vfstype) = args.fs_type {
                     ms.mount.vfstype == *vfstype
                 } else {
                     true
                 })
         .filter(|ms|
-                if let Some(ref vfstype) = args.flag_exclude_type {
+                if let Some(ref vfstype) = args.exclude_type {
                     ms.mount.vfstype != *vfstype
                 } else {
                     true
@@ -175,44 +162,44 @@ fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
     let mut status = Status::Ok;
     for ms in mountstats {
         let pcnt = percent(ms.stat.f_bavail, ms.stat.f_blocks);
-        if pcnt > args.flag_crit {
+        if pcnt > args.crit {
             status = Status::Critical;
             println!(
                 "CRITICAL: {} has {:.1}% of its {}B used (> {:.1}%)",
                 ms.mount.file,
                 pcnt,
                 bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
-                args.flag_crit
+                args.crit
             )
-        } else if pcnt > args.flag_warn {
+        } else if pcnt > args.warn {
             status = max(status, Status::Warning);
             println!(
                 "WARNING: {} has {:.1}% of its {}B used (> {:.1}%)",
                 ms.mount.file,
                 pcnt,
                 bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
-                args.flag_warn
+                args.warn
             )
         }
 
         let ipcnt = percent(ms.stat.f_favail, ms.stat.f_files);
-        if ipcnt > args.flag_crit_inodes {
+        if ipcnt > args.crit_inodes {
             status = Status::Critical;
             println!(
                 "CRITICAL: {} has {:.1}% of its {} inodes used (> {:.1}%)",
                 ms.mount.file,
                 ipcnt,
                 bytes_to_human_size(ms.stat.f_files),
-                args.flag_crit_inodes
+                args.crit_inodes
             );
-        } else if ipcnt > args.flag_warn_inodes {
+        } else if ipcnt > args.warn_inodes {
             status = max(status, Status::Warning);
             println!(
                 "WARNING: {} has {:.1}% of its {} inodes used (> {:.1}%)",
                 ms.mount.file,
                 ipcnt,
                 bytes_to_human_size(ms.stat.f_files),
-                args.flag_warn_inodes
+                args.warn_inodes
             );
         }
     }
@@ -220,12 +207,12 @@ fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
         println!(
             "OKAY: {} filesystems checked, none are above {}% disk or {}% inode usage",
             mountstats.len(),
-            args.flag_warn,
-            args.flag_warn_inodes
+            args.warn,
+            args.warn_inodes
         );
     }
 
-    if args.flag_info {
+    if args.info {
         println!(
             "{:<15} {:>7} {:>5}% {:>7} {:>5}% {:<20}",
             "Filesystem", "Size", "Use", "INodes", "IUse", "Mounted on"
@@ -247,7 +234,7 @@ fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = Args::from_args();
 
     let mut mounts = Mount::load_all().unwrap();
     mounts.sort_by(|l, r| l.file.len().cmp(&r.file.len()));
@@ -266,22 +253,15 @@ fn main() {
 
 #[cfg(test)]
 mod unit {
-    use super::{maybe_regex, Args, ErrorMsg, USAGE};
-    use docopt::Docopt;
+    use super::{maybe_regex, Args, ErrorMsg};
+    use structopt::StructOpt;
 
     #[test]
     fn validate_docstring() {
-        let args: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(vec!["arg0", "--crit", "5"].into_iter()).decode())
-            .unwrap();
-        assert_eq!(args.flag_crit, 5.0);
-        let args: Args = Docopt::new(USAGE)
-            .and_then(|d| {
-                d.argv(vec!["arg0", "--pattern", "hello"].into_iter())
-                    .decode()
-            })
-            .unwrap();
-        assert_eq!(args.flag_pattern.unwrap(), "hello");
+        let args: Args = Args::from_iter(["arg0", "--crit", "5"].into_iter());
+        assert_eq!(args.crit, 5.0);
+        let args: Args = Args::from_iter(["arg0", "--pattern", "hello"].into_iter());
+        assert_eq!(args.pattern.unwrap(), "hello");
     }
 
     #[test]

@@ -1,33 +1,30 @@
-extern crate rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
 
-extern crate docopt;
+#[macro_use]
+extern crate structopt;
 extern crate tabin_plugins;
 
-use docopt::Docopt;
+use structopt::StructOpt;
 
 use tabin_plugins::linux::pages_to_human_size;
 use tabin_plugins::Status;
-use tabin_plugins::procfs::{MemInfo, RunningProcs};
+use tabin_plugins::procfs::{LoadProcsError, MemInfo, ProcFsError, RunningProcs};
 
-static USAGE: &'static str = "
-Usage: check-ram [options]
-       check-ram -h | --help
-
-Options:
-    -h, --help             Show this help message
-
-    -w, --warn=<percent>   Percent used to warn at      [default: 80]
-    -c, --crit=<percent>   Percent used to critical at  [default: 95]
-
-    --show-hogs=<count>    Show most RAM-hungry procs   [default: 0]
-";
-
-#[derive(RustcDecodable, Debug)]
+#[derive(Deserialize, StructOpt, Debug)]
+#[structopt(name = "check-ram")]
+/// Check the ram usage of the current computer
 struct Args {
-    flag_help: bool,
-    flag_warn: f64,
-    flag_crit: f64,
-    flag_show_hogs: usize,
+    #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "85")]
+    warn: f64,
+    #[structopt(short = "c", long = "crit", help = "Percent to go critical at",
+                default_value = "95")]
+    crit: f64,
+
+    #[structopt(long = "show-hogs", name = "count",
+                help = "Show <count> most ram-intensive processes in this container.",
+                default_value = "0")]
+    show_hogs: usize,
 }
 
 fn compare_status(crit: f64, warn: f64, mem: &MemInfo) -> Status {
@@ -51,17 +48,27 @@ fn compare_status(crit: f64, warn: f64, mem: &MemInfo) -> Status {
 
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
-    let args: Args = Docopt::new(USAGE)
-        .and_then(|d| d.decode())
-        .unwrap_or_else(|e| e.exit());
+    let args: Args = Args::from_args();
     let mem = MemInfo::load();
-    let status = compare_status(args.flag_crit, args.flag_warn, &mem);
-    if args.flag_show_hogs > 0 {
-        let per_proc = RunningProcs::currently_running().unwrap();
+    let status = compare_status(args.crit, args.warn, &mem);
+    if args.show_hogs > 0 {
+        let mut load_errors = None;
+        let per_proc = match RunningProcs::currently_running() {
+            Ok(procs) => procs,
+            Err(ProcFsError::LoadProcsError(LoadProcsError { procs, errors })) => {
+                load_errors = Some(errors);
+                procs
+            }
+            Err(err) => {
+                eprintln!("UNKNOWN: Unexpected error loading procs: {}", err);
+                RunningProcs::empty()
+            }
+        };
+
         let mut procs = per_proc.0.values().collect::<Vec<_>>();
         procs.sort_by(|l, r| r.stat.rss.cmp(&l.stat.rss));
         println!("INFO [check-ram]: ram hogs");
-        for process in procs.iter().take(args.flag_show_hogs) {
+        for process in procs.iter().take(args.show_hogs) {
             let system_kb = mem.total.unwrap();
             let percent = process.percent_ram(system_kb * 1024);
             println!(
@@ -72,21 +79,20 @@ fn main() {
                 process.useful_cmdline()
             );
         }
+        if let Some(errors) = load_errors {
+            for err in errors {
+                eprintln!("UNKNOWN: error loading process: {}", err);
+            }
+        }
     };
     status.exit();
 }
 
 #[cfg(test)]
 mod test {
-    use docopt::Docopt;
-    use super::{compare_status, Args, USAGE};
+    use super::compare_status;
     use tabin_plugins::Status;
     use tabin_plugins::procfs::MemInfo;
-
-    #[test]
-    fn usage_is_valid() {
-        let _: Args = Docopt::new(USAGE).and_then(|d| d.decode()).unwrap();
-    }
 
     #[test]
     fn alerts_when_told_to() {

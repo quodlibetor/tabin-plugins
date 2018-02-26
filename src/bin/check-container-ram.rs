@@ -1,51 +1,46 @@
 //! Check RAM usage of the currently-running container
 
-extern crate docopt;
-extern crate rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
+
+#[macro_use]
+extern crate structopt;
 
 extern crate tabin_plugins;
 
 use std::fmt;
 use std::cmp::max;
-
-use docopt::Docopt;
+use structopt::StructOpt;
 
 use tabin_plugins::Status;
 use tabin_plugins::sys::fs::cgroup::memory::{limit_in_bytes, Stat};
 use tabin_plugins::linux::{bytes_to_human_size, pages_to_human_size};
-use tabin_plugins::procfs::{MemInfo, RunningProcs};
+use tabin_plugins::procfs::{LoadProcsError, MemInfo, ProcFsError, RunningProcs};
 
-static USAGE: &'static str = "
-Usage:
-    check-container-ram [--show-hogs=<count>] [--invalid-limit=<status>] [options]
-    check-container-ram (-h | --help)
-
-Check the RAM usage of the currently-running container. This must be run from
-inside the container to be checked.
-
-This checks as a ratio of the limit specified in the cgroup memory limit, and
-if there is no limit set (or the limit is greater than the total memory
-available on the system) this checks against the total system memory.
-
-Options:
-    -h, --help                 Show this message and exit
-
-    -w, --warn=<percent>       Warn at this percent used           [default: 85]
-    -c, --crit=<percent>       Critical at this percent used       [default: 95]
-
-    --invalid-limit=<status>   Status to consider this check if the CGroup limit
-                               is greater than the system ram      [default: ok]
-
-    --show-hogs=<count>        Show the most ram-hungry procs      [default: 0]
-";
-
-#[derive(RustcDecodable, Debug)]
+#[derive(Deserialize, StructOpt, Debug)]
+#[structopt(name = "check-container-ram")]
+/// Check the RAM usage of the currently-running container.
+///
+/// This must be run from inside the container to be checked.
+///
+/// This checks as a ratio of the limit specified in the cgroup memory limit, and
+/// if there is no limit set (or the limit is greater than the total memory
+/// available on the system) this checks against the total system memory.
 struct Args {
-    flag_warn: f64,
-    flag_crit: f64,
+    #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "85")]
+    warn: f64,
+    #[structopt(short = "c", long = "crit", help = "Percent to go critical at",
+                default_value = "95")]
+    crit: f64,
 
-    flag_invalid_limit: Status,
-    flag_show_hogs: u32,
+    #[structopt(long = "invalid-limit", default_value = "ok",
+                help = "Status to consider this check if the CGroup limit is greater than \
+                        the system ram")]
+    invalid_limit: Status,
+    #[structopt(long = "show-hogs", name = "count",
+                help = "Show <count> most ram-intensive processes in this container.",
+                default_value = "0")]
+    show_hogs: usize,
 }
 
 enum Limit {
@@ -63,9 +58,7 @@ impl fmt::Display for Limit {
 }
 
 fn main() {
-    let args: Args = Docopt::new(USAGE)
-        .and_then(|d| d.decode())
-        .unwrap_or_else(|e| e.exit());
+    let args: Args = Args::from_args();
     let mut status = Status::Ok;
 
     let mut limit = limit_in_bytes().unwrap();
@@ -73,14 +66,14 @@ fn main() {
     let mem = MemInfo::load();
     let system_bytes = mem.total.unwrap() * 1024;
     if limit > system_bytes {
-        if args.flag_invalid_limit != Status::Ok {
+        if args.invalid_limit != Status::Ok {
             println!(
                 "{}: CGroup memory limit is greater than system memory ({} > {})",
-                args.flag_invalid_limit,
+                args.invalid_limit,
                 bytes_to_human_size(limit as u64),
                 bytes_to_human_size(system_bytes as u64)
             );
-            status = args.flag_invalid_limit;
+            status = args.invalid_limit;
         }
         limit = system_bytes;
         limit_type = Limit::System;
@@ -90,22 +83,22 @@ fn main() {
     let ratio = cgroup_stat.rss as f64 / limit as f64;
     let percent = ratio * 100.0;
 
-    if percent > args.flag_crit {
+    if percent > args.crit {
         println!(
             "CRITICAL: cgroup is using {:.1}% of {} {} (greater than {}%)",
             percent,
             bytes_to_human_size(limit as u64),
             limit_type,
-            args.flag_crit
+            args.crit
         );
         status = Status::Critical;
-    } else if percent > args.flag_warn {
+    } else if percent > args.warn {
         println!(
             "WARNING: cgroup is using {:.1}% of {} {} (greater than {}%)",
             percent,
             bytes_to_human_size(limit as u64),
             limit_type,
-            args.flag_warn
+            args.warn
         );
         status = max(status, Status::Warning);
     } else {
@@ -114,16 +107,28 @@ fn main() {
             percent,
             bytes_to_human_size(limit as u64),
             limit_type,
-            args.flag_warn
+            args.warn
         );
     }
 
-    if args.flag_show_hogs > 0 {
-        let per_proc = RunningProcs::currently_running().unwrap();
+    if args.show_hogs > 0 {
+        let mut load_errors = None;
+        let per_proc = match RunningProcs::currently_running() {
+            Ok(procs) => procs,
+            Err(ProcFsError::LoadProcsError(LoadProcsError { procs, errors })) => {
+                load_errors = Some(errors);
+                procs
+            }
+            Err(err) => {
+                eprintln!("UNKNOWN: Unexpected error loading procs: {}", err);
+                RunningProcs::empty()
+            }
+        };
+
         let mut procs = per_proc.0.values().collect::<Vec<_>>();
         procs.sort_by(|l, r| r.stat.rss.cmp(&l.stat.rss));
         println!("INFO [check-container-ram]: ram hogs");
-        for process in procs.iter().take(args.flag_show_hogs as usize) {
+        for process in procs.iter().take(args.show_hogs as usize) {
             let percent = process.percent_ram(limit);
             println!(
                 "[{:>6}]{:>5.1}% {:>6}: {}",
@@ -133,6 +138,12 @@ fn main() {
                 process.useful_cmdline()
             );
         }
+
+        if let Some(errors) = load_errors {
+            for err in errors {
+                eprintln!("UNKNOWN: error loading process: {}", err);
+            }
+        }
     }
     status.exit();
 }
@@ -140,21 +151,17 @@ fn main() {
 #[cfg(test)]
 mod unit {
 
-    use docopt::Docopt;
+    use structopt::StructOpt;
     use tabin_plugins::Status;
-    use super::{Args, USAGE};
+    use super::Args;
 
     #[test]
     fn usage_is_valid() {
-        let args: Args = Docopt::new(USAGE).and_then(|d| d.decode()).unwrap();
-        assert_eq!(args.flag_crit, 95.0);
-        assert_eq!(args.flag_invalid_limit, Status::Ok);
-        let args: Args = Docopt::new(USAGE)
-            .and_then(|d| {
-                d.argv(vec!["arg0", "--crit", "80", "--warn", "20"].into_iter())
-                    .decode()
-            })
-            .unwrap();
-        assert_eq!(args.flag_crit, 80.0);
+        let argv: [&str; 0] = [];
+        let args = Args::from_iter(argv.into_iter());
+        assert_eq!(args.crit, 95.0);
+        assert_eq!(args.invalid_limit, Status::Ok);
+        let args: Args = Args::from_iter(["arg0", "--crit", "80", "--warn", "20"].into_iter());
+        assert_eq!(args.crit, 80.0);
     }
 }

@@ -52,7 +52,12 @@ impl Assertion {
                         !invalid.points.is_empty()
                     } else {
                         let filtered = invalid.points.len() as f64;
-                        let original = invalid.original.points.len() as f64;
+                        let original = invalid
+                            .original
+                            .points
+                            .iter()
+                            .filter(|p| p.val.is_some())
+                            .count() as f64;
                         filtered / original >= error_ratio
                     }
                 })
@@ -802,11 +807,11 @@ mod test {
     }
 
     #[test]
-    fn null_points_count_towards_percent() {
+    fn null_points_do_not_count_towards_percent() {
         let assertion = parse_assertion("critical if at least 61% of points are == 0").unwrap();
         let graphite_data = deser(json_all_points_are_0_and_40p_of_points_are_null());
         let result = assertion.check(&graphite_data);
-        assert_eq!(result, Status::Ok);
+        assert_eq!(result, Status::Critical);
     }
 
     #[test]

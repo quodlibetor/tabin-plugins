@@ -1,14 +1,16 @@
-//! Data structures related to the /proc/<pid>/* files
+//! Data structures related to the `/proc/<pid>/*` files
 
 use std::fmt;
 use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
 
-use super::{ProcFsError, Result};
+use super::{ParseStatError, ParseStateError, ProcFsError, Result};
 
 use linux::{Jiffies, PAGESIZE};
 
+/// Information about a running process
+#[derive(Debug)]
 pub struct Process {
     pub stat: Stat,
     pub cmdline: CmdLine,
@@ -43,14 +45,56 @@ fn pages_to_bytes(pages: u64) -> u64 {
     pages * (*PAGESIZE)
 }
 
-/// The status of a process
+/// The state of the process
 ///
-/// This represents much of the information in /proc/[pid]/stat
+/// See `man 5 proc` for details
+#[derive(Debug, PartialEq, Eq)]
+pub enum State {
+    /// `R`: Currently using the CPU
+    Running,
+    /// `S`: Sleeping on an interruptible wait
+    Sleeping,
+    /// `D`: Sleeping on an uninterruptible or disk sleep
+    UninterruptibleSleep,
+    /// `W`: Paging
+    Waiting,
+    /// `T`: Traced or Stopped on a signal
+    Stopped,
+    /// `Z`: No parent process has reaped this
+    Zombie,
+}
+
+impl FromStr for State {
+    type Err = ProcFsError;
+
+    fn from_str(s: &str) -> Result<State> {
+        use self::State::*;
+        match s {
+            "R" => Ok(Running),
+            "S" => Ok(Sleeping),
+            "D" => Ok(UninterruptibleSleep),
+            "W" => Ok(Waiting),
+            "T" => Ok(Stopped),
+            "Z" => Ok(Zombie),
+            _ => Err(ParseStateError {
+                state: s.to_string(),
+            }.into()),
+        }
+    }
+}
+
+/// The status of a `Process`
+///
+/// This represents much of the information in `/proc/[pid]/stat`, and is
+/// commonly access via a [`Process`](../struct.Process.html)
 #[derive(Debug)]
 pub struct Stat {
+    /// The process ID
     pub pid: i32,
+    /// The filename of the executable
     pub comm: String,
-    pub state: String,
+    /// The state of the process
+    pub state: State,
     pub ppid: i32,
     pub pgrp: i32,
     pub session: i32,
@@ -88,7 +132,7 @@ impl Default for Stat {
         Stat {
             pid: 0,
             comm: "init".to_owned(),
-            state: "R".to_owned(),
+            state: "R".parse().unwrap(),
             ppid: 0,
             pgrp: 0,
             session: 0,
@@ -109,6 +153,20 @@ impl Default for Stat {
             starttime: 0,
             vsize: 0,
             rss: 0,
+        }
+    }
+}
+
+fn field<T>(val: Option<T>, field_name: &'static str, row: &str, position: u8) -> Result<T> {
+    match val {
+        Some(v) => Ok(v),
+        None => {
+            let row = row.to_string();
+            return Err(ParseStatError {
+                line: row,
+                field_name,
+                position,
+            }.into());
         }
     }
 }
@@ -143,11 +201,11 @@ impl FromStr for Stat {
             rss,
         ) = scan_fmt!(
             s,
-            "{d} ({[^)]}) {} {} {} {} {} {} {d} {d} {d} {d} {d} {d} {d} {} {} \
+            "{d} {/\\((.*)\\) /}{} {} {} {} {} {} {d} {d} {d} {d} {d} {d} {d} {} {} \
              {} {} {} 0 {d} {d} {}",
             i32,    // pid
             String, // comm
-            String, // state
+            State,  // state
             i32,    // ppid
             i32,    // pgrp
             i32,    // session
@@ -171,29 +229,29 @@ impl FromStr for Stat {
             u64  /* rss */
         );
         Ok(Stat {
-            pid: pid.expect("unable to parse pid."),
-            comm: comm.expect("unable to parse comm."),
-            state: state.expect("unable to parse state."),
-            ppid: ppid.expect("unable to parse ppid."),
-            pgrp: pgrp.expect("unable to parse pgrp."),
-            session: session.expect("unable to parse session."),
-            tty_nr: tty_nr.expect("unable to parse tty_nr."),
-            tpgid: tpgid.expect("unable to parse tpgid."),
-            flags: flags.expect("unable to parse flags."),
-            minflt: minflt.expect("unable to parse minflt."),
-            cminflt: cminflt.expect("unable to parse cminflt."),
-            majflt: majflt.expect("unable to parse majflt."),
-            cmajflt: cmajflt.expect("unable to parse cmajflt."),
-            utime: utime.expect("unable to parse utime.").into(),
-            stime: stime.expect("unable to parse stime.").into(),
-            cutime: cutime.expect("unable to parse cutime.").into(),
-            cstime: cstime.expect("unable to parse cstime.").into(),
-            priority: priority.expect("unable to parse priority."),
-            nice: nice.expect("unable to parse nice."),
-            num_threads: num_threads.expect("unable to parse num_threads."),
-            starttime: starttime.expect("unable to parse starttime."),
-            vsize: vsize.expect("unable to parse vsize."),
-            rss: rss.expect("unable to parse rss."),
+            pid: field(pid, "pid", s, 0)?,
+            comm: field(comm, "comm", s, 1)?,
+            state: field(state, "state", s, 2)?,
+            ppid: field(ppid, "ppid", s, 3)?,
+            pgrp: field(pgrp, "pgrp", s, 4)?,
+            session: field(session, "session", s, 5)?,
+            tty_nr: field(tty_nr, "tty_nr", s, 6)?,
+            tpgid: field(tpgid, "tpgid", s, 7)?,
+            flags: field(flags, "flags", s, 8)?,
+            minflt: field(minflt, "minflt", s, 9)?,
+            cminflt: field(cminflt, "cminflt", s, 10)?,
+            majflt: field(majflt, "majflt", s, 11)?,
+            cmajflt: field(cmajflt, "cmajflt", s, 12)?,
+            utime: field(utime, "utime", s, 13)?.into(),
+            stime: field(stime, "stime", s, 14)?.into(),
+            cutime: field(cutime, "cutime", s, 15)?.into(),
+            cstime: field(cstime, "cstime", s, 16)?.into(),
+            priority: field(priority, "priority", s, 17)?,
+            nice: field(nice, "nice", s, 18)?,
+            num_threads: field(num_threads, "num_threads", s, 19)?,
+            starttime: field(starttime, "starttime", s, 20)?,
+            vsize: field(vsize, "vsize", s, 21)?,
+            rss: field(rss, "rss", s, 22)?,
         })
     }
 }
@@ -227,5 +285,34 @@ impl CmdLine {
 
     pub fn display(&self) -> String {
         self.line.join(" ")
+    }
+}
+
+#[cfg(test)]
+mod test {
+    mod cpu_stat {
+        use super::super::*;
+
+        #[test]
+        fn test_parse_cpuline() {
+            for (i, s) in [
+                "529 ((sd-proc)) S 885 885 885 0 -1 107793 24 0 0 0 0 \
+                 0 0 0 20 0 1 0 7777777 111111111 647 18848888888888888888 1 1 0 \
+                 0 0 0 0 4096 0 0 0 0 17 15 0 0 0 0 0 0 0 0 0 0 0 0 0",
+                "47 (migration/8) S 2 0 0 0 -1 66666668 0 0 0 0 0 14 0 0 -100 0 1 \
+                 0 25 0 0 18848888888888888888 0 0 0 0 0 0 0 2147483647 0 0 0 0 17 \
+                 8 99 1 0 0 0 0 0 0 0 0 0 0 0",
+                "122 (statsd /app/connection) S 103 103 181 0 -1 304 0626 0 \
+                 0 0 605 198 0 0 20 0 10 0 71025 1230417920 11878 18848888888888888888 \
+                 1 1 0 0 0 0 0 4096 16898 0 0 0 17 11 0 0 0 0 0 0 0 0 0 0 0 0 0",
+            ].iter()
+                .enumerate()
+            {
+                s.parse::<Stat>().unwrap_or_else(|e| match e {
+                    ProcFsError::ParseStatError(e) => panic!("line {}: {}", i, e),
+                    x => panic!("unexpected error: {:?}", x),
+                });
+            }
+        }
     }
 }
