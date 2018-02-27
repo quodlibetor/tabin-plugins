@@ -1,7 +1,7 @@
 [package]
 authors = ["Brandon W Maister <quodlibetor@gmail.com>"]
 name = "tabin-plugins"
-version = "0.3.0-pre1"
+version = "0.3.0-pre2"
 description = "Libs for building nagios-compatible check scripts, some scripts, and some libs to read from /proc and /sys on Linux. "
 documentation = "http://quodlibetor.github.io/tabin-plugins/doc/tabin_plugins/index.html"
 homepage = "https://github.com/quodlibetor/tabin-plugins"
