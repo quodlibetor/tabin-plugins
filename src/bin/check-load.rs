@@ -21,6 +21,8 @@ use tabin_plugins::procfs::{Calculations, LoadAvg};
 /// due to IO or CPU constraints. The numbers used to check are the load averaged
 /// over 1, 5 and 15 minutes, respectively
 #[derive(Deserialize, Debug, StructOpt)]
+#[structopt(name = "check-load (part of tabin-plugins)",
+            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
 struct Args {
     #[structopt(short = "w", long = "warn", help = "Averages to warn at",
                 default_value = "5,3.5,2.5")]

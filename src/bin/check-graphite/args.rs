@@ -34,9 +34,10 @@ static ASSERTION_EXAMPLES: &'static [&'static str] = &[
 impl Args {
     pub fn parse() -> Args {
         let allowed_no_data = Status::str_values(); // block-local var for borrowck
-        let args = clap::App::new("check-graphite")
+        let args = clap::App::new("check-graphite (part of tabin-plugins)")
             .version(env!("CARGO_PKG_VERSION"))
             .author("Brandon W Maister <quodlibetor@gmail.com>")
+            .setting(clap::AppSettings::ColoredHelp)
             .about("Query graphite and exit based on predicates")
             .args_from_usage(
                 "<URL>                 'The domain to query graphite. Must \

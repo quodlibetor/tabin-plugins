@@ -20,9 +20,27 @@ use structopt::StructOpt;
 /// Does not try to create the directory, or do anything else. Just writes a
 /// single byte to a file, errors if it cannot, and then deletes the file.
 #[derive(StructOpt, Deserialize)]
+#[structopt(name = "check-fs-writeable (part of tabin-plugins)",
+            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
 struct Args {
     #[structopt(help = "The file to write to")]
     filename: String,
+}
+
+#[cfg_attr(test, allow(dead_code))]
+fn main() {
+    let args = Args::from_args();
+    let mut exit_status = 0;
+    match check_file_writeable(args.filename) {
+        Ok(msg) => {
+            println!("{}", msg);
+        }
+        Err(msg) => {
+            println!("{}", msg);
+            exit_status = 2;
+        }
+    }
+    process::exit(exit_status);
 }
 
 fn check_file_writeable(filename: String) -> Result<String, String> {
@@ -75,22 +93,6 @@ fn check_file_writeable(filename: String) -> Result<String, String> {
             ));
         }
     };
-}
-
-#[cfg_attr(test, allow(dead_code))]
-fn main() {
-    let args = Args::from_args();
-    let mut exit_status = 0;
-    match check_file_writeable(args.filename) {
-        Ok(msg) => {
-            println!("{}", msg);
-        }
-        Err(msg) => {
-            println!("{}", msg);
-            exit_status = 2;
-        }
-    }
-    process::exit(exit_status);
 }
 
 #[cfg(test)]

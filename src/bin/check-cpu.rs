@@ -18,7 +18,7 @@ use tabin_plugins::Status;
 use tabin_plugins::procfs::{Calculations, LoadProcsError, ProcFsError, RunningProcs, WorkSource};
 
 #[derive(Deserialize, StructOpt, Debug)]
-#[structopt(name = "check-container-cpu",
+#[structopt(name = "check-cpu  (part of tabin-plugins)",
             raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
             after_help = "CPU Work Types:
 

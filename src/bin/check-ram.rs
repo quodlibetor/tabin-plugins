@@ -11,9 +11,10 @@ use tabin_plugins::linux::pages_to_human_size;
 use tabin_plugins::Status;
 use tabin_plugins::procfs::{LoadProcsError, MemInfo, ProcFsError, RunningProcs};
 
-#[derive(Deserialize, StructOpt, Debug)]
-#[structopt(name = "check-ram")]
 /// Check the ram usage of the current computer
+#[derive(Deserialize, StructOpt, Debug)]
+#[structopt(name = "check-ram (part of tabin-plugins)",
+            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
 struct Args {
     #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "85")]
     warn: f64,
@@ -22,33 +23,14 @@ struct Args {
     crit: f64,
 
     #[structopt(long = "show-hogs", name = "count",
-                help = "Show <count> most ram-intensive processes in this container.",
+                help = "Show <count> most ram-intensive processes in this computer.",
                 default_value = "0")]
     show_hogs: usize,
 }
 
-fn compare_status(crit: f64, warn: f64, mem: &MemInfo) -> Status {
-    match mem.percent_used() {
-        Ok(percent) => if percent > crit {
-            println!("CRITICAL [check-ram]: {:.1}% > {}%", percent, crit);
-            Status::Critical
-        } else if percent > warn {
-            println!("WARNING [check-ram]: {:.1}% > {}%", percent, warn);
-            Status::Warning
-        } else {
-            println!("OK [check-ram]: {:.1}% < {}%", percent, warn);
-            Status::Ok
-        },
-        Err(e) => {
-            println!("UNKNOWN [check-ram]: UNEXPECTED ERROR {:?}", e);
-            Status::Unknown
-        }
-    }
-}
-
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
-    let args: Args = Args::from_args();
+    let args = Args::from_args();
     let mem = MemInfo::load();
     let status = compare_status(args.crit, args.warn, &mem);
     if args.show_hogs > 0 {
@@ -86,6 +68,25 @@ fn main() {
         }
     };
     status.exit();
+}
+
+fn compare_status(crit: f64, warn: f64, mem: &MemInfo) -> Status {
+    match mem.percent_used() {
+        Ok(percent) => if percent > crit {
+            println!("CRITICAL [check-ram]: {:.1}% > {}%", percent, crit);
+            Status::Critical
+        } else if percent > warn {
+            println!("WARNING [check-ram]: {:.1}% > {}%", percent, warn);
+            Status::Warning
+        } else {
+            println!("OK [check-ram]: {:.1}% < {}%", percent, warn);
+            Status::Ok
+        },
+        Err(e) => {
+            println!("UNKNOWN [check-ram]: UNEXPECTED ERROR {:?}", e);
+            Status::Unknown
+        }
+    }
 }
 
 #[cfg(test)]

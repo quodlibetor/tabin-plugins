@@ -17,8 +17,6 @@ use tabin_plugins::sys::fs::cgroup::memory::{limit_in_bytes, Stat};
 use tabin_plugins::linux::{bytes_to_human_size, pages_to_human_size};
 use tabin_plugins::procfs::{LoadProcsError, MemInfo, ProcFsError, RunningProcs};
 
-#[derive(Deserialize, StructOpt, Debug)]
-#[structopt(name = "check-container-ram")]
 /// Check the RAM usage of the currently-running container.
 ///
 /// This must be run from inside the container to be checked.
@@ -26,6 +24,9 @@ use tabin_plugins::procfs::{LoadProcsError, MemInfo, ProcFsError, RunningProcs};
 /// This checks as a ratio of the limit specified in the cgroup memory limit, and
 /// if there is no limit set (or the limit is greater than the total memory
 /// available on the system) this checks against the total system memory.
+#[derive(Deserialize, StructOpt, Debug)]
+#[structopt(name = "check-container-ram (part of tabin-plugins)",
+            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
 struct Args {
     #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "85")]
     warn: f64,

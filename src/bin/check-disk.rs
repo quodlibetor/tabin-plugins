@@ -25,6 +25,8 @@ use tabin_plugins::linux::bytes_to_human_size;
 /// 3% higher than `df`, even though AFAICT we're both just calling statvfs a bunch
 /// of times.
 #[derive(StructOpt, Deserialize, Debug)]
+#[structopt(name = "check-disk (part of tabin-plugins)",
+            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
 struct Args {
     #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "80")]
     warn: f64,
@@ -55,6 +57,23 @@ struct Args {
                 help = "Print information of all known filesystems. \
                         Similar to df.")]
     info: bool,
+}
+
+fn main() {
+    let args = Args::from_args();
+
+    let mut mounts = Mount::load_all().unwrap();
+    mounts.sort_by(|l, r| l.file.len().cmp(&r.file.len()));
+
+    let status = match filter(mounts, &args) {
+        Ok(ms) => do_check(&ms, &args),
+        Err(e) => {
+            println!("{}", e.msg);
+            Status::Critical
+        }
+    };
+
+    status.exit();
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -231,24 +250,6 @@ fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
     }
 
     status
-}
-
-fn main() {
-    let args = Args::from_args();
-
-    let mut mounts = Mount::load_all().unwrap();
-    mounts.sort_by(|l, r| l.file.len().cmp(&r.file.len()));
-
-    let mountstats = match filter(mounts, &args) {
-        Ok(ms) => ms,
-        Err(e) => {
-            println!("{}", e.msg);
-            Status::Critical.exit();
-        }
-    };
-
-    let status = do_check(&mountstats, &args);
-    status.exit();
 }
 
 #[cfg(test)]

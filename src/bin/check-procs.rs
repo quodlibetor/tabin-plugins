@@ -19,8 +19,10 @@ use tabin_plugins::Status;
 use tabin_plugins::procfs::RunningProcs;
 use tabin_plugins::procfs::pid::Process;
 
-#[derive(StructOpt, Debug, Deserialize)]
 /// Check that an expected number of processes are running.
+#[derive(StructOpt, Debug, Deserialize)]
+#[structopt(name = "check-procs (part of tabin-plugins)",
+            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
 struct Args {
     #[structopt(help = "Regex that command and its arguments must match")]
     pattern: String,
@@ -36,8 +38,12 @@ fn main() {
     let args = Args::from_args();
     let re = Regex::new(&args.pattern).unwrap_or_else(|e| {
         println!("ERROR: invalid process pattern: {}", e);
-        Status::Critical.exit()
+        Status::Critical.exit();
     });
+    if let (None, None) = (args.crit_under, args.crit_over) {
+        println!("At least one of --crit-under or --crit-over must be provided");
+        Status::Critical.exit();
+    }
     let procs = RunningProcs::currently_running().unwrap();
 
     let me = getpid();

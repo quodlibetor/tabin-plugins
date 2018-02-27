@@ -22,7 +22,7 @@ use tabin_plugins::sys::fs::cgroup::cpu::shares;
 ///
 /// This must be run from inside the container to be checked.
 #[derive(Deserialize, StructOpt, Debug)]
-#[structopt(name = "check-container-cpu",
+#[structopt(name = "check-container-cpu (part of tabin-plugins)",
             raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
             after_help = "About usage percentages:
 
@@ -80,18 +80,6 @@ struct Args {
                 help = "Show <count> most cpu-intensive processes in this container.",
                 default_value = "0")]
     show_hogs: usize,
-}
-
-// These all should be extremely similar to each other, so just taking the
-// middle one should be safe
-fn find_median_jiffies_used(start: &[Calculations], end: &[Calculations]) -> Jiffies {
-    let mut jiffies: Vec<_> = start
-        .iter()
-        .zip(end)
-        .map(|(start, end)| end.total() - start.total())
-        .collect();
-    jiffies.sort();
-    jiffies[jiffies.len() / 2]
 }
 
 fn main() {
@@ -167,6 +155,18 @@ fn main() {
         }
     }
     status.exit();
+}
+
+// These all should be extremely similar to each other, so just taking the
+// middle one should be safe
+fn find_median_jiffies_used(start: &[Calculations], end: &[Calculations]) -> Jiffies {
+    let mut jiffies: Vec<_> = start
+        .iter()
+        .zip(end)
+        .map(|(start, end)| end.total() - start.total())
+        .collect();
+    jiffies.sort();
+    jiffies[jiffies.len() / 2]
 }
 
 /// Load currently running procs, and die if there is a surprising error
