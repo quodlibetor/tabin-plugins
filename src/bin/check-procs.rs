@@ -16,7 +16,7 @@ use regex::Regex;
 use structopt::StructOpt;
 
 use tabin_plugins::Status;
-use tabin_plugins::procfs::RunningProcs;
+use tabin_plugins::procfs::{LoadProcsError, ProcFsError, RunningProcs};
 use tabin_plugins::procfs::pid::Process;
 
 /// Check that an expected number of processes are running.
@@ -26,12 +26,16 @@ use tabin_plugins::procfs::pid::Process;
 struct Args {
     #[structopt(help = "Regex that command and its arguments must match")]
     pattern: String,
-    #[structopt(long = "crit-under",
+    #[structopt(long = "crit-under", name = "N",
                 help = "Error if there are fewer than this many procs matching <pattern>")]
     crit_under: Option<usize>,
-    #[structopt(long = "crit-over",
+    #[structopt(long = "crit-over", name = "M",
                 help = "Error if there are more than this many procs matching <pattern>")]
     crit_over: Option<usize>,
+
+    #[structopt(long = "allow-unparseable-procs",
+                help = "In combination with --crit-over M this will not alert if any processes cannot be parsed")]
+    allow_unparseable_procs: bool,
 }
 
 fn main() {
@@ -44,7 +48,12 @@ fn main() {
         println!("At least one of --crit-under or --crit-over must be provided");
         Status::Critical.exit();
     }
-    let procs = RunningProcs::currently_running().unwrap();
+    let should_die = if let Some(_) = args.crit_over {
+        !args.allow_unparseable_procs
+    } else {
+        false
+    };
+    let procs = load_procs(should_die);
 
     let me = getpid();
     let parent = getppid();
@@ -52,14 +61,9 @@ fn main() {
     let matches = procs
         .0
         .into_iter()
-        .filter_map(|(pid, process)| {
-            if re.is_match(&process.useful_cmdline())
-                && !(Pid::from_raw(pid) == me || Pid::from_raw(pid) == parent)
-            {
-                Some((pid, process))
-            } else {
-                None
-            }
+        .filter(|&(ref pid, ref process)| {
+            re.is_match(&process.useful_cmdline())
+                && !(Pid::from_raw(*pid) == me || Pid::from_raw(*pid) == parent)
         })
         .collect::<Vec<(i32, Process)>>();
 
@@ -118,6 +122,38 @@ fn main() {
         }
     }
     status.exit();
+}
+
+/// Load currently running procs, and die if there is a surprising error
+///
+/// Normally if this can load *any* processes it returns what it can find, and
+/// prints errors for procs that can't be parsed. But if `die_on_any_errors` is
+/// true it dies if it cannot parse a *single* process.
+fn load_procs(die_on_any_errors: bool) -> RunningProcs {
+    match RunningProcs::currently_running() {
+        Ok(procs) => procs,
+        Err(ProcFsError::LoadProcsError(LoadProcsError { procs, errors })) => {
+            let mut saw_real_error = false;
+            for err in errors {
+                match err {
+                    // If the process no longer exists, that's fine
+                    ProcFsError::Io(_) => {}
+                    err => {
+                        saw_real_error = true;
+                        println!("WARN: Unexpected error loading some processes: {}", err);
+                    }
+                }
+            }
+            if die_on_any_errors && saw_real_error {
+                Status::Critical.exit();
+            }
+            procs
+        }
+        Err(err) => {
+            println!("ERROR: unable to load processes: {}", err);
+            Status::Critical.exit();
+        }
+    }
 }
 
 #[cfg(test)]
