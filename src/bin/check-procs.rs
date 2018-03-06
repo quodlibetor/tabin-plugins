@@ -27,10 +27,10 @@ struct Args {
     #[structopt(help = "Regex that command and its arguments must match")]
     pattern: String,
     #[structopt(long = "crit-under", name = "N",
-                help = "Error if there are fewer than this many procs matching <pattern>")]
+                help = "Error if there are fewer than <N> procs matching <pattern>")]
     crit_under: Option<usize>,
     #[structopt(long = "crit-over", name = "M",
-                help = "Error if there are more than this many procs matching <pattern>")]
+                help = "Error if there are more than <M> procs matching <pattern>")]
     crit_over: Option<usize>,
 
     #[structopt(long = "allow-unparseable-procs",
