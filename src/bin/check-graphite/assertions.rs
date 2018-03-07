@@ -26,7 +26,10 @@ pub(crate) enum PointAssertion {
 impl Assertion {
     /// Check if any series *violates* the assertion
     ///
-    /// Returns the maximum violation
+    /// Returns the maximum violation status
+    ///
+    /// `series_with_data` must contain only series that contain at least some
+    /// data (`main::bail_if_no_data` must have been called first.)
     pub fn check(&self, series_with_data: &[GraphiteData]) -> Status {
         let &Assertion {
             operator: ref op,
@@ -91,8 +94,7 @@ impl Assertion {
                             )
                         } else {
                             println!(
-                                "{}: All {} matched paths have at least {:.0}% invalid \
-                                 datapoints:",
+                                "{}: All {} matched paths have at least {:.0}% invalid datapoints:",
                                 status,
                                 with_invalid.len(),
                                 ratio * 100.0
@@ -100,8 +102,7 @@ impl Assertion {
                         }
                     } else {
                         println!(
-                            "{}: Of {} paths with data, {} have at least {:.1}% invalid \
-                             datapoints:",
+                            "{}: Of {} paths with data, {} have at least {:.1}% invalid datapoints:",
                             status,
                             series_with_data.len(),
                             with_invalid.len(),

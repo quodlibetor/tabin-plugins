@@ -25,6 +25,8 @@ pub struct GraphiteResponse {
 }
 
 impl GraphiteResponse {
+    /// Mutate self to only contain series that have at least one existing
+    /// datapoint
     pub fn filter_to_series_with_data(&mut self) {
         self.result.retain(|gd| {
             gd.points
