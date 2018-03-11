@@ -16,11 +16,11 @@
 //! * Much of the code is hideous, and should not be
 
 #[macro_use]
+extern crate derive_more;
+#[macro_use]
 extern crate lazy_static;
 #[macro_use]
 extern crate scan_fmt;
-#[macro_use]
-extern crate wrapped_enum;
 
 extern crate libc;
 extern crate regex;

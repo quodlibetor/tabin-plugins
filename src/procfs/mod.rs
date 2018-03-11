@@ -18,25 +18,25 @@ use linux::{Jiffies, Ratio};
 
 pub mod pid;
 
-wrapped_enum!{
-    #[derive(Debug)]
-    /// ProcFs errors
-    pub enum ProcFsError {
-        /// Errors originating in IO
-        Io(io::Error),
-        /// Error pulling all required data out of procfs
-        InsufficientData(String),
-        /// Happens when we try to parse a float from something in procfs
-        InvalidFloat(num::ParseFloatError),
-        /// Happens when we try to parse an int from something in procfs
-        InvalidInt(num::ParseIntError),
-        /// When we receive an error loading an individual proc, we get this
-        LoadProcsError(LoadProcsError),
-        /// Happens when we try to parse a line from /proc/<pid>/stat and got an error
-        ParseStatError(ParseStatError),
-        /// Happens when we get an invalid process state
-        ParseStateError(ParseStateError),
-    }
+/// ProcFs errors
+///
+/// Every error from in this module can be converted into a `ProcFsError`
+#[derive(Debug, From)]
+pub enum ProcFsError {
+    /// Errors originating in IO
+    Io(io::Error),
+    /// Error pulling all required data out of procfs
+    InsufficientData(String),
+    /// Happens when we try to parse a float from something in procfs
+    InvalidFloat(num::ParseFloatError),
+    /// Happens when we try to parse an int from something in procfs
+    InvalidInt(num::ParseIntError),
+    /// When we receive an error loading an individual proc, we get this
+    LoadProcsError(LoadProcsError),
+    /// Happens when we try to parse a line from /proc/<pid>/stat and got an error
+    ParseStatError(ParseStatError),
+    /// Happens when we get an invalid process state
+    ParseStateError(ParseStateError),
 }
 
 impl fmt::Display for ProcFsError {
