@@ -4,20 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `scan_fmt` macro in crate `scan_fmt`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, scan_fmt">
+    <meta name="description" content="API documentation for the Rust `print` mod in crate `regex_syntax`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, print">
 
-    <title>scan_fmt::scan_fmt - Rust</title>
+    <title>regex_syntax::hir::print - Rust</title>
 
-    <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
     
 
     
     
 </head>
-<body class="rustdoc macro">
+<body class="rustdoc mod">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -30,7 +30,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'><a href='index.html'>scan_fmt</a></p><script>window.sidebarCurrent = {name: 'scan_fmt', ty: 'macro', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Module print</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li></ul></div><p class='location'><a href='../../index.html'>regex_syntax</a>::<wbr><a href='../index.html'>hir</a></p><script>window.sidebarCurrent = {name: 'print', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -45,18 +45,22 @@
     </nav>
 
     <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Macro <a href='index.html'>scan_fmt</a>::<wbr><a class="macro" href=''>scan_fmt</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>regex_syntax</a>::<wbr><a href='../index.html'>hir</a>::<wbr><a class="mod" href=''>print</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/scan_fmt/lib.rs.html#82-107' title='goto source code'>[src]</a></span></h1>
-<pre class="rust macro">
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">scan_fmt</span> {
-    ( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">instr</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">fmt</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg1</span>:<span class="ident">ty</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg2</span>:<span class="ident">ty</span>),<span class="op">*</span> ) <span class="op">=&gt;</span> { ... };
-    ( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">instr</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">fmt</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg1</span>:<span class="ident">ty</span> ) <span class="op">=&gt;</span> { ... };
-}</pre>
-<div class='docblock'><p>(a,+) = scan_fmt!( input_string, format_string, types,+ )</p>
-</div></section>
+               </span><a class='srclink' href='../../../src/regex_syntax/hir/print.rs.html#1-359' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>This module provides a regular expression printer for <code>Hir</code>.</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Printer.html"
+                                  title='struct regex_syntax::hir::print::Printer'>Printer</a></td>
+                           <td class='docblock-short'>
+                                <p>A printer for a regular expression&#39;s high-level intermediate
+representation.</p>
+                           </td>
+                       </tr></table></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -112,10 +116,10 @@
     
 
     <script>
-        window.rootPath = "../";
-        window.currentCrate = "scan_fmt";
+        window.rootPath = "../../../";
+        window.currentCrate = "regex_syntax";
     </script>
-    <script src="../main.js"></script>
-    <script defer src="../search-index.js"></script>
+    <script src="../../../main.js"></script>
+    <script defer src="../../../search-index.js"></script>
 </body>
 </html>

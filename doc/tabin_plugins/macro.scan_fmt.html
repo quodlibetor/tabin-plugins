@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `scanln_fmt` macro in crate `scan_fmt`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, scanln_fmt">
+    <meta name="description" content="API documentation for the Rust `scan_fmt` macro in crate `tabin_plugins`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, scan_fmt">
 
-    <title>scan_fmt::scanln_fmt - Rust</title>
+    <title>tabin_plugins::scan_fmt - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
@@ -30,7 +30,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'><a href='index.html'>scan_fmt</a></p><script>window.sidebarCurrent = {name: 'scanln_fmt', ty: 'macro', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='index.html'>tabin_plugins</a></p><script>window.sidebarCurrent = {name: 'scan_fmt', ty: 'macro', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -45,17 +45,17 @@
     </nav>
 
     <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Macro <a href='index.html'>scan_fmt</a>::<wbr><a class="macro" href=''>scanln_fmt</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Macro <a href='index.html'>tabin_plugins</a>::<wbr><a class="macro" href=''>scan_fmt</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/scan_fmt/lib.rs.html#118-120' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/tabin_plugins/vendor/scan_fmt/mod.rs.html#82-107' title='goto source code'>[src]</a></span></h1>
 <pre class="rust macro">
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">scanln_fmt</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> { ... };
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">scan_fmt</span> {
+    ( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">instr</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">fmt</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg1</span>:<span class="ident">ty</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg2</span>:<span class="ident">ty</span>),<span class="op">*</span> ) <span class="op">=&gt;</span> { ... };
+    ( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">instr</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">fmt</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg1</span>:<span class="ident">ty</span> ) <span class="op">=&gt;</span> { ... };
 }</pre>
-<div class='docblock'><p>(a,+) = scanln_fmt!( format_string, types,+ )
-<p>Same as scan_fmt!(), but reads input string from stdin.</p></p>
+<div class='docblock'><p>(a,+) = scan_fmt!( input_string, format_string, types,+ )</p>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -113,7 +113,7 @@
 
     <script>
         window.rootPath = "../";
-        window.currentCrate = "scan_fmt";
+        window.currentCrate = "tabin_plugins";
     </script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
