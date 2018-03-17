@@ -73,6 +73,8 @@
 //!
 //! Conversion to output values is done using parse::<T>().
 
+use std;
+
 pub mod parse;
 
 /// (a,+) = scan_fmt!( input_string, format_string, types,+ )
@@ -80,7 +82,7 @@ pub mod parse;
 macro_rules! scan_fmt {
     ( $instr:expr, $fmt:expr, $arg1:ty, $($arg2:ty),* ) => {
         {
-            let mut res = $crate::parse::scan( $instr, $fmt ) ;
+            let mut res = $crate::vendor::scan_fmt::parse::scan( $instr, $fmt ) ;
             ( match res.next() {
                 Some(item) => item.parse::<$arg1>().ok(),
                 _ => None
@@ -95,7 +97,7 @@ macro_rules! scan_fmt {
     };
     ( $instr:expr, $fmt:expr, $arg1:ty ) => {
         {
-            let mut res = $crate::parse::scan( $instr, $fmt ) ;
+            let mut res = $crate::vendor::scan_fmt::parse::scan( $instr, $fmt ) ;
             ( match res.next() {
                 Some(item) => item.parse::<$arg1>().ok(),
                 _ => None
@@ -104,6 +106,7 @@ macro_rules! scan_fmt {
     };
 }
 
+#[allow(unused)]  // in scan_fmt, but not exported
 pub fn get_input_unwrap() -> String {
     let mut input = String::new();
     std::io::stdin().read_line(&mut input).unwrap();

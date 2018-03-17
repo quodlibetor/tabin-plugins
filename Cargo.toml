@@ -27,6 +27,10 @@ structopt = "0.2"
 url = "1.6"
 wrapped_enum = "0.1"
 
+[dev-dependencies]
+# needed for the doctests in the vendorized scan_fmt
+scan_fmt = "0.1"
+
 [dependencies.clap]
 default-features = false
 features = ["suggestions", "color"]
