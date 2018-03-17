@@ -106,7 +106,7 @@ macro_rules! scan_fmt {
     };
 }
 
-#[allow(unused)]  // in scan_fmt, but not exported
+#[allow(unused)] // in scan_fmt, but not exported
 pub fn get_input_unwrap() -> String {
     let mut input = String::new();
     std::io::stdin().read_line(&mut input).unwrap();

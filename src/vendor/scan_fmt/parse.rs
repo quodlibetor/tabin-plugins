@@ -347,9 +347,7 @@ fn scan_regex(vs: &mut VecScanner, fmt: &mut FmtResult) -> ReMatch {
     if let Some(mat) = re.captures(&remainder) {
         vs.pos += mat.get(0).unwrap().end();
         if let Some(cap) = mat.get(1) {
-            return ReMatch::Captured {
-                len: cap.end(),
-            };
+            return ReMatch::Captured { len: cap.end() };
         }
     }
     return ReMatch::NoCapture;
@@ -371,7 +369,10 @@ fn get_token(vs: &mut VecScanner, fmt: &mut FmtResult) -> String {
             // regex
             match scan_regex(vs, fmt) {
                 ReMatch::Captured { len } => {
-                    return vs.data[pos_start..pos_start + len].iter().cloned().collect();
+                    return vs.data[pos_start..pos_start + len]
+                        .iter()
+                        .cloned()
+                        .collect();
                 }
                 ReMatch::NoCapture => {}
             }
