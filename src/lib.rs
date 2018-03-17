@@ -19,8 +19,6 @@
 extern crate derive_more;
 #[macro_use]
 extern crate lazy_static;
-#[macro_use]
-extern crate scan_fmt;
 
 extern crate libc;
 extern crate regex;
@@ -31,6 +29,9 @@ extern crate serde_json;
 use std::process;
 use std::fmt;
 use std::str::FromStr;
+
+#[macro_use]
+mod vendor;
 
 pub mod linux;
 pub mod procfs;
