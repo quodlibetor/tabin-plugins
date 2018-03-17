@@ -167,7 +167,11 @@ fn main() {
         per_proc
             .0
             .sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
-        println!("INFO [check-cpu]: hogs");
+        println!(
+            "INFO [check-cpu]: {} processes running, top {} cpu hogs:",
+            per_proc.0.len(),
+            args.show_hogs
+        );
         for usage in per_proc.0.iter().take(args.show_hogs) {
             println!(
                 "[{:>5}]{:>5.1}%: {}",
