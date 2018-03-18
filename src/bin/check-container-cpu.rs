@@ -14,7 +14,7 @@ use structopt::StructOpt;
 
 use tabin_plugins::Status;
 use tabin_plugins::linux::{Jiffies, Ratio};
-use tabin_plugins::procfs::{Calculations, LoadProcsError, ProcFsError, RunningProcs};
+use tabin_plugins::procfs::{Calculations, LoadProcsError, ProcField, ProcFsError, RunningProcs};
 use tabin_plugins::sys::fs::cgroup::cpuacct::Stat as CGroupStat;
 use tabin_plugins::sys::fs::cgroup::cpu::shares;
 
@@ -141,15 +141,13 @@ fn main() {
         let end_per_proc = load_procs(&mut per_proc_errors);
         let start_per_proc = start_per_proc.unwrap();
         let mut per_proc = end_per_proc.percent_cpu_util_since(&start_per_proc, median_jiffies);
-        per_proc
-            .0
-            .sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap());
+        per_proc.sort_by_field(ProcField::TotalCpu);
         println!(
             "INFO [check-container-cpu]: {} processes running, top {} cpu hogs:",
-            per_proc.0.len(),
+            per_proc.len(),
             args.show_hogs
         );
-        for usage in per_proc.0.iter().take(args.show_hogs) {
+        for usage in per_proc.iter().take(args.show_hogs) {
             println!(
                 "[{:>5}]{:>5.1}%: {}",
                 usage.process.stat.pid,

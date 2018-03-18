@@ -13,8 +13,10 @@ use std::fmt;
 use std::num;
 
 use regex::Regex;
+use std::slice;
 
-use linux::{Jiffies, Ratio};
+use linux::Jiffies;
+use procfs::pid::ProcessCpuUsage;
 
 pub mod pid;
 
@@ -112,20 +114,36 @@ impl fmt::Display for ParseStateError {
 /// All the results are results with `ProcFsError`s
 pub type Result<T> = StdResult<T, ProcFsError>;
 
-pub type Usages<'a> = Vec<ProcUsage<'a>>;
-pub struct ProcUsages<'a>(pub Usages<'a>);
+/// A collection of `ProcessCpuUsage`s
+///
+/// This is basically the value of the `RunningProcs::currently_running()` map.
+pub struct ProcessCpuUsages<'a>(Vec<ProcessCpuUsage<'a>>);
 
-/// Represent the percent CPU utilization of a specific process over a specific
-/// time period
-pub struct ProcUsage<'a> {
-    /// The process we're reporting on
-    pub process: &'a pid::Process,
-    /// Percent time spent in user mode
-    pub upercent: f64,
-    /// Percent time spent in system mode
-    pub spercent: f64,
-    /// upercent + spercent
-    pub total: f64,
+pub enum ProcField {
+    /// Total (system + user) CPU usage
+    TotalCpu,
+}
+
+impl<'a> ProcessCpuUsages<'a> {
+    /// Sort the processes by the field
+    ///
+    /// See the `ProcField` docs for details
+    pub fn sort_by_field(&mut self, field: ProcField) {
+        match field {
+            ProcField::TotalCpu => self.0
+                .sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap()),
+        }
+    }
+
+    /// The number of processes we successfully loaded
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    /// Get an iterator over the underlying Vec.
+    pub fn iter(&'a self) -> slice::Iter<'a, ProcessCpuUsage<'a>> {
+        self.0.iter()
+    }
 }
 
 pub type ProcMap = HashMap<i32, pid::Process>;
@@ -184,32 +202,18 @@ impl RunningProcs {
     /// The value for `total_cpu` should probably be the result of subtracting
     /// two `Calculations::total()`s from each other.
     pub fn percent_cpu_util_since<'a>(
-        &self,
+        &'a self,
         start: &'a RunningProcs,
         total_cpu: Jiffies,
-    ) -> ProcUsages<'a> {
+    ) -> ProcessCpuUsages<'a> {
         let me = &self.0;
-        let mut usages = Usages::new();
+        let mut usages = Vec::new();
         for (_start_pid, start_process) in start.iter() {
             if let Some(end_process) = me.get(&start_process.stat.pid) {
-                let (start_ps, end_ps) = (&start_process.stat, &end_process.stat);
-                let user = 100.0
-                    * (end_ps.utime - start_ps.utime)
-                        .duration()
-                        .ratio(&total_cpu.duration());
-                let sys = 100.0
-                    * (end_ps.stime - start_ps.stime)
-                        .duration()
-                        .ratio(&total_cpu.duration());
-                usages.push(ProcUsage {
-                    process: &start_process,
-                    upercent: user,
-                    spercent: sys,
-                    total: user + sys,
-                })
+                usages.push(end_process.cpu_utilization_since(start_process, total_cpu));
             }
         }
-        ProcUsages(usages)
+        ProcessCpuUsages(usages)
     }
 
     pub fn len(&self) -> usize {
