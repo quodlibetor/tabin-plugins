@@ -160,7 +160,11 @@ impl RunningProcs {
         let mut errors = vec![];
         let is_digit = Regex::new(r"^[0-9]+$").unwrap();
         for entry in try!(fs::read_dir("/proc")) {
-            if let Some(fname) = try!(entry).path().file_name() {
+            if entry.is_err() {
+                continue;
+            }
+            let entry = entry.unwrap();
+            if let Some(fname) = entry.path().file_name() {
                 fname
                     .to_str()
                     .map(|fname| {
