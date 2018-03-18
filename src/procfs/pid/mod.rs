@@ -12,7 +12,10 @@ use linux::{Jiffies, Ratio, PAGESIZE};
 /// Information about a running process
 #[derive(Debug)]
 pub struct Process {
+    /// The stat info for a process
     pub stat: Stat,
+    /// Scheduler statistics for a process
+    pub schedstat: Schedstat,
     pub cmdline: CmdLine,
 }
 
