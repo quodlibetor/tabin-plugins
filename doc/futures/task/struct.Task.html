@@ -67,7 +67,7 @@ the future as notifications arrive, until the future terminates.</p>
 <div class='docblock'><p>Indicate that the task should attempt to poll its future in a timely
 fashion.</p>
 
-<p>It&#39;s typically guaranteed that, for each call to <code>notify</code>, <code>poll</code> will
+<p>It&#39;s typically guaranteed that, after calling <code>notify</code>, <code>poll</code> will
 be called at least once subsequently (unless the future has terminated).
 If the task is currently polling its future when <code>notify</code> is called, it
 must poll the future <em>again</em> afterwards, ensuring that all relevant
