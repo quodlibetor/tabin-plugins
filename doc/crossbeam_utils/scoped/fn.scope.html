@@ -49,7 +49,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/crossbeam_utils/scoped.rs.html#223-234' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/crossbeam_utils/scoped.rs.html#207-215' title='goto source code'>[src]</a></span></h1>
 <pre class='rust fn'>pub fn scope&lt;'a, F, R&gt;(f: F) -&gt; R <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;F: <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/function/trait.FnOnce.html" title="trait core::ops::function::FnOnce">FnOnce</a>(&amp;<a class="struct" href="../../crossbeam_utils/scoped/struct.Scope.html" title="struct crossbeam_utils::scoped::Scope">Scope</a>&lt;'a&gt;) -&gt; R,&nbsp;</span></pre><div class='docblock'><p>Create a new <code>scope</code>, for deferred destructors.</p>
 
 <p>Scopes, in particular, support <a href="struct.Scope.html#method.spawn"><em>scoped thread spawning</em></a>.</p>
@@ -63,9 +63,6 @@
     <span class="ident">scope</span>.<span class="ident">spawn</span>(<span class="op">||</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Running child thread in scope&quot;</span>))
 });
 <span class="comment">// Prints messages in the reverse order written</span></pre>
-
-<h1 id='panics' class='section-header'><a href='#panics'>Panics</a></h1>
-<p><code>scoped::scope()</code> panics if a spawned thread panics but it is not joined inside the scope.</p>
 </div></section>
     <section id='search' class="content hidden"></section>
 
