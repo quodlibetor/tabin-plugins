@@ -1,87 +1,10 @@
-//! Data structures related to the `/proc/<pid>/*` files
-
-use std::fmt;
 use std::fs::File;
+use std::fmt;
 use std::io::Read;
 use std::str::FromStr;
 
-use super::{ParseStatError, ParseStateError, ProcFsError, Result};
-
-use linux::{Jiffies, PAGESIZE};
-
-/// Information about a running process
-#[derive(Debug)]
-pub struct Process {
-    pub stat: Stat,
-    pub cmdline: CmdLine,
-}
-
-impl Process {
-    pub fn from_pid<P: fmt::Display + Copy>(p: P) -> Result<Process> {
-        Ok(Process {
-            stat: try!(Stat::from_pid(p)),
-            cmdline: try!(CmdLine::from_pid(p)),
-        })
-    }
-
-    pub fn useful_cmdline(&self) -> String {
-        let cmd = self.cmdline.display();
-        if cmd.is_empty() {
-            self.stat.comm.clone()
-        } else {
-            cmd
-        }
-    }
-
-    /// What percent this process is using
-    ///
-    /// First argument should be in bytes.
-    pub fn percent_ram(&self, of_bytes: usize) -> f64 {
-        pages_to_bytes(self.stat.rss) as f64 / of_bytes as f64 * 100.0
-    }
-}
-
-fn pages_to_bytes(pages: u64) -> u64 {
-    pages * (*PAGESIZE)
-}
-
-/// The state of the process
-///
-/// See `man 5 proc` for details
-#[derive(Debug, PartialEq, Eq)]
-pub enum State {
-    /// `R`: Currently using the CPU
-    Running,
-    /// `S`: Sleeping on an interruptible wait
-    Sleeping,
-    /// `D`: Sleeping on an uninterruptible or disk sleep
-    UninterruptibleSleep,
-    /// `W`: Paging
-    Waiting,
-    /// `T`: Traced or Stopped on a signal
-    Stopped,
-    /// `Z`: No parent process has reaped this
-    Zombie,
-}
-
-impl FromStr for State {
-    type Err = ProcFsError;
-
-    fn from_str(s: &str) -> Result<State> {
-        use self::State::*;
-        match s {
-            "R" => Ok(Running),
-            "S" => Ok(Sleeping),
-            "D" => Ok(UninterruptibleSleep),
-            "W" => Ok(Waiting),
-            "T" => Ok(Stopped),
-            "Z" => Ok(Zombie),
-            _ => Err(ParseStateError {
-                state: s.to_string(),
-            }.into()),
-        }
-    }
-}
+use procfs::{ParseStatError, ParseStateError, ProcFsError, Result};
+use linux::Jiffies;
 
 /// The status of a `Process`
 ///
@@ -256,35 +179,41 @@ impl FromStr for Stat {
     }
 }
 
-#[derive(Debug)]
-pub struct CmdLine {
-    line: Vec<String>,
+/// The state of the process
+///
+/// See `man 5 proc` for details
+#[derive(Debug, PartialEq, Eq)]
+pub enum State {
+    /// `R`: Currently using the CPU
+    Running,
+    /// `S`: Sleeping on an interruptible wait
+    Sleeping,
+    /// `D`: Sleeping on an uninterruptible or disk sleep
+    UninterruptibleSleep,
+    /// `W`: Paging
+    Waiting,
+    /// `T`: Traced or Stopped on a signal
+    Stopped,
+    /// `Z`: No parent process has reaped this
+    Zombie,
 }
 
-impl CmdLine {
-    pub fn from_pid<P: fmt::Display>(pid: P) -> Result<CmdLine> {
-        let path_str = format!("/proc/{}/cmdline", pid);
-        let mut f = try!(File::open(&path_str));
-        let mut s = String::new();
-        try!(f.read_to_string(&mut s));
-        Ok(CmdLine {
-            line: s.split('\0')
-                .map(String::from)
-                .filter(|arg| !arg.is_empty())
-                .collect(),
-        })
-    }
+impl FromStr for State {
+    type Err = ProcFsError;
 
-    pub fn len(&self) -> usize {
-        self.line.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.line.is_empty()
-    }
-
-    pub fn display(&self) -> String {
-        self.line.join(" ")
+    fn from_str(s: &str) -> Result<State> {
+        use self::State::*;
+        match s {
+            "R" => Ok(Running),
+            "S" => Ok(Sleeping),
+            "D" => Ok(UninterruptibleSleep),
+            "W" => Ok(Waiting),
+            "T" => Ok(Stopped),
+            "Z" => Ok(Zombie),
+            _ => Err(ParseStateError {
+                state: s.to_string(),
+            }.into()),
+        }
     }
 }
 

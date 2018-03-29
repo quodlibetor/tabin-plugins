@@ -49,7 +49,10 @@ fn main() {
 
         let mut procs = per_proc.0.values().collect::<Vec<_>>();
         procs.sort_by(|l, r| r.stat.rss.cmp(&l.stat.rss));
-        println!("INFO [check-ram]: ram hogs");
+        println!(
+            "INFO [check-ram]: {} processes running, top {} ram hogs:",
+            procs.len(), args.show_hogs
+        );
         for process in procs.iter().take(args.show_hogs) {
             let system_kb = mem.total.unwrap();
             let percent = process.percent_ram(system_kb * 1024);

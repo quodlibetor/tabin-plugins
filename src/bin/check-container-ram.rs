@@ -128,7 +128,11 @@ fn main() {
 
         let mut procs = per_proc.0.values().collect::<Vec<_>>();
         procs.sort_by(|l, r| r.stat.rss.cmp(&l.stat.rss));
-        println!("INFO [check-container-ram]: ram hogs");
+        println!(
+            "INFO [check-container-ram]: {} processes running, top {} ram hogs:",
+            procs.len(),
+            args.show_hogs
+        );
         for process in procs.iter().take(args.show_hogs as usize) {
             let percent = process.percent_ram(limit);
             println!(
