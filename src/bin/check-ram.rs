@@ -51,7 +51,8 @@ fn main() {
         procs.sort_by(|l, r| r.stat.rss.cmp(&l.stat.rss));
         println!(
             "INFO [check-ram]: {} processes running, top {} ram hogs:",
-            procs.len(), args.show_hogs
+            procs.len(),
+            args.show_hogs
         );
         for process in procs.iter().take(args.show_hogs) {
             let system_kb = mem.total.unwrap();
