@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["State","The state of the process"]],"struct":[["CmdLine",""],["Process","Information about a running process"],["Stat","The status of a `Process`"]]});
+initSidebarItems({"enum":[["State","The state of the process"]],"struct":[["CmdLine","The visibule command line for a process"],["Process","Information about a running process"],["ProcessCpuUsage","Represent the percent CPU utilization of a specific process over a specific time period"],["Stat","The status of a `Process`"]]});

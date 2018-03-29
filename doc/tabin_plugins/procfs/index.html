@@ -49,7 +49,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#1-1097' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#1-1105' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Structs and impls for the various files from the /proc filesystem</p>
 
 <p>Each file gets a struct to represent its data, with an associated <code>load</code>
@@ -122,18 +122,10 @@ period</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.ProcUsage.html"
-                                  title='struct tabin_plugins::procfs::ProcUsage'>ProcUsage</a></td>
+                           <td><a class="struct" href="struct.ProcessCpuUsages.html"
+                                  title='struct tabin_plugins::procfs::ProcessCpuUsages'>ProcessCpuUsages</a></td>
                            <td class='docblock-short'>
-                                <p>Represent the percent CPU utilization of a specific process over a specific
-time period</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.ProcUsages.html"
-                                  title='struct tabin_plugins::procfs::ProcUsages'>ProcUsages</a></td>
-                           <td class='docblock-short'>
-                                
+                                <p>A collection of <code>ProcessCpuUsage</code>s</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -144,6 +136,13 @@ time period</p>
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.ProcField.html"
+                                  title='enum tabin_plugins::procfs::ProcField'>ProcField</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
                        <tr class=' module-item'>
                            <td><a class="enum" href="enum.ProcFsError.html"
                                   title='enum tabin_plugins::procfs::ProcFsError'>ProcFsError</a></td>
@@ -171,13 +170,6 @@ time period</p>
                                   title='type tabin_plugins::procfs::Result'>Result</a></td>
                            <td class='docblock-short'>
                                 <p>All the results are results with <code>ProcFsError</code>s</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.Usages.html"
-                                  title='type tabin_plugins::procfs::Usages'>Usages</a></td>
-                           <td class='docblock-short'>
-                                
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>

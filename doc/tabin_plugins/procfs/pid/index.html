@@ -49,15 +49,18 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/tabin_plugins/procfs/pid.rs.html#1-318' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../../src/tabin_plugins/procfs/pid/mod.rs.html#1-104' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Data structures related to the <code>/proc/&lt;pid&gt;/*</code> files</p>
+
+<p>The <code>Process</code> struct can load everything about a running process, and
+provides some aggregate data about them.</p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.CmdLine.html"
                                   title='struct tabin_plugins::procfs::pid::CmdLine'>CmdLine</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>The visibule command line for a process</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -65,6 +68,14 @@
                                   title='struct tabin_plugins::procfs::pid::Process'>Process</a></td>
                            <td class='docblock-short'>
                                 <p>Information about a running process</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ProcessCpuUsage.html"
+                                  title='struct tabin_plugins::procfs::pid::ProcessCpuUsage'>ProcessCpuUsage</a></td>
+                           <td class='docblock-short'>
+                                <p>Represent the percent CPU utilization of a specific process over a specific
+time period</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>

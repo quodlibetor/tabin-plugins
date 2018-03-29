@@ -49,7 +49,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/chrono/offset/mod.rs.html#164-368' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/chrono/offset/mod.rs.html#164-370' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait TimeZone: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> {
     type <a href='#associatedtype.Offset' class="type">Offset</a>: <a class="trait" href="../../chrono/offset/trait.Offset.html" title="trait chrono::offset::Offset">Offset</a>;
     fn <a href='#tymethod.from_offset' class='fnname'>from_offset</a>(offset: &amp;Self::<a class="type" href="../../chrono/offset/trait.TimeZone.html#associatedtype.Offset" title="type chrono::offset::TimeZone::Offset">Offset</a>) -&gt; Self;
@@ -173,7 +173,8 @@ but it will propagate to the <code>DateTime</code> values constructed via this d
 since January 1, 1970 0:00:00 UTC (aka &quot;UNIX timestamp&quot;)
 and the number of nanoseconds since the last whole non-leap second.</p>
 
-<p>Panics on the out-of-range number of seconds and/or invalid nanosecond.</p>
+<p>Panics on the out-of-range number of seconds and/or invalid nanosecond,
+for a non-panicking version see <a href="#method.timestamp_opt"><code>timestamp_opt</code></a>.</p>
 
 <h1 id='example-4' class='section-header'><a href='#example-4'>Example</a></h1>
 <pre class="rust rust-example-rendered">
@@ -184,7 +185,8 @@ and the number of nanoseconds since the last whole non-leap second.</p>
 since January 1, 1970 0:00:00 UTC (aka &quot;UNIX timestamp&quot;)
 and the number of nanoseconds since the last whole non-leap second.</p>
 
-<p>Returns <code>None</code> on the out-of-range number of seconds and/or invalid nanosecond.</p>
+<p>Returns <code>LocalResult::None</code> on out-of-range number of seconds and/or
+invalid nanosecond, otherwise always returns <code>LocalResult::Single</code>.</p>
 </div><h3 id='method.datetime_from_str' class='method'><span id='datetime_from_str.v' class='invisible'><code>fn <a href='#method.datetime_from_str' class='fnname'>datetime_from_str</a>(&amp;self, s: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>, fmt: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="type" href="../../chrono/format/type.ParseResult.html" title="type chrono::format::ParseResult">ParseResult</a>&lt;<a class="struct" href="../../chrono/struct.DateTime.html" title="struct chrono::DateTime">DateTime</a>&lt;Self&gt;&gt;</code></span></h3><div class='docblock'><p>Parses a string with the specified format string and
 returns a <code>DateTime</code> with the current offset.
 See the <a href="../format/strftime/index.html"><code>format::strftime</code> module</a>
