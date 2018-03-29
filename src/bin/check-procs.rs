@@ -16,7 +16,7 @@ use regex::Regex;
 use structopt::StructOpt;
 
 use tabin_plugins::Status;
-use tabin_plugins::procfs::{LoadProcsError, ProcFsError, RunningProcs};
+use tabin_plugins::procfs::{LoadProcsError, ProcFsError, ProcMap, RunningProcs};
 use tabin_plugins::procfs::pid::{Process, State};
 
 /// Check that an expected number of processes are running.
@@ -29,6 +29,10 @@ use tabin_plugins::procfs::pid::{Process, State};
 
         check-procs --crit-under 2 nginx
 
+    Ensure there are not more than 30 zombie proccesses on the system:
+
+        check-procs --crit-over 30 --state zombie
+
     Ensure that there are not more than 5 java processes running MyMainClass
     that are in the zombie *or* waiting states:
 
@@ -40,7 +44,7 @@ use tabin_plugins::procfs::pid::{Process, State};
         check-procs --crit-under 3 --state running --state waiting 'cassandra|postgres'")]
 struct Args {
     #[structopt(help = "Regex that command and its arguments must match")]
-    pattern: String,
+    pattern: Option<String>,
     #[structopt(long = "crit-under", name = "N",
                 help = "Error if there are fewer than <N> procs matching <pattern>")]
     crit_under: Option<usize>,
@@ -60,16 +64,27 @@ struct Args {
     allow_unparseable_procs: bool,
 }
 
-fn main() {
+fn parse_args() -> (Option<Regex>, Args) {
     let args = Args::from_args();
-    let re = Regex::new(&args.pattern).unwrap_or_else(|e| {
-        println!("ERROR: invalid process pattern: {}", e);
+    let mut re = None;
+    if let &Some(ref pattern) = &args.pattern {
+        re = Some(Regex::new(&pattern).unwrap_or_else(|e| {
+            println!("ERROR: invalid process pattern: {}", e);
+            Status::Critical.exit();
+        }));
+    } else if args.states.is_empty() {
+        println!("At least one of a pattern or some states are required for this to do anything");
         Status::Critical.exit();
-    });
+    }
     if let (None, None) = (args.crit_under, args.crit_over) {
         println!("At least one of --crit-under or --crit-over must be provided");
         Status::Critical.exit();
     }
+    (re, args)
+}
+
+fn main() {
+    let (re, args) = parse_args();
     let should_die = if let Some(_) = args.crit_over {
         !args.allow_unparseable_procs
     } else {
@@ -77,20 +92,7 @@ fn main() {
     };
     let procs = load_procs(should_die);
 
-    let me = getpid();
-    let parent = getppid();
-
-    let mut maybe: Box<Iterator<Item = (i32, Process)>> =
-        Box::new(procs.0.into_iter().filter(|&(ref pid, ref process)| {
-            re.is_match(&process.useful_cmdline())
-                && !(Pid::from_raw(*pid) == me || Pid::from_raw(*pid) == parent)
-        }));
-    if !args.states.is_empty() {
-        maybe = Box::new(
-            maybe.filter(|&(ref pid, ref process)| args.states.contains(&process.stat.state)),
-        );
-    }
-    let matches = maybe.collect::<Vec<(i32, Process)>>();
+    let matches = filter_procs(re, &args.states, &procs.0);
 
     let mut status = Status::Ok;
     if let Some(crit_over) = args.crit_over {
@@ -181,11 +183,45 @@ fn load_procs(die_on_any_errors: bool) -> RunningProcs {
     }
 }
 
+/// Filter to processes that match the condition
+///
+/// The condition is:
+///
+/// * Does not match me or my parent process
+/// * Does match the regex, if it is present
+/// * Does match *any* of the states
+fn filter_procs<'m>(
+    re: Option<Regex>,
+    states: &[State],
+    procs: &'m ProcMap,
+) -> Vec<(&'m Pid, &'m Process)> {
+    let me = getpid();
+    let parent = getppid();
+    let mut maybe: Box<Iterator<Item = (&Pid, &Process)>> = Box::new(
+        procs
+            .iter()
+            .filter(|&(ref pid, ref process)| **pid != me && **pid != parent),
+    );
+    if !states.is_empty() {
+        maybe =
+            Box::new(maybe.filter(|&(ref pid, ref process)| states.contains(&process.stat.state)));
+    }
+    if let Some(re) = re {
+        return Box::new(
+            maybe.filter(|&(ref pid, ref process)| re.is_match(&process.useful_cmdline())),
+        ).collect();
+    } else {
+        return maybe.collect();
+    }
+}
+
 #[cfg(test)]
 mod unit {
-    use super::*;
-
     use structopt::StructOpt;
+
+    use tabin_plugins::procfs::pid::Process;
+
+    use super::*;
 
     #[test]
     fn validate_argparse() {
@@ -200,5 +236,70 @@ mod unit {
         let args =
             Args::from_iter(["c-p", "some.*proc", "--state=zombie", "--state", "S"].into_iter());
         assert_eq!(args.states, [State::Zombie, State::Sleeping]);
+    }
+
+
+    #[test]
+    fn filter_procs_handles_patterns() {
+        let mut procs = vec![Process::default(); 5];
+        procs[2].cmdline.raw.append(&mut vec!["hello".into(), "jar".into()]);
+        let proc_map = vec_to_procmap(procs);
+        let filtered = filter_procs(regex("llo.*ar"), &[], &proc_map);
+        assert_eq!(filtered.len(), 1);
+    }
+
+
+    #[test]
+    fn filter_procs_handles_single_state() {
+        let mut procs = vec![Process::default(); 5];
+        procs[2].stat.state = State::Zombie;
+        let proc_map = vec_to_procmap(procs);
+        let filtered = filter_procs(None, &[State::Zombie], &proc_map);
+        assert_eq!(filtered.len(), 1);
+    }
+
+    #[test]
+    fn filter_procs_handles_multiple_states() {
+        let mut procs = vec![Process::default(); 5];
+        procs[2].stat.state = State::Zombie;
+        procs[3].stat.state = State::Stopped;
+        let proc_map = vec_to_procmap(procs);
+
+        let filtered = filter_procs(None, &[State::Zombie], &proc_map);
+        assert_eq!(filtered.len(), 1);
+
+        let filtered = filter_procs(None, &[State::Zombie, State::Stopped], &proc_map);
+        assert_eq!(filtered.len(), 2);
+    }
+
+    #[test]
+    fn filter_procs_handles_multiple_states_and_regex() {
+        let mut procs = vec![Process::default(); 5];
+        procs[2].stat.state = State::Zombie;
+        procs[2].cmdline.raw.push("example".into());
+
+        procs[3].stat.state = State::Stopped;
+        let proc_map = vec_to_procmap(procs);
+
+        let filtered = filter_procs(regex("exa"), &[], &proc_map);
+        assert_eq!(filtered.len(), 1);
+
+        let filtered = filter_procs(regex("exa"), &[State::Zombie, State::Stopped], &proc_map);
+        assert_eq!(filtered.len(), 1);
+
+        let filtered = filter_procs(regex("exa"), &[State::Stopped], &proc_map);
+        assert_eq!(filtered.len(), 0);
+    }
+
+    fn regex(re: &str) -> Option<Regex> {
+        Some(Regex::new(re).unwrap())
+    }
+
+    fn vec_to_procmap(procs: Vec<Process>) -> ProcMap {
+        procs
+            .into_iter()
+            .enumerate()
+            .map(|(i, process)| (Pid::from_raw(i as i32), process))
+            .collect()
     }
 }

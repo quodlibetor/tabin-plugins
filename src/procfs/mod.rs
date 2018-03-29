@@ -14,6 +14,7 @@ use std::num;
 
 use regex::Regex;
 use std::slice;
+use nix::unistd::Pid;
 
 use linux::Jiffies;
 use procfs::pid::ProcessCpuUsage;
@@ -147,7 +148,7 @@ impl<'a> ProcessCpuUsages<'a> {
     }
 }
 
-pub type ProcMap = HashMap<i32, pid::Process>;
+pub type ProcMap = HashMap<Pid, pid::Process>;
 /// All the processes that are running
 // TODO: make this internal field private, and re-export the methods
 // on the vec.
@@ -197,7 +198,7 @@ impl RunningProcs {
         RunningProcs(HashMap::new())
     }
 
-    fn iter(&self) -> hash_map::Iter<i32, pid::Process> {
+    fn iter(&self) -> hash_map::Iter<Pid, pid::Process> {
         self.0.iter()
     }
 

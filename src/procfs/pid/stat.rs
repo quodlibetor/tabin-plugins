@@ -3,6 +3,8 @@ use std::fmt;
 use std::io::Read;
 use std::str::FromStr;
 
+use nix::unistd::Pid;
+
 use procfs::{ParseStatError, ParseStateError, ProcFsError, Result};
 use linux::Jiffies;
 
@@ -10,10 +12,10 @@ use linux::Jiffies;
 ///
 /// This represents much of the information in `/proc/[pid]/stat`, and is
 /// commonly access via a [`Process`](../struct.Process.html)
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Stat {
     /// The process ID
-    pub pid: i32,
+    pub pid: Pid,
     /// The filename of the executable
     pub comm: String,
     /// The state of the process
@@ -53,7 +55,7 @@ impl Stat {
 impl Default for Stat {
     fn default() -> Stat {
         Stat {
-            pid: 0,
+            pid: Pid::from_raw(0),
             comm: "init".to_owned(),
             state: "R".parse().unwrap(),
             ppid: 0,
@@ -152,7 +154,7 @@ impl FromStr for Stat {
             u64  /* rss */
         );
         Ok(Stat {
-            pid: field(pid, "pid", s, 0)?,
+            pid: Pid::from_raw(field(pid, "pid", s, 0)?),
             comm: field(comm, "comm", s, 1)?,
             state: field(state, "state", s, 2)?,
             ppid: field(ppid, "ppid", s, 3)?,
@@ -182,7 +184,7 @@ impl FromStr for Stat {
 /// The state of the process
 ///
 /// See `man 5 proc` for details
-#[derive(Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 pub enum State {
     /// `R`: Currently using the CPU
     Running,
