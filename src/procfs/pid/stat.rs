@@ -182,7 +182,7 @@ impl FromStr for Stat {
 /// The state of the process
 ///
 /// See `man 5 proc` for details
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Deserialize)]
 pub enum State {
     /// `R`: Currently using the CPU
     Running,
@@ -201,15 +201,19 @@ pub enum State {
 impl FromStr for State {
     type Err = ProcFsError;
 
+    /// Parse from either /proc/<pid>/stat or the command line
+    ///
+    /// StructOpt and scan_fmt use the same trait, so we need to handle both
+    /// here.
     fn from_str(s: &str) -> Result<State> {
         use self::State::*;
         match s {
-            "R" => Ok(Running),
-            "S" => Ok(Sleeping),
-            "D" => Ok(UninterruptibleSleep),
-            "W" => Ok(Waiting),
-            "T" => Ok(Stopped),
-            "Z" => Ok(Zombie),
+            "R" | "running" => Ok(Running),
+            "S" | "sleeping" => Ok(Sleeping),
+            "D" | "uninteruptible-sleep" => Ok(UninterruptibleSleep),
+            "W" | "waiting" => Ok(Waiting),
+            "T" | "stopped" => Ok(Stopped),
+            "Z" | "zombie" => Ok(Zombie),
             _ => Err(ParseStateError {
                 state: s.to_string(),
             }.into()),

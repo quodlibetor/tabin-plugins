@@ -105,7 +105,8 @@ impl fmt::Display for ParseStateError {
     fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
         write!(
             f,
-            "String '{}' was not a valid state, expected one of RSDWTZ",
+            "String '{}' was not a valid state, expected one of \
+             R,running, S,sleeping, D,uninteruptible-sleep, W,waiting, T,stopped, Z,zombie",
             self.state
         )
     }
