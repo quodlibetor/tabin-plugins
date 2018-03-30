@@ -10,8 +10,11 @@
     <title>crossbeam_epoch - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Crate crossbeam_epoch</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'crossbeam_epoch', ty: 'mod', relpath: '../'};</script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,48 +61,39 @@
                    </a>
                </span><a class='srclink' href='../src/crossbeam_epoch/lib.rs.html#1-103' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Epoch-based memory reclamation.</p>
-
 <p>An interesting problem concurrent collections deal with comes from the remove operation.
 Suppose that a thread removes an element from a lock-free map, while another thread is reading
 that same element at the same time. The first thread must wait until the second thread stops
 reading the element. Only then it is safe to destruct it.</p>
-
 <p>Programming languages that come with garbage collectors solve this problem trivially. The
 garbage collector will destruct the removed element when no thread can hold a reference to it
 anymore.</p>
-
 <p>This crate implements a basic memory reclamation mechanism, which is based on epochs. When an
 element gets removed from a concurrent collection, it is inserted into a pile of garbage and
 marked with the current epoch. Every time a thread accesses a collection, it checks the current
 epoch, attempts to increment it, and destructs some garbage that became so old that no thread
 can be referencing it anymore.</p>
-
 <p>That is the general mechanism behind epoch-based memory reclamation, but the details are a bit
 more complicated. Anyhow, memory reclamation is designed to be fully automatic and something
-users of concurrent collections don&#39;t have to worry much about.</p>
-
-<h1 id='pointers' class='section-header'><a href='#pointers'>Pointers</a></h1>
+users of concurrent collections don't have to worry much about.</p>
+<h1 id="pointers" class="section-header"><a href="#pointers">Pointers</a></h1>
 <p>Concurrent collections are built using atomic pointers. This module provides <a href="struct.Atomic.html"><code>Atomic</code></a>, which
 is just a shared atomic pointer to a heap-allocated object. Loading an <a href="struct.Atomic.html"><code>Atomic</code></a> yields a
 <a href="struct.Shared.html"><code>Shared</code></a>, which is an epoch-protected pointer through which the loaded object can be safely
 read.</p>
-
-<h1 id='pinning' class='section-header'><a href='#pinning'>Pinning</a></h1>
+<h1 id="pinning" class="section-header"><a href="#pinning">Pinning</a></h1>
 <p>Before an <a href="struct.Atomic.html"><code>Atomic</code></a> can be loaded, a participant must be <a href="fn.pin.html"><code>pin</code></a>ned. By pinning a participant
 we declare that any object that gets removed from now on must not be destructed just
 yet. Garbage collection of newly removed objects is suspended until the participant gets
 unpinned.</p>
-
-<h1 id='garbage' class='section-header'><a href='#garbage'>Garbage</a></h1>
+<h1 id="garbage" class="section-header"><a href="#garbage">Garbage</a></h1>
 <p>Objects that get removed from concurrent collections must be stashed away until all currently
 pinned participants get unpinned. Such objects can be stored into a [<code>Garbage</code>], where they are
 kept until the right time for their destruction comes.</p>
-
 <p>There is a global shared instance of garbage queue. You can <a href="fn.defer.html"><code>defer</code></a> the execution of an
 arbitrary function until the global epoch is advanced enough. Most notably, concurrent data
 structures may defer the deallocation of an object.</p>
-
-<h1 id='apis' class='section-header'><a href='#apis'>APIs</a></h1>
+<h1 id="apis" class="section-header"><a href="#apis">APIs</a></h1>
 <p>For majority of use cases, just use the default garbage collector by invoking <a href="fn.pin.html"><code>pin</code></a>. If you
 want to create your own garbage collector, use the <a href="struct.Collector.html"><code>Collector</code></a> API.</p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
@@ -102,6 +103,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='struct crossbeam_epoch::Atomic'>Atomic</a></td>
                            <td class='docblock-short'>
                                 <p>An atomic pointer that can be safely shared between threads.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -109,6 +111,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='struct crossbeam_epoch::Collector'>Collector</a></td>
                            <td class='docblock-short'>
                                 <p>An epoch-based garbage collector.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -116,6 +119,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='struct crossbeam_epoch::CompareAndSetError'>CompareAndSetError</a></td>
                            <td class='docblock-short'>
                                 <p>The error returned on failed compare-and-set operation.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -123,6 +127,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='struct crossbeam_epoch::Guard'>Guard</a></td>
                            <td class='docblock-short'>
                                 <p>A guard that keeps the current thread pinned.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -130,6 +135,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='struct crossbeam_epoch::Handle'>Handle</a></td>
                            <td class='docblock-short'>
                                 <p>A handle to a garbage collector.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -137,6 +143,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='struct crossbeam_epoch::Owned'>Owned</a></td>
                            <td class='docblock-short'>
                                 <p>An owned heap-allocated object.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -144,6 +151,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='struct crossbeam_epoch::Shared'>Shared</a></td>
                            <td class='docblock-short'>
                                 <p>A pointer to an object protected by the epoch GC.</p>
+
                            </td>
                        </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>
@@ -152,6 +160,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='trait crossbeam_epoch::CompareAndSetOrdering'>CompareAndSetOrdering</a></td>
                            <td class='docblock-short'>
                                 <p>Memory orderings for compare-and-set operations.</p>
+
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
@@ -160,6 +169,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='fn crossbeam_epoch::default_collector'>default_collector</a></td>
                            <td class='docblock-short'>
                                 <p>Returns the default handle associated with the current thread.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -167,6 +177,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='fn crossbeam_epoch::default_handle'>default_handle</a></td>
                            <td class='docblock-short'>
                                 <p>Returns the default handle associated with the current thread.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -174,6 +185,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='fn crossbeam_epoch::is_pinned'>is_pinned</a></td>
                            <td class='docblock-short'>
                                 <p>Returns <code>true</code> if the current thread is pinned.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -181,6 +193,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='fn crossbeam_epoch::pin'>pin</a></td>
                            <td class='docblock-short'>
                                 <p>Pins the current thread.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -188,6 +201,7 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                                   title='fn crossbeam_epoch::unprotected'>unprotected</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Returns a reference to a dummy guard that allows unprotected access to <a href="struct.Atomic.html"><code>Atomic</code></a>s.</p>
+
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
@@ -202,20 +216,22 @@ want to create your own garbage collector, use the <a href="struct.Collector.htm
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

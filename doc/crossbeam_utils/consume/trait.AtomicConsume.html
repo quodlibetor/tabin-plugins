@@ -10,8 +10,11 @@
     <title>crossbeam_utils::consume::AtomicConsume - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Trait AtomicConsume</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#associated-types">Associated Types</a><div class="sidebar-links"><a href="#associatedtype.Val">Val</a></div><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.load_consume">load_consume</a></div><a class="sidebar-title" href="#foreign-impls">Implementations on Foreign Types</a><div class="sidebar-links"><a href="#impl-AtomicConsume">AtomicBool</a><a href="#impl-AtomicConsume">AtomicUsize</a><a href="#impl-AtomicConsume">AtomicIsize</a><a href="#impl-AtomicConsume">AtomicPtr&lt;T&gt;</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='../index.html'>crossbeam_utils</a>::<wbr><a href='index.html'>consume</a></p><script>window.sidebarCurrent = {name: 'AtomicConsume', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -66,17 +76,14 @@
             </h2>
             <div class='methods'>
         <h3 id='tymethod.load_consume' class='method'><span id='load_consume.v' class='invisible'><code>fn <a href='#tymethod.load_consume' class='fnname'>load_consume</a>(&amp;self) -&gt; Self::<a class="type" href="../../crossbeam_utils/consume/trait.AtomicConsume.html#associatedtype.Val" title="type crossbeam_utils::consume::AtomicConsume::Val">Val</a></code></span></h3><div class='docblock'><p>Loads a value from the atomic using a &quot;consume&quot; memory ordering.</p>
-
 <p>This is similar to the &quot;acquire&quot; ordering, except that an ordering is
 only guaranteed with operations that &quot;depend on&quot; the result of the load.
 However consume loads are usually much faster than acquire loads on
-architectures with a weak memory model since they don&#39;t require memory
+architectures with a weak memory model since they don't require memory
 fence instructions.</p>
-
 <p>The exact definition of &quot;depend on&quot; is a bit vague, but it works as you
 would expect in practice since a lot of software, especially the Linux
 kernel, rely on this behavior.</p>
-
 <p>This is currently only implemented on ARM and AArch64, where a fence
 can be avoided. On other architectures this will fall back to a simple
 <code>load(Ordering::Acquire)</code>.</p>
@@ -116,20 +123,22 @@ can be avoided. On other architectures this will fall back to a simple
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

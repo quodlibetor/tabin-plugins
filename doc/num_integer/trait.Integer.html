@@ -10,8 +10,11 @@
     <title>num_integer::Integer - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Trait Integer</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.div_floor">div_floor</a><a href="#tymethod.mod_floor">mod_floor</a><a href="#tymethod.gcd">gcd</a><a href="#tymethod.lcm">lcm</a><a href="#tymethod.divides">divides</a><a href="#tymethod.is_multiple_of">is_multiple_of</a><a href="#tymethod.is_even">is_even</a><a href="#tymethod.is_odd">is_odd</a><a href="#tymethod.div_rem">div_rem</a></div><a class="sidebar-title" href="#provided-methods">Provided Methods</a><div class="sidebar-links"><a href="#method.div_mod_floor">div_mod_floor</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='index.html'>num_integer</a></p><script>window.sidebarCurrent = {name: 'Integer', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -68,8 +78,7 @@
             </h2>
             <div class='methods'>
         <h3 id='tymethod.div_floor' class='method'><span id='div_floor.v' class='invisible'><code>fn <a href='#tymethod.div_floor' class='fnname'>div_floor</a>(&amp;self, other: &amp;Self) -&gt; Self</code></span></h3><div class='docblock'><p>Floored integer division.</p>
-
-<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
+<h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert</span><span class="macro">!</span>(( <span class="number">8</span>).<span class="ident">div_floor</span>(<span class="op">&amp;</span> <span class="number">3</span>) <span class="op">==</span>  <span class="number">2</span>);
 <span class="macro">assert</span><span class="macro">!</span>(( <span class="number">8</span>).<span class="ident">div_floor</span>(<span class="kw-2">&amp;</span><span class="op">-</span><span class="number">3</span>) <span class="op">==</span> <span class="op">-</span><span class="number">3</span>);
@@ -84,8 +93,7 @@
 
 <pre class="rust rust-example-rendered">
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">n</span>.<span class="ident">div_floor</span>(<span class="kw-2">&amp;</span><span class="ident">d</span>) <span class="op">*</span> <span class="ident">d</span> <span class="op">+</span> <span class="ident">n</span>.<span class="ident">mod_floor</span>(<span class="kw-2">&amp;</span><span class="ident">d</span>) <span class="op">==</span> <span class="ident">n</span>)</pre>
-
-<h1 id='examples-1' class='section-header'><a href='#examples-1'>Examples</a></h1>
+<h1 id="examples-1" class="section-header"><a href="#examples-1">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert</span><span class="macro">!</span>(( <span class="number">8</span>).<span class="ident">mod_floor</span>(<span class="op">&amp;</span> <span class="number">3</span>) <span class="op">==</span>  <span class="number">2</span>);
 <span class="macro">assert</span><span class="macro">!</span>(( <span class="number">8</span>).<span class="ident">mod_floor</span>(<span class="kw-2">&amp;</span><span class="op">-</span><span class="number">3</span>) <span class="op">==</span> <span class="op">-</span><span class="number">1</span>);
@@ -97,40 +105,34 @@
 <span class="macro">assert</span><span class="macro">!</span>((<span class="op">-</span><span class="number">1</span>).<span class="ident">mod_floor</span>(<span class="op">&amp;</span> <span class="number">2</span>) <span class="op">==</span>  <span class="number">1</span>);
 <span class="macro">assert</span><span class="macro">!</span>((<span class="op">-</span><span class="number">1</span>).<span class="ident">mod_floor</span>(<span class="kw-2">&amp;</span><span class="op">-</span><span class="number">2</span>) <span class="op">==</span> <span class="op">-</span><span class="number">1</span>);</pre>
 </div><h3 id='tymethod.gcd' class='method'><span id='gcd.v' class='invisible'><code>fn <a href='#tymethod.gcd' class='fnname'>gcd</a>(&amp;self, other: &amp;Self) -&gt; Self</code></span></h3><div class='docblock'><p>Greatest Common Divisor (GCD).</p>
-
-<h1 id='examples-2' class='section-header'><a href='#examples-2'>Examples</a></h1>
+<h1 id="examples-2" class="section-header"><a href="#examples-2">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">6</span>.<span class="ident">gcd</span>(<span class="kw-2">&amp;</span><span class="number">8</span>), <span class="number">2</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">7</span>.<span class="ident">gcd</span>(<span class="kw-2">&amp;</span><span class="number">3</span>), <span class="number">1</span>);</pre>
 </div><h3 id='tymethod.lcm' class='method'><span id='lcm.v' class='invisible'><code>fn <a href='#tymethod.lcm' class='fnname'>lcm</a>(&amp;self, other: &amp;Self) -&gt; Self</code></span></h3><div class='docblock'><p>Lowest Common Multiple (LCM).</p>
-
-<h1 id='examples-3' class='section-header'><a href='#examples-3'>Examples</a></h1>
+<h1 id="examples-3" class="section-header"><a href="#examples-3">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">7</span>.<span class="ident">lcm</span>(<span class="kw-2">&amp;</span><span class="number">3</span>), <span class="number">21</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">2</span>.<span class="ident">lcm</span>(<span class="kw-2">&amp;</span><span class="number">4</span>), <span class="number">4</span>);</pre>
 </div><h3 id='tymethod.divides' class='method'><span id='divides.v' class='invisible'><code>fn <a href='#tymethod.divides' class='fnname'>divides</a>(&amp;self, other: &amp;Self) -&gt; bool</code></span></h3><div class='docblock'><p>Deprecated, use <code>is_multiple_of</code> instead.</p>
 </div><h3 id='tymethod.is_multiple_of' class='method'><span id='is_multiple_of.v' class='invisible'><code>fn <a href='#tymethod.is_multiple_of' class='fnname'>is_multiple_of</a>(&amp;self, other: &amp;Self) -&gt; bool</code></span></h3><div class='docblock'><p>Returns <code>true</code> if <code>self</code> is a multiple of <code>other</code>.</p>
-
-<h1 id='examples-4' class='section-header'><a href='#examples-4'>Examples</a></h1>
+<h1 id="examples-4" class="section-header"><a href="#examples-4">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">9</span>.<span class="ident">is_multiple_of</span>(<span class="kw-2">&amp;</span><span class="number">3</span>), <span class="bool-val">true</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>.<span class="ident">is_multiple_of</span>(<span class="kw-2">&amp;</span><span class="number">9</span>), <span class="bool-val">false</span>);</pre>
 </div><h3 id='tymethod.is_even' class='method'><span id='is_even.v' class='invisible'><code>fn <a href='#tymethod.is_even' class='fnname'>is_even</a>(&amp;self) -&gt; bool</code></span></h3><div class='docblock'><p>Returns <code>true</code> if the number is even.</p>
-
-<h1 id='examples-5' class='section-header'><a href='#examples-5'>Examples</a></h1>
+<h1 id="examples-5" class="section-header"><a href="#examples-5">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>.<span class="ident">is_even</span>(), <span class="bool-val">false</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">4</span>.<span class="ident">is_even</span>(), <span class="bool-val">true</span>);</pre>
 </div><h3 id='tymethod.is_odd' class='method'><span id='is_odd.v' class='invisible'><code>fn <a href='#tymethod.is_odd' class='fnname'>is_odd</a>(&amp;self) -&gt; bool</code></span></h3><div class='docblock'><p>Returns <code>true</code> if the number is odd.</p>
-
-<h1 id='examples-6' class='section-header'><a href='#examples-6'>Examples</a></h1>
+<h1 id="examples-6" class="section-header"><a href="#examples-6">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>.<span class="ident">is_odd</span>(), <span class="bool-val">true</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">4</span>.<span class="ident">is_odd</span>(), <span class="bool-val">false</span>);</pre>
 </div><h3 id='tymethod.div_rem' class='method'><span id='div_rem.v' class='invisible'><code>fn <a href='#tymethod.div_rem' class='fnname'>div_rem</a>(&amp;self, other: &amp;Self) -&gt; (Self, Self)</code></span></h3><div class='docblock'><p>Simultaneous truncated integer division and modulus.
 Returns <code>(quotient, remainder)</code>.</p>
-
-<h1 id='examples-7' class='section-header'><a href='#examples-7'>Examples</a></h1>
+<h1 id="examples-7" class="section-header"><a href="#examples-7">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert_eq</span><span class="macro">!</span>(( <span class="number">8</span>).<span class="ident">div_rem</span>( <span class="kw-2">&amp;</span><span class="number">3</span>), ( <span class="number">2</span>,  <span class="number">2</span>));
 <span class="macro">assert_eq</span><span class="macro">!</span>(( <span class="number">8</span>).<span class="ident">div_rem</span>(<span class="kw-2">&amp;</span><span class="op">-</span><span class="number">3</span>), (<span class="op">-</span><span class="number">2</span>,  <span class="number">2</span>));
@@ -148,8 +150,7 @@ Returns <code>(quotient, remainder)</code>.</p>
             <div class='methods'>
         <h3 id='method.div_mod_floor' class='method'><span id='div_mod_floor.v' class='invisible'><code>fn <a href='#method.div_mod_floor' class='fnname'>div_mod_floor</a>(&amp;self, other: &amp;Self) -&gt; (Self, Self)</code></span></h3><div class='docblock'><p>Simultaneous floored integer division and modulus.
 Returns <code>(quotient, remainder)</code>.</p>
-
-<h1 id='examples-8' class='section-header'><a href='#examples-8'>Examples</a></h1>
+<h1 id="examples-8" class="section-header"><a href="#examples-8">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="macro">assert_eq</span><span class="macro">!</span>(( <span class="number">8</span>).<span class="ident">div_mod_floor</span>( <span class="kw-2">&amp;</span><span class="number">3</span>), ( <span class="number">2</span>,  <span class="number">2</span>));
 <span class="macro">assert_eq</span><span class="macro">!</span>(( <span class="number">8</span>).<span class="ident">div_mod_floor</span>(<span class="kw-2">&amp;</span><span class="op">-</span><span class="number">3</span>), (<span class="op">-</span><span class="number">3</span>, <span class="op">-</span><span class="number">1</span>));
@@ -165,16 +166,16 @@ Returns <code>(quotient, remainder)</code>.</p>
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    <li><code>impl Integer for i8</code></li>
-<li><code>impl Integer for i16</code></li>
-<li><code>impl Integer for i32</code></li>
-<li><code>impl Integer for i64</code></li>
-<li><code>impl Integer for isize</code></li>
-<li><code>impl Integer for u8</code></li>
-<li><code>impl Integer for u16</code></li>
-<li><code>impl Integer for u32</code></li>
-<li><code>impl Integer for u64</code></li>
-<li><code>impl Integer for usize</code></li>
+    <li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for i8</code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for i16</code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for i32</code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for i64</code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for isize</code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for u8</code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for u16</code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for u32</code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for u64</code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for usize</code></li>
 </ul><script type="text/javascript" async
                          src="../implementors/num_integer/trait.Integer.js">
                  </script></section>
@@ -190,20 +191,22 @@ Returns <code>(quotient, remainder)</code>.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

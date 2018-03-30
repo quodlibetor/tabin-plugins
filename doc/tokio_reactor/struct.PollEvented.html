@@ -10,8 +10,11 @@
     <title>tokio_reactor::PollEvented - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Struct PollEvented</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.new_with_handle">new_with_handle</a><a href="#method.get_ref">get_ref</a><a href="#method.get_mut">get_mut</a><a href="#method.into_inner">into_inner</a><a href="#method.poll_read_ready">poll_read_ready</a><a href="#method.clear_read_ready">clear_read_ready</a><a href="#method.poll_write_ready">poll_write_ready</a><a href="#method.clear_write_ready">clear_write_ready</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Read">Read</a><a href="#impl-Write">Write</a><a href="#impl-AsyncRead">AsyncRead</a><a href="#impl-AsyncWrite">AsyncWrite</a><a href="#impl-Debug">Debug</a><a href="#impl-Drop">Drop</a></div></div><p class='location'><a href='index.html'>tokio_reactor</a></p><script>window.sidebarCurrent = {name: 'PollEvented', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -52,40 +62,33 @@
                </span><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#87-90' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct PollEvented&lt;E:&nbsp;<a class="trait" href="../mio/event_imp/trait.Evented.html" title="trait mio::event_imp::Evented">Evented</a>&gt; { /* fields omitted */ }</pre><div class='docblock'><p>Associates an I/O resource that implements the <a href="https://doc.rust-lang.org/std/io/trait.Read.html"><code>std::Read</code></a> and / or
 <a href="https://doc.rust-lang.org/std/io/trait.Write.html"><code>std::Write</code></a> traits with the reactor that drives it.</p>
-
 <p><code>PollEvented</code> uses <a href="struct.Registration.html"><code>Registration</code></a> internally to take a type that
 implements <a href="https://docs.rs/mio/0.6/mio/trait.Evented.html"><code>mio::Evented</code></a> as well as <a href="https://doc.rust-lang.org/std/io/trait.Read.html"><code>std::Read</code></a> and or <a href="https://doc.rust-lang.org/std/io/trait.Write.html"><code>std::Write</code></a>
 and associate it with a reactor that will drive it.</p>
-
 <p>Once the <a href="https://docs.rs/mio/0.6/mio/trait.Evented.html"><code>mio::Evented</code></a> type is wrapped by <code>PollEvented</code>, it can be
-used from within the future&#39;s execution model. As such, the <code>PollEvented</code>
+used from within the future's execution model. As such, the <code>PollEvented</code>
 type provides <a href="../io/trait.AsyncRead.html"><code>AsyncRead</code></a> and <a href="../io/trait.AsyncWrite.html"><code>AsyncWrite</code></a> implementations using the
 underlying I/O resource as well as readiness events provided by the reactor.</p>
-
 <p><strong>Note</strong>: While <code>PollEvented</code> is <code>Sync</code> (if the underlying I/O type is
 <code>Sync</code>), the caller must ensure that there are at most two tasks that use a
 <code>PollEvented</code> instance concurrenty. One for reading and one for writing.
 While violating this requirement is &quot;safe&quot; from a Rust memory model point of
 view, it will result in unexpected behavior in the form of lost
 notifications and tasks hanging.</p>
-
-<h2 id='readiness-events' class='section-header'><a href='#readiness-events'>Readiness events</a></h2>
+<h2 id="readiness-events" class="section-header"><a href="#readiness-events">Readiness events</a></h2>
 <p>Besides just providing <a href="../io/trait.AsyncRead.html"><code>AsyncRead</code></a> and <a href="../io/trait.AsyncWrite.html"><code>AsyncWrite</code></a> implementations,
 this type also supports access to the underlying readiness event stream.
 While similar in function to what <a href="struct.Registration.html"><code>Registration</code></a> provides, the semantics
 are a bit different.</p>
-
 <p>Two functions are provided to access the readiness events:
 [<code>poll_read_ready</code>] and [<code>poll_write_ready</code>]. These functions return the
 current readiness state of the <code>PollEvented</code> instance. If
 [<code>poll_read_ready</code>] indicates read readiness, immediately calling
 [<code>poll_read_ready</code>] again will also indicate read readiness.</p>
-
 <p>When the operation is attempted and is unable to succeed due to the I/O
 resource not being ready, the caller must call [<code>clear_read_ready</code>] or
 [<code>clear_write_ready</code>]. This clears the readiness state until a new readiness
 event is received.</p>
-
 <p>This allows the caller to implement additional funcitons. For example,
 <a href="../net/struct.TcpListener.html"><code>TcpListener</code></a> implements poll_accept by using [<code>poll_read_ready</code>] and
 [<code>clear_write_ready</code>].</p>
@@ -105,8 +108,7 @@ event is received.</p>
         <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>),
     }
 }</pre>
-
-<h2 id='platform-specific-events' class='section-header'><a href='#platform-specific-events'>Platform-specific events</a></h2>
+<h2 id="platform-specific-events" class="section-header"><a href="#platform-specific-events">Platform-specific events</a></h2>
 <p><code>PollEvented</code> also allows receiving platform-specific <code>mio::Ready</code> events.
 These events are included as part of the read readiness event stream. The
 write readiness event stream is only for <code>Ready::writable()</code> events.</p>
@@ -127,81 +129,62 @@ stream is wrapping.</p>
 stream is wrapping.</p>
 </div><h4 id='method.into_inner' class="method"><span id='into_inner.v' class='invisible'><code>pub fn <a href='#method.into_inner' class='fnname'>into_inner</a>(self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;E&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#187-191' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Consumes self, returning the inner I/O object</p>
-
 <p>This function will deregister the I/O resource from the reactor before
 returning. If the deregistration operation fails, an error is returned.</p>
-
 <p>Note that deregistering does not guarantee that the I/O resource can be
 registered with a different reactor. Some I/O resource types can only be
 associated with a single reactor instance for their lifetime.</p>
 </div><h4 id='method.poll_read_ready' class="method"><span id='poll_read_ready.v' class='invisible'><code>pub fn <a href='#method.poll_read_ready' class='fnname'>poll_read_ready</a>(&amp;self, mask: <a class="struct" href="../mio/event_imp/struct.Ready.html" title="struct mio::event_imp::Ready">Ready</a>) -&gt; <a class="type" href="../futures/poll/type.Poll.html" title="type futures::poll::Poll">Poll</a>&lt;<a class="struct" href="../mio/event_imp/struct.Ready.html" title="struct mio::event_imp::Ready">Ready</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#214-220' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Check the I/O resource&#39;s read readiness state.</p>
-
+<div class='docblock'><p>Check the I/O resource's read readiness state.</p>
 <p>The mask argument allows specifying what readiness to notify on. This
 can be any value, including platform specific readiness, <strong>except</strong>
 <code>writable</code>. HUP is always implicitly included on platforms that support
 it.</p>
-
 <p>If the resource is not ready for a read then <code>Async::NotReady</code> is
 returned and the current task is notified once a new event is received.</p>
-
 <p>The I/O resource will remain in a read-ready state until readiness is
 cleared by calling <a href="#method.clear_read_ready"><code>clear_read_ready</code></a>.</p>
-
-<h1 id='panics' class='section-header'><a href='#panics'>Panics</a></h1>
+<h1 id="panics" class="section-header"><a href="#panics">Panics</a></h1>
 <p>This function panics if:</p>
-
 <ul>
 <li><code>ready</code> includes writable.</li>
 <li>called from outside of a task context.</li>
 </ul>
 </div><h4 id='method.clear_read_ready' class="method"><span id='clear_read_ready.v' class='invisible'><code>pub fn <a href='#method.clear_read_ready' class='fnname'>clear_read_ready</a>(&amp;self, ready: <a class="struct" href="../mio/event_imp/struct.Ready.html" title="struct mio::event_imp::Ready">Ready</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#250-263' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Clears the I/O resource&#39;s read readiness state and registers the current
+<div class='docblock'><p>Clears the I/O resource's read readiness state and registers the current
 task to be notified once a read readiness event is received.</p>
-
 <p>After calling this function, <code>poll_read_ready</code> will return <code>NotReady</code>
 until a new read readiness event has been received.</p>
-
 <p>The <code>mask</code> argument specifies the readiness bits to clear. This may not
 include <code>writable</code> or <code>hup</code>.</p>
-
-<h1 id='panics-1' class='section-header'><a href='#panics-1'>Panics</a></h1>
+<h1 id="panics-1" class="section-header"><a href="#panics-1">Panics</a></h1>
 <p>This function panics if:</p>
-
 <ul>
 <li><code>ready</code> includes writable or HUP</li>
 <li>called from outside of a task context.</li>
 </ul>
 </div><h4 id='method.poll_write_ready' class="method"><span id='poll_write_ready.v' class='invisible'><code>pub fn <a href='#method.poll_write_ready' class='fnname'>poll_write_ready</a>(&amp;self) -&gt; <a class="type" href="../futures/poll/type.Poll.html" title="type futures::poll::Poll">Poll</a>&lt;<a class="struct" href="../mio/event_imp/struct.Ready.html" title="struct mio::event_imp::Ready">Ready</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#303-311' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Check the I/O resource&#39;s write readiness state.</p>
-
+<div class='docblock'><p>Check the I/O resource's write readiness state.</p>
 <p>This always checks for writable readiness and also checks for HUP
 readiness on platforms that support it.</p>
-
 <p>If the resource is not ready for a write then <code>Async::NotReady</code> is
 returned and the current task is notified once a new event is received.</p>
-
 <p>The I/O resource will remain in a write-ready state until readiness is
 cleared by calling <a href="#method.clear_write_ready"><code>clear_write_ready</code></a>.</p>
-
-<h1 id='panics-2' class='section-header'><a href='#panics-2'>Panics</a></h1>
+<h1 id="panics-2" class="section-header"><a href="#panics-2">Panics</a></h1>
 <p>This function panics if:</p>
-
 <ul>
 <li><code>ready</code> contains bits besides <code>writable</code> and <code>hup</code>.</li>
 <li>called from outside of a task context.</li>
 </ul>
 </div><h4 id='method.clear_write_ready' class="method"><span id='clear_write_ready.v' class='invisible'><code>pub fn <a href='#method.clear_write_ready' class='fnname'>clear_write_ready</a>(&amp;self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#341-352' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Resets the I/O resource&#39;s write readiness state and registers the current
+<div class='docblock'><p>Resets the I/O resource's write readiness state and registers the current
 task to be notified once a write readiness event is received.</p>
-
 <p>This only clears writable readiness. HUP (on platforms that support HUP)
 cannot be cleared as it is a final state.</p>
-
 <p>After calling this function, <code>poll_write_ready(Ready::writable())</code> will
 return <code>NotReady</code> until a new read readiness event has been received.</p>
-
-<h1 id='panics-3' class='section-header'><a href='#panics-3'>Panics</a></h1>
+<h1 id="panics-3" class="section-header"><a href="#panics-3">Panics</a></h1>
 <p>This function will panic if called from outside of a task context.</p>
 </div></div>
             <h2 id='implementations' class='small-section-header'>
@@ -215,7 +198,7 @@ return <code>NotReady</code> until a new read readiness event has been received.
 </div><h4 id='method.read_to_end' class="method"><span id='read_to_end.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_end' class='fnname'>read_to_end</a>(&amp;mut self, buf: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#600-602' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Read all bytes until EOF in this source, placing them into <code>buf</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_end">Read more</a></p>
 </div><h4 id='method.read_to_string' class="method"><span id='read_to_string.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_string' class='fnname'>read_to_string</a>(&amp;mut self, buf: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#638-649' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Read all bytes until EOF in this source, placing them into <code>buf</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_string">Read more</a></p>
+<div class='docblock'><p>Read all bytes until EOF in this source, appending them to <code>buf</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_string">Read more</a></p>
 </div><h4 id='method.read_exact' class="method"><span id='read_exact.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_exact' class='fnname'>read_exact</a>(&amp;mut self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.6.0'>1.6.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#701-716' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Read the exact number of bytes required to fill <code>buf</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_exact">Read more</a></p>
 </div><h4 id='method.by_ref' class="method"><span id='by_ref.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.by_ref' class='fnname'>by_ref</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#753' title='goto source code'>[src]</a></span></h4>
@@ -234,11 +217,11 @@ return <code>NotReady</code> until a new read readiness event has been received.
 <div class='docblock'><p>Write a buffer into this object, returning how many bytes were written. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#tymethod.write">Read more</a></p>
 </div><h4 id='method.flush' class="method"><span id='flush.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#tymethod.flush' class='fnname'>flush</a>(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#435-447' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Flush this output stream, ensuring that all intermediately buffered contents reach their destination. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#tymethod.flush">Read more</a></p>
-</div><h4 id='method.write_all' class="method"><span id='write_all.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_all' class='fnname'>write_all</a>(&amp;mut self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1090-1101' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.write_all' class="method"><span id='write_all.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_all' class='fnname'>write_all</a>(&amp;mut self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1097-1108' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Attempts to write an entire buffer into this write. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_all">Read more</a></p>
-</div><h4 id='method.write_fmt' class="method"><span id='write_fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_fmt' class='fnname'>write_fmt</a>(&amp;mut self, fmt: <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Arguments.html" title="struct core::fmt::Arguments">Arguments</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1142-1174' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.write_fmt' class="method"><span id='write_fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_fmt' class='fnname'>write_fmt</a>(&amp;mut self, fmt: <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Arguments.html" title="struct core::fmt::Arguments">Arguments</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1149-1181' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Writes a formatted string into this writer, returning any error encountered. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_fmt">Read more</a></p>
-</div><h4 id='method.by_ref-1' class="method"><span id='by_ref.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.by_ref' class='fnname'>by_ref</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1198' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.by_ref-1' class="method"><span id='by_ref.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.by_ref' class='fnname'>by_ref</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1205' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Creates a &quot;by reference&quot; adaptor for this instance of <code>Write</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.by_ref">Read more</a></p>
 </div></div><h3 id='impl-AsyncRead' class='impl'><span class='in-band'><code>impl&lt;E&gt; <a class="trait" href="../tokio_io/async_read/trait.AsyncRead.html" title="trait tokio_io::async_read::AsyncRead">AsyncRead</a> for <a class="struct" href="../tokio_reactor/struct.PollEvented.html" title="struct tokio_reactor::PollEvented">PollEvented</a>&lt;E&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;E: <a class="trait" href="../mio/event_imp/trait.Evented.html" title="trait mio::event_imp::Evented">Evented</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a>,&nbsp;</span></code><a href='#impl-AsyncRead' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#492-495' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.prepare_uninitialized_buffer' class="method"><span id='prepare_uninitialized_buffer.v' class='invisible'><code>unsafe fn <a href='../tokio_io/async_read/trait.AsyncRead.html#method.prepare_uninitialized_buffer' class='fnname'>prepare_uninitialized_buffer</a>(&amp;self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_io/async_read.rs.html#62-68' title='goto source code'>[src]</a></span></h4>
@@ -268,7 +251,7 @@ return <code>NotReady</code> until a new read readiness event has been received.
 </div><h4 id='method.read_to_end-1' class="method"><span id='read_to_end.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_end' class='fnname'>read_to_end</a>(&amp;mut self, buf: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#600-602' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Read all bytes until EOF in this source, placing them into <code>buf</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_end">Read more</a></p>
 </div><h4 id='method.read_to_string-1' class="method"><span id='read_to_string.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_string' class='fnname'>read_to_string</a>(&amp;mut self, buf: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#638-649' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Read all bytes until EOF in this source, placing them into <code>buf</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_string">Read more</a></p>
+<div class='docblock'><p>Read all bytes until EOF in this source, appending them to <code>buf</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_string">Read more</a></p>
 </div><h4 id='method.read_exact-1' class="method"><span id='read_exact.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_exact' class='fnname'>read_exact</a>(&amp;mut self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.6.0'>1.6.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#701-716' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Read the exact number of bytes required to fill <code>buf</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_exact">Read more</a></p>
 </div><h4 id='method.by_ref-2' class="method"><span id='by_ref.v-2' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.by_ref' class='fnname'>by_ref</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#753' title='goto source code'>[src]</a></span></h4>
@@ -287,11 +270,11 @@ return <code>NotReady</code> until a new read readiness event has been received.
 <div class='docblock'><p>Write a buffer into this object, returning how many bytes were written. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#tymethod.write">Read more</a></p>
 </div><h4 id='method.flush-1' class="method"><span id='flush.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#tymethod.flush' class='fnname'>flush</a>(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#564-576' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Flush this output stream, ensuring that all intermediately buffered contents reach their destination. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#tymethod.flush">Read more</a></p>
-</div><h4 id='method.write_all-1' class="method"><span id='write_all.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_all' class='fnname'>write_all</a>(&amp;mut self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1090-1101' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.write_all-1' class="method"><span id='write_all.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_all' class='fnname'>write_all</a>(&amp;mut self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1097-1108' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Attempts to write an entire buffer into this write. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_all">Read more</a></p>
-</div><h4 id='method.write_fmt-1' class="method"><span id='write_fmt.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_fmt' class='fnname'>write_fmt</a>(&amp;mut self, fmt: <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Arguments.html" title="struct core::fmt::Arguments">Arguments</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1142-1174' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.write_fmt-1' class="method"><span id='write_fmt.v-1' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_fmt' class='fnname'>write_fmt</a>(&amp;mut self, fmt: <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Arguments.html" title="struct core::fmt::Arguments">Arguments</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1149-1181' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Writes a formatted string into this writer, returning any error encountered. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.write_fmt">Read more</a></p>
-</div><h4 id='method.by_ref-3' class="method"><span id='by_ref.v-3' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.by_ref' class='fnname'>by_ref</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1198' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.by_ref-3' class="method"><span id='by_ref.v-3' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.by_ref' class='fnname'>by_ref</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/std/io/mod.rs.html#1205' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Creates a &quot;by reference&quot; adaptor for this instance of <code>Write</code>. <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#method.by_ref">Read more</a></p>
 </div></div><h3 id='impl-AsyncRead-1' class='impl'><span class='in-band'><code>impl&lt;'a, E&gt; <a class="trait" href="../tokio_io/async_read/trait.AsyncRead.html" title="trait tokio_io::async_read::AsyncRead">AsyncRead</a> for &amp;'a <a class="struct" href="../tokio_reactor/struct.PollEvented.html" title="struct tokio_reactor::PollEvented">PollEvented</a>&lt;E&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;E: <a class="trait" href="../mio/event_imp/trait.Evented.html" title="trait mio::event_imp::Evented">Evented</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;'a </a>E: <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a>,&nbsp;</span></code><a href='#impl-AsyncRead-1' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_reactor/poll_evented.rs.html#620-623' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.prepare_uninitialized_buffer-1' class="method"><span id='prepare_uninitialized_buffer.v-1' class='invisible'><code>unsafe fn <a href='../tokio_io/async_read/trait.AsyncRead.html#method.prepare_uninitialized_buffer' class='fnname'>prepare_uninitialized_buffer</a>(&amp;self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_io/async_read.rs.html#62-68' title='goto source code'>[src]</a></span></h4>
@@ -332,20 +315,22 @@ return <code>NotReady</code> until a new read readiness event has been received.
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

@@ -10,8 +10,11 @@
     <title>nix::unistd::sysconf - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'><a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a></p><script>window.sidebarCurrent = {name: 'sysconf', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -52,15 +62,13 @@
                </span><a class='srclink' href='../../src/nix/unistd.rs.html#1588-1602' title='goto source code'>[src]</a></span></h1>
 <pre class='rust fn'>pub fn sysconf(var: <a class="enum" href="../../nix/unistd/enum.SysconfVar.html" title="enum nix::unistd::SysconfVar">SysconfVar</a>) -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="../../libc/unix/notbsd/linux/other/b64/not_x32/type.c_long.html" title="type libc::unix::notbsd::linux::other::b64::not_x32::c_long">c_long</a>&gt;&gt;</pre><div class='docblock'><p>Get configurable system variables (see
 <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/sysconf.html">sysconf(3)</a>)</p>
-
 <p>Returns the value of a configurable system variable.  Most supported
 variables also have associated compile-time constants, but POSIX
 allows their values to change at runtime.  There are generally two types of
 sysconf variables: options and limits.  See sysconf(3) for more details.</p>
-
-<h1 id='returns' class='section-header'><a href='#returns'>Returns</a></h1>
+<h1 id="returns" class="section-header"><a href="#returns">Returns</a></h1>
 <ul>
-<li><code>Ok(Some(x))</code>: the variable&#39;s limit (for limit variables) or its
+<li><code>Ok(Some(x))</code>: the variable's limit (for limit variables) or its
 implementation level (for option variables).  Implementation levels are
 usually a decimal-coded date, such as 200112 for POSIX 2001.12</li>
 <li><code>Ok(None)</code>: the variable has no limit (for limit variables) or is
@@ -80,20 +88,22 @@ unsupported (for option variables)</li>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

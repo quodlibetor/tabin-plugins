@@ -10,8 +10,11 @@
     <title>nix::sys::signalfd::signalfd - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css" id="themeStyle">
+    <script src="../../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a>::<wbr><a href='index.html'>signalfd</a></p><script>window.sidebarCurrent = {name: 'signalfd', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,15 +61,11 @@
                    </a>
                </span><a class='srclink' href='../../../src/nix/sys/signalfd.rs.html#49-53' title='goto source code'>[src]</a></span></h1>
 <pre class='rust fn'>pub fn signalfd(fd: <a class="type" href="https://doc.rust-lang.org/nightly/std/sys/unix/ext/io/type.RawFd.html" title="type std::sys::unix::ext::io::RawFd">RawFd</a>, mask: &amp;<a class="struct" href="../../../nix/sys/signal/struct.SigSet.html" title="struct nix::sys::signal::SigSet">SigSet</a>, flags: <a class="struct" href="../../../nix/sys/signalfd/struct.SfdFlags.html" title="struct nix::sys::signalfd::SfdFlags">SfdFlags</a>) -&gt; <a class="type" href="../../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="type" href="https://doc.rust-lang.org/nightly/std/sys/unix/ext/io/type.RawFd.html" title="type std::sys::unix::ext::io::RawFd">RawFd</a>&gt;</pre><div class='docblock'><p>Creates a new file descriptor for reading signals.</p>
-
 <p><strong>Important:</strong> please read the module level documentation about signal discarding before using
 this function!</p>
-
 <p>The <code>mask</code> parameter specifies the set of signals that can be accepted via this file descriptor.</p>
-
-<p>A signal must be blocked on every thread in a process, otherwise it won&#39;t be visible from
+<p>A signal must be blocked on every thread in a process, otherwise it won't be visible from
 signalfd (the default handler will be invoked instead).</p>
-
 <p>See <a href="http://man7.org/linux/man-pages/man2/signalfd.2.html">the signalfd man page for more information</a></p>
 </div></section>
     <section id='search' class="content hidden"></section>
@@ -74,20 +80,22 @@ signalfd (the default handler will be invoked instead).</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

@@ -10,8 +10,11 @@
     <title>tokio_core::reactor::Remote - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Struct Remote</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.spawn">spawn</a><a href="#method.id">id</a><a href="#method.handle">handle</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Clone">Clone</a><a href="#impl-Executor%3CF%3E">Executor&lt;F&gt;</a><a href="#impl-Debug">Debug</a></div></div><p class='location'><a href='../index.html'>tokio_core</a>::<wbr><a href='index.html'>reactor</a></p><script>window.sidebarCurrent = {name: 'Remote', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -52,7 +62,6 @@
                </span><a class='srclink' href='../../src/tokio_core/reactor/mod.rs.html#108-112' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Remote { /* fields omitted */ }</pre><div class='docblock'><p>Handle to an event loop, used to construct I/O objects, send messages, and
 otherwise interact indirectly with the event loop itself.</p>
-
 <p>Handles can be cloned, and when cloned they will still refer to the
 same underlying event loop.</p>
 </div>
@@ -62,29 +71,24 @@ same underlying event loop.</p>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../../tokio_core/reactor/struct.Remote.html" title="struct tokio_core::reactor::Remote">Remote</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/tokio_core/reactor/mod.rs.html#468-578' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.spawn' class="method"><span id='spawn.v' class='invisible'><code>pub fn <a href='#method.spawn' class='fnname'>spawn</a>&lt;F, R&gt;(&amp;self, f: F) <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;F: <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/function/trait.FnOnce.html" title="trait core::ops::function::FnOnce">FnOnce</a>(&amp;<a class="struct" href="../../tokio_core/reactor/struct.Handle.html" title="struct tokio_core::reactor::Handle">Handle</a>) -&gt; R + <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + 'static,<br>&nbsp;&nbsp;&nbsp;&nbsp;R: <a class="trait" href="../../futures/future/trait.IntoFuture.html" title="trait futures::future::IntoFuture">IntoFuture</a>&lt;Item = <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, Error = <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;R::<a class="type" href="../../futures/future/trait.IntoFuture.html#associatedtype.Future" title="type futures::future::IntoFuture::Future">Future</a>: 'static,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/tokio_core/reactor/mod.rs.html#536-545' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Spawns a new future into the event loop this remote is associated with.</p>
-
 <p>This function takes a closure which is executed within the context of
 the I/O loop itself. The future returned by the closure will be
 scheduled on the event loop and run to completion.</p>
-
 <p>Note that while the closure, <code>F</code>, requires the <code>Send</code> bound as it might
 cross threads, the future <code>R</code> does not.</p>
-
-<h1 id='panics' class='section-header'><a href='#panics'>Panics</a></h1>
+<h1 id="panics" class="section-header"><a href="#panics">Panics</a></h1>
 <p>This method will <strong>not</strong> catch panics from polling the future <code>f</code>. If
-the future panics then it&#39;s the responsibility of the caller to catch
+the future panics then it's the responsibility of the caller to catch
 that panic and handle it as appropriate.</p>
 </div><h4 id='method.id' class="method"><span id='id.v' class='invisible'><code>pub fn <a href='#method.id' class='fnname'>id</a>(&amp;self) -&gt; <a class="struct" href="../../tokio_core/reactor/struct.CoreId.html" title="struct tokio_core::reactor::CoreId">CoreId</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/tokio_core/reactor/mod.rs.html#548-550' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Return the ID of the represented Core</p>
 </div><h4 id='method.handle' class="method"><span id='handle.v' class='invisible'><code>pub fn <a href='#method.handle' class='fnname'>handle</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../tokio_core/reactor/struct.Handle.html" title="struct tokio_core::reactor::Handle">Handle</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/tokio_core/reactor/mod.rs.html#564-577' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Attempts to &quot;promote&quot; this remote to a handle, if possible.</p>
-
 <p>This function is intended for structures which typically work through a
-<code>Remote</code> but want to optimize runtime when the remote doesn&#39;t actually
+<code>Remote</code> but want to optimize runtime when the remote doesn't actually
 leave the thread of the original reactor. This will attempt to return a
 handle if the <code>Remote</code> is on the same thread as the event loop and the
 event loop is running.</p>
-
 <p>If this <code>Remote</code> has moved to a different thread or if the event loop is
 running, then <code>None</code> may be returned. If you need to guarantee access to
 a <code>Handle</code>, then you can call this function and fall back to using
@@ -117,20 +121,22 @@ a <code>Handle</code>, then you can call this function and fall back to using
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

@@ -10,8 +10,11 @@
     <title>tokio_io::AsyncWrite - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Trait AsyncWrite</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.shutdown">shutdown</a></div><a class="sidebar-title" href="#provided-methods">Provided Methods</a><div class="sidebar-links"><a href="#method.poll_write">poll_write</a><a href="#method.poll_flush">poll_flush</a><a href="#method.write_buf">write_buf</a></div><a class="sidebar-title" href="#foreign-impls">Implementations on Foreign Types</a><div class="sidebar-links"><a href="#impl-AsyncWrite">Box&lt;T&gt;</a><a href="#impl-AsyncWrite">&amp;&#39;a mut T</a><a href="#impl-AsyncWrite">Sink</a><a href="#impl-AsyncWrite">BufWriter&lt;T&gt;</a><a href="#impl-AsyncWrite">Cursor&lt;&amp;&#39;a mut [u8]&gt;</a><a href="#impl-AsyncWrite">Cursor&lt;Vec&lt;u8&gt;&gt;</a><a href="#impl-AsyncWrite">Cursor&lt;Box&lt;[u8]&gt;&gt;</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='index.html'>tokio_io</a></p><script>window.sidebarCurrent = {name: 'AsyncWrite', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -58,29 +68,30 @@
 <div class='item-spacer'></div>    fn <a href='#method.write_buf' class='fnname'>write_buf</a>&lt;B:&nbsp;<a class="trait" href="../bytes/buf/buf/trait.Buf.html" title="trait bytes::buf::buf::Buf">Buf</a>&gt;(&amp;mut self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>B) -&gt; <a class="type" href="../futures/poll/type.Poll.html" title="type futures::poll::Poll">Poll</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>,
     { ... }
 }</pre><div class='docblock'><p>Writes bytes asynchronously.</p>
-
 <p>The trait inherits from <code>std::io::Write</code> and indicates that an I/O object is
 <strong>nonblocking</strong>. All non-blocking I/O objects must return an error when
 bytes cannot be written instead of blocking the current thread.</p>
-
 <p>Specifically, this means that the <code>write</code> function will return one of the
 following:</p>
-
 <ul>
-<li><p><code>Ok(n)</code> means that <code>n</code> bytes of data was immediately written .</p></li>
-<li><p><code>Err(e) if e.kind() == ErrorKind::WouldBlock</code> means that no data was
+<li>
+<p><code>Ok(n)</code> means that <code>n</code> bytes of data was immediately written .</p>
+</li>
+<li>
+<p><code>Err(e) if e.kind() == ErrorKind::WouldBlock</code> means that no data was
 written from the buffer provided. The I/O object is not currently
 writable but may become writable in the future. Most importantly, <strong>the
-current future&#39;s task is scheduled to get unparked when the object is
-readable</strong>. This means that like <code>Future::poll</code> you&#39;ll receive a
-notification when the I/O object is writable again.</p></li>
-<li><p><code>Err(e)</code> for other errors are standard I/O errors coming from the
-underlying object.</p></li>
+current future's task is scheduled to get unparked when the object is
+readable</strong>. This means that like <code>Future::poll</code> you'll receive a
+notification when the I/O object is writable again.</p>
+</li>
+<li>
+<p><code>Err(e)</code> for other errors are standard I/O errors coming from the
+underlying object.</p>
+</li>
 </ul>
-
 <p>This trait importantly means that the <code>write</code> method only works in the
-context of a future&#39;s task. The object may panic if used outside of a task.</p>
-
+context of a future's task. The object may panic if used outside of a task.</p>
 <p>Note that this trait also represents that the  <code>Write::flush</code> method works
 very similarly to the <code>write</code> method, notably that <code>Ok(())</code> means that the
 writer has successfully been flushed, a &quot;would block&quot; error means that the
@@ -93,7 +104,6 @@ progress, and otherwise normal errors can happen as well.</p>
             <div class='methods'>
         <h3 id='tymethod.shutdown' class='method'><span id='shutdown.v' class='invisible'><code>fn <a href='#tymethod.shutdown' class='fnname'>shutdown</a>(&amp;mut self) -&gt; <a class="type" href="../futures/poll/type.Poll.html" title="type futures::poll::Poll">Poll</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span></h3><div class='docblock'><p>Initiates or attempts to shut down this writer, returning success when
 the I/O connection has completely shut down.</p>
-
 <p>This method is intended to be used for asynchronous shutdown of I/O
 connections. For example this is suitable for implementing shutdown of a
 TLS connection or calling <code>TcpStream::shutdown</code> on a proxied connection.
@@ -101,50 +111,50 @@ Protocols sometimes need to flush out final pieces of data or otherwise
 perform a graceful shutdown handshake, reading/writing more data as
 appropriate. This method is the hook for such protocols to implement the
 graceful shutdown logic.</p>
-
 <p>This <code>shutdown</code> method is required by implementors of the
 <code>AsyncWrite</code> trait. Wrappers typically just want to proxy this call
 through to the wrapped type, and base types will typically implement
-shutdown logic here or just return <code>Ok(().into())</code>. Note that if you&#39;re
+shutdown logic here or just return <code>Ok(().into())</code>. Note that if you're
 wrapping an underlying <code>AsyncWrite</code> a call to <code>shutdown</code> implies that
-transitively the entire stream has been shut down. After your wrapper&#39;s
+transitively the entire stream has been shut down. After your wrapper's
 shutdown logic has been executed you should shut down the underlying
 stream.</p>
-
 <p>Invocation of a <code>shutdown</code> implies an invocation of <code>flush</code>. Once this
 method returns <code>Ready</code> it implies that a flush successfully happened
-before the shutdown happened. That is, callers don&#39;t need to call
+before the shutdown happened. That is, callers don't need to call
 <code>flush</code> before calling <code>shutdown</code>. They can rely that by calling
 <code>shutdown</code> any pending buffered data will be written out.</p>
-
-<h1 id='return-value' class='section-header'><a href='#return-value'>Return value</a></h1>
+<h1 id="return-value" class="section-header"><a href="#return-value">Return value</a></h1>
 <p>This function returns a <code>Poll&lt;(), io::Error&gt;</code> classified as such:</p>
-
 <ul>
-<li><p><code>Ok(Async::Ready(()))</code> - indicates that the connection was
+<li>
+<p><code>Ok(Async::Ready(()))</code> - indicates that the connection was
 successfully shut down and is now safe to deallocate/drop/close
 resources associated with it. This method means that the current task
 will no longer receive any notifications due to this method and the
-I/O object itself is likely no longer usable.</p></li>
-<li><p><code>Ok(Async::NotReady)</code> - indicates that shutdown is initiated but could
+I/O object itself is likely no longer usable.</p>
+</li>
+<li>
+<p><code>Ok(Async::NotReady)</code> - indicates that shutdown is initiated but could
 not complete just yet. This may mean that more I/O needs to happen to
 continue this shutdown operation. The current task is scheduled to
-receive a notification when it&#39;s otherwise ready to continue the
-shutdown operation. When woken up this method should be called again.</p></li>
-<li><p><code>Err(e)</code> - indicates a fatal error has happened with shutdown,
+receive a notification when it's otherwise ready to continue the
+shutdown operation. When woken up this method should be called again.</p>
+</li>
+<li>
+<p><code>Err(e)</code> - indicates a fatal error has happened with shutdown,
 indicating that the shutdown operation did not complete successfully.
-This typically means that the I/O object is no longer usable.</p></li>
+This typically means that the I/O object is no longer usable.</p>
+</li>
 </ul>
-
-<h1 id='errors' class='section-header'><a href='#errors'>Errors</a></h1>
+<h1 id="errors" class="section-header"><a href="#errors">Errors</a></h1>
 <p>This function can return normal I/O errors through <code>Err</code>, described
 above. Additionally this method may also render the underlying
 <code>Write::write</code> method no longer usable (e.g. will return errors in the
-future). It&#39;s recommended that once <code>shutdown</code> is called the
+future). It's recommended that once <code>shutdown</code> is called the
 <code>write</code> method is no longer called.</p>
-
-<h1 id='panics' class='section-header'><a href='#panics'>Panics</a></h1>
-<p>This function will panic if not called within the context of a future&#39;s
+<h1 id="panics" class="section-header"><a href="#panics">Panics</a></h1>
+<p>This function will panic if not called within the context of a future's
 task.</p>
 </div></div>
             <h2 id='provided-methods' class='small-section-header'>
@@ -152,24 +162,19 @@ task.</p>
             </h2>
             <div class='methods'>
         <h3 id='method.poll_write' class='method'><span id='poll_write.v' class='invisible'><code>fn <a href='#method.poll_write' class='fnname'>poll_write</a>(&amp;mut self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="type" href="../futures/poll/type.Poll.html" title="type futures::poll::Poll">Poll</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span></h3><div class='docblock'><p>Attempt to write bytes from <code>buf</code> into the object.</p>
-
 <p>On success, returns <code>Ok(Async::Ready(num_bytes_written))</code>.</p>
-
 <p>If the object is not ready for writing, the method returns
 <code>Ok(Async::Pending)</code> and arranges for the current task (via
 <code>cx.waker()</code>) to receive a notification when the object becomes
 readable or is closed.</p>
 </div><h3 id='method.poll_flush' class='method'><span id='poll_flush.v' class='invisible'><code>fn <a href='#method.poll_flush' class='fnname'>poll_flush</a>(&amp;mut self) -&gt; <a class="type" href="../futures/poll/type.Poll.html" title="type futures::poll::Poll">Poll</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span></h3><div class='docblock'><p>Attempt to flush the object, ensuring that any buffered data reach
 their destination.</p>
-
 <p>On success, returns <code>Ok(Async::Ready(()))</code>.</p>
-
 <p>If flushing cannot immediately complete, this method returns
 <code>Ok(Async::Pending)</code> and arranges for the current task (via
 <code>cx.waker()</code>) to receive a notification when the object can make
 progress towards flushing.</p>
 </div><h3 id='method.write_buf' class='method'><span id='write_buf.v' class='invisible'><code>fn <a href='#method.write_buf' class='fnname'>write_buf</a>&lt;B:&nbsp;<a class="trait" href="../bytes/buf/buf/trait.Buf.html" title="trait bytes::buf::buf::Buf">Buf</a>&gt;(&amp;mut self, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>B) -&gt; <a class="type" href="../futures/poll/type.Poll.html" title="type futures::poll::Poll">Poll</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,&nbsp;</span></code></span></h3><div class='docblock'><p>Write a <code>Buf</code> into this value, returning how many bytes were written.</p>
-
 <p>Note that this method will advance the <code>buf</code> provided automatically by
 the number of bytes written.</p>
 </div></div>
@@ -234,20 +239,22 @@ the number of bytes written.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

@@ -10,8 +10,11 @@
     <title>nix::unistd - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Module unistd</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>nix</a></p><script>window.sidebarCurrent = {name: 'unistd', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -58,6 +68,7 @@
                                   title='struct nix::unistd::Gid'>Gid</a></td>
                            <td class='docblock-short'>
                                 <p>Group identifier</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -65,6 +76,7 @@
                                   title='struct nix::unistd::Pid'>Pid</a></td>
                            <td class='docblock-short'>
                                 <p>Process identifier</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -72,6 +84,7 @@
                                   title='struct nix::unistd::Uid'>Uid</a></td>
                            <td class='docblock-short'>
                                 <p>User identifier</p>
+
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
@@ -80,6 +93,7 @@
                                   title='enum nix::unistd::ForkResult'>ForkResult</a></td>
                            <td class='docblock-short'>
                                 <p>Represents the successful result of calling <code>fork</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -87,6 +101,7 @@
                                   title='enum nix::unistd::PathconfVar'>PathconfVar</a></td>
                            <td class='docblock-short'>
                                 <p>Variable names for <code>pathconf</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -94,6 +109,7 @@
                                   title='enum nix::unistd::SysconfVar'>SysconfVar</a></td>
                            <td class='docblock-short'>
                                 <p>Variable names for <code>sysconf</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -109,6 +125,7 @@
                                   title='constant nix::unistd::ROOT'>ROOT</a></td>
                            <td class='docblock-short'>
                                 <p>Constant for UID = 0</p>
+
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
@@ -118,6 +135,7 @@
                            <td class='docblock-short'>
                                 <p>Change the current working directory of the calling process (see
 <a href="http://man7.org/linux/man-pages/man2/chdir.2.html">chdir(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -127,6 +145,7 @@
                                 <p>Change the ownership of the file at <code>path</code> to be owned by the specified
 <code>owner</code> (user) and <code>group</code> (see
 <a href="http://man7.org/linux/man-pages/man2/lchown.2.html">chown(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -141,6 +160,7 @@
                                   title='fn nix::unistd::close'>close</a></td>
                            <td class='docblock-short'>
                                 <p>Close a raw file descriptor</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -149,6 +169,7 @@
                            <td class='docblock-short'>
                                 <p>Daemonize this process by detaching from the controlling terminal (see
 <a href="http://man7.org/linux/man-pages/man3/daemon.3.html">daemon(3)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -157,6 +178,7 @@
                            <td class='docblock-short'>
                                 <p>Create a copy of the specified file descriptor (see
 <a href="http://man7.org/linux/man-pages/man2/dup.2.html">dup(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -165,6 +187,7 @@
                            <td class='docblock-short'>
                                 <p>Create a copy of the specified file descriptor using the specified fd (see
 <a href="http://man7.org/linux/man-pages/man2/dup.2.html">dup(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -173,6 +196,7 @@
                            <td class='docblock-short'>
                                 <p>Create a new copy of the specified file descriptor using the specified fd
 and flags (see <a href="http://man7.org/linux/man-pages/man2/dup.2.html">dup(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -181,6 +205,7 @@ and flags (see <a href="http://man7.org/linux/man-pages/man2/dup.2.html">dup(2)<
                            <td class='docblock-short'>
                                 <p>Replace the current process image with a new one (see
 <a href="http://man7.org/linux/man-pages/man3/exec.3.html">exec(3)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -189,6 +214,7 @@ and flags (see <a href="http://man7.org/linux/man-pages/man2/dup.2.html">dup(2)<
                            <td class='docblock-short'>
                                 <p>Replace the current process image with a new one (see
 <a href="http://man7.org/linux/man-pages/man2/execve.2.html">execve(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -198,6 +224,7 @@ and flags (see <a href="http://man7.org/linux/man-pages/man2/dup.2.html">dup(2)<
                                 <p>Replace the current process image with a new one and replicate shell <code>PATH</code>
 searching behavior (see
 <a href="http://man7.org/linux/man-pages/man3/exec.3.html">exec(3)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -207,6 +234,7 @@ searching behavior (see
                                 <p>Change the current working directory of the process to the one
 given as an open file descriptor (see
 <a href="http://man7.org/linux/man-pages/man2/fchdir.2.html">fchdir(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -222,6 +250,7 @@ given as an open file descriptor (see
                            <td class='docblock-short'>
                                 <p>Create a new child process duplicating the parent process (<a href="http://man7.org/linux/man-pages/man2/fork.2.html">see
 fork(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -230,6 +259,7 @@ fork(2)</a>).</p>
                            <td class='docblock-short'>
                                 <p>Like <code>pathconf</code>, but works with file descriptors instead of paths (see
 <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/pathconf.html">fpathconf(2)</a>)</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -251,6 +281,7 @@ fork(2)</a>).</p>
                                   title='fn nix::unistd::getcwd'>getcwd</a></td>
                            <td class='docblock-short'>
                                 <p>Returns the current directory as a PathBuf</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -281,6 +312,7 @@ fork(2)</a>).</p>
                                 <p>Get the host name and store it in the provided buffer, returning a pointer
 the CStr in that buffer on success (see
 <a href="http://man7.org/linux/man-pages/man2/gethostname.2.html">gethostname(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -296,6 +328,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Get the group id of the calling process (see
 <a href="http://man7.org/linux/man-pages/man3/getpgrp.3p.html">getpgrp(3)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -304,22 +337,25 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Get the pid of this process (see
 <a href="http://man7.org/linux/man-pages/man2/getpid.2.html">getpid(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class="fn" href="fn.getppid.html"
                                   title='fn nix::unistd::getppid'>getppid</a></td>
                            <td class='docblock-short'>
-                                <p>Get the pid of this processes&#39; parent (see
+                                <p>Get the pid of this processes' parent (see
 <a href="http://man7.org/linux/man-pages/man2/getpid.2.html">getpid(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class="fn" href="fn.gettid.html"
                                   title='fn nix::unistd::gettid'>gettid</a></td>
                            <td class='docblock-short'>
-                                <p>Get the caller&#39;s thread ID (see
+                                <p>Get the caller's thread ID (see
 <a href="http://man7.org/linux/man-pages/man2/gettid.2.html">gettid(2)</a>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -355,6 +391,7 @@ the CStr in that buffer on success (see
                                   title='fn nix::unistd::mkdir'>mkdir</a></td>
                            <td class='docblock-short'>
                                 <p>Creates new directory <code>path</code> with access rights <code>mode</code>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -362,6 +399,7 @@ the CStr in that buffer on success (see
                                   title='fn nix::unistd::mkstemp'>mkstemp</a></td>
                            <td class='docblock-short'>
                                 <p>Creates a regular file which persists even after process termination</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -370,6 +408,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Get path-dependent configurable system variables (see
 <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/pathconf.html">pathconf(2)</a>)</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -420,6 +459,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Set the system host name (see
 <a href="http://man7.org/linux/man-pages/man2/gethostname.2.html">gethostname(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -428,6 +468,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Set a process group ID (see
 <a href="http://man7.org/linux/man-pages/man2/setpgid.2.html">setpgid(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -436,6 +477,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Sets the real, effective, and saved gid.
 (<a href="http://man7.org/linux/man-pages/man2/setresuid.2.html">see setresuid(2)</a>)</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -444,6 +486,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Sets the real, effective, and saved uid.
 (<a href="http://man7.org/linux/man-pages/man2/setresuid.2.html">see setresuid(2)</a>)</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -452,6 +495,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Create new session and set process group id (see
 <a href="http://man7.org/linux/man-pages/man2/setsid.2.html">setsid(2)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -474,6 +518,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Get configurable system variables (see
 <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/sysconf.html">sysconf(3)</a>)</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -482,6 +527,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Get the terminal foreground process group (see
 <a href="http://man7.org/linux/man-pages/man3/tcgetpgrp.3.html">tcgetpgrp(3)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -490,6 +536,7 @@ the CStr in that buffer on success (see
                            <td class='docblock-short'>
                                 <p>Set the terminal foreground process group (see
 <a href="http://man7.org/linux/man-pages/man3/tcgetpgrp.3.html">tcgetpgrp(3)</a>).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -518,20 +565,22 @@ the CStr in that buffer on success (see
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

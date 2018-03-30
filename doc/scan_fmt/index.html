@@ -10,8 +10,11 @@
     <title>scan_fmt - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Crate scan_fmt</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'scan_fmt', ty: 'mod', relpath: '../'};</script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -52,12 +62,10 @@
                </span><a class='srclink' href='../src/scan_fmt/lib.rs.html#4-164' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>This crate provides a simple sscanf()-like interface to extract
 data from strings and stdin.</p>
-
 <p>To use this crate, do:</p>
 
 <div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">scan_fmt</span>;</pre>
-
 <p>Example to read from a string:</p>
 
 <pre class="rust rust-example-rendered">
@@ -67,33 +75,31 @@ data from strings and stdin.</p>
   <span class="macro">assert_eq</span><span class="macro">!</span>( <span class="ident">a</span>.<span class="ident">unwrap</span>(), <span class="number">12</span> ) ;
   <span class="macro">assert_eq</span><span class="macro">!</span>( <span class="ident">b</span>.<span class="ident">unwrap</span>(), <span class="number">345</span> ) ;
   <span class="macro">assert_eq</span><span class="macro">!</span>( <span class="ident">c</span>.<span class="ident">unwrap</span>(), <span class="string">&quot;bye&quot;</span> ) ;</pre>
-
-<p>Special format_string tokens:
+<p>Special format_string tokens:</p>
 <pre class="rust">
-  {{ = escape for &#39;{&#39;
-  }} = escape for &#39;}&#39;
+  {{ = escape for '{'
+  }} = escape for '}'
   {} = return any value (until next whitespace)
   {d} = return base-10 decimal
   {x} = return hex (0xab or ab)
   {f} = return float
-  {*d} = &quot;*&quot; as the first character means &quot;match but don&#39;t return&quot;
+  {*d} = "*" as the first character means "match but don't return"
   {[...]} = return pattern.
     ^ inverts if it is the first character
     - is for ranges.  For a literal - put it at the start or end.
-    To add a literal ] do &quot;[]abc]&quot;
+    To add a literal ] do "[]abc]"
   Examples:
     {[0-9ab]} = match 0-9 or a or b
-    {[<sup>,.]}</sup> = match anything but , or .
-  {/.../} = return regex inside of <code>//</code>.
+    {[^,.]} = match anything but , or .
+  {/.../} = return regex inside of `//`.
     If there is a single capture group inside of the slashes then
     that group will make up the pattern.
   Examples:
     {/[0-9ab]/} = same as {[0-9]ab}, above
-    {/a+/} = matches at least one <code>a</code>, greedily
-    {/jj(a*)jj/} = matches any number of <code>a</code>s, but only if
-      they&#39;re surrounded by two <code>j</code>s
-</pre></p>
-
+    {/a+/} = matches at least one `a`, greedily
+    {/jj(a*)jj/} = matches any number of `a`s, but only if
+      they're surrounded by two `j`s
+</pre>
 <p>Example to read from stdin:</p>
 
 <pre class="rust rust-example-rendered">
@@ -103,14 +109,11 @@ data from strings and stdin.</p>
     (<span class="prelude-val">Some</span>(<span class="ident">aa</span>),<span class="prelude-val">Some</span>(<span class="ident">bb</span>)) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Got {} and {}&quot;</span>,<span class="ident">aa</span>,<span class="ident">bb</span>),
     _ <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;input error&quot;</span>)
   }</pre>
-
-<h2 id='limitations' class='section-header'><a href='#limitations'>LIMITATIONS:</a></h2>
+<h2 id="limitations" class="section-header"><a href="#limitations">LIMITATIONS:</a></h2>
 <p>There are no compile-time checks to make sure the format
 strings matches the number of return arguments.  Extra
 return values will be None.</p>
-
 <p>Like sscanf(), whitespace (including \n) is largely ignored.</p>
-
 <p>Conversion to output values is done using parse::<T>().</p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
@@ -127,14 +130,15 @@ return values will be None.</p>
                                   title='macro scan_fmt::scan_fmt'>scan_fmt</a></td>
                            <td class='docblock-short'>
                                 <p>(a,+) = scan_fmt!( input_string, format_string, types,+ )</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class="macro" href="macro.scanln_fmt.html"
                                   title='macro scan_fmt::scanln_fmt'>scanln_fmt</a></td>
                            <td class='docblock-short'>
-                                <p>(a,+) = scanln_fmt!( format_string, types,+ )
-<p>Same as scan_fmt!(), but reads input string from stdin.</p></p>
+                                <p>(a,+) = scanln_fmt!( format_string, types,+ )</p>
+
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
@@ -157,20 +161,22 @@ return values will be None.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

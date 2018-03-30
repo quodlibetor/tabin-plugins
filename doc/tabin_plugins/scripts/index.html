@@ -10,8 +10,11 @@
     <title>tabin_plugins::scripts - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Module scripts</p><div class="sidebar-elems"><p class='location'><a href='../index.html'>tabin_plugins</a></p><script>window.sidebarCurrent = {name: 'scripts', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,7 +61,6 @@
                    </a>
                </span><a class='srclink' href='../../src/tabin_plugins/scripts.rs.html#2-335' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Documentation about the various scripts contained herein</p>
-
 <ul>
 <li><a href="#check-graphite">check-graphite</a></li>
 <li><a href="#check-cpu">check-cpu</a></li>
@@ -62,10 +71,8 @@
 <li><a href="#check-fs-writeable">check-fs-writeable</a></li>
 <li><a href="#check-disk">check-disk</a></li>
 </ul>
-
-<h1 id='check-graphite' class='section-header'><a href='#check-graphite'>check-graphite</a></h1>
+<h1 id="check-graphite" class="section-header"><a href="#check-graphite">check-graphite</a></h1>
 <p>Usage looks like:</p>
-
 <pre><code class="language-plain">$ check-graphite --help
 check-graphite 0.2.3
 Brandon W Maister &lt;quodlibetor@gmail.com&gt;
@@ -90,7 +97,7 @@ OPTIONS:
         --no-data &lt;NO_DATA_STATUS&gt;                  What to do with no data.
                               Choices: ok, warn, critical, unknown.
                               This is the value to use for the assertion
-                              &#39;if all values are null&#39;
+                              'if all values are null'
                               Default: warn. [values: ok warning critical unknown]
 
 ARGS:
@@ -100,7 +107,7 @@ ARGS:
 
 About Assertions:
 
-    Assertions look like &#39;critical if any point in any series is &gt; 5&#39;.
+    Assertions look like 'critical if any point in any series is &gt; 5'.
 
     They describe what you care about in your graphite data. The structure of
     an assertion is as follows:
@@ -134,10 +141,8 @@ About Assertions:
         - `critical if most recent point is &gt; 5`
         - `critical if most recent point in all series are == 0`
 </code></pre>
-
-<h1 id='check-cpu' class='section-header'><a href='#check-cpu'>check-cpu</a></h1>
+<h1 id="check-cpu" class="section-header"><a href="#check-cpu">check-cpu</a></h1>
 <p>Linux-only.</p>
-
 <pre><code class="language-plain">Usage:
     check-cpu [options] [--type=&lt;work-source&gt;...] [--show-hogs=&lt;count&gt;]
     check-cpu (-h | --help)
@@ -167,17 +172,15 @@ CPU Work Types:
     `activeminusnice`. `activeplusiowait` considers time spent waiting for IO
     to be busy time, this gets alerts to be more aligned with the overall
     system load, but is different from CPU usage reported by `top` since the
-    CPU isn&#39;t actually *busy* during this time.
+    CPU isn't actually *busy* during this time.
 
     --type=&lt;usage&gt;           Some of:
                                 active activeplusiowait activeminusnice
                                 user nice system irq softirq steal guest
                                 idle iowait [default: active]
 </code></pre>
-
-<h1 id='check-container-cpu' class='section-header'><a href='#check-container-cpu'>check-container-cpu</a></h1>
+<h1 id="check-container-cpu" class="section-header"><a href="#check-container-cpu">check-container-cpu</a></h1>
 <p>Linux-only. Can only be run from inside a cgroup.</p>
-
 <pre><code class="language-plain">$ check-container-cpu -h
 Usage:
     check-container-cpu [options]
@@ -203,15 +206,15 @@ Options:
 
 About usage percentages:
 
-    If you don&#39;t specify &#39;--shares-per-cpu&#39;, percentages should be specified
-    relative to a single CPU&#39;s usage. So if you have a process that you want to
+    If you don't specify '--shares-per-cpu', percentages should be specified
+    relative to a single CPU's usage. So if you have a process that you want to
     be allowed to use 4 CPUs worth of processor time, and you were planning on
-    going critical at 90%, you should specify something like &#39;--crit 360&#39;
+    going critical at 90%, you should specify something like '--crit 360'
 
     However, if you are using a container orchestrator such as Mesos, you often
     tell it that you want this container to have &quot;2 CPUs&quot; worth of hardware.
     Your scheduler is responsible for deciding how many cgroup cpu shares 1
-    CPU&#39;s worth of time is, and keeping track of how many shares it has doled
+    CPU's worth of time is, and keeping track of how many shares it has doled
     out, and then schedule your containers to run with 2 CPUs worth of CPU
     shares. Assuming that your scheduler uses the default number of shares
     (1024) as &quot;one cpu&quot;, this will mean that you have given that cgroup 2048
@@ -226,7 +229,7 @@ About usage percentages:
     your warn/crit percentages out of 100%, because this script will correctly
     scale it for your process.
 
-    Here are some examples, where &#39;shares granted&#39; is the value in
+    Here are some examples, where 'shares granted' is the value in
     /sys/fs/cgroup/cpu/cpu.shares:
 
         * args: --shares-per-cpu 1024 --crit 90
@@ -239,10 +242,8 @@ About usage percentages:
           shares granted: 102
           percent of one CPU to alert at: 9
 </code></pre>
-
-<h1 id='check-load' class='section-header'><a href='#check-load'>check-load</a></h1>
+<h1 id="check-load" class="section-header"><a href="#check-load">check-load</a></h1>
 <p>Linux-only.</p>
-
 <pre><code class="language-plain">$ check-load -h
 Usage: check-load [options]
        check-load -h | --help
@@ -264,10 +265,8 @@ Threshold Behavior:
     --per-cpu               Divide the load average by the number of processors on the
                             system.
 </code></pre>
-
-<h1 id='check-ram' class='section-header'><a href='#check-ram'>check-ram</a></h1>
+<h1 id="check-ram" class="section-header"><a href="#check-ram">check-ram</a></h1>
 <p>Linux-only.</p>
-
 <pre><code class="language-plain">$ check-ram -h
 Usage: check-ram [options]
        check-ram -h | --help
@@ -281,10 +280,8 @@ Options:
     --show-hogs=&lt;count&gt;    Show most RAM-hungry procs   [default: 0]
     -v, --verbose          Always show the hogs
 </code></pre>
-
-<h1 id='check-container-ram' class='section-header'><a href='#check-container-ram'>check-container-ram</a></h1>
+<h1 id="check-container-ram" class="section-header"><a href="#check-container-ram">check-container-ram</a></h1>
 <p>Linux-only. Can only be run from inside a container.</p>
-
 <pre><code class="language-plain">$ check-container-ram -h
 Usage:
     check-container-ram [--show-hogs=&lt;count&gt;] [--invalid-limit=&lt;status&gt;] [options]
@@ -308,10 +305,8 @@ Options:
 
     --show-hogs=&lt;count&gt;        Show the most ram-hungry procs      [default: 0]
 </code></pre>
-
-<h1 id='check-disk' class='section-header'><a href='#check-disk'>check-disk</a></h1>
+<h1 id="check-disk" class="section-header"><a href="#check-disk">check-disk</a></h1>
 <p>Linux-only.</p>
-
 <pre><code class="language-plain">$ check-disk -h
 Usage:
      check-disk [options] [thresholds] [filters]
@@ -320,7 +315,7 @@ Usage:
 Check all mounted file systems for disk usage.
 
 For some reason this check generally generates values that are between 1% and
-3% higher than `df`, even though AFAICT we&#39;re both just calling statvfs a bunch
+3% higher than `df`, even though AFAICT we're both just calling statvfs a bunch
 of times.
 
 Options:
@@ -340,11 +335,10 @@ Filters:
     --pattern=&lt;regex&gt;     Only check filesystems that match this regex.
     --exclude-pattern=&lt;regex&gt;  Do not check filesystems that match this regex.
     --type=&lt;fs&gt;           Only check filesystems that are of this type, e.g.
-                          ext4 or tmpfs. See &#39;man 8 mount&#39; for more examples.
+                          ext4 or tmpfs. See 'man 8 mount' for more examples.
     --exclude-type=&lt;fs&gt;   Do not check filesystems that are of this type.
 </code></pre>
-
-<h1 id='check-fs-writeable' class='section-header'><a href='#check-fs-writeable'>check-fs-writeable</a></h1>
+<h1 id="check-fs-writeable" class="section-header"><a href="#check-fs-writeable">check-fs-writeable</a></h1>
 <pre><code class="language-plain">$ check-fs-writeable -h
 Usage:
     check-fs-writeable &lt;filename&gt;
@@ -374,20 +368,22 @@ Options:
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

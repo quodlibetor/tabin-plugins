@@ -10,8 +10,11 @@
     <title>arrayvec::ArrayVec - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Struct ArrayVec</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.len">len</a><a href="#method.capacity">capacity</a><a href="#method.is_full">is_full</a><a href="#method.push">push</a><a href="#method.try_push">try_push</a><a href="#method.push_unchecked">push_unchecked</a><a href="#method.insert">insert</a><a href="#method.try_insert">try_insert</a><a href="#method.pop">pop</a><a href="#method.swap_remove">swap_remove</a><a href="#method.swap_pop">swap_pop</a><a href="#method.remove">remove</a><a href="#method.pop_at">pop_at</a><a href="#method.truncate">truncate</a><a href="#method.clear">clear</a><a href="#method.retain">retain</a><a href="#method.set_len">set_len</a><a href="#method.drain">drain</a><a href="#method.into_inner">into_inner</a><a href="#method.dispose">dispose</a><a href="#method.as_slice">as_slice</a><a href="#method.as_mut_slice">as_mut_slice</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Drop">Drop</a><a href="#impl-Deref">Deref</a><a href="#impl-DerefMut">DerefMut</a><a href="#impl-From%3CA%3E">From&lt;A&gt;</a><a href="#impl-IntoIterator">IntoIterator</a><a href="#impl-Extend%3CA%3A%3AItem%3E">Extend&lt;A::Item&gt;</a><a href="#impl-FromIterator%3CA%3A%3AItem%3E">FromIterator&lt;A::Item&gt;</a><a href="#impl-Clone">Clone</a><a href="#impl-Hash">Hash</a><a href="#impl-PartialEq">PartialEq</a><a href="#impl-PartialEq%3C%5BA%3A%3AItem%5D%3E">PartialEq&lt;[A::Item]&gt;</a><a href="#impl-Eq">Eq</a><a href="#impl-Borrow%3C%5BA%3A%3AItem%5D%3E">Borrow&lt;[A::Item]&gt;</a><a href="#impl-BorrowMut%3C%5BA%3A%3AItem%5D%3E">BorrowMut&lt;[A::Item]&gt;</a><a href="#impl-AsRef%3C%5BA%3A%3AItem%5D%3E">AsRef&lt;[A::Item]&gt;</a><a href="#impl-AsMut%3C%5BA%3A%3AItem%5D%3E">AsMut&lt;[A::Item]&gt;</a><a href="#impl-Debug">Debug</a><a href="#impl-Default">Default</a><a href="#impl-PartialOrd">PartialOrd</a><a href="#impl-Ord">Ord</a></div></div><p class='location'><a href='index.html'>arrayvec</a></p><script>window.sidebarCurrent = {name: 'ArrayVec', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,16 +61,12 @@
                    </a>
                </span><a class='srclink' href='../src/arrayvec/lib.rs.html#95-98' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct ArrayVec&lt;A:&nbsp;<a class="trait" href="../arrayvec/trait.Array.html" title="trait arrayvec::Array">Array</a>&gt; { /* fields omitted */ }</pre><div class='docblock'><p>A vector with a fixed capacity.</p>
-
 <p>The <code>ArrayVec</code> is a vector backed by a fixed size array. It keeps track of
 the number of initialized elements.</p>
-
 <p>The vector is a contiguous value that you can store directly on the stack
 if needed.</p>
-
 <p>It offers a simple API but also dereferences to a slice, so
 that the full slice API is available.</p>
-
 <p>ArrayVec can be converted into a by value iterator.</p>
 </div>
                     <h2 id='methods' class='small-section-header'>
@@ -69,7 +75,6 @@ that the full slice API is available.</p>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl&lt;A:&nbsp;<a class="trait" href="../arrayvec/trait.Array.html" title="trait arrayvec::Array">Array</a>&gt; <a class="struct" href="../arrayvec/struct.ArrayVec.html" title="struct arrayvec::ArrayVec">ArrayVec</a>&lt;A&gt;</code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#117-598' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>pub fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class="struct" href="../arrayvec/struct.ArrayVec.html" title="struct arrayvec::ArrayVec">ArrayVec</a>&lt;A&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#131-135' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Create a new empty <code>ArrayVec</code>.</p>
-
 <p>Capacity is inferred from the type parameter.</p>
 
 <pre class="rust rust-example-rendered">
@@ -109,7 +114,6 @@ that the full slice API is available.</p>
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">array</span>.<span class="ident">is_full</span>());</pre>
 </div><h4 id='method.push' class="method"><span id='push.v' class='invisible'><code>pub fn <a href='#method.push' class='fnname'>push</a>(&amp;mut self, element: A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#186-188' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Push <code>element</code> to the end of the vector.</p>
-
 <p><strong><em>Panics</em></strong> if the vector is already full.</p>
 
 <pre class="rust rust-example-rendered">
@@ -123,7 +127,6 @@ that the full slice API is available.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="ident">array</span>[..], <span class="kw-2">&amp;</span>[<span class="number">1</span>, <span class="number">2</span>]);</pre>
 </div><h4 id='method.try_push' class="method"><span id='try_push.v' class='invisible'><code>pub fn <a href='#method.try_push' class='fnname'>try_push</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self, <br>&nbsp;&nbsp;&nbsp;&nbsp;element: A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;(), <a class="struct" href="../arrayvec/struct.CapacityError.html" title="struct arrayvec::CapacityError">CapacityError</a>&lt;A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>&gt;&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#212-221' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Push <code>element</code> to the end of the vector.</p>
-
 <p>Return <code>Ok</code> if the push succeeds, or return an error if the vector
 is already full.</p>
 
@@ -145,10 +148,8 @@ is already full.</p>
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">overflow</span>.<span class="ident">is_err</span>());</pre>
 </div><h4 id='method.push_unchecked' class="method"><span id='push_unchecked.v' class='invisible'><code>pub unsafe fn <a href='#method.push_unchecked' class='fnname'>push_unchecked</a>(&amp;mut self, element: A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#246-251' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Push <code>element</code> to the end of the vector without checking the capacity.</p>
-
 <p>It is up to the caller to ensure the capacity of the vector is
 sufficiently large.</p>
-
 <p>This method uses <em>debug assertions</em> to check that the arrayvec is not full.</p>
 
 <pre class="rust rust-example-rendered">
@@ -166,12 +167,9 @@ sufficiently large.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="ident">array</span>[..], <span class="kw-2">&amp;</span>[<span class="number">1</span>, <span class="number">2</span>]);</pre>
 </div><h4 id='method.insert' class="method"><span id='insert.v' class='invisible'><code>pub fn <a href='#method.insert' class='fnname'>insert</a>(&amp;mut self, index: usize, element: A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#272-274' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Insert <code>element</code> at position <code>index</code>.</p>
-
 <p>Shift up all elements after <code>index</code>.</p>
-
 <p>It is an error if the index is greater than the length or if the
 arrayvec is full.</p>
-
 <p><strong><em>Panics</em></strong> on errors. See <code>try_result</code> for fallible version.</p>
 
 <pre class="rust rust-example-rendered">
@@ -185,12 +183,9 @@ arrayvec is full.</p>
 </pre>
 </div><h4 id='method.try_insert' class="method"><span id='try_insert.v' class='invisible'><code>pub fn <a href='#method.try_insert' class='fnname'>try_insert</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self, <br>&nbsp;&nbsp;&nbsp;&nbsp;index: usize, <br>&nbsp;&nbsp;&nbsp;&nbsp;element: A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;(), <a class="struct" href="../arrayvec/struct.CapacityError.html" title="struct arrayvec::CapacityError">CapacityError</a>&lt;A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>&gt;&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#296-320' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Insert <code>element</code> at position <code>index</code>.</p>
-
 <p>Shift up all elements after <code>index</code>; the <code>index</code> must be less than
 or equal to the length.</p>
-
 <p>Returns an error if vector is already at full capacity.</p>
-
 <p><strong><em>Panics</em></strong> <code>index</code> is out of bounds.</p>
 
 <pre class="rust rust-example-rendered">
@@ -205,7 +200,6 @@ or equal to the length.</p>
 </pre>
 </div><h4 id='method.pop' class="method"><span id='pop.v' class='invisible'><code>pub fn <a href='#method.pop' class='fnname'>pop</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#336-345' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Remove the last element in the vector and return it.</p>
-
 <p>Return <code>Some(</code> <em>element</em> <code>)</code> if the vector is non-empty, else <code>None</code>.</p>
 
 <pre class="rust rust-example-rendered">
@@ -219,11 +213,8 @@ or equal to the length.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">array</span>.<span class="ident">pop</span>(), <span class="prelude-val">None</span>);</pre>
 </div><h4 id='method.swap_remove' class="method"><span id='swap_remove.v' class='invisible'><code>pub fn <a href='#method.swap_remove' class='fnname'>swap_remove</a>(&amp;mut self, index: usize) -&gt; A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#366-371' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Remove the element at <code>index</code> and swap the last element into its place.</p>
-
 <p>This operation is O(1).</p>
-
 <p>Return the <em>element</em> if the index is in bounds, else panic.</p>
-
 <p><strong><em>Panics</em></strong> if the <code>index</code> is out of bounds.</p>
 
 <pre class="rust rust-example-rendered">
@@ -238,10 +229,8 @@ or equal to the length.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="ident">array</span>[..], <span class="kw-2">&amp;</span>[<span class="number">3</span>]);</pre>
 </div><h4 id='method.swap_pop' class="method"><span id='swap_pop.v' class='invisible'><code>pub fn <a href='#method.swap_pop' class='fnname'>swap_pop</a>(&amp;mut self, index: usize) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#390-397' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Remove the element at <code>index</code> and swap the last element into its place.</p>
-
-<p>This is a checked version of <code>.swap_remove</code>.<br>
+<p>This is a checked version of <code>.swap_remove</code>.<br />
 This operation is O(1).</p>
-
 <p>Return <code>Some(</code> <em>element</em> <code>)</code> if the index is in bounds, else <code>None</code>.</p>
 
 <pre class="rust rust-example-rendered">
@@ -255,9 +244,7 @@ This operation is O(1).</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">array</span>.<span class="ident">swap_pop</span>(<span class="number">10</span>), <span class="prelude-val">None</span>);</pre>
 </div><h4 id='method.remove' class="method"><span id='remove.v' class='invisible'><code>pub fn <a href='#method.remove' class='fnname'>remove</a>(&amp;mut self, index: usize) -&gt; A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#414-419' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Remove the element at <code>index</code> and shift down the following elements.</p>
-
 <p>The <code>index</code> must be strictly less than the length of the vector.</p>
-
 <p><strong><em>Panics</em></strong> if the <code>index</code> is out of bounds.</p>
 
 <pre class="rust rust-example-rendered">
@@ -270,7 +257,6 @@ This operation is O(1).</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="ident">array</span>[..], <span class="kw-2">&amp;</span>[<span class="number">2</span>, <span class="number">3</span>]);</pre>
 </div><h4 id='method.pop_at' class="method"><span id='pop_at.v' class='invisible'><code>pub fn <a href='#method.pop_at' class='fnname'>pop_at</a>(&amp;mut self, index: usize) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#437-443' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Remove the element at <code>index</code> and shift down the following elements.</p>
-
 <p>This is a checked version of <code>.remove(index)</code>. Returns <code>None</code> if there
 is no element at <code>index</code>. Otherwise, return the element inside <code>Some</code>.</p>
 
@@ -287,7 +273,6 @@ is no element at <code>index</code>. Otherwise, return the element inside <code>
 </div><h4 id='method.truncate' class="method"><span id='truncate.v' class='invisible'><code>pub fn <a href='#method.truncate' class='fnname'>truncate</a>(&amp;mut self, len: usize)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#460-462' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Shortens the vector, keeping the first <code>len</code> elements and dropping
 the rest.</p>
-
 <p>If <code>len</code> is greater than the vector’s current length this has no
 effect.</p>
 
@@ -303,7 +288,6 @@ effect.</p>
 <div class='docblock'><p>Remove all elements in the vector.</p>
 </div><h4 id='method.retain' class="method"><span id='retain.v' class='invisible'><code>pub fn <a href='#method.retain' class='fnname'>retain</a>&lt;F&gt;(&amp;mut self, f: F) <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;F: <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/function/trait.FnMut.html" title="trait core::ops::function::FnMut">FnMut</a>(&amp;mut A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>) -&gt; bool,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#482-501' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Retains only the elements specified by the predicate.</p>
-
 <p>In other words, remove all elements <code>e</code> such that <code>f(&amp;mut e)</code> returns false.
 This method operates in place and preserves the order of the retained
 elements.</p>
@@ -316,20 +300,16 @@ elements.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="ident">array</span>[..], <span class="kw-2">&amp;</span>[<span class="number">1</span>, <span class="number">3</span>]);</pre>
 </div><h4 id='method.set_len' class="method"><span id='set_len.v' class='invisible'><code>pub unsafe fn <a href='#method.set_len' class='fnname'>set_len</a>(&amp;mut self, length: usize)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#511-514' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Set the vector’s length without dropping or moving out elements</p>
-
 <p>This method is <code>unsafe</code> because it changes the notion of the
 number of “valid” elements in the vector. Use with care.</p>
-
 <p>This method uses <em>debug assertions</em> to check that check that <code>length</code> is
 not greater than the capacity.</p>
 </div><h4 id='method.drain' class="method"><div class="important-traits"><div class='tooltip'>ⓘ<span class='tooltiptext'>Important traits for <a class="struct" href="../arrayvec/struct.Drain.html" title="struct arrayvec::Drain">Drain</a>&lt;'a, A&gt;</span></div><div class="content hidden"><h3 class="important">Important traits for <a class="struct" href="../arrayvec/struct.Drain.html" title="struct arrayvec::Drain">Drain</a>&lt;'a, A&gt;</h3><code class="content"><span class="where fmt-newline">impl&lt;'a, A:&nbsp;<a class="trait" href="../arrayvec/trait.Array.html" title="trait arrayvec::Array">Array</a>&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Iterator</a> for <a class="struct" href="../arrayvec/struct.Drain.html" title="struct arrayvec::Drain">Drain</a>&lt;'a, A&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>: 'a,&nbsp;</span></span><span class="where fmt-newline">    type <a href='https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html#associatedtype.Item' class="type">Item</a> = A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>;</span></code></div></div><span id='drain.v' class='invisible'><code>pub fn <a href='#method.drain' class='fnname'>drain</a>&lt;R:&nbsp;<a class="trait" href="../arrayvec/trait.RangeArgument.html" title="trait arrayvec::RangeArgument">RangeArgument</a>&gt;(&amp;mut self, range: R) -&gt; <a class="struct" href="../arrayvec/struct.Drain.html" title="struct arrayvec::Drain">Drain</a>&lt;A&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#535-562' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Create a draining iterator that removes the specified range in the vector
 and yields the removed items from start to end. The element range is
 removed even if the iterator is not consumed until the end.</p>
-
 <p>Note: It is unspecified how many elements are removed from the vector,
 if the <code>Drain</code> value is leaked.</p>
-
 <p><strong>Panics</strong> if the starting point is greater than the end point or if
 the end point is greater than the length of the vector.</p>
 
@@ -342,10 +322,8 @@ the end point is greater than the length of the vector.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="ident">u</span>[..], <span class="kw-2">&amp;</span>[<span class="number">1</span>, <span class="number">2</span>]);</pre>
 </div><h4 id='method.into_inner' class="method"><span id='into_inner.v' class='invisible'><code>pub fn <a href='#method.into_inner' class='fnname'>into_inner</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;A, Self&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#571-581' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Return the inner fixed size array, if it is full to its capacity.</p>
-
 <p>Return an <code>Ok</code> value with the array if length equals capacity,
 return an <code>Err</code> with self otherwise.</p>
-
 <p><code>Note:</code> This function may incur unproportionally large overhead
 to move the array out, its performance is not optimal.</p>
 </div><h4 id='method.dispose' class="method"><span id='dispose.v' class='invisible'><code>pub fn <a href='#method.dispose' class='fnname'>dispose</a>(self)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#584-587' title='goto source code'>[src]</a></span></h4>
@@ -416,7 +394,6 @@ to move the array out, its performance is not optimal.</p>
 <div class='docblock'><p>Creates an iterator from a value. <a href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html#tymethod.into_iter">Read more</a></p>
 </div></div><h3 id='impl-IntoIterator-2' class='impl'><span class='in-band'><code>impl&lt;A:&nbsp;<a class="trait" href="../arrayvec/trait.Array.html" title="trait arrayvec::Array">Array</a>&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html" title="trait core::iter::traits::IntoIterator">IntoIterator</a> for <a class="struct" href="../arrayvec/struct.ArrayVec.html" title="struct arrayvec::ArrayVec">ArrayVec</a>&lt;A&gt;</code><a href='#impl-IntoIterator-2' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#681-687' title='goto source code'>[src]</a></span></h3>
 <div class='docblock'><p>Iterate the <code>ArrayVec</code> with each element by value.</p>
-
 <p>The vector is consumed by this operation.</p>
 
 <pre class="rust rust-example-rendered">
@@ -433,14 +410,12 @@ to move the array out, its performance is not optimal.</p>
 <div class='docblock'><p>Creates an iterator from a value. <a href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html#tymethod.into_iter">Read more</a></p>
 </div></div><h3 id='impl-Extend%3CA%3A%3AItem%3E' class='impl'><span class='in-band'><code>impl&lt;A:&nbsp;<a class="trait" href="../arrayvec/trait.Array.html" title="trait arrayvec::Array">Array</a>&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.Extend.html" title="trait core::iter::traits::Extend">Extend</a>&lt;A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>&gt; for <a class="struct" href="../arrayvec/struct.ArrayVec.html" title="struct arrayvec::ArrayVec">ArrayVec</a>&lt;A&gt;</code><a href='#impl-Extend%3CA%3A%3AItem%3E' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#848-872' title='goto source code'>[src]</a></span></h3>
 <div class='docblock'><p>Extend the <code>ArrayVec</code> with an iterator.</p>
-
 <p>Does not extract more items than there is space for. No error
 occurs if there are more iterator elements.</p>
 </div><div class='impl-items'><h4 id='method.extend' class="method"><span id='extend.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/iter/traits/trait.Extend.html#tymethod.extend' class='fnname'>extend</a>&lt;T:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html" title="trait core::iter::traits::IntoIterator">IntoIterator</a>&lt;Item = A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>&gt;&gt;(&amp;mut self, iter: T)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#849-871' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Extends a collection with the contents of an iterator. <a href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.Extend.html#tymethod.extend">Read more</a></p>
 </div></div><h3 id='impl-FromIterator%3CA%3A%3AItem%3E' class='impl'><span class='in-band'><code>impl&lt;A:&nbsp;<a class="trait" href="../arrayvec/trait.Array.html" title="trait arrayvec::Array">Array</a>&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.FromIterator.html" title="trait core::iter::traits::FromIterator">FromIterator</a>&lt;A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>&gt; for <a class="struct" href="../arrayvec/struct.ArrayVec.html" title="struct arrayvec::ArrayVec">ArrayVec</a>&lt;A&gt;</code><a href='#impl-FromIterator%3CA%3A%3AItem%3E' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#878-884' title='goto source code'>[src]</a></span></h3>
 <div class='docblock'><p>Create an <code>ArrayVec</code> from an iterator.</p>
-
 <p>Does not extract more items than there is space for. No error
 occurs if there are more iterator elements.</p>
 </div><div class='impl-items'><h4 id='method.from_iter' class="method"><span id='from_iter.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/iter/traits/trait.FromIterator.html#tymethod.from_iter' class='fnname'>from_iter</a>&lt;T:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html" title="trait core::iter::traits::IntoIterator">IntoIterator</a>&lt;Item = A::<a class="type" href="../arrayvec/trait.Array.html#associatedtype.Item" title="type arrayvec::Array::Item">Item</a>&gt;&gt;(iter: T) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/arrayvec/lib.rs.html#879-883' title='goto source code'>[src]</a></span></h4>
@@ -515,20 +490,22 @@ occurs if there are more iterator elements.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

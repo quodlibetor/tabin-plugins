@@ -10,8 +10,11 @@
     <title>tokio::runtime - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Module runtime</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>tokio</a></p><script>window.sidebarCurrent = {name: 'runtime', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,36 +61,27 @@
                    </a>
                </span><a class='srclink' href='../../src/tokio/runtime/mod.rs.html#1-361' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>A batteries included runtime for applications using Tokio.</p>
-
 <p>Applications using Tokio require some runtime support in order to work:</p>
-
 <ul>
 <li>A <a href="../reactor/struct.Reactor.html">reactor</a> to drive I/O resources.</li>
 <li>An <a href="https://tokio.rs/docs/getting-started/runtime-model/#executors">executor</a> to execute tasks that use these I/O resources.</li>
 </ul>
-
 <p>While it is possible to setup each component manually, this involves a bunch
 of boilerplate.</p>
-
 <p><a href="struct.Runtime.html"><code>Runtime</code></a> bundles all of these various runtime components into a single
 handle that can be started and shutdown together, eliminating the necessary
 boilerplate to run a Tokio application.</p>
-
 <p>Most applications wont need to use <a href="struct.Runtime.html"><code>Runtime</code></a> directly. Instead, they will
 use the <a href="fn.run.html"><code>run</code></a> function, which uses <a href="struct.Runtime.html"><code>Runtime</code></a> under the hood.</p>
-
 <p>Creating a <a href="struct.Runtime.html"><code>Runtime</code></a> does the following:</p>
-
 <ul>
 <li>Spawn a background thread running a [<code>Reactor</code>] instance.</li>
 <li>Start a <a href="../executor/thread_pool/struct.ThreadPool.html"><code>ThreadPool</code></a> for executing futures.</li>
 </ul>
-
 <p>The thread pool uses a work-stealing strategy and is configured to start a
 worker thread for each CPU core available on the system. This tends to be
 the ideal setup for Tokio applications.</p>
-
-<h1 id='usage' class='section-header'><a href='#usage'>Usage</a></h1>
+<h1 id="usage" class="section-header"><a href="#usage">Usage</a></h1>
 <p>Most applications will use the <a href="fn.run.html"><code>run</code></a> function. This takes a future to
 &quot;seed&quot; the application, blocking the thread until the runtime becomes
 <a href="struct.Runtime.html#method.shutdown_on_idle">idle</a>.</p>
@@ -97,14 +98,11 @@ the ideal setup for Tokio applications.</p>
     });
 
 <span class="ident">tokio</span>::<span class="ident">run</span>(<span class="ident">server</span>);</pre>
-
 <p>In this function, the <code>run</code> function blocks until the runtime becomes idle.
 See <a href="struct.Runtime.html#method.shutdown_on_idle"><code>shutdown_on_idle</code></a> for more shutdown details.</p>
-
 <p>From within the context of the runtime, additional tasks are spawned using
 the <a href="../executor/fn.spawn.html"><code>tokio::spawn</code></a> function. Futures spawned using this function will be
 executed on the same thread pool used by the <a href="struct.Runtime.html"><code>Runtime</code></a>.</p>
-
 <p>A <a href="struct.Runtime.html"><code>Runtime</code></a> instance can also be used directly.</p>
 
 <pre class="rust rust-example-rendered">
@@ -135,6 +133,7 @@ executed on the same thread pool used by the <a href="struct.Runtime.html"><code
                                   title='struct tokio::runtime::Builder'>Builder</a></td>
                            <td class='docblock-short'>
                                 <p>Builds Tokio Runtime with custom configuration values.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -142,6 +141,7 @@ executed on the same thread pool used by the <a href="struct.Runtime.html"><code
                                   title='struct tokio::runtime::Runtime'>Runtime</a></td>
                            <td class='docblock-short'>
                                 <p>Handle to the Tokio runtime.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -149,6 +149,7 @@ executed on the same thread pool used by the <a href="struct.Runtime.html"><code
                                   title='struct tokio::runtime::Shutdown'>Shutdown</a></td>
                            <td class='docblock-short'>
                                 <p>A future that resolves when the Tokio <code>Runtime</code> is shut down.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -156,6 +157,7 @@ executed on the same thread pool used by the <a href="struct.Runtime.html"><code
                                   title='struct tokio::runtime::TaskExecutor'>TaskExecutor</a></td>
                            <td class='docblock-short'>
                                 <p>Executes futures on the runtime</p>
+
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
@@ -164,6 +166,7 @@ executed on the same thread pool used by the <a href="struct.Runtime.html"><code
                                   title='fn tokio::runtime::run'>run</a></td>
                            <td class='docblock-short'>
                                 <p>Start the Tokio runtime using the supplied future to bootstrap execution.</p>
+
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
@@ -178,20 +181,22 @@ executed on the same thread pool used by the <a href="struct.Runtime.html"><code
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

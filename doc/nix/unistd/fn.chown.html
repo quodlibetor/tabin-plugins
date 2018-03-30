@@ -10,8 +10,11 @@
     <title>nix::unistd::chown - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'><a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a></p><script>window.sidebarCurrent = {name: 'chown', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -53,11 +63,9 @@
 <pre class='rust fn'>pub fn chown&lt;P:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> + <a class="trait" href="../../nix/trait.NixPath.html" title="trait nix::NixPath">NixPath</a>&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;path: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>P, <br>&nbsp;&nbsp;&nbsp;&nbsp;owner: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../nix/unistd/struct.Uid.html" title="struct nix::unistd::Uid">Uid</a>&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;group: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../nix/unistd/struct.Gid.html" title="struct nix::unistd::Gid">Gid</a>&gt;<br>) -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</pre><div class='docblock'><p>Change the ownership of the file at <code>path</code> to be owned by the specified
 <code>owner</code> (user) and <code>group</code> (see
 <a href="http://man7.org/linux/man-pages/man2/lchown.2.html">chown(2)</a>).</p>
-
 <p>The owner/group for the provided path name will not be modified if <code>None</code> is
 provided for that argument.  Ownership change will be attempted for the path
 only if <code>Some</code> owner/group is provided.</p>
-
 <p>This call may fail under a number of different situations.  See <a href="http://man7.org/linux/man-pages/man2/lchown.2.html#ERRORS">the man
 pages</a> for
 additional details.</p>
@@ -74,20 +82,22 @@ additional details.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

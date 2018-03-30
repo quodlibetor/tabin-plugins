@@ -10,8 +10,11 @@
     <title>tabin_plugins::procfs - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Module procfs</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'><a href='../index.html'>tabin_plugins</a></p><script>window.sidebarCurrent = {name: 'procfs', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,7 +61,6 @@
                    </a>
                </span><a class='srclink' href='../../src/tabin_plugins/procfs/mod.rs.html#1-1105' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Structs and impls for the various files from the /proc filesystem</p>
-
 <p>Each file gets a struct to represent its data, with an associated <code>load</code>
 function.</p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
@@ -61,6 +70,7 @@ function.</p>
                                   title='mod tabin_plugins::procfs::pid'>pid</a></td>
                            <td class='docblock-short'>
                                 <p>Data structures related to the <code>/proc/&lt;pid&gt;/*</code> files</p>
+
                            </td>
                        </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
@@ -70,6 +80,7 @@ function.</p>
                            <td class='docblock-short'>
                                 <p>The number of calculations that have occured on this computer in a time
 period</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -84,6 +95,7 @@ period</p>
                                   title='struct tabin_plugins::procfs::LoadAvg'>LoadAvg</a></td>
                            <td class='docblock-short'>
                                 <p>The load average of the system</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -98,6 +110,7 @@ period</p>
                                   title='struct tabin_plugins::procfs::MemInfo'>MemInfo</a></td>
                            <td class='docblock-short'>
                                 <p>A struct that represents overall memory usage on the system.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -126,6 +139,7 @@ period</p>
                                   title='struct tabin_plugins::procfs::ProcessCpuUsages'>ProcessCpuUsages</a></td>
                            <td class='docblock-short'>
                                 <p>A collection of <code>ProcessCpuUsage</code>s</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -133,6 +147,7 @@ period</p>
                                   title='struct tabin_plugins::procfs::RunningProcs'>RunningProcs</a></td>
                            <td class='docblock-short'>
                                 <p>All the processes that are running</p>
+
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
@@ -148,6 +163,7 @@ period</p>
                                   title='enum tabin_plugins::procfs::ProcFsError'>ProcFsError</a></td>
                            <td class='docblock-short'>
                                 <p>ProcFs errors</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -155,6 +171,7 @@ period</p>
                                   title='enum tabin_plugins::procfs::WorkSource'>WorkSource</a></td>
                            <td class='docblock-short'>
                                 <p>A kind of CPU usage</p>
+
                            </td>
                        </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
 <table>
@@ -170,6 +187,7 @@ period</p>
                                   title='type tabin_plugins::procfs::Result'>Result</a></td>
                            <td class='docblock-short'>
                                 <p>All the results are results with <code>ProcFsError</code>s</p>
+
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
@@ -184,20 +202,22 @@ period</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

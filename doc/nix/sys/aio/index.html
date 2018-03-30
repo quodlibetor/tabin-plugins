@@ -10,8 +10,11 @@
     <title>nix::sys::aio - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css" id="themeStyle">
+    <script src="../../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Module aio</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../../index.html'>nix</a>::<wbr><a href='../index.html'>sys</a></p><script>window.sidebarCurrent = {name: 'aio', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -58,6 +68,7 @@
                            <td class='docblock-short'>
                                 <p>The basic structure used by all aio functions.  Each <code>aiocb</code> represents one
 I/O request.</p>
+
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
@@ -66,6 +77,7 @@ I/O request.</p>
                                   title='enum nix::sys::aio::AioCancelStat'>AioCancelStat</a></td>
                            <td class='docblock-short'>
                                 <p>Return values for <code>AioCb::cancel and aio_cancel_all</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -74,6 +86,7 @@ I/O request.</p>
                            <td class='docblock-short'>
                                 <p>Mode for <code>AioCb::fsync</code>.  Controls whether only data or both data and
 metadata are synced.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -81,6 +94,7 @@ metadata are synced.</p>
                                   title='enum nix::sys::aio::LioMode'>LioMode</a></td>
                            <td class='docblock-short'>
                                 <p>Mode for <code>lio_listio</code>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -90,6 +104,7 @@ metadata are synced.</p>
                                 <p>When used with <code>lio_listio</code>, determines whether a given <code>aiocb</code> should be
 used for a read operation, a write operation, or ignored.  Has no effect for
 any other aio functions.</p>
+
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
@@ -98,6 +113,7 @@ any other aio functions.</p>
                                   title='fn nix::sys::aio::aio_cancel_all'>aio_cancel_all</a></td>
                            <td class='docblock-short'>
                                 <p>Cancels outstanding AIO requests.  All requests for <code>fd</code> will be cancelled.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -107,6 +123,7 @@ any other aio functions.</p>
                                 <p>Suspends the calling process until at least one of the specified <code>AioCb</code>s
 has completed, a signal is delivered, or the timeout has passed.  If
 <code>timeout</code> is <code>None</code>, <code>aio_suspend</code> will block indefinitely.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -115,6 +132,7 @@ has completed, a signal is delivered, or the timeout has passed.  If
                            <td class='docblock-short'>
                                 <p>Submits multiple asynchronous I/O requests with a single system call.  The
 order in which the requests are carried out is not specified.</p>
+
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
@@ -129,20 +147,22 @@ order in which the requests are carried out is not specified.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

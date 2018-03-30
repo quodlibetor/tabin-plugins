@@ -10,8 +10,11 @@
     <title>tokio::executor::current_thread - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css" id="themeStyle">
+    <script src="../../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Module current_thread</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../../index.html'>tokio</a>::<wbr><a href='../index.html'>executor</a></p><script>window.sidebarCurrent = {name: 'current_thread', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,21 +61,16 @@
                    </a>
                </span><a class='srclink' href='../../../src/tokio/executor/current_thread/mod.rs.html#1-730' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Execute many tasks concurrently on the current thread.</p>
-
 <p><a href="struct.CurrentThread.html"><code>CurrentThread</code></a> is an executor that keeps tasks on the same thread that
 they were spawned from. This allows it to execute futures that are not
 <code>Send</code>.</p>
-
 <p>A single <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> instance is able to efficiently manage a large
 number of tasks and will attempt to schedule all tasks fairly.</p>
-
 <p>All tasks that are being managed by a <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> executor are able to
 spawn additional tasks by calling <a href="fn.spawn.html"><code>spawn</code></a>. This function only works from
 within the context of a running <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> instance.</p>
-
 <p>The easiest way to start a new <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> executor is to call
 <a href="fn.block_on_all.html"><code>block_on_all</code></a> with an initial task to seed the executor.</p>
-
 <p>For example:</p>
 
 <pre class="rust rust-example-rendered">
@@ -83,11 +88,9 @@ within the context of a running <a href="struct.CurrentThread.html"><code>Curren
 
     <span class="prelude-val">Ok</span>::<span class="op">&lt;</span>_, ()<span class="op">&gt;</span>(())
 }));</pre>
-
 <p>The <code>block_on_all</code> function will block the current thread until <strong>all</strong>
 tasks that have been spawned onto the <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> instance have
 completed.</p>
-
 <p>More fine-grain control can be achieved by using <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> directly.</p>
 
 <pre class="rust rust-example-rendered">
@@ -117,22 +120,18 @@ completed.</p>
 <span class="comment">// Now, run the executor for *at most* 1 second. Since a task was spawned</span>
 <span class="comment">// that never completes, this function will return with an error.</span>
 <span class="ident">current_thread</span>.<span class="ident">run_timeout</span>(<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">1</span>)).<span class="ident">unwrap_err</span>();</pre>
-
-<h1 id='execution-model' class='section-header'><a href='#execution-model'>Execution model</a></h1>
+<h1 id="execution-model" class="section-header"><a href="#execution-model">Execution model</a></h1>
 <p>Internally, <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> maintains a queue. When one of its tasks is
 notified, the task gets added to the queue. The executor will pop tasks from
 the queue and call <a href="https://docs.rs/futures/0.1/futures/future/trait.Future.html#tymethod.poll"><code>Future::poll</code></a>. If the task gets notified while it is
-being executed, it won&#39;t get re-executed until all other tasks currently in
+being executed, it won't get re-executed until all other tasks currently in
 the queue get polled.</p>
-
 <p>Before the task is polled, a thread-local variable referencing the current
 <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> instance is set. This enables <a href="fn.spawn.html"><code>spawn</code></a> to spawn new tasks
 onto the same executor without having to thread through a handle value.</p>
-
 <p>If the <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> instance still has uncompleted tasks, but none of
 these tasks are ready to be polled, the current thread is put to sleep. When
 a task is notified, the thread is woken up and processing resumes.</p>
-
 <p>All tasks managed by <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> remain on the current thread. When a
 task completes, it is dropped.</p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
@@ -142,6 +141,7 @@ task completes, it is dropped.</p>
                                   title='struct tokio::executor::current_thread::BlockError'>BlockError</a></td>
                            <td class='docblock-short'>
                                 <p>Error returned by the <code>block_on</code> function.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -149,6 +149,7 @@ task completes, it is dropped.</p>
                                   title='struct tokio::executor::current_thread::CurrentThread'>CurrentThread</a></td>
                            <td class='docblock-short'>
                                 <p>Executes tasks on the current thread</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -156,6 +157,7 @@ task completes, it is dropped.</p>
                                   title='struct tokio::executor::current_thread::Entered'>Entered</a></td>
                            <td class='docblock-short'>
                                 <p>A <code>CurrentThread</code> instance bound to a supplied execution conext.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -163,6 +165,7 @@ task completes, it is dropped.</p>
                                   title='struct tokio::executor::current_thread::RunError'>RunError</a></td>
                            <td class='docblock-short'>
                                 <p>Error returned by the <code>run</code> function.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -170,6 +173,7 @@ task completes, it is dropped.</p>
                                   title='struct tokio::executor::current_thread::RunTimeoutError'>RunTimeoutError</a></td>
                            <td class='docblock-short'>
                                 <p>Error returned by the <code>run_timeout</code> function.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -177,6 +181,7 @@ task completes, it is dropped.</p>
                                   title='struct tokio::executor::current_thread::TaskExecutor'>TaskExecutor</a></td>
                            <td class='docblock-short'>
                                 <p>Executes futures on the current thread.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -184,6 +189,7 @@ task completes, it is dropped.</p>
                                   title='struct tokio::executor::current_thread::Turn'>Turn</a></td>
                            <td class='docblock-short'>
                                 <p>Returned by the <code>turn</code> function</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -191,6 +197,7 @@ task completes, it is dropped.</p>
                                   title='struct tokio::executor::current_thread::TurnError'>TurnError</a></td>
                            <td class='docblock-short'>
                                 <p>Error returned by the <code>turn</code> function.</p>
+
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
@@ -199,6 +206,7 @@ task completes, it is dropped.</p>
                                   title='fn tokio::executor::current_thread::block_on_all'>block_on_all</a></td>
                            <td class='docblock-short'>
                                 <p>Run the executor bootstrapping the execution with the provided future.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -206,6 +214,7 @@ task completes, it is dropped.</p>
                                   title='fn tokio::executor::current_thread::spawn'>spawn</a></td>
                            <td class='docblock-short'>
                                 <p>Executes a future on the current thread.</p>
+
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
@@ -220,20 +229,22 @@ task completes, it is dropped.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 
