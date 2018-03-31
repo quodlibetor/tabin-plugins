@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/structopt/lib.rs.html#9-382' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/structopt/lib.rs.html#9-394' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>This crate defines the <code>StructOpt</code> trait and its custom derrive.</p>
 <h2 id="features" class="section-header"><a href="#features">Features</a></h2>
 <p>If you want to disable all the <code>clap</code> features (colors,
@@ -72,19 +72,32 @@ structopt = { version = &quot;0.2&quot;, default-features = false }
 <p>First, let's look at an example:</p>
 
 <pre class="rust rust-example-rendered">
-<span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">structopt</span>;
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">structopt</span>;
+
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">PathBuf</span>;
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">StructOpt</span>)]</span>
+<span class="kw">use</span> <span class="ident">structopt</span>::<span class="ident">StructOpt</span>;
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">StructOpt</span>)]</span>
 <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;example&quot;</span>, <span class="ident">about</span> <span class="op">=</span> <span class="string">&quot;An example of StructOpt usage.&quot;</span>)]</span>
 <span class="kw">struct</span> <span class="ident">Opt</span> {
-    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">short</span> <span class="op">=</span> <span class="string">&quot;d&quot;</span>, <span class="ident">long</span> <span class="op">=</span> <span class="string">&quot;debug&quot;</span>, <span class="ident">help</span> <span class="op">=</span> <span class="string">&quot;Activate debug mode&quot;</span>)]</span>
+    <span class="doccomment">/// Activate debug mode</span>
+    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">short</span> <span class="op">=</span> <span class="string">&quot;d&quot;</span>, <span class="ident">long</span> <span class="op">=</span> <span class="string">&quot;debug&quot;</span>)]</span>
     <span class="ident">debug</span>: <span class="ident">bool</span>,
-    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">short</span> <span class="op">=</span> <span class="string">&quot;s&quot;</span>, <span class="ident">long</span> <span class="op">=</span> <span class="string">&quot;speed&quot;</span>, <span class="ident">help</span> <span class="op">=</span> <span class="string">&quot;Set speed&quot;</span>, <span class="ident">default_value</span> <span class="op">=</span> <span class="string">&quot;42&quot;</span>)]</span>
+    <span class="doccomment">/// Set speed</span>
+    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">short</span> <span class="op">=</span> <span class="string">&quot;s&quot;</span>, <span class="ident">long</span> <span class="op">=</span> <span class="string">&quot;speed&quot;</span>, <span class="ident">default_value</span> <span class="op">=</span> <span class="string">&quot;42&quot;</span>)]</span>
     <span class="ident">speed</span>: <span class="ident">f64</span>,
-    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">help</span> <span class="op">=</span> <span class="string">&quot;Input file&quot;</span>, <span class="ident">parse</span>(<span class="ident">from_os_str</span>))]</span>
+    <span class="doccomment">/// Input file</span>
+    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">parse</span>(<span class="ident">from_os_str</span>))]</span>
     <span class="ident">input</span>: <span class="ident">PathBuf</span>,
-    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">help</span> <span class="op">=</span> <span class="string">&quot;Output file, stdout if not present&quot;</span>, <span class="ident">parse</span>(<span class="ident">from_os_str</span>))]</span>
+    <span class="doccomment">/// Output file, stdout if not present</span>
+    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">parse</span>(<span class="ident">from_os_str</span>))]</span>
     <span class="ident">output</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
+}
+
+<span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">let</span> <span class="ident">opt</span> <span class="op">=</span> <span class="ident">Opt</span>::<span class="ident">from_args</span>();
+    <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">opt</span>);
 }</pre>
 <p>So <code>derive(StructOpt)</code> tells Rust to generate a command line parser,
 and the various <code>structopt</code> attributes are simply
