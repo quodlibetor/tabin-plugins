@@ -14,6 +14,7 @@ use std::num;
 
 use regex::Regex;
 use std::slice;
+use nix::unistd::Pid;
 
 use linux::Jiffies;
 use procfs::pid::ProcessCpuUsage;
@@ -105,7 +106,8 @@ impl fmt::Display for ParseStateError {
     fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
         write!(
             f,
-            "String '{}' was not a valid state, expected one of RSDWTZ",
+            "String '{}' was not a valid state, expected one of \
+             R,running, S,sleeping, D,uninteruptible-sleep, W,waiting, T,stopped, Z,zombie",
             self.state
         )
     }
@@ -146,7 +148,7 @@ impl<'a> ProcessCpuUsages<'a> {
     }
 }
 
-pub type ProcMap = HashMap<i32, pid::Process>;
+pub type ProcMap = HashMap<Pid, pid::Process>;
 /// All the processes that are running
 // TODO: make this internal field private, and re-export the methods
 // on the vec.
@@ -196,7 +198,7 @@ impl RunningProcs {
         RunningProcs(HashMap::new())
     }
 
-    fn iter(&self) -> hash_map::Iter<i32, pid::Process> {
+    fn iter(&self) -> hash_map::Iter<Pid, pid::Process> {
         self.0.iter()
     }
 

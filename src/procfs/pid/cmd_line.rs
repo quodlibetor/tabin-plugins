@@ -5,9 +5,12 @@ use std::fs::File;
 use procfs::Result;
 
 /// The visibule command line for a process
-#[derive(Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct CmdLine {
-    line: Vec<String>,
+    /// The raw parts of the command line
+    ///
+    /// The vec of arguments that started the process
+    pub raw: Vec<String>,
 }
 
 impl CmdLine {
@@ -17,7 +20,7 @@ impl CmdLine {
         let mut s = String::new();
         try!(f.read_to_string(&mut s));
         Ok(CmdLine {
-            line: s.split('\0')
+            raw: s.split('\0')
                 .map(String::from)
                 .filter(|arg| !arg.is_empty())
                 .collect(),
@@ -25,14 +28,14 @@ impl CmdLine {
     }
 
     pub fn len(&self) -> usize {
-        self.line.len()
+        self.raw.len()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.line.is_empty()
+        self.raw.is_empty()
     }
 
     pub fn display(&self) -> String {
-        self.line.join(" ")
+        self.raw.join(" ")
     }
 }

@@ -16,7 +16,7 @@ pub use self::stat::{Stat, State};
 pub use self::cmd_line::CmdLine;
 
 /// Information about a running process
-#[derive(Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Process {
     /// The stat info for a process
     pub stat: Stat,

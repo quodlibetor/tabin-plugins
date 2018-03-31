@@ -23,6 +23,7 @@ extern crate lazy_static;
 extern crate scan_fmt;
 
 extern crate libc;
+extern crate nix;
 extern crate regex;
 #[macro_use]
 extern crate serde_derive;
