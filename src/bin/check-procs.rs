@@ -238,16 +238,17 @@ mod unit {
         assert_eq!(args.states, [State::Zombie, State::Sleeping]);
     }
 
-
     #[test]
     fn filter_procs_handles_patterns() {
         let mut procs = vec![Process::default(); 5];
-        procs[2].cmdline.raw.append(&mut vec!["hello".into(), "jar".into()]);
+        procs[2]
+            .cmdline
+            .raw
+            .append(&mut vec!["hello".into(), "jar".into()]);
         let proc_map = vec_to_procmap(procs);
         let filtered = filter_procs(regex("llo.*ar"), &[], &proc_map);
         assert_eq!(filtered.len(), 1);
     }
-
 
     #[test]
     fn filter_procs_handles_single_state() {
