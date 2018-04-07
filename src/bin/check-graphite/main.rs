@@ -2,14 +2,15 @@ extern crate chrono;
 #[macro_use]
 extern crate clap;
 extern crate itertools;
+#[macro_use]
+extern crate lazy_static;
 extern crate reqwest;
-extern crate url;
-
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
 extern crate tabin_plugins;
+extern crate url;
 
 mod args;
 mod assertions;
