@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/structopt/lib.rs.html#9-394' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/structopt/lib.rs.html#9-428' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>This crate defines the <code>StructOpt</code> trait and its custom derrive.</p>
 <h2 id="features" class="section-header"><a href="#features">Features</a></h2>
 <p>If you want to disable all the <code>clap</code> features (colors,
@@ -304,6 +304,32 @@ commands:</p>
     <span class="ident">Baz</span>,
     <span class="ident">Quux</span>
 }</pre>
+<h2 id="flattening" class="section-header"><a href="#flattening">Flattening</a></h2>
+<p>It can sometimes be useful to group related arguments in a substruct,
+while keeping the command-line interface flat. In these cases you can mark
+a field as <code>flatten</code> and give it another type that derives <code>StructOpt</code>:</p>
+
+<pre class="rust rust-example-rendered">
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">StructOpt</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Cmdline</span> {
+    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">short</span> <span class="op">=</span> <span class="string">&quot;v&quot;</span>, <span class="ident">help</span> <span class="op">=</span> <span class="string">&quot;switch on verbosity&quot;</span>)]</span>
+    <span class="ident">verbose</span>: <span class="ident">bool</span>,
+    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">flatten</span>)]</span>
+    <span class="ident">daemon_opts</span>: <span class="ident">DaemonOpts</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">StructOpt</span>)]</span>
+<span class="kw">struct</span> <span class="ident">DaemonOpts</span> {
+    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">short</span> <span class="op">=</span> <span class="string">&quot;u&quot;</span>, <span class="ident">help</span> <span class="op">=</span> <span class="string">&quot;daemon user&quot;</span>)]</span>
+    <span class="ident">user</span>: <span class="ident">String</span>,
+    <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">short</span> <span class="op">=</span> <span class="string">&quot;g&quot;</span>, <span class="ident">help</span> <span class="op">=</span> <span class="string">&quot;daemon group&quot;</span>)]</span>
+    <span class="ident">group</span>: <span class="ident">String</span>,
+}</pre>
+<p>In this example, the derived <code>Cmdline</code> parser will support the options <code>-v</code>,
+<code>-u</code> and <code>-g</code>.</p>
+<p>This feature also makes it possible to define a <code>StructOpt</code> struct in a
+library, parse the corresponding arguments in the main argument parser, and
+pass off this struct to a handler provided by that library.</p>
 <h2 id="custom-string-parsers" class="section-header"><a href="#custom-string-parsers">Custom string parsers</a></h2>
 <p>If the field type does not have a <code>FromStr</code> implementation, or you would
 like to provide a custom parsing scheme other than <code>FromStr</code>, you may

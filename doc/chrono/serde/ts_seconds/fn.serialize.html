@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/chrono/datetime.rs.html#894-898' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../../src/chrono/datetime.rs.html#923-927' title='goto source code'>[src]</a></span></h1>
 <pre class='rust fn'>pub fn serialize&lt;S&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;dt: &amp;<a class="struct" href="../../../chrono/struct.DateTime.html" title="struct chrono::DateTime">DateTime</a>&lt;<a class="struct" href="../../../chrono/offset/struct.Utc.html" title="struct chrono::offset::Utc">Utc</a>&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;serializer: S<br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;S::<a class="type" href="../../../serde/ser/trait.Serializer.html#associatedtype.Ok" title="type serde::ser::Serializer::Ok">Ok</a>, S::<a class="type" href="../../../serde/ser/trait.Serializer.html#associatedtype.Error" title="type serde::ser::Serializer::Error">Error</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="../../../serde/ser/trait.Serializer.html" title="trait serde::ser::Serializer">Serializer</a>,&nbsp;</span></pre><div class='docblock'><p>Serialize a UTC datetime into an integer number of seconds since the epoch</p>
 <p>Intended for use with <code>serde</code>s <code>serialize_with</code> attribute.</p>
 <h1 id="example" class="section-header"><a href="#example">Example:</a></h1>
