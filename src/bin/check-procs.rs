@@ -5,22 +5,24 @@
 extern crate nix;
 extern crate regex;
 #[macro_use]
-extern crate serde_derive;
-#[macro_use]
 extern crate structopt;
 
 extern crate tabin_plugins;
 
+use std::collections::HashSet;
+use std::str::FromStr;
+
+use nix::sys::signal::{kill, Signal as NixSignal};
 use nix::unistd::{getpid, getppid, Pid};
 use regex::Regex;
 use structopt::StructOpt;
 
-use tabin_plugins::Status;
-use tabin_plugins::procfs::{LoadProcsError, ProcFsError, ProcMap, RunningProcs};
 use tabin_plugins::procfs::pid::{Process, State};
+use tabin_plugins::procfs::{LoadProcsError, ProcFsError, ProcMap, RunningProcs};
+use tabin_plugins::Status;
 
 /// Check that an expected number of processes are running.
-#[derive(StructOpt, Debug, Deserialize)]
+#[derive(StructOpt, Debug)]
 #[structopt(name = "check-procs (part of tabin-plugins)",
             raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
             after_help = "Examples:
@@ -62,6 +64,53 @@ struct Args {
                 help = "In combination with --crit-over M this will not alert if any \
                         processes cannot be parsed")]
     allow_unparseable_procs: bool,
+
+    #[structopt(long = "kill-matching", name = "SIGNAL",
+                help = "If *any* processes match, then kill them with the provided signal \
+                        which can be either an integer or a name like KILL or SIGTERM. \
+                        This option does not affect the exit status, all matches are always \
+                        killed, and if --crit-under/over are violated then then this will \
+                        still exit critical.")]
+    kill_matching: Option<Signal>,
+
+    #[structopt(long = "kill-parents-of-matching", name = "PARENT_SIGNAL",
+                help = "If *any* processes match, then kill their parents with the provided \
+                        signal which can be either an integer or a name like KILL or SIGTERM. \
+                        This has the same exit status behavior as kill-matching.")]
+    kill_matching_parents: Option<Signal>,
+}
+
+/// Our own signal wrapper so that we can implement a forgiving FromStr for `nix::sys::Signal`
+#[derive(Debug)]
+struct Signal(NixSignal);
+
+impl FromStr for Signal {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Signal, String> {
+        let sig: Result<i32, _> = s.parse();
+        match sig {
+            Ok(integer) => Ok(Signal(NixSignal::from_c_int(integer)
+                .map_err(|_| format!("Not a valid signal integer: {}", s))?)),
+            Err(_) => Ok(Signal(match s {
+                "SIGHUP" | "HUP" => NixSignal::SIGHUP,
+                "SIGINT" | "INT" => NixSignal::SIGINT,
+                "SIGQUIT" | "QUIT" => NixSignal::SIGQUIT,
+                "SIGILL" | "ILL" => NixSignal::SIGILL,
+                "SIGTRAP" | "TRAP" => NixSignal::SIGTRAP,
+                "SIGABRT" | "ABRT" => NixSignal::SIGABRT,
+                "SIGBUS" | "BUS" => NixSignal::SIGBUS,
+                "SIGFPE" | "FPE" => NixSignal::SIGFPE,
+                "SIGKILL" | "KILL" => NixSignal::SIGKILL,
+                "SIGUSR1" | "USR1" => NixSignal::SIGUSR1,
+                "SIGSEGV" | "SEGV" => NixSignal::SIGSEGV,
+                "SIGUSR2" | "USR2" => NixSignal::SIGUSR2,
+                "SIGPIPE" | "PIPE" => NixSignal::SIGPIPE,
+                "SIGALRM" | "ALRM" => NixSignal::SIGALRM,
+                "SIGTERM" | "TERM" => NixSignal::SIGTERM,
+                _ => return Err(format!("Could not parse {:?} as an int or named signal", s)),
+            })),
+        }
+    }
 }
 
 fn parse_args() -> (Option<Regex>, Args) {
@@ -148,6 +197,33 @@ fn main() {
             println!("And {} more...", matches.len() - 20)
         }
     }
+
+    if args.kill_matching.is_some() {
+        let signal = args.kill_matching.unwrap().0;
+        let errors: Vec<_> = matches
+            .iter()
+            .map(|&(pid, _)| kill(*pid, signal))
+            .filter(|result| result.is_err())
+            .collect();
+        if !errors.is_empty() {
+            println!("INFO: There were {} errors killing processes", errors.len());
+        }
+    }
+    if args.kill_matching_parents.is_some() {
+        let signal = args.kill_matching_parents.unwrap().0;
+        let mut parents = HashSet::new();
+        let errors: Vec<_> = matches
+            .iter()
+            .map(|&(_, process)| process.stat.ppid)
+            .filter(|ppid| parents.insert(*ppid))
+            .map(|ppid| kill(ppid, signal))
+            .filter(|result| result.is_err())
+            .collect();
+        if !errors.is_empty() {
+            println!("INFO: There were {} errors killing processes", errors.len());
+        }
+    }
+
     status.exit();
 }
 
