@@ -18,6 +18,7 @@ use tabin_plugins::Status;
 use tabin_plugins::procfs::{Calculations, LoadProcsError, ProcField, ProcFsError, RunningProcs,
                             WorkSource};
 
+/// Check cpu usage of the current computer
 #[derive(Deserialize, StructOpt, Debug)]
 #[structopt(name = "check-cpu  (part of tabin-plugins)",
             raw(setting = "structopt::clap::AppSettings::ColoredHelp"),

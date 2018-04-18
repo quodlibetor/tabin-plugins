@@ -22,6 +22,8 @@ use tabin_plugins::procfs::{LoadProcsError, ProcFsError, ProcMap, RunningProcs};
 use tabin_plugins::Status;
 
 /// Check that an expected number of processes are running.
+///
+/// Optionally, kill unwanted processes.
 #[derive(StructOpt, Debug)]
 #[structopt(name = "check-procs (part of tabin-plugins)",
             raw(setting = "structopt::clap::AppSettings::ColoredHelp"),

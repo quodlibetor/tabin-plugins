@@ -1,28 +1,27 @@
-// Fake module for documentation
 //! Documentation about the various scripts contained herein
 //!
 //! - [check-graphite](#check-graphite)
 //! - [check-cpu](#check-cpu)
 //! - [check-container-cpu](#check-container-cpu)
 //! - [check-load](#check-load)
-//! - [check-container-ram](#check-container-ram)
 //! - [check-ram](#check-ram)
+//! - [check-container-ram](#check-container-ram)
+//! - [check-procs](#check-procs)
 //! - [check-fs-writeable](#check-fs-writeable)
 //! - [check-disk](#check-disk)
 //!
-//! check-graphite
-//! ==============
+//! # check-graphite
 //!
-//! Usage looks like:
+//! Cross platform, only requires access to a graphite instance.
 //!
 //! ```plain
 //! $ check-graphite --help
-//! check-graphite 0.2.3
+//! check-graphite (part of tabin-plugins) 0.3.0
 //! Brandon W Maister <quodlibetor@gmail.com>
 //! Query graphite and exit based on predicates
 //!
 //! USAGE:
-//!         check-graphite [FLAGS] [OPTIONS] <URL> <PATH> <ASSERTION>... [--]
+//!     check-graphite [FLAGS] [OPTIONS] <URL> <PATH> <ASSERTION>...
 //!
 //! FLAGS:
 //!     -h, --help                 Prints help information
@@ -31,22 +30,20 @@
 //!         --verify-assertions    Just check assertion syntax, do not query urls
 //!
 //! OPTIONS:
-//!         --retries <COUNT>      How many times to retry reaching graphite. Default 4
-//!         --graphite-error <GRAPHITE_ERROR_STATUS>    What to do with no data.
-//!                               Choices: ok, warn, critical, unknown.
-//!                               What to say if graphite returns a 500 or invalid JSON
-//!                               Default: unknown. [values: ok warning critical unknown]
+//!         --graphite-error <GRAPHITE_ERROR_STATUS>
+//!             What to say if graphite returns a 500 or invalid JSON. Default: unknown. [possible values: ok, warning,
+//!             critical, unknown]
+//!         --no-data <NO_DATA_STATUS>
+//!             What to do with no data. This is the value to use for the assertion 'if all values are null' Default: warn.
+//!             [possible values: ok, warning, critical, unknown]
+//!         --retries <COUNT>                           How many times to retry reaching graphite. Default 4.
 //!     -w, --window <MINUTES>                          How many minutes of data to test. Default 10.
-//!         --no-data <NO_DATA_STATUS>                  What to do with no data.
-//!                               Choices: ok, warn, critical, unknown.
-//!                               This is the value to use for the assertion
-//!                               'if all values are null'
-//!                               Default: warn. [values: ok warning critical unknown]
+//!         --window-start <MINUTES_IN_PAST>            How far back to start the window. Default is now.
 //!
 //! ARGS:
-//!     URL             The domain to query graphite. Must include scheme (http/s)
-//!     PATH            The graphite path to query. For example: "collectd.*.cpu"
-//!     ASSERTION...    The assertion to make against the PATH. See Below.
+//!     <URL>             The domain to query graphite. Must include scheme (http/s)
+//!     <PATH>            The graphite path to query. For example: "collectd.*.cpu"
+//!     <ASSERTION>...    The assertion to make against the PATH. See Below.
 //!
 //! About Assertions:
 //!
@@ -69,7 +66,7 @@
 //!             - `any series`
 //!             - `all series`
 //!             - `at least <N>% of series`
-//!         - `not` is optional, and inverts the following operator
+//!             - `not` is optional, and inverts the following operator
 //!         - `operator` is one of: `==` `!=` `<` `>` `<=` `>=`
 //!         - `threshold` is a floating-point value (e.g. 100, 78.0)
 //!
@@ -83,38 +80,41 @@
 //!         - `critical if at least 20% of points are > 100`
 //!         - `critical if most recent point is > 5`
 //!         - `critical if most recent point in all series are == 0`
+//!
 //! ```
 //!
-//! check-cpu
-//! =========
+//! # check-cpu
 //!
 //! Linux-only.
 //!
 //! ```plain
-//! Usage:
-//!     check-cpu [options] [--type=<work-source>...] [--show-hogs=<count>]
-//!     check-cpu (-h | --help)
+//! $ check-cpu --help
+//! check-cpu  (part of tabin-plugins) 0.3.0
+//! Brandon W Maister <quodlibetor@gmail.com>
+//! Check cpu usage of the current computer
 //!
-//! Options:
-//!     -h, --help               Show this help message
+//! USAGE:
+//!     check-cpu [FLAGS] [OPTIONS]
 //!
-//!     -s, --sample=<seconds>   Seconds to spent collecting   [default: 1]
-//!     -w, --warn=<percent>     Percent to warn at            [default: 80]
-//!     -c, --crit=<percent>     Percent to critical at        [default: 95]
+//! FLAGS:
+//!     -h, --help       Prints help information
+//!         --per-cpu    Gauge values per-cpu instead of across the entire machine
+//!     -V, --version    Prints version information
 //!
-//!     --per-cpu                Gauge values per-cpu instead of across the
-//!                              entire machine
-//!     --cpu-count=<num>        If --per-cpu is specified, this is how many
-//!                              CPUs need to be at a threshold to trigger.
-//!                              [default: 1]
-//!
-//!     --show-hogs=<count>      Show most cpu-hungry procs    [default: 0]
+//! OPTIONS:
+//!         --show-hogs <count>        Show <count> most cpu-intensive processes in this container. [default: 0]
+//!         --cpu-count <cpu_count>    If --per-cpu is specified, this is how many
+//!                                                                 CPUs need to be at a threshold to trigger. [default: 1]
+//!     -c, --crit <crit>              Percent to go critical at [default: 80]
+//!     -s, --sample <seconds>         Seconds to take sample over [default: 5]
+//!     -w, --warn <warn>              Percent to warn at [default: 80]
+//!         --type <work_type>...      See 'CPU Work Types, below [default: active]
 //!
 //! CPU Work Types:
 //!
-//!     Specifying one of the CPU kinds checks that kind of utilization. The
-//!     default is to check total utilization. Specifying this multiple times
-//!     alerts if *any* of the CPU usage types are critical.
+//!     Specifying one of the CPU kinds via `--type` checks that kind of
+//!     utilization. The default is to check total utilization. Specifying this
+//!     multiple times alerts if *any* of the CPU usage types are critical.
 //!
 //!     There are three CPU type groups: `active` `activeplusiowait` and
 //!     `activeminusnice`. `activeplusiowait` considers time spent waiting for IO
@@ -126,36 +126,35 @@
 //!                                 active activeplusiowait activeminusnice
 //!                                 user nice system irq softirq steal guest
 //!                                 idle iowait [default: active]
+//!
 //! ```
 //!
-//! check-container-cpu
-//! ===================
+//! # check-container-cpu
 //!
 //! Linux-only. Can only be run from inside a cgroup.
 //!
 //! ```plain
-//! $ check-container-cpu -h
-//! Usage:
-//!     check-container-cpu [options]
-//!     check-container-cpu (-h | --help)
+//! $ check-container-cpu --help
+//! check-container-cpu (part of tabin-plugins) 0.3.0
+//! Brandon W Maister <quodlibetor@gmail.com>
+//! Check the cpu usage of the currently-running container.
 //!
-//! Check the cpu usage of the currently-running container. This must be run from
-//! inside the container to be checked.
+//! This must be run from inside the container to be checked.
 //!
-//! Options:
-//!     -h, --help            Show this help message
+//! USAGE:
+//!     check-container-cpu [OPTIONS]
 //!
-//!     -w, --warn=<percent>  Percent to warn at           [default: 80]
-//!     -c, --crit=<percent>  Percent to critical at       [default: 80]
+//! FLAGS:
+//!     -h, --help       Prints help information
+//!     -V, --version    Prints version information
 //!
-//!     -s, --sample=<secs>   Seconds to take sample over  [default: 5]
-//!
-//!     --show-hogs=<count>   Show <count> most cpu-intensive processes in this
-//!                           container.                   [default: 0]
-//!
-//!     --shares-per-cpu=<shares>
-//!                           The number of CPU shares given to a cgroup when
-//!                           it has exactly one CPU allocated to it.
+//! OPTIONS:
+//!         --show-hogs <count>                  Show <count> most cpu-intensive processes in this container. [default: 0]
+//!     -c, --crit <crit>                        Percent to go critical at [default: 80]
+//!     -s, --sample <seconds>                   Seconds to take sample over [default: 5]
+//!         --shares-per-cpu <shares_per_cpu>    The number of CPU shares given to a cgroup when it has exactly one CPU
+//!                                              allocated to it.
+//!     -w, --warn <warn>                        Percent to warn at [default: 80]
 //!
 //! About usage percentages:
 //!
@@ -165,12 +164,12 @@
 //!     going critical at 90%, you should specify something like '--crit 360'
 //!
 //!     However, if you are using a container orchestrator such as Mesos, you often
-//!     tell it that you want this container to have "2 CPUs" worth of hardware.
+//!     tell it that you want this container to have '2 CPUs' worth of hardware.
 //!     Your scheduler is responsible for deciding how many cgroup cpu shares 1
 //!     CPU's worth of time is, and keeping track of how many shares it has doled
 //!     out, and then schedule your containers to run with 2 CPUs worth of CPU
 //!     shares. Assuming that your scheduler uses the default number of shares
-//!     (1024) as "one cpu", this will mean that you have given that cgroup 2048
+//!     (1024) as 'one cpu', this will mean that you have given that cgroup 2048
 //!     shares.
 //!
 //!     If you do specify --shares-per-cpu then the percentage that you give will
@@ -194,142 +193,209 @@
 //!         * args: --shares-per-cpu 1024 --crit 90
 //!           shares granted: 102
 //!           percent of one CPU to alert at: 9
+//!
 //! ```
 //!
-//! check-load
-//! ==========
+//! # check-load
 //!
 //! Linux-only.
 //!
 //! ```plain
-//! $ check-load -h
-//! Usage: check-load [options]
-//!        check-load -h | --help
-//!
+//! $ check-load --help
+//! check-load (part of tabin-plugins) 0.3.0
+//! Brandon W Maister <quodlibetor@gmail.com>
 //! Check the load average of the system
 //!
-//! Load average is the number of processes *waiting* to do work in a queue, either
-//! due to IO or CPU constraints. The numbers used to check are the load averaged
-//! over 1, 5 and 15 minutes, respectively
+//! Load average is the number of processes *waiting* to do work in a queue, either due to IO or CPU constraints. The
+//! numbers used to check are the load averaged over 1, 5 and 15 minutes, respectively
 //!
-//! Options:
-//!     -h, --help              Show this message and exit
-//!     -v, --verbose           Print even when things are okay
+//! USAGE:
+//!     check-load [FLAGS] [OPTIONS]
 //!
-//! Threshold Behavior:
-//!     -w, --warn=<averages>   Averages to warn at         [default: 5,3.5,2.5]
-//!     -c, --crit=<averages>   Averages to go critical at  [default: 10,5,3]
+//! FLAGS:
+//!     -h, --help       Prints help information
+//!         --per-cpu    Divide the load average by the number of processors on the system.
+//!     -V, --version    Prints version information
+//!     -v, --verbose    print info even if everything is okay
 //!
-//!     --per-cpu               Divide the load average by the number of processors on the
-//!                             system.
+//! OPTIONS:
+//!     -c, --crit <crit>    Averages to go critical at [default: 10,5,3]
+//!     -w, --warn <warn>    Averages to warn at [default: 5,3.5,2.5]
+//!
 //! ```
 //!
-//! check-ram
-//! =========
+//! # check-ram
 //!
 //! Linux-only.
 //!
 //! ```plain
-//! $ check-ram -h
-//! Usage: check-ram [options]
-//!        check-ram -h | --help
+//! $ check-ram --help
+//! check-ram (part of tabin-plugins) 0.3.0
+//! Brandon W Maister <quodlibetor@gmail.com>
+//! Check the ram usage of the current computer
 //!
-//! Options:
-//!     -h, --help             Show this help message
+//! USAGE:
+//!     check-ram [OPTIONS]
 //!
-//!     -w, --warn=<percent>   Percent used to warn at      [default: 80]
-//!     -c, --crit=<percent>   Percent used to critical at  [default: 95]
+//! FLAGS:
+//!     -h, --help       Prints help information
+//!     -V, --version    Prints version information
 //!
-//!     --show-hogs=<count>    Show most RAM-hungry procs   [default: 0]
-//!     -v, --verbose          Always show the hogs
+//! OPTIONS:
+//!         --show-hogs <count>    Show <count> most ram-intensive processes in this computer. [default: 0]
+//!     -c, --crit <crit>          Percent to go critical at [default: 95]
+//!     -w, --warn <warn>          Percent to warn at [default: 85]
+//!
 //! ```
 //!
-//! check-container-ram
-//! ===================
+//! # check-container-ram
 //!
-//! Linux-only. Can only be run from inside a container.
+//! Linux-only. Can only be run from inside a cgroup.
 //!
 //! ```plain
-//! $ check-container-ram -h
-//! Usage:
-//!     check-container-ram [--show-hogs=<count>] [--invalid-limit=<status>] [options]
-//!     check-container-ram (-h | --help)
+//! $ check-container-ram --help
+//! check-container-ram (part of tabin-plugins) 0.3.0
+//! Brandon W Maister <quodlibetor@gmail.com>
+//! Check the RAM usage of the currently-running container.
 //!
-//! Check the RAM usage of the currently-running container. This must be run from
-//! inside the container to be checked.
+//! This must be run from inside the container to be checked.
 //!
-//! This checks as a ratio of the limit specified in the cgroup memory limit, and
-//! if there is no limit set (or the limit is greater than the total memory
-//! available on the system) this checks against the total system memory.
+//! This checks as a ratio of the limit specified in the cgroup memory limit, and if there is no limit set (or the limit is
+//! greater than the total memory available on the system) this checks against the total system memory.
 //!
-//! Options:
-//!     -h, --help                 Show this message and exit
+//! USAGE:
+//!     check-container-ram [OPTIONS]
 //!
-//!     -w, --warn=<percent>       Warn at this percent used           [default: 85]
-//!     -c, --crit=<percent>       Critical at this percent used       [default: 95]
+//! FLAGS:
+//!     -h, --help       Prints help information
+//!     -V, --version    Prints version information
 //!
-//!     --invalid-limit=<status>   Status to consider this check if the CGroup limit
-//!                                is greater than the system ram      [default: ok]
+//! OPTIONS:
+//!         --show-hogs <count>                Show <count> most ram-intensive processes in this container. [default: 0]
+//!     -c, --crit <crit>                      Percent to go critical at [default: 95]
+//!         --invalid-limit <invalid_limit>    Status to consider this check if the CGroup limit is greater than the system
+//!                                            ram [default: ok]
+//!     -w, --warn <warn>                      Percent to warn at [default: 85]
 //!
-//!     --show-hogs=<count>        Show the most ram-hungry procs      [default: 0]
 //! ```
 //!
-//! check-disk
-//! ==========
+//! # check-procs
 //!
-//! Linux-only.
+//! Linux-only. Reads running processes
 //!
 //! ```plain
-//! $ check-disk -h
-//! Usage:
-//!      check-disk [options] [thresholds] [filters]
-//!      check-disk -h | --help
+//! $ check-procs --help
+//! check-procs (part of tabin-plugins) 0.3.0
+//! Brandon W Maister <quodlibetor@gmail.com>
+//! Check that an expected number of processes are running.
 //!
+//! Optionally, kill unwanted processes.
+//!
+//! USAGE:
+//!     check-procs [FLAGS] [OPTIONS] [--] [pattern]
+//!
+//! FLAGS:
+//!         --allow-unparseable-procs    In combination with --crit-over M this will not alert if any processes cannot be
+//!                                      parsed
+//!     -h, --help                       Prints help information
+//!     -V, --version                    Prints version information
+//!
+//! OPTIONS:
+//!         --crit-over <M>                               Error if there are more than <M> procs matching <pattern>
+//!         --crit-under <N>                              Error if there are fewer than <N> procs matching <pattern>
+//!         --kill-parents-of-matching <PARENT_SIGNAL>
+//!             If *any* processes match, then kill their parents with the provided signal which can be either an integer or
+//!             a name like KILL or SIGTERM. This has the same exit status behavior as kill-matching.
+//!         --kill-matching <SIGNAL>
+//!             If *any* processes match, then kill them with the provided signal which can be either an integer or a name
+//!             like KILL or SIGTERM. This option does not affect the exit status, all matches are always killed, and if
+//!             --crit-under/over are violated then then this will still exit critical.
+//!         --state <states>...
+//!             Filter to only processes in these states. If passed multiple times, processes matching any state are
+//!             included.
+//!             Choices: running sleeping uninterruptible-sleep waiting stopped zombie
+//!
+//! ARGS:
+//!     <pattern>    Regex that command and its arguments must match
+//!
+//! Examples:
+//!
+//!     Ensure at least two nginx processes are running:
+//!
+//!         check-procs --crit-under 2 nginx
+//!
+//!     Ensure there are not more than 30 zombie proccesses on the system:
+//!
+//!         check-procs --crit-over 30 --state zombie
+//!
+//!     Ensure that there are not more than 5 java processes running MyMainClass
+//!     that are in the zombie *or* waiting states:
+//!
+//!         check-procs --crit-over 5 --state zombie --state waiting 'java.*MyMainClass'
+//!
+//!     Ensure that there are at least three (running or waiting) (cassandra or
+//!     postgres) processes:
+//!
+//!         check-procs --crit-under 3 --state running --state waiting 'cassandra|postgres'
+//!
+//! ```
+//!
+//! # check-fs-writeable
+//!
+//! 
+//!
+//! ```plain
+//! $ check-fs-writeable --help
+//! check-fs-writeable (part of tabin-plugins) 0.3.0
+//! Brandon W Maister <quodlibetor@gmail.com>
+//! Check that we can write to a filesystem by writing a byte to a file.
+//!
+//! Does not try to create the directory, or do anything else. Just writes a single byte to a file, errors if it cannot, and
+//! then deletes the file.
+//!
+//! USAGE:
+//!     check-fs-writeable <filename>
+//!
+//! FLAGS:
+//!     -h, --help       Prints help information
+//!     -V, --version    Prints version information
+//!
+//! ARGS:
+//!     <filename>    The file to write to
+//!
+//! ```
+//!
+//! # check-disk
+//!
+//! Unix only.
+//!
+//! ```plain
+//! $ check-disk --help
+//! check-disk (part of tabin-plugins) 0.3.0
+//! Brandon W Maister <quodlibetor@gmail.com>
 //! Check all mounted file systems for disk usage.
 //!
-//! For some reason this check generally generates values that are between 1% and
-//! 3% higher than `df`, even though AFAICT we're both just calling statvfs a bunch
-//! of times.
+//! For some reason this check generally generates values that are between 1% and 3% higher than `df`, even though AFAICT
+//! we're both just calling statvfs a bunch of times.
 //!
-//! Options:
-//!     -h, --help            Show this message and exit
-//!     --info                Print information of all known filesystems.
-//!                           Similar to df.
+//! USAGE:
+//!     check-disk [FLAGS] [OPTIONS]
 //!
-//! Thresholds:
-//!     -w, --warn=<percent>  Percent usage to warn at. [default: 80]
-//!     -c, --crit=<percent>  Percent usage to go critical at. [default: 90]
-//!     -W, --warn-inodes=<percent>
-//!                           Percent of inode usage to warn at. [default: 80]
-//!     -C, --crit-inodes=<percent>
-//!                           Percent of inode usage to go critical at. [default: 90]
+//! FLAGS:
+//!     -h, --help       Prints help information
+//!         --info       Print information of all known filesystems. Similar to df.
+//!     -V, --version    Prints version information
 //!
-//! Filters:
-//!     --pattern=<regex>     Only check filesystems that match this regex.
-//!     --exclude-pattern=<regex>  Do not check filesystems that match this regex.
-//!     --type=<fs>           Only check filesystems that are of this type, e.g.
-//!                           ext4 or tmpfs. See 'man 8 mount' for more examples.
-//!     --exclude-type=<fs>   Do not check filesystems that are of this type.
+//! OPTIONS:
+//!     -c, --crit <crit>                        Percent to go critical at [default: 90]
+//!     -C, --crit-inodes <crit_inodes>          Percent of inode usage to go critical at [default: 90]
+//!         --exclude-type <exclude-fs-type>     Do not check filesystems that are of this type.
+//!         --exclude-pattern <exclude-regex>    Only check filesystems that match this regex
+//!         --type <fs-type>                     Only check filesystems that are of this type, e.g. ext4 or tmpfs. See 'man
+//!                                              8 mount' for more examples.
+//!         --pattern <regex>                    Only check filesystems that match this regex
+//!     -w, --warn <warn>                        Percent to warn at [default: 80]
+//!     -W, --warn-inodes <warn_inodes>          Percent of inode usage to warn at [default: 80]
+//!
 //! ```
-//!
-//! check-fs-writeable
-//! ==================
-//!
-//! ```plain
-//! $ check-fs-writeable -h
-//! Usage:
-//!     check-fs-writeable <filename>
-//!     check-fs-writeable -h | --help
-//!
-//! Check that we can write to a filesystem by writing a byte to a file. Does not
-//! try to create the directory, or do anything else. Just writes a single byte to
-//! a file.
-//!
-//! Arguments:
-//!
-//!     <filename>            The file to write to
-//!
-//! Options:
-//!     -h, --help            Show this message and exit
-//! ```
-//!
+
