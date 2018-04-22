@@ -38,17 +38,18 @@ use tabin_plugins::Status;
         check-procs --crit-over 30 --state zombie
 
     Ensure that there are not more than 5 java processes running MyMainClass
-    that are in the zombie *or* waiting states:
+    that are in the zombie *or* waiting states. Note that since there can be
+    multiple states the regex must come before the `state` flag:
 
-        check-procs --crit-over 5 --state zombie --state waiting 'java.*MyMainClass'
+        check-procs 'java.*MyMainClass' --crit-over 5 --state zombie waiting
 
     Ensure that there are at least three (running or waiting) (cassandra or
     postgres) processes:
 
-        check-procs --crit-under 3 --state running --state waiting 'cassandra|postgres'")]
+        check-procs --crit-under 3 --state=running --state=waiting 'cassandra|postgres'")]
 struct Args {
     #[structopt(help = "Regex that command and its arguments must match")]
-    pattern: Option<String>,
+    pattern: Option<Regex>,
     #[structopt(long = "crit-under", name = "N",
                 help = "Error if there are fewer than <N> procs matching <pattern>")]
     crit_under: Option<usize>,
@@ -115,15 +116,9 @@ impl FromStr for Signal {
     }
 }
 
-fn parse_args() -> (Option<Regex>, Args) {
+fn parse_args() -> Args {
     let args = Args::from_args();
-    let mut re = None;
-    if let &Some(ref pattern) = &args.pattern {
-        re = Some(Regex::new(&pattern).unwrap_or_else(|e| {
-            println!("ERROR: invalid process pattern: {}", e);
-            Status::Critical.exit();
-        }));
-    } else if args.states.is_empty() {
+    if args.pattern.is_none() && args.states.is_empty() {
         println!("At least one of a pattern or some states are required for this to do anything");
         Status::Critical.exit();
     }
@@ -131,19 +126,20 @@ fn parse_args() -> (Option<Regex>, Args) {
         println!("At least one of --crit-under or --crit-over must be provided");
         Status::Critical.exit();
     }
-    (re, args)
+    args
 }
 
 fn main() {
-    let (re, args) = parse_args();
+    let args = parse_args();
     let should_die = if let Some(_) = args.crit_over {
         !args.allow_unparseable_procs
     } else {
         false
     };
     let procs = load_procs(should_die);
+    let re = args.pattern.as_ref().map(|r| r.to_string());
 
-    let matches = filter_procs(re, &args.states, &procs.0);
+    let matches = filter_procs(args.pattern, &args.states, &procs.0);
 
     let mut status = Status::Ok;
     if let Some(crit_over) = args.crit_over {
@@ -152,7 +148,7 @@ fn main() {
             println!(
                 "CRITICAL: there are {} process that match {:?} (greater than {})",
                 matches.len(),
-                args.pattern,
+                re,
                 crit_over
             );
         }
@@ -163,7 +159,7 @@ fn main() {
             println!(
                 "CRITICAL: there are {} process that match {:?} (less than {})",
                 matches.len(),
-                args.pattern,
+                re,
                 crit_under
             );
         }
@@ -315,6 +311,23 @@ mod unit {
             Args::from_iter(["c-p", "some.*proc", "--state=zombie", "--state", "S"].into_iter());
         assert_eq!(args.states, [State::Zombie, State::Sleeping]);
     }
+
+    #[test]
+    fn validate_parse_zombies_and_pattern() {
+        let args = Args::from_iter(["c-p", "--state", "zombie", "--", "some.*proc"].into_iter());
+        assert_eq!(args.states, [State::Zombie]);
+        let args = Args::from_iter(["c-p", "--state=zombie", "some.*proc"].into_iter());
+        assert_eq!(args.states, [State::Zombie]);
+        let args = Args::from_iter(["c-p", "so.*proc", "--state", "zombie", "waiting"].into_iter());
+        assert_eq!(args.states, [State::Zombie, State::Waiting]);
+    }
+
+    // Waiting for structopt 0.2.8 to be released with the from_iter_safe method
+    // #[test]
+    // #[should_panic]
+    // fn regexes_must_be_valid() {
+    //     Args::from_iter_safe(["c-p", "--crit-over=5", "["].into_iter()).unwrap();
+    // }
 
     #[test]
     fn filter_procs_handles_patterns() {
