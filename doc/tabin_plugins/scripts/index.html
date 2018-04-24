@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/tabin_plugins/scripts.rs.html#1-400' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/tabin_plugins/scripts.rs.html#1-403' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Documentation about the various scripts contained herein</p>
 <ul>
 <li><a href="#check-graphite">check-graphite</a></li>
@@ -364,14 +364,15 @@ Examples:
         check-procs --crit-over 30 --state zombie
 
     Ensure that there are not more than 5 java processes running MyMainClass
-    that are in the zombie *or* waiting states:
+    that are in the zombie *or* waiting states. Note that since there can be
+    multiple states the regex must come before the `state` flag:
 
-        check-procs --crit-over 5 --state zombie --state waiting 'java.*MyMainClass'
+        check-procs 'java.*MyMainClass' --crit-over 5 --state zombie waiting
 
     Ensure that there are at least three (running or waiting) (cassandra or
     postgres) processes:
 
-        check-procs --crit-under 3 --state running --state waiting 'cassandra|postgres'
+        check-procs --crit-under 3 --state=running --state=waiting 'cassandra|postgres'
 
 </code></pre>
 <h1 id="check-fs-writeable" class="section-header"><a href="#check-fs-writeable">check-fs-writeable</a></h1>
@@ -413,6 +414,8 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
+        --inaccessible-status &lt;STATUS&gt;       If any filesystems are inaccessible print a warning and exit with STATUS.
+                                             Choices: [critical, warning, ok]
     -c, --crit &lt;crit&gt;                        Percent to go critical at [default: 90]
     -C, --crit-inodes &lt;crit_inodes&gt;          Percent of inode usage to go critical at [default: 90]
         --exclude-type &lt;exclude-fs-type&gt;     Do not check filesystems that are of this type.
