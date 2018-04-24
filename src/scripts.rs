@@ -329,20 +329,21 @@
 //!         check-procs --crit-over 30 --state zombie
 //!
 //!     Ensure that there are not more than 5 java processes running MyMainClass
-//!     that are in the zombie *or* waiting states:
+//!     that are in the zombie *or* waiting states. Note that since there can be
+//!     multiple states the regex must come before the `state` flag:
 //!
-//!         check-procs --crit-over 5 --state zombie --state waiting 'java.*MyMainClass'
+//!         check-procs 'java.*MyMainClass' --crit-over 5 --state zombie waiting
 //!
 //!     Ensure that there are at least three (running or waiting) (cassandra or
 //!     postgres) processes:
 //!
-//!         check-procs --crit-under 3 --state running --state waiting 'cassandra|postgres'
+//!         check-procs --crit-under 3 --state=running --state=waiting 'cassandra|postgres'
 //!
 //! ```
 //!
 //! # check-fs-writeable
 //!
-//! 
+//!
 //!
 //! ```plain
 //! $ check-fs-writeable --help
@@ -387,6 +388,8 @@
 //!     -V, --version    Prints version information
 //!
 //! OPTIONS:
+//!         --inaccessible-status <STATUS>       If any filesystems are inaccessible print a warning and exit with STATUS.
+//!                                              Choices: [critical, warning, ok]
 //!     -c, --crit <crit>                        Percent to go critical at [default: 90]
 //!     -C, --crit-inodes <crit_inodes>          Percent of inode usage to go critical at [default: 90]
 //!         --exclude-type <exclude-fs-type>     Do not check filesystems that are of this type.
@@ -398,4 +401,3 @@
 //!     -W, --warn-inodes <warn_inodes>          Percent of inode usage to warn at [default: 80]
 //!
 //! ```
-

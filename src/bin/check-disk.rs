@@ -1,5 +1,10 @@
 //! Check Disk usage
 
+#[macro_use]
+extern crate derive_more;
+extern crate env_logger;
+#[macro_use]
+extern crate log;
 extern crate nix;
 extern crate regex;
 #[macro_use]
@@ -11,6 +16,7 @@ extern crate tabin_plugins;
 
 use std::collections::HashSet;
 use std::cmp::max;
+use std::fmt;
 
 use structopt::StructOpt;
 use regex::Regex;
@@ -57,18 +63,49 @@ struct Args {
                 help = "Print information of all known filesystems. \
                         Similar to df.")]
     info: bool,
+    // df defaults to ignoring innaccessible filesystems, so we should too
+    #[structopt(long = "inaccessible-status", name = "STATUS",
+                help = "If any filesystems are inaccessible print a warning and exit with STATUS. \
+                        Choices: [critical, warning, ok]")]
+    inaccessible_status: Option<Status>,
 }
+
+const LOG_VAR: &str = "TABIN_LOG";
 
 fn main() {
     let args = Args::from_args();
+    env_logger::Builder::from_env(LOG_VAR).init();
 
-    let mut mounts = Mount::load_all().unwrap();
+    let mut mounts = match Mount::load_all() {
+        Ok(mounts) => mounts,
+        Err(e) => {
+            println!("CRITICAL error loading mounts: {}", e);
+            Status::Critical.exit();
+        }
+    };
     mounts.sort_by(|l, r| l.file.len().cmp(&r.file.len()));
 
     let status = match filter(mounts, &args) {
         Ok(ms) => do_check(&ms, &args),
+        Err(Error::NotAccessible {
+            accessible,
+            not_accessible,
+        }) => {
+            let check_result = do_check(&accessible, &args);
+            if args.inaccessible_status.is_some() {
+                let status = args.inaccessible_status.unwrap();
+                println!(
+                    "{}: {} filesystems were not accessible, \
+                     run with TABIN_LOG=debug for details",
+                    status, not_accessible
+                );
+                max(check_result, status)
+            } else {
+                check_result
+            }
+        }
         Err(e) => {
-            println!("{}", e.msg);
+            println!("{}", e);
             Status::Critical
         }
     };
@@ -81,7 +118,27 @@ struct ErrorMsg {
     msg: String,
 }
 
-type DiskResult<T> = Result<T, ErrorMsg>;
+#[derive(Debug, From)]
+enum Error {
+    Message(ErrorMsg),
+    NotAccessible {
+        accessible: Vec<MountStat>,
+        not_accessible: u32,
+    },
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        match *self {
+            Error::Message(ref e) => write!(f, "{}", e.msg),
+            Error::NotAccessible {
+                ref not_accessible, ..
+            } => write!(f, "{} directories were not accesible", not_accessible),
+        }
+    }
+}
+
+type DiskResult<T> = Result<T, Error>;
 
 #[derive(Debug)]
 struct MountStat {
@@ -100,7 +157,7 @@ fn maybe_regex(pattern: &Option<String>) -> DiskResult<Option<Regex>> {
             Err(e) => {
                 return Err(ErrorMsg {
                     msg: format!("Unable to filter disks like {:?}: {}", pattern, e),
-                })
+                }.into())
             }
         };
         Ok(Some(re))
@@ -122,6 +179,7 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
     let mut devices = HashSet::new();
     let include_regex = try!(maybe_regex(&args.pattern));
     let exclude_regex = try!(maybe_regex(&args.exclude_pattern));
+    let mut error_count = 0;
     let ms = mounts.into_iter()
         .filter(|mount|
                 if let Some(ref re) = include_regex {
@@ -136,7 +194,14 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
                     true
                 })
         .filter_map(|mount| {
-            let stat = vfs::Statvfs::for_path(mount.file.as_bytes()).unwrap();
+            let stat = match vfs::Statvfs::for_path(mount.file.as_bytes()) {
+                Ok(stat) => stat,
+                Err(e) => {
+                    error_count += 1;
+                    debug!("Error reading statvfs for path {}: {}", mount.file, e);
+                    return None;
+                }
+            };
             if stat.f_blocks > 0 && !mount.file.starts_with("/proc") {
                 Some(MountStat {
                     mount: mount,
@@ -174,7 +239,14 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
                     true
                 })
         .collect::<Vec<_>>();
-    Ok(ms)
+    if error_count == 0 {
+        Ok(ms)
+    } else {
+        Err(Error::NotAccessible {
+            accessible: ms,
+            not_accessible: error_count,
+        })
+    }
 }
 
 fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
@@ -270,11 +342,11 @@ mod unit {
         if let Err(emsg) = maybe_regex(&Some("[hello".to_owned())) {
             let expected = r#"Unable to filter disks like "[hello":"#;
             assert!(
-                emsg.msg.contains(expected),
+                emsg.to_string().contains(expected),
                 "\nExpected something containing: {}\n\
                  But instead received         : {}",
                 expected,
-                emsg.msg
+                emsg.to_string()
             );
         } else {
             panic!("Should have gotten an error");
