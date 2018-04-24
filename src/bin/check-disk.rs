@@ -182,17 +182,11 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
     let mut error_count = 0;
     let ms = mounts.into_iter()
         .filter(|mount|
-                if let Some(ref re) = include_regex {
-                    re.is_match(&mount.file)
-                } else {
-                    true
-                })
+                include_regex.as_ref().map(|re| re.is_match(&mount.file)).unwrap_or(true)
+        )
         .filter(|mount|
-                if let Some(ref re) = exclude_regex {
-                    !re.is_match(&mount.file)
-                } else {
-                    true
-                })
+                exclude_regex.as_ref().map(|re| !re.is_match(&mount.file)).unwrap_or(true)
+        )
         .filter_map(|mount| {
             let stat = match vfs::Statvfs::for_path(mount.file.as_bytes()) {
                 Ok(stat) => stat,
@@ -227,17 +221,11 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
             }
         })
         .filter(|ms|
-                if let Some(ref vfstype) = args.fs_type {
-                    ms.mount.vfstype == *vfstype
-                } else {
-                    true
-                })
+                args.fs_type.as_ref().map(|vfstype| ms.mount.vfstype == *vfstype).unwrap_or(true)
+        )
         .filter(|ms|
-                if let Some(ref vfstype) = args.exclude_type {
-                    ms.mount.vfstype != *vfstype
-                } else {
-                    true
-                })
+                args.exclude_type.as_ref().map(|vfstype| ms.mount.vfstype != *vfstype).unwrap_or(true)
+        )
         .collect::<Vec<_>>();
     if error_count == 0 {
         Ok(ms)
