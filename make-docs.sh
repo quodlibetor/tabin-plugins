@@ -8,3 +8,4 @@ cd make-docs
 cargo build
 cd ..
 ./make-docs/target/debug/make-docs > src/scripts.rs
+cargo +stable fmt
