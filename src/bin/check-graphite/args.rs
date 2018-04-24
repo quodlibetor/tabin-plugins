@@ -200,7 +200,7 @@ mod test {
         )
     }
 
-        #[test]
+    #[test]
     fn args_parse_all_values() {
         let args = Args::parse_from(&[
             "check-graphite-test",
