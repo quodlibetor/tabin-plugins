@@ -123,6 +123,18 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
     let include_regex = try!(maybe_regex(&args.pattern));
     let exclude_regex = try!(maybe_regex(&args.exclude_pattern));
     let ms = mounts.into_iter()
+        .filter(|mount|
+                if let Some(ref re) = include_regex {
+                    re.is_match(&mount.file)
+                } else {
+                    true
+                })
+        .filter(|mount|
+                if let Some(ref re) = exclude_regex {
+                    !re.is_match(&mount.file)
+                } else {
+                    true
+                })
         .filter_map(|mount| {
             let stat = vfs::Statvfs::for_path(mount.file.as_bytes()).unwrap();
             if stat.f_blocks > 0 && !mount.file.starts_with("/proc") {
@@ -149,18 +161,6 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
                 Some(ms)
             }
         })
-        .filter(|ms|
-                if let Some(ref re) = include_regex {
-                    re.is_match(&ms.mount.file)
-                } else {
-                    true
-                })
-        .filter(|ms|
-                if let Some(ref re) = exclude_regex {
-                    !re.is_match(&ms.mount.file)
-                } else {
-                    true
-                })
         .filter(|ms|
                 if let Some(ref vfstype) = args.fs_type {
                     ms.mount.vfstype == *vfstype
