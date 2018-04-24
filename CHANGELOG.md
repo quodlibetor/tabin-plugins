@@ -1,5 +1,12 @@
 # Tābin Plugins Change Log
 
+# 0.3.1
+
+## CLI Changes
+
+* `check-disk` now behaves more like `df` and doesn't error out for lack of
+  permissions. ([#15](https://github.com/quodlibetor/tabin-plugins/pull/15))
+
 # 0.3.0
 
 ## CLI Changes
