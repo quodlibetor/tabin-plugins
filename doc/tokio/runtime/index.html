@@ -33,7 +33,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Module runtime</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>tokio</a></p><script>window.sidebarCurrent = {name: 'runtime', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
+        <p class='location'>Module runtime</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>tokio</a></p><script>window.sidebarCurrent = {name: 'runtime', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/tokio/runtime/mod.rs.html#1-470' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/tokio/runtime/mod.rs.html#1-471' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>A batteries included runtime for applications using Tokio.</p>
 <p>Applications using Tokio require some runtime support in order to work:</p>
 <ul>
@@ -130,7 +130,16 @@ executed on the same thread pool used by the <a href="struct.Runtime.html"><code
 <span class="comment">// Wait until the runtime becomes idle and shut it down.</span>
 <span class="ident">rt</span>.<span class="ident">shutdown_on_idle</span>()
     .<span class="ident">wait</span>().<span class="ident">unwrap</span>();</pre>
-</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="current_thread/index.html"
+                                  title='mod tokio::runtime::current_thread'>current_thread</a></td>
+                           <td class='docblock-short'>
+                                <p>A runtime implementation that runs everything on the current thread.</p>
+
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.Builder.html"

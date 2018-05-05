@@ -59,18 +59,28 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/tokio/lib.rs.html#96-158' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/tokio/lib.rs.html#99-193' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Asynchronous I/O.</p>
 <p>This module is the asynchronous version of <code>std::io</code>. Primarily, it
 defines two traits, <a href="trait.AsyncRead.html"><code>AsyncRead</code></a> and <a href="trait.AsyncWrite.html"><code>AsyncWrite</code></a>, which extend the
 <code>Read</code> and <code>Write</code> traits of the standard library.</p>
+<h1 id="asyncread-and-asyncwrite" class="section-header"><a href="#asyncread-and-asyncwrite">AsyncRead and AsyncWrite</a></h1>
 <p><a href="trait.AsyncRead.html"><code>AsyncRead</code></a> and <a href="trait.AsyncWrite.html"><code>AsyncWrite</code></a> must only be implemented for
 non-blocking I/O types that integrate with the futures type system. In
 other words, these types must never block the thread, and instead the
 current task is notified when the I/O resource is ready.</p>
+<h1 id="standard-input-and-output" class="section-header"><a href="#standard-input-and-output">Standard input and output</a></h1>
+<p>Tokio provides asynchronous APIs to standard <a href="fn.stdin.html">input</a>, <a href="fn.stdout.html">output</a>, and <a href="fn.stderr.html">error</a>.
+These APIs are very similar to the ones provided by <code>std</code>, but they also
+implement <a href="trait.AsyncRead.html"><code>AsyncRead</code></a> and <a href="trait.AsyncWrite.html"><code>AsyncWrite</code></a>.</p>
+<p>Unlike <em>most</em> other Tokio APIs, the standard input / output APIs
+<strong>must</strong> be used from the context of the Tokio runtime as they require
+Tokio specific features to function.</p>
+<h1 id="utility-functions" class="section-header"><a href="#utility-functions">Utility functions</a></h1>
 <p>Utilities functions are provided for working with <a href="trait.AsyncRead.html"><code>AsyncRead</code></a> /
 <a href="trait.AsyncWrite.html"><code>AsyncWrite</code></a> types. For example, <a href="fn.copy.html"><code>copy</code></a> asynchronously copies all
 data from a source to a destination.</p>
+<h1 id="std-re-exports" class="section-header"><a href="#std-re-exports"><code>std</code> re-exports</a></h1>
 <p>Additionally, <a href="trait.Read.html"><code>Read</code></a>, <a href="trait.Write.html"><code>Write</code></a>, <a href="struct.Error.html"><code>Error</code></a>, <a href="enum.ErrorKind.html"><code>ErrorKind</code></a>, and
 <a href="type.Result.html"><code>Result</code></a> are re-exported from <code>std::io</code> for ease of use.</p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
@@ -119,6 +129,14 @@ a buffer.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ReadHalf.html"
+                                  title='struct tokio::io::ReadHalf'>ReadHalf</a></td>
+                           <td class='docblock-short'>
+                                <p>The readable half of an object returned from <code>AsyncRead::split</code>.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="struct" href="struct.ReadToEnd.html"
                                   title='struct tokio::io::ReadToEnd'>ReadToEnd</a></td>
                            <td class='docblock-short'>
@@ -145,10 +163,42 @@ vector until the delimiter is reached.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Stderr.html"
+                                  title='struct tokio::io::Stderr'>Stderr</a></td>
+                           <td class='docblock-short'>
+                                <p>A handle to the standard error stream of a process.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Stdin.html"
+                                  title='struct tokio::io::Stdin'>Stdin</a></td>
+                           <td class='docblock-short'>
+                                <p>A handle to the standard input stream of a process.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Stdout.html"
+                                  title='struct tokio::io::Stdout'>Stdout</a></td>
+                           <td class='docblock-short'>
+                                <p>A handle to the standard output stream of a process.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="struct" href="struct.WriteAll.html"
                                   title='struct tokio::io::WriteAll'>WriteAll</a></td>
                            <td class='docblock-short'>
                                 <p>A future used to write the entire contents of some data to a stream.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.WriteHalf.html"
+                                  title='struct tokio::io::WriteHalf'>WriteHalf</a></td>
+                           <td class='docblock-short'>
+                                <p>The writable half of an object returned from <code>AsyncRead::split</code>.</p>
 
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
@@ -256,6 +306,30 @@ This method is the async equivalent to <a href="https://doc.rust-lang.org/std/io
                            <td class='docblock-short'>
                                 <p>Creates a future which will entirely shutdown an I/O object and then yield
 the object itself.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.stderr.html"
+                                  title='fn tokio::io::stderr'>stderr</a></td>
+                           <td class='docblock-short'>
+                                <p>Constructs a new handle to the standard error of the current process.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.stdin.html"
+                                  title='fn tokio::io::stdin'>stdin</a></td>
+                           <td class='docblock-short'>
+                                <p>Constructs a new handle to the standard input of the current process.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.stdout.html"
+                                  title='fn tokio::io::stdout'>stdout</a></td>
+                           <td class='docblock-short'>
+                                <p>Constructs a new handle to the standard output of the current process.</p>
 
                            </td>
                        </tr>

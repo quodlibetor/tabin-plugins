@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/tokio/lib.rs.html#1-199' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/tokio/lib.rs.html#1-234' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>A runtime for writing reliable, asynchronous, and slim applications.</p>
 <p>Tokio is an event-driven, non-blocking I/O platform for writing asynchronous
 applications with the Rust programming language. At a high level, it
@@ -69,6 +69,7 @@ provides a few major components:</p>
 <li>A [reactor][reactor] backed by the operating system's event queue (epoll, kqueue,
 IOCP, etc...).</li>
 <li>Asynchronous [TCP and UDP][net] sockets.</li>
+<li>Asynchronous [filesystem][fs] operations.</li>
 <li>[Timer][timer] API for scheduling work in the future.</li>
 </ul>
 <p>Tokio is built using <a href="http://docs.rs/futures">futures</a> as the abstraction for managing the
@@ -124,6 +125,14 @@ complexity of asynchronous programming.</p>
                                   title='mod tokio::executor'>executor</a></td>
                            <td class='docblock-short'>
                                 <p>Task execution utilities.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="fs/index.html"
+                                  title='mod tokio::fs'>fs</a></td>
+                           <td class='docblock-short'>
+                                <p>Asynchronous filesystem manipulation operations.</p>
 
                            </td>
                        </tr>
