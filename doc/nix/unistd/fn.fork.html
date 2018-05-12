@@ -10,10 +10,11 @@
     <title>nix::unistd::fork - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -33,7 +34,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'><a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a></p><script>window.sidebarCurrent = {name: 'fork', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <div class="sidebar-elems"><p class='location'><a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a></p><script>window.sidebarCurrent = {name: 'fork', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a>::<wbr><a class="fn" href=''>fork</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a>::<wbr><a class="fn" href=''>fork</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/nix/unistd.rs.html#207-215' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn fork() -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="enum" href="../../nix/unistd/enum.ForkResult.html" title="enum nix::unistd::ForkResult">ForkResult</a>&gt;</pre><div class='docblock'><p>Create a new child process duplicating the parent process (<a href="http://man7.org/linux/man-pages/man2/fork.2.html">see
+               </span><a class='srclink' href='../../src/nix/unistd.rs.html#207-215' title='goto source code'>[src]</a></span></h1><pre class='rust fn'>pub fn fork() -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="enum" href="../../nix/unistd/enum.ForkResult.html" title="enum nix::unistd::ForkResult">ForkResult</a>&gt;</pre><div class='docblock'><p>Create a new child process duplicating the parent process (<a href="http://man7.org/linux/man-pages/man2/fork.2.html">see
 fork(2)</a>).</p>
 <p>After calling the fork system call (successfully) two processes will
 be created that are identical with the exception of their pid and the
@@ -74,7 +73,7 @@ return value of this function.  As an example:</p>
        <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Continuing execution in parent process, new child has pid: {}&quot;</span>, <span class="ident">child</span>);
    }
    <span class="prelude-val">Ok</span>(<span class="ident">ForkResult</span>::<span class="ident">Child</span>) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;I&#39;m a new child process&quot;</span>),
-   <span class="prelude-val">Err</span>(_) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Fork failed&quot;</span>),
+   <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Fork failed&quot;</span>),
 }</pre>
 <p>This will print something like the following (order indeterministic).  The
 thing to note is that you end up with two processes continuing execution

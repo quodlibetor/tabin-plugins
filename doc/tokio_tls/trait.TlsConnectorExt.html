@@ -10,10 +10,11 @@
     <title>tokio_tls::TlsConnectorExt - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,16 +55,14 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>tokio_tls</a>::<wbr><a class="trait" href=''>TlsConnectorExt</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>tokio_tls</a>::<wbr><a class="trait" href=''>TlsConnectorExt</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/tokio_tls/lib.rs.html#67-109' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait TlsConnectorExt: Sealed {
+               </span><a class='srclink' href='../src/tokio_tls/lib.rs.html#67-109' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait TlsConnectorExt: Sealed {
     fn <a href='#tymethod.connect_async' class='fnname'>connect_async</a>&lt;S&gt;(&amp;self, domain: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>, stream: S) -&gt; <a class="struct" href="../tokio_tls/struct.ConnectAsync.html" title="struct tokio_tls::ConnectAsync">ConnectAsync</a>&lt;S&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a></span>;
 <div class='item-spacer'></div>    fn <a href='#tymethod.danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication' class='fnname'>danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication</a>&lt;S&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stream: S<br>&nbsp;&nbsp;&nbsp;&nbsp;) -&gt; <a class="struct" href="../tokio_tls/struct.ConnectAsync.html" title="struct tokio_tls::ConnectAsync">ConnectAsync</a>&lt;S&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a></span>;
-}</pre><div class='docblock'><p>Extension trait for the <code>TlsConnector</code> type in the <code>native_tls</code> crate.</p>
+}</pre></div><div class='docblock'><p>Extension trait for the <code>TlsConnector</code> type in the <code>native_tls</code> crate.</p>
 </div>
             <h2 id='required-methods' class='small-section-header'>
               Required Methods<a href='#required-methods' class='anchor'></a>
@@ -100,15 +99,12 @@ properly.</p>
                 <h2 id='foreign-impls' class='small-section-header'>
                   Implementations on Foreign Types<a href='#foreign-impls' class='anchor'></a>
                 </h2>
-            <h3 id='impl-TlsConnectorExt' class='impl'><span class='in-band'><code>impl <a class="trait" href="../tokio_tls/trait.TlsConnectorExt.html" title="trait tokio_tls::TlsConnectorExt">TlsConnectorExt</a> for <a class="struct" href="../native_tls/struct.TlsConnector.html" title="struct native_tls::TlsConnector">TlsConnector</a></code><a href='#impl-TlsConnectorExt' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_tls/lib.rs.html#182-203' title='goto source code'>[src]</a></span></h3>
-<span class='docblock autohide'><div class='impl-items'><h4 id='method.connect_async' class="method"><span id='connect_async.v-1' class='invisible'><code>fn <a href='#method.connect_async' class='fnname'>connect_async</a>&lt;S&gt;(&amp;self, domain: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>, stream: S) -&gt; <a class="struct" href="../tokio_tls/struct.ConnectAsync.html" title="struct tokio_tls::ConnectAsync">ConnectAsync</a>&lt;S&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a>,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_tls/lib.rs.html#183-191' title='goto source code'>[src]</a></span></h4>
-<h4 id='method.danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication' class="method"><span id='danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication.v-1' class='invisible'><code>fn <a href='#method.danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication' class='fnname'>danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication</a>&lt;S&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;stream: S<br>) -&gt; <a class="struct" href="../tokio_tls/struct.ConnectAsync.html" title="struct tokio_tls::ConnectAsync">ConnectAsync</a>&lt;S&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a>,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_tls/lib.rs.html#193-202' title='goto source code'>[src]</a></span></h4>
-</div></span>
+            <h3 id='impl-TlsConnectorExt' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl <a class="trait" href="../tokio_tls/trait.TlsConnectorExt.html" title="trait tokio_tls::TlsConnectorExt">TlsConnectorExt</a> for <a class="struct" href="../native_tls/struct.TlsConnector.html" title="struct native_tls::TlsConnector">TlsConnector</a></code><a href='#impl-TlsConnectorExt' class='anchor'></a></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_tls/lib.rs.html#182-203' title='goto source code'>[src]</a></span></td></tr></tbody></table></h3><span class='docblock autohide'><div class='impl-items'><h4 id='method.connect_async' class="method"><span id='connect_async.v-1' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.connect_async' class='fnname'>connect_async</a>&lt;S&gt;(&amp;self, domain: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>, stream: S) -&gt; <a class="struct" href="../tokio_tls/struct.ConnectAsync.html" title="struct tokio_tls::ConnectAsync">ConnectAsync</a>&lt;S&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a>,&nbsp;</span></code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_tls/lib.rs.html#183-191' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><h4 id='method.danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication' class="method"><span id='danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication.v-1' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication' class='fnname'>danger_connect_async_without_providing_domain_for_certificate_verification_and_server_name_indication</a>&lt;S&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;stream: S<br>) -&gt; <a class="struct" href="../tokio_tls/struct.ConnectAsync.html" title="struct tokio_tls::ConnectAsync">ConnectAsync</a>&lt;S&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a>,&nbsp;</span></code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/tokio_tls/lib.rs.html#193-202' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4></div></span>
         <h2 id='implementors' class='small-section-header'>
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    </ul><script type="text/javascript" async
+    </ul><script type="text/javascript">window.inlined_types=new Set([]);</script><script type="text/javascript" async
                          src="../implementors/tokio_tls/trait.TlsConnectorExt.js">
                  </script></section>
     <section id='search' class="content hidden"></section>

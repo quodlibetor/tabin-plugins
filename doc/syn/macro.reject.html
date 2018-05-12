@@ -10,10 +10,11 @@
     <title>syn::reject - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -33,7 +34,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'><a href='index.html'>syn</a></p><script>window.sidebarCurrent = {name: 'reject', ty: 'macro', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <div class="sidebar-elems"><p class='location'><a href='index.html'>syn</a></p><script>window.sidebarCurrent = {name: 'reject', ty: 'macro', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -54,17 +55,15 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Macro <a href='index.html'>syn</a>::<wbr><a class="macro" href=''>reject</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Macro <a href='index.html'>syn</a>::<wbr><a class="macro" href=''>reject</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/syn/parsers.rs.html#722-727' title='goto source code'>[src]</a></span></h1>
-<pre class="rust macro">
+               </span><a class='srclink' href='../src/syn/parsers.rs.html#722-727' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class="rust macro">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">reject</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>:<span class="ident">expr</span>,) <span class="op">=&gt;</span> { ... };
 }</pre>
-<div class='docblock'><p>Unconditionally fail to parse anything.</p>
+</div><div class='docblock'><p>Unconditionally fail to parse anything.</p>
 <p>This may be useful in rejecting some arms of a <code>switch!</code> parser.</p>
 <ul>
 <li><strong>Syntax:</strong> <code>reject!()</code></li>
@@ -80,7 +79,7 @@
 <span class="comment">// Parse any item, except for a module.</span>
 <span class="macro">named</span><span class="macro">!</span>(<span class="ident">almost_any_item</span> <span class="op">-&gt;</span> <span class="ident">Item</span>,
     <span class="macro">switch</span><span class="macro">!</span>(<span class="macro">syn</span><span class="macro">!</span>(<span class="ident">Item</span>),
-        <span class="ident">Item</span>::<span class="ident">Mod</span>(_) <span class="op">=&gt;</span> <span class="macro">reject</span><span class="macro">!</span>()
+        <span class="ident">Item</span>::<span class="ident">Mod</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">reject</span><span class="macro">!</span>()
         <span class="op">|</span>
         <span class="ident">ok</span> <span class="op">=&gt;</span> <span class="macro">value</span><span class="macro">!</span>(<span class="ident">ok</span>)
     )

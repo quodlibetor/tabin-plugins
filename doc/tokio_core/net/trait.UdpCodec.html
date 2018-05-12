@@ -10,10 +10,11 @@
     <title>tokio_core::net::UdpCodec - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -54,18 +55,16 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>tokio_core</a>::<wbr><a href='index.html'>net</a>::<wbr><a class="trait" href=''>UdpCodec</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>tokio_core</a>::<wbr><a href='index.html'>net</a>::<wbr><a class="trait" href=''>UdpCodec</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/tokio_core/net/udp/frame.rs.html#22-51' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait UdpCodec {
+               </span><a class='srclink' href='../../src/tokio_core/net/udp/frame.rs.html#22-51' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait UdpCodec {
     type <a href='#associatedtype.In' class="type">In</a>;
     type <a href='#associatedtype.Out' class="type">Out</a>;
     fn <a href='#tymethod.decode' class='fnname'>decode</a>(&amp;mut self, src: &amp;<a class="enum" href="https://doc.rust-lang.org/nightly/std/net/addr/enum.SocketAddr.html" title="enum std::net::addr::SocketAddr">SocketAddr</a>, buf: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;Self::<a class="type" href="../../tokio_core/net/trait.UdpCodec.html#associatedtype.In" title="type tokio_core::net::UdpCodec::In">In</a>&gt;;
 <div class='item-spacer'></div>    fn <a href='#tymethod.encode' class='fnname'>encode</a>(&amp;mut self, msg: Self::<a class="type" href="../../tokio_core/net/trait.UdpCodec.html#associatedtype.Out" title="type tokio_core::net::UdpCodec::Out">Out</a>, buf: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/std/net/addr/enum.SocketAddr.html" title="enum std::net::addr::SocketAddr">SocketAddr</a>;
-}</pre><div class='docblock'><p>Encoding of frames via buffers.</p>
+}</pre></div><div class='docblock'><p>Encoding of frames via buffers.</p>
 <p>This trait is used when constructing an instance of <code>UdpFramed</code> and provides
 the <code>In</code> and <code>Out</code> types which are decoded and encoded from the socket,
 respectively.</p>
@@ -107,7 +106,7 @@ should be directed, which will be returned as a <code>SocketAddr</code>.</p>
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    </ul><script type="text/javascript" async
+    </ul><script type="text/javascript">window.inlined_types=new Set([]);</script><script type="text/javascript" async
                          src="../../implementors/tokio_core/net/trait.UdpCodec.js">
                  </script></section>
     <section id='search' class="content hidden"></section>

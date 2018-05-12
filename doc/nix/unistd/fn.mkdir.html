@@ -10,10 +10,11 @@
     <title>nix::unistd::mkdir - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -33,7 +34,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'><a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a></p><script>window.sidebarCurrent = {name: 'mkdir', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <div class="sidebar-elems"><p class='location'><a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a></p><script>window.sidebarCurrent = {name: 'mkdir', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a>::<wbr><a class="fn" href=''>mkdir</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>nix</a>::<wbr><a href='index.html'>unistd</a>::<wbr><a class="fn" href=''>mkdir</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/nix/unistd.rs.html#432-438' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn mkdir&lt;P:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> + <a class="trait" href="../../nix/trait.NixPath.html" title="trait nix::NixPath">NixPath</a>&gt;(path: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>P, mode: <a class="struct" href="../../nix/sys/stat/struct.Mode.html" title="struct nix::sys::stat::Mode">Mode</a>) -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</pre><div class='docblock'><p>Creates new directory <code>path</code> with access rights <code>mode</code>.</p>
+               </span><a class='srclink' href='../../src/nix/unistd.rs.html#432-438' title='goto source code'>[src]</a></span></h1><pre class='rust fn'>pub fn mkdir&lt;P:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> + <a class="trait" href="../../nix/trait.NixPath.html" title="trait nix::NixPath">NixPath</a>&gt;(path: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>P, mode: <a class="struct" href="../../nix/sys/stat/struct.Mode.html" title="struct nix::sys::stat::Mode">Mode</a>) -&gt; <a class="type" href="../../nix/type.Result.html" title="type nix::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</pre><div class='docblock'><p>Creates new directory <code>path</code> with access rights <code>mode</code>.</p>
 <h1 id="errors" class="section-header"><a href="#errors">Errors</a></h1>
 <p>There are several situations where mkdir might fail:</p>
 <ul>
@@ -85,7 +84,7 @@
 
     <span class="comment">// create new directory and give read, write and execute rights to the owner</span>
     <span class="kw">match</span> <span class="ident">unistd</span>::<span class="ident">mkdir</span>(<span class="kw-2">&amp;</span><span class="ident">tmp_dir2</span>, <span class="ident">stat</span>::<span class="ident">S_IRWXU</span>) {
-       <span class="prelude-val">Ok</span>(_) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;created {:?}&quot;</span>, <span class="ident">tmp_dir2</span>),
+       <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;created {:?}&quot;</span>, <span class="ident">tmp_dir2</span>),
        <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Error creating directory: {}&quot;</span>, <span class="ident">err</span>),
     }
 }</pre>

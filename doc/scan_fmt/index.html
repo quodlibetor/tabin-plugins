@@ -10,10 +10,11 @@
     <title>scan_fmt - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>scan_fmt</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>scan_fmt</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/scan_fmt/lib.rs.html#4-164' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>This crate provides a simple sscanf()-like interface to extract
+               </span><a class='srclink' href='../src/scan_fmt/lib.rs.html#4-164' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>This crate provides a simple sscanf()-like interface to extract
 data from strings and stdin.</p>
 <p>To use this crate, do:</p>
 
@@ -107,7 +106,7 @@ data from strings and stdin.</p>
                            <span class="ident">u16</span>, <span class="ident">u8</span>);    <span class="comment">// type of a&amp;b Options</span>
   <span class="kw">match</span> (<span class="ident">a</span>,<span class="ident">b</span>) {
     (<span class="prelude-val">Some</span>(<span class="ident">aa</span>),<span class="prelude-val">Some</span>(<span class="ident">bb</span>)) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Got {} and {}&quot;</span>,<span class="ident">aa</span>,<span class="ident">bb</span>),
-    _ <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;input error&quot;</span>)
+    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;input error&quot;</span>)
   }</pre>
 <h2 id="limitations" class="section-header"><a href="#limitations">LIMITATIONS:</a></h2>
 <p>There are no compile-time checks to make sure the format

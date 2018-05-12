@@ -10,10 +10,11 @@
     <title>clap - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>clap</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>clap</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/clap/lib.rs.html#6-625' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p><code>clap</code> is a simple-to-use, efficient, and full-featured library for parsing command line
+               </span><a class='srclink' href='../src/clap/lib.rs.html#6-625' title='goto source code'>[src]</a></span></h1><div class='docblock'><p><code>clap</code> is a simple-to-use, efficient, and full-featured library for parsing command line
 arguments and subcommands when writing console/terminal applications.</p>
 <h2 id="about" class="section-header"><a href="#about">About</a></h2>
 <p><code>clap</code> is used to parse <em>and validate</em> the string of command line arguments provided by the user
@@ -138,7 +137,7 @@ more verbose.</p>
         <span class="number">0</span> <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;No verbose info&quot;</span>),
         <span class="number">1</span> <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Some verbose info&quot;</span>),
         <span class="number">2</span> <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Tons of verbose info&quot;</span>),
-        <span class="number">3</span> <span class="op">|</span> _ <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Don&#39;t be crazy&quot;</span>),
+        <span class="number">3</span> <span class="op">|</span> <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Don&#39;t be crazy&quot;</span>),
     }
 
     <span class="comment">// You can handle information about subcommands by requesting their matches by name</span>

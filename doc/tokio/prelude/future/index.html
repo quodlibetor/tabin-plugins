@@ -10,10 +10,11 @@
     <title>tokio::prelude::future - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle">
     <script src="../../../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>tokio</a>::<wbr><a href='../index.html'>prelude</a>::<wbr><a class="mod" href=''>future</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>tokio</a>::<wbr><a href='../index.html'>prelude</a>::<wbr><a class="mod" href=''>future</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/futures/lib.rs.html#177' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>Futures</p>
+               </span><a class='srclink' href='../../../src/futures/lib.rs.html#177' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Futures</p>
 <p>This module contains the <code>Future</code> trait and a number of adaptors for this
 trait. See the crate docs, and the docs for <code>Future</code>, for full detail.</p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
@@ -83,6 +82,14 @@ another future which completes successfully.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Done.html"
+                                  title='struct tokio::prelude::future::Done'>Done</a></td>
+                           <td class='docblock-short'>
+                                <p>A future representing a value that is immediately ready.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="struct" href="struct.Empty.html"
                                   title='struct tokio::prelude::future::Empty'>Empty</a></td>
                            <td class='docblock-short'>
@@ -95,14 +102,6 @@ another future which completes successfully.</p>
                                   title='struct tokio::prelude::future::ExecuteError'>ExecuteError</a></td>
                            <td class='docblock-short'>
                                 <p>Errors returned from the <code>Spawn::spawn</code> function.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Failed.html"
-                                  title='struct tokio::prelude::future::Failed'>Failed</a></td>
-                           <td class='docblock-short'>
-                                <p>A future representing a value that is immediately ready.</p>
 
                            </td>
                        </tr>
@@ -404,6 +403,14 @@ given.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class="fn" href="fn.done.html"
+                                  title='fn tokio::prelude::future::done'>done</a></td>
+                           <td class='docblock-short'>
+                                <p>Creates a new &quot;leaf future&quot; which will resolve with the given result.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="fn" href="fn.empty.html"
                                   title='fn tokio::prelude::future::empty'>empty</a></td>
                            <td class='docblock-short'>
@@ -451,14 +458,6 @@ successful computation.</p>
                                   title='fn tokio::prelude::future::poll_fn'>poll_fn</a></td>
                            <td class='docblock-short'>
                                 <p>Creates a new future wrapping around a function returning <code>Poll</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.result.html"
-                                  title='fn tokio::prelude::future::result'>result</a></td>
-                           <td class='docblock-short'>
-                                <p>Creates a new &quot;leaf future&quot; which will resolve with the given result.</p>
 
                            </td>
                        </tr>

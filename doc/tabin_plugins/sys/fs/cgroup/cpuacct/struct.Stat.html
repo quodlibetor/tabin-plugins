@@ -10,10 +10,11 @@
     <title>tabin_plugins::sys::fs::cgroup::cpuacct::Stat - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../../../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../../../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../../../light.css" id="themeStyle">
     <script src="../../../../../storage.js"></script>
     
 
@@ -33,7 +34,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Struct Stat</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#fields">Fields</a><div class="sidebar-links"><a href="#structfield.user">user</a><a href="#structfield.system">system</a></div><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.load">load</a><a href="#method.total">total</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a></div></div><p class='location'><a href='../../../../index.html'>tabin_plugins</a>::<wbr><a href='../../../index.html'>sys</a>::<wbr><a href='../../index.html'>fs</a>::<wbr><a href='../index.html'>cgroup</a>::<wbr><a href='index.html'>cpuacct</a></p><script>window.sidebarCurrent = {name: 'Stat', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
+        <p class='location'>Struct Stat</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#fields">Fields</a><div class="sidebar-links"><a href="#structfield.user">user</a><a href="#structfield.system">system</a></div><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.load">load</a><a href="#method.total">total</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a></div><a class="sidebar-title" href="#synthetic-implementations">Auto Trait Implementations</a><div class="sidebar-links"><a href="#impl-Send">Send</a><a href="#impl-Sync">Sync</a></div></div><p class='location'><a href='../../../../index.html'>tabin_plugins</a>::<wbr><a href='../../../index.html'>sys</a>::<wbr><a href='../../index.html'>fs</a>::<wbr><a href='../index.html'>cgroup</a>::<wbr><a href='index.html'>cpuacct</a></p><script>window.sidebarCurrent = {name: 'Stat', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -54,16 +55,14 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Struct <a href='../../../../index.html'>tabin_plugins</a>::<wbr><a href='../../../index.html'>sys</a>::<wbr><a href='../../index.html'>fs</a>::<wbr><a href='../index.html'>cgroup</a>::<wbr><a href='index.html'>cpuacct</a>::<wbr><a class="struct" href=''>Stat</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Struct <a href='../../../../index.html'>tabin_plugins</a>::<wbr><a href='../../../index.html'>sys</a>::<wbr><a href='../../index.html'>fs</a>::<wbr><a href='../index.html'>cgroup</a>::<wbr><a href='index.html'>cpuacct</a>::<wbr><a class="struct" href=''>Stat</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#48-51' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct Stat {
+               </span><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#48-51' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust struct'>pub struct Stat {
     pub user: <a class="struct" href="../../../../../tabin_plugins/linux/struct.UserHz.html" title="struct tabin_plugins::linux::UserHz">UserHz</a>,
     pub system: <a class="struct" href="../../../../../tabin_plugins/linux/struct.UserHz.html" title="struct tabin_plugins::linux::UserHz">UserHz</a>,
-}</pre><div class='docblock'><p>Similar to /proc/stat, but shows toatal CPU usage by the cgroup</p>
+}</pre></div><div class='docblock'><p>Similar to /proc/stat, but shows toatal CPU usage by the cgroup</p>
 </div><h2 id='fields' class='fields small-section-header'>
                        Fields<a href='#fields' class='anchor'></a></h2><span id="structfield.user" class="structfield small-section-header">
                            <a href="#structfield.user" class="anchor field"></a>
@@ -77,18 +76,19 @@
                     <h2 id='methods' class='small-section-header'>
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
-                <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#53-70' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.load' class="method"><span id='load.v' class='invisible'><code>pub fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#55-65' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Create a new <code>Stat</code> with values for the cgroup fs</p>
-</div><h4 id='method.total' class="method"><span id='total.v' class='invisible'><code>pub fn <a href='#method.total' class='fnname'>total</a>(&amp;self) -&gt; <a class="struct" href="../../../../../tabin_plugins/linux/struct.UserHz.html" title="struct tabin_plugins::linux::UserHz">UserHz</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#67-69' title='goto source code'>[src]</a></span></h4>
-</div>
+                <h3 id='impl' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl <a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a></code><a href='#impl' class='anchor'></a></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#53-70' title='goto source code'>[src]</a></span></td></tr></tbody></table></h3><div class='impl-items'><h4 id='method.load' class="method"><span id='load.v' class='invisible'><table class='table-display'><tbody><tr><td><code>pub fn <a href='#method.load' class='fnname'>load</a>() -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#55-65' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Create a new <code>Stat</code> with values for the cgroup fs</p>
+</div><h4 id='method.total' class="method"><span id='total.v' class='invisible'><table class='table-display'><tbody><tr><td><code>pub fn <a href='#method.total' class='fnname'>total</a>(&amp;self) -&gt; <a class="struct" href="../../../../../tabin_plugins/linux/struct.UserHz.html" title="struct tabin_plugins::linux::UserHz">UserHz</a></code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#67-69' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4></div>
             <h2 id='implementations' class='small-section-header'>
               Trait Implementations<a href='#implementations' class='anchor'></a>
             </h2>
-        <h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#47' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#47' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
-</div></div></section>
+            <div id='implementations-list'>
+        <h3 id='impl-Debug' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a></code><a href='#impl-Debug' class='anchor'></a></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#47' title='goto source code'>[src]</a></span></td></tr></tbody></table></h3><div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../../../src/tabin_plugins/sys.rs.html#47' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
+</div></div></div>
+                <h2 id='synthetic-implementations' class='small-section-header'>
+                  Auto Trait Implementations<a href='#synthetic-implementations' class='anchor'></a>
+                </h2>
+                <div id='synthetic-implementations-list'>
+            <h3 id='impl-Send' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> for <a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a></code><a href='#impl-Send' class='anchor'></a></span></td><td><span class='out-of-band'></span></td></tr></tbody></table></h3><div class='impl-items'></div><h3 id='impl-Sync' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sync.html" title="trait core::marker::Sync">Sync</a> for <a class="struct" href="../../../../../tabin_plugins/sys/fs/cgroup/cpuacct/struct.Stat.html" title="struct tabin_plugins::sys::fs::cgroup::cpuacct::Stat">Stat</a></code><a href='#impl-Sync' class='anchor'></a></span></td><td><span class='out-of-band'></span></td></tr></tbody></table></h3><div class='impl-items'></div></div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

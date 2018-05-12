@@ -10,10 +10,11 @@
     <title>itertools::Itertools - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>itertools</a>::<wbr><a class="trait" href=''>Itertools</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>itertools</a>::<wbr><a class="trait" href=''>Itertools</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/itertools/lib.rs.html#283-1986' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait Itertools: <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Iterator</a> {
+               </span><a class='srclink' href='../src/itertools/lib.rs.html#283-1986' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait Itertools: <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Iterator</a> {
     fn <a href='#method.interleave' class='fnname'>interleave</a>&lt;J&gt;(self, other: J) -&gt; <a class="struct" href="../itertools/structs/struct.Interleave.html" title="struct itertools::structs::Interleave">Interleave</a>&lt;Self, J::<a class="type" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html#associatedtype.IntoIter" title="type core::iter::traits::IntoIterator::IntoIter">IntoIter</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J: <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html" title="trait core::iter::traits::IntoIterator">IntoIterator</a>&lt;Item = Self::<a class="type" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html#associatedtype.Item" title="type core::iter::iterator::Iterator::Item">Item</a>&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>,
     { ... }
 <div class='item-spacer'></div>    fn <a href='#method.interleave_shortest' class='fnname'>interleave_shortest</a>&lt;J&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;other: J<br>&nbsp;&nbsp;&nbsp;&nbsp;) -&gt; <a class="struct" href="../itertools/structs/struct.InterleaveShortest.html" title="struct itertools::structs::InterleaveShortest">InterleaveShortest</a>&lt;Self, J::<a class="type" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html#associatedtype.IntoIter" title="type core::iter::traits::IntoIterator::IntoIter">IntoIter</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J: <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html" title="trait core::iter::traits::IntoIterator">IntoIterator</a>&lt;Item = Self::<a class="type" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html#associatedtype.Item" title="type core::iter::iterator::Iterator::Item">Item</a>&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>,
@@ -181,7 +180,7 @@
     { ... }
 <div class='item-spacer'></div>    fn <a href='#method.minmax_by' class='fnname'>minmax_by</a>&lt;F&gt;(self, compare: F) -&gt; <a class="enum" href="../itertools/enum.MinMaxResult.html" title="enum itertools::MinMaxResult">MinMaxResult</a>&lt;Self::<a class="type" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html#associatedtype.Item" title="type core::iter::iterator::Iterator::Item">Item</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;F: <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/function/trait.FnMut.html" title="trait core::ops::function::FnMut">FnMut</a>(&amp;Self::<a class="type" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html#associatedtype.Item" title="type core::iter::iterator::Iterator::Item">Item</a>, &amp;Self::<a class="type" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html#associatedtype.Item" title="type core::iter::iterator::Iterator::Item">Item</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/cmp/enum.Ordering.html" title="enum core::cmp::Ordering">Ordering</a></span>,
     { ... }
-}</pre><div class='docblock'><p>The trait <code>Itertools</code>: extra iterator adaptors and methods for iterators.</p>
+}</pre></div><div class='docblock'><p>The trait <code>Itertools</code>: extra iterator adaptors and methods for iterators.</p>
 <p>This trait defines a number of methods. They are divided into two groups:</p>
 <ul>
 <li>
@@ -341,7 +340,7 @@ of references and other values that are cheap to copy.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">None</span>, <span class="ident">it</span>.<span class="ident">next</span>());
 
 <span class="comment">// this requires a type hint</span>
-<span class="kw">let</span> <span class="ident">it</span> <span class="op">=</span> (<span class="number">1</span>..<span class="number">5</span>).<span class="ident">tuple_windows</span>::<span class="op">&lt;</span>(_, _, _)<span class="op">&gt;</span>();
+<span class="kw">let</span> <span class="ident">it</span> <span class="op">=</span> (<span class="number">1</span>..<span class="number">5</span>).<span class="ident">tuple_windows</span>::<span class="op">&lt;</span>(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>)<span class="op">&gt;</span>();
 <span class="ident">itertools</span>::<span class="ident">assert_equal</span>(<span class="ident">it</span>, <span class="macro">vec</span><span class="macro">!</span>[(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)]);
 
 <span class="comment">// you can also specify the complete type</span>
@@ -368,7 +367,7 @@ of references and other values that are cheap to copy.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">None</span>, <span class="ident">it</span>.<span class="ident">next</span>());
 
 <span class="comment">// this requires a type hint</span>
-<span class="kw">let</span> <span class="ident">it</span> <span class="op">=</span> (<span class="number">1</span>..<span class="number">7</span>).<span class="ident">tuples</span>::<span class="op">&lt;</span>(_, _, _)<span class="op">&gt;</span>();
+<span class="kw">let</span> <span class="ident">it</span> <span class="op">=</span> (<span class="number">1</span>..<span class="number">7</span>).<span class="ident">tuples</span>::<span class="op">&lt;</span>(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>)<span class="op">&gt;</span>();
 <span class="ident">itertools</span>::<span class="ident">assert_equal</span>(<span class="ident">it</span>, <span class="macro">vec</span><span class="macro">!</span>[(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)]);
 
 <span class="comment">// you can also specify the complete type</span>
@@ -461,9 +460,9 @@ and remove both <code>i</code> and <code>j</code> from their respective source i
 <span class="kw">let</span> <span class="ident">ku</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">10</span>).<span class="ident">step</span>(<span class="number">5</span>);
 <span class="kw">let</span> <span class="ident">ki_ku</span> <span class="op">=</span> <span class="ident">ki</span>.<span class="ident">merge_join_by</span>(<span class="ident">ku</span>, <span class="op">|</span><span class="ident">i</span>, <span class="ident">j</span><span class="op">|</span> <span class="ident">i</span>.<span class="ident">cmp</span>(<span class="ident">j</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="ident">either</span><span class="op">|</span> {
     <span class="kw">match</span> <span class="ident">either</span> {
-        <span class="ident">Left</span>(_) <span class="op">=&gt;</span> <span class="string">&quot;Ki&quot;</span>,
-        <span class="ident">Right</span>(_) <span class="op">=&gt;</span> <span class="string">&quot;Ku&quot;</span>,
-        <span class="ident">Both</span>(_, _) <span class="op">=&gt;</span> <span class="string">&quot;KiKu&quot;</span>
+        <span class="ident">Left</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="string">&quot;Ki&quot;</span>,
+        <span class="ident">Right</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="string">&quot;Ku&quot;</span>,
+        <span class="ident">Both</span>(<span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> <span class="string">&quot;KiKu&quot;</span>
     }
 });
 
@@ -644,7 +643,7 @@ size up to 4.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">None</span>, <span class="ident">it</span>.<span class="ident">next</span>());
 
 <span class="comment">// this requires a type hint</span>
-<span class="kw">let</span> <span class="ident">it</span> <span class="op">=</span> (<span class="number">1</span>..<span class="number">5</span>).<span class="ident">tuple_combinations</span>::<span class="op">&lt;</span>(_, _, _)<span class="op">&gt;</span>();
+<span class="kw">let</span> <span class="ident">it</span> <span class="op">=</span> (<span class="number">1</span>..<span class="number">5</span>).<span class="ident">tuple_combinations</span>::<span class="op">&lt;</span>(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>)<span class="op">&gt;</span>();
 <span class="ident">itertools</span>::<span class="ident">assert_equal</span>(<span class="ident">it</span>, <span class="macro">vec</span><span class="macro">!</span>[(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>), (<span class="number">1</span>, <span class="number">3</span>, <span class="number">4</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)]);
 
 <span class="comment">// you can also specify the complete type</span>
@@ -919,7 +918,7 @@ this effetively results in <em>((0 + 1) + 2) + 3</em></p>
 <span class="kw">let</span> <span class="ident">values</span> <span class="op">=</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="op">-</span><span class="number">2</span>, <span class="op">-</span><span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>];
 <span class="macro">assert_eq</span><span class="macro">!</span>(
     <span class="ident">values</span>.<span class="ident">iter</span>()
-          .<span class="ident">map</span>(<span class="prelude-val">Ok</span>::<span class="op">&lt;</span>_, ()<span class="op">&gt;</span>)
+          .<span class="ident">map</span>(<span class="prelude-val">Ok</span>::<span class="op">&lt;</span><span class="kw">_</span>, ()<span class="op">&gt;</span>)
           .<span class="ident">fold_results</span>(<span class="number">0</span>, <span class="ident">Add</span>::<span class="ident">add</span>),
     <span class="prelude-val">Ok</span>(<span class="number">3</span>)
 );
@@ -1086,7 +1085,7 @@ have a distinct type.</p>
 
 <span class="kw">let</span> <span class="ident">successes_and_failures</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="prelude-val">Ok</span>(<span class="number">1</span>), <span class="prelude-val">Err</span>(<span class="bool-val">false</span>), <span class="prelude-val">Err</span>(<span class="bool-val">true</span>), <span class="prelude-val">Ok</span>(<span class="number">2</span>)];
 
-<span class="kw">let</span> (<span class="ident">successes</span>, <span class="ident">failures</span>): (<span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;</span>) <span class="op">=</span> <span class="ident">successes_and_failures</span>
+<span class="kw">let</span> (<span class="ident">successes</span>, <span class="ident">failures</span>): (<span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span>) <span class="op">=</span> <span class="ident">successes_and_failures</span>
     .<span class="ident">into_iter</span>()
     .<span class="ident">partition_map</span>(<span class="op">|</span><span class="ident">r</span><span class="op">|</span> {
         <span class="kw">match</span> <span class="ident">r</span> {
@@ -1159,8 +1158,8 @@ the last maximal element wins.  This matches the behavior of the standard
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    <li><div class='out-of-band'><a class='srclink' href='../src/itertools/lib.rs.html#1988' title='goto source code'>[src]</a></div><code>impl&lt;T:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>&gt; Itertools for T <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Iterator</a>,&nbsp;</span></code></li>
-</ul><script type="text/javascript" async
+    <li><table class='table-display'><tbody><tr><td><code>impl&lt;T:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>&gt; Itertools for T <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Iterator</a>,&nbsp;</span></code><td><div class='out-of-band'><a class='srclink' href='../src/itertools/lib.rs.html#1988' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+</ul><script type="text/javascript">window.inlined_types=new Set([]);</script><script type="text/javascript" async
                          src="../implementors/itertools/trait.Itertools.js">
                  </script></section>
     <section id='search' class="content hidden"></section>

@@ -10,10 +10,11 @@
     <title>reqwest::IntoUrl - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>reqwest</a>::<wbr><a class="trait" href=''>IntoUrl</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>reqwest</a>::<wbr><a class="trait" href=''>IntoUrl</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/reqwest/into_url.rs.html#8' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait IntoUrl: PolyfillTryInto { }</pre><div class='docblock'><p>A trait to try to convert some type into a <code>Url</code>.</p>
+               </span><a class='srclink' href='../src/reqwest/into_url.rs.html#8' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait IntoUrl: PolyfillTryInto { }</pre></div><div class='docblock'><p>A trait to try to convert some type into a <code>Url</code>.</p>
 <p>This trait is &quot;sealed&quot;, such that only types within reqwest can
 implement it. The reason is that it will eventually be deprecated
 and removed, when <code>std::convert::TryFrom</code> is stabilized.</p>
@@ -69,8 +68,8 @@ and removed, when <code>std::convert::TryFrom</code> is stabilized.</p>
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    <li><div class='out-of-band'><a class='srclink' href='../src/reqwest/into_url.rs.html#10' title='goto source code'>[src]</a></div><code>impl&lt;T:&nbsp;PolyfillTryInto&gt; IntoUrl for T</code></li>
-</ul><script type="text/javascript" async
+    <li><table class='table-display'><tbody><tr><td><code>impl&lt;T:&nbsp;PolyfillTryInto&gt; IntoUrl for T</code><td><div class='out-of-band'><a class='srclink' href='../src/reqwest/into_url.rs.html#10' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+</ul><script type="text/javascript">window.inlined_types=new Set([]);</script><script type="text/javascript" async
                          src="../implementors/reqwest/trait.IntoUrl.js">
                  </script></section>
     <section id='search' class="content hidden"></section>

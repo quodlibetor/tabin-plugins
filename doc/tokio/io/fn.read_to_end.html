@@ -10,10 +10,11 @@
     <title>tokio::io::read_to_end - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -33,7 +34,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'><a href='../index.html'>tokio</a>::<wbr><a href='index.html'>io</a></p><script>window.sidebarCurrent = {name: 'read_to_end', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <div class="sidebar-elems"><p class='location'><a href='../index.html'>tokio</a>::<wbr><a href='index.html'>io</a></p><script>window.sidebarCurrent = {name: 'read_to_end', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>tokio</a>::<wbr><a href='index.html'>io</a>::<wbr><a class="fn" href=''>read_to_end</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>tokio</a>::<wbr><a href='index.html'>io</a>::<wbr><a class="fn" href=''>read_to_end</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/tokio_io/io/read_to_end.rs.html#35-44' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn read_to_end&lt;A&gt;(a: A, buf: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;) -&gt; <a class="struct" href="../../tokio/io/struct.ReadToEnd.html" title="struct tokio::io::ReadToEnd">ReadToEnd</a>&lt;A&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;A: <a class="trait" href="../../tokio/prelude/trait.AsyncRead.html" title="trait tokio::prelude::AsyncRead">AsyncRead</a>,&nbsp;</span></pre><div class='docblock'><p>Creates a future which will read all the bytes associated with the I/O
+               </span><a class='srclink' href='../../src/tokio_io/io/read_to_end.rs.html#35-44' title='goto source code'>[src]</a></span></h1><pre class='rust fn'>pub fn read_to_end&lt;A&gt;(a: A, buf: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;) -&gt; <a class="struct" href="../../tokio/io/struct.ReadToEnd.html" title="struct tokio::io::ReadToEnd">ReadToEnd</a>&lt;A&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;A: <a class="trait" href="../../tokio/prelude/trait.AsyncRead.html" title="trait tokio::prelude::AsyncRead">AsyncRead</a>,&nbsp;</span></pre><div class='docblock'><p>Creates a future which will read all the bytes associated with the I/O
 object <code>A</code> into the buffer provided.</p>
 <p>In the case of an error the buffer and the object will be discarded, with
 the error yielded. In the case of success the object will be destroyed and

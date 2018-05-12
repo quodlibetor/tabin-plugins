@@ -10,10 +10,11 @@
     <title>tokio::executor::current_thread::spawn - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle">
     <script src="../../../storage.js"></script>
     
 
@@ -33,7 +34,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'><a href='../../index.html'>tokio</a>::<wbr><a href='../index.html'>executor</a>::<wbr><a href='index.html'>current_thread</a></p><script>window.sidebarCurrent = {name: 'spawn', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <div class="sidebar-elems"><p class='location'><a href='../../index.html'>tokio</a>::<wbr><a href='../index.html'>executor</a>::<wbr><a href='index.html'>current_thread</a></p><script>window.sidebarCurrent = {name: 'spawn', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Function <a href='../../index.html'>tokio</a>::<wbr><a href='../index.html'>executor</a>::<wbr><a href='index.html'>current_thread</a>::<wbr><a class="fn" href=''>spawn</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Function <a href='../../index.html'>tokio</a>::<wbr><a href='../index.html'>executor</a>::<wbr><a href='index.html'>current_thread</a>::<wbr><a class="fn" href=''>spawn</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/tokio/executor/current_thread/mod.rs.html#284-290' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn spawn&lt;F&gt;(future: F) <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;F: <a class="trait" href="../../../tokio/prelude/future/trait.Future.html" title="trait tokio::prelude::future::Future">Future</a>&lt;Item = <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, Error = <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt; + 'static,&nbsp;</span></pre><div class='docblock'><p>Executes a future on the current thread.</p>
+               </span><a class='srclink' href='../../../src/tokio/executor/current_thread/mod.rs.html#284-290' title='goto source code'>[src]</a></span></h1><pre class='rust fn'>pub fn spawn&lt;F&gt;(future: F) <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;F: <a class="trait" href="../../../tokio/prelude/future/trait.Future.html" title="trait tokio::prelude::future::Future">Future</a>&lt;Item = <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, Error = <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt; + 'static,&nbsp;</span></pre><div class='docblock'><p>Executes a future on the current thread.</p>
 <p>The provided future must complete or be canceled before <code>run</code> will return.</p>
 <p>Unlike <a href="../fn.spawn.html"><code>tokio::spawn</code></a>, this function will always spawn on a
 <code>CurrentThread</code> executor and is able to spawn futures that are not <code>Send</code>.</p>

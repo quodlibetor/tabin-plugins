@@ -10,10 +10,11 @@
     <title>tokio::executor::current_thread - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle">
     <script src="../../../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>tokio</a>::<wbr><a href='../index.html'>executor</a>::<wbr><a class="mod" href=''>current_thread</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>tokio</a>::<wbr><a href='../index.html'>executor</a>::<wbr><a class="mod" href=''>current_thread</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/tokio/executor/current_thread/mod.rs.html#1-761' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>Execute many tasks concurrently on the current thread.</p>
+               </span><a class='srclink' href='../../../src/tokio/executor/current_thread/mod.rs.html#1-761' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Execute many tasks concurrently on the current thread.</p>
 <p><a href="struct.CurrentThread.html"><code>CurrentThread</code></a> is an executor that keeps tasks on the same thread that
 they were spawned from. This allows it to execute futures that are not
 <code>Send</code>.</p>
@@ -86,7 +85,7 @@ within the context of a running <a href="struct.CurrentThread.html"><code>Curren
         <span class="prelude-val">Ok</span>(())
     }));
 
-    <span class="prelude-val">Ok</span>::<span class="op">&lt;</span>_, ()<span class="op">&gt;</span>(())
+    <span class="prelude-val">Ok</span>::<span class="op">&lt;</span><span class="kw">_</span>, ()<span class="op">&gt;</span>(())
 }));</pre>
 <p>The <code>block_on_all</code> function will block the current thread until <strong>all</strong>
 tasks that have been spawned onto the <a href="struct.CurrentThread.html"><code>CurrentThread</code></a> instance have
@@ -114,7 +113,7 @@ completed.</p>
 <span class="comment">// Run the executor, but only until the provided future completes. This</span>
 <span class="comment">// provides the opportunity to start executing previously spawned tasks.</span>
 <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">current_thread</span>.<span class="ident">block_on</span>(<span class="ident">lazy</span>(<span class="op">||</span> {
-    <span class="prelude-val">Ok</span>::<span class="op">&lt;</span>_, ()<span class="op">&gt;</span>(<span class="string">&quot;Hello&quot;</span>)
+    <span class="prelude-val">Ok</span>::<span class="op">&lt;</span><span class="kw">_</span>, ()<span class="op">&gt;</span>(<span class="string">&quot;Hello&quot;</span>)
 })).<span class="ident">unwrap</span>();
 
 <span class="comment">// Now, run the executor for *at most* 1 second. Since a task was spawned</span>

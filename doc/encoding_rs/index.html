@@ -10,10 +10,11 @@
     <title>encoding_rs - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>encoding_rs</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>encoding_rs</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/encoding_rs/lib.rs.html#10-5054' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>encoding_rs is a Gecko-oriented Free Software / Open Source implementation
+               </span><a class='srclink' href='../src/encoding_rs/lib.rs.html#10-5054' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>encoding_rs is a Gecko-oriented Free Software / Open Source implementation
 of the <a href="https://encoding.spec.whatwg.org/">Encoding Standard</a> in Rust.
 Gecko-oriented means that converting to and from UTF-16 is supported in
 addition to converting to and from UTF-8, that the performance and
@@ -167,7 +166,7 @@ The <a href="https://github.com/hsivonen/encoding_rs">repository is on GitHub</a
 
 <span class="comment">// Process EOF</span>
 <span class="kw">loop</span> {
-    <span class="kw">let</span> (<span class="ident">result</span>, _, <span class="ident">written</span>, <span class="ident">had_errors</span>) <span class="op">=</span>
+    <span class="kw">let</span> (<span class="ident">result</span>, <span class="kw">_</span>, <span class="ident">written</span>, <span class="ident">had_errors</span>) <span class="op">=</span>
         <span class="ident">decoder</span>.<span class="ident">decode_to_str</span>(<span class="string">b&quot;&quot;</span>,
                               <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buffer</span>[<span class="ident">bytes_in_buffer</span>..],
                               <span class="bool-val">true</span>);

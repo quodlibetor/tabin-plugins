@@ -10,10 +10,11 @@
     <title>num_integer::Integer - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>num_integer</a>::<wbr><a class="trait" href=''>Integer</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>num_integer</a>::<wbr><a class="trait" href=''>Integer</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/num_integer/lib.rs.html#30-171' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait Integer: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> + <a class="trait" href="../num_traits/trait.Num.html" title="trait num_traits::Num">Num</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html" title="trait core::cmp::PartialOrd">PartialOrd</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html" title="trait core::cmp::Ord">Ord</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html" title="trait core::cmp::Eq">Eq</a> {
+               </span><a class='srclink' href='../src/num_integer/lib.rs.html#30-171' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait Integer: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> + <a class="trait" href="../num_traits/trait.Num.html" title="trait num_traits::Num">Num</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html" title="trait core::cmp::PartialOrd">PartialOrd</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html" title="trait core::cmp::Ord">Ord</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html" title="trait core::cmp::Eq">Eq</a> {
     fn <a href='#tymethod.div_floor' class='fnname'>div_floor</a>(&amp;self, other: &amp;Self) -&gt; Self;
 <div class='item-spacer'></div>    fn <a href='#tymethod.mod_floor' class='fnname'>mod_floor</a>(&amp;self, other: &amp;Self) -&gt; Self;
 <div class='item-spacer'></div>    fn <a href='#tymethod.gcd' class='fnname'>gcd</a>(&amp;self, other: &amp;Self) -&gt; Self;
@@ -72,7 +71,7 @@
 <div class='item-spacer'></div>    fn <a href='#tymethod.div_rem' class='fnname'>div_rem</a>(&amp;self, other: &amp;Self) -&gt; (Self, Self);
 
     fn <a href='#method.div_mod_floor' class='fnname'>div_mod_floor</a>(&amp;self, other: &amp;Self) -&gt; (Self, Self) { ... }
-}</pre>
+}</pre></div>
             <h2 id='required-methods' class='small-section-header'>
               Required Methods<a href='#required-methods' class='anchor'></a>
             </h2>
@@ -166,17 +165,19 @@ Returns <code>(quotient, remainder)</code>.</p>
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    <li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for i8</code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for i16</code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for i32</code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for i64</code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div><code>impl Integer for isize</code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for u8</code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for u16</code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for u32</code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for u64</code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#509-581' title='goto source code'>[src]</a></div><code>impl Integer for usize</code></li>
-</ul><script type="text/javascript" async
+    <li><table class='table-display'><tbody><tr><td><code>impl Integer for i8</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for i16</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for i32</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for i64</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for isize</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for i128</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#208-319' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for u8</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#511-583' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for u16</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#511-583' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for u32</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#511-583' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for u64</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#511-583' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for usize</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#511-583' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+<li><table class='table-display'><tbody><tr><td><code>impl Integer for u128</code><td><div class='out-of-band'><a class='srclink' href='../src/num_integer/lib.rs.html#511-583' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+</ul><script type="text/javascript">window.inlined_types=new Set([]);</script><script type="text/javascript" async
                          src="../implementors/num_integer/trait.Integer.js">
                  </script></section>
     <section id='search' class="content hidden"></section>

@@ -10,10 +10,11 @@
     <title>tokio_proto::pipeline::ClientProto - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -54,19 +55,17 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>tokio_proto</a>::<wbr><a href='index.html'>pipeline</a>::<wbr><a class="trait" href=''>ClientProto</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>tokio_proto</a>::<wbr><a href='index.html'>pipeline</a>::<wbr><a class="trait" href=''>ClientProto</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/tokio_proto/simple/pipeline/client.rs.html#23-51' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait ClientProto&lt;T:&nbsp;'static&gt;: 'static {
+               </span><a class='srclink' href='../../src/tokio_proto/simple/pipeline/client.rs.html#23-51' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait ClientProto&lt;T:&nbsp;'static&gt;: 'static {
     type <a href='#associatedtype.Request' class="type">Request</a>: 'static;
     type <a href='#associatedtype.Response' class="type">Response</a>: 'static;
     type <a href='#associatedtype.Transport' class="type">Transport</a>: 'static + <a class="trait" href="../../futures/stream/trait.Stream.html" title="trait futures::stream::Stream">Stream</a>&lt;Item = Self::<a class="type" href="../../tokio_proto/pipeline/trait.ClientProto.html#associatedtype.Response" title="type tokio_proto::pipeline::ClientProto::Response">Response</a>, Error = <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt; + <a class="trait" href="../../futures/sink/trait.Sink.html" title="trait futures::sink::Sink">Sink</a>&lt;SinkItem = Self::<a class="type" href="../../tokio_proto/pipeline/trait.ClientProto.html#associatedtype.Request" title="type tokio_proto::pipeline::ClientProto::Request">Request</a>, SinkError = <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;;
     type <a href='#associatedtype.BindTransport' class="type">BindTransport</a>: <a class="trait" href="../../futures/future/trait.IntoFuture.html" title="trait futures::future::IntoFuture">IntoFuture</a>&lt;Item = Self::<a class="type" href="../../tokio_proto/pipeline/trait.ClientProto.html#associatedtype.Transport" title="type tokio_proto::pipeline::ClientProto::Transport">Transport</a>, Error = <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;;
     fn <a href='#tymethod.bind_transport' class='fnname'>bind_transport</a>(&amp;self, io: T) -&gt; Self::<a class="type" href="../../tokio_proto/pipeline/trait.ClientProto.html#associatedtype.BindTransport" title="type tokio_proto::pipeline::ClientProto::BindTransport">BindTransport</a>;
-}</pre><div class='docblock'><p>A pipelined client protocol.</p>
+}</pre></div><div class='docblock'><p>A pipelined client protocol.</p>
 <p>The <code>T</code> parameter is used for the I/O object used to communicate, which is
 supplied in <code>bind_transport</code>.</p>
 <p>For simple protocols, the <code>Self</code> type is often a unit struct. In more
@@ -100,7 +99,7 @@ together with a <code>Codec</code>; in that case, <code>bind_transport</code> is
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    </ul><script type="text/javascript" async
+    </ul><script type="text/javascript">window.inlined_types=new Set([]);</script><script type="text/javascript" async
                          src="../../implementors/tokio_proto/pipeline/trait.ClientProto.js">
                  </script></section>
     <section id='search' class="content hidden"></section>

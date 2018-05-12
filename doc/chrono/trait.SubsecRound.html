@@ -10,10 +10,11 @@
     <title>chrono::SubsecRound - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,16 +55,14 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>chrono</a>::<wbr><a class="trait" href=''>SubsecRound</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>chrono</a>::<wbr><a class="trait" href=''>SubsecRound</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/chrono/round.rs.html#14-39' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait SubsecRound {
+               </span><a class='srclink' href='../src/chrono/round.rs.html#14-39' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait SubsecRound {
     fn <a href='#tymethod.round_subsecs' class='fnname'>round_subsecs</a>(self, digits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>) -&gt; Self;
 <div class='item-spacer'></div>    fn <a href='#tymethod.trunc_subsecs' class='fnname'>trunc_subsecs</a>(self, digits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>) -&gt; Self;
-}</pre><div class='docblock'><p>Extension trait for subsecond rounding or truncation to a maximum number
+}</pre></div><div class='docblock'><p>Extension trait for subsecond rounding or truncation to a maximum number
 of digits. Rounding can be used to decrease the error variance when
 serializing/persisting to lower precision. Truncation is the default
 behavior in Chrono display formatting.  Either can be used to guarantee
@@ -94,8 +93,8 @@ digits. With 9 or more digits, self is returned unmodified.</p>
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    <li><div class='out-of-band'><a class='srclink' href='../src/chrono/round.rs.html#41-68' title='goto source code'>[src]</a></div><code>impl&lt;T&gt; SubsecRound for T <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="../chrono/trait.Timelike.html" title="trait chrono::Timelike">Timelike</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/arith/trait.Add.html" title="trait core::ops::arith::Add">Add</a>&lt;<a class="struct" href="../chrono/struct.Duration.html" title="struct chrono::Duration">Duration</a>, Output = T&gt; + <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/arith/trait.Sub.html" title="trait core::ops::arith::Sub">Sub</a>&lt;<a class="struct" href="../chrono/struct.Duration.html" title="struct chrono::Duration">Duration</a>, Output = T&gt;,&nbsp;</span></code></li>
-</ul><script type="text/javascript" async
+    <li><table class='table-display'><tbody><tr><td><code>impl&lt;T&gt; SubsecRound for T <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="../chrono/trait.Timelike.html" title="trait chrono::Timelike">Timelike</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/arith/trait.Add.html" title="trait core::ops::arith::Add">Add</a>&lt;<a class="struct" href="../chrono/struct.Duration.html" title="struct chrono::Duration">Duration</a>, Output = T&gt; + <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/arith/trait.Sub.html" title="trait core::ops::arith::Sub">Sub</a>&lt;<a class="struct" href="../chrono/struct.Duration.html" title="struct chrono::Duration">Duration</a>, Output = T&gt;,&nbsp;</span></code><td><div class='out-of-band'><a class='srclink' href='../src/chrono/round.rs.html#41-68' title='goto source code'>[src]</a></div></td></tr></tbody></table></li>
+</ul><script type="text/javascript">window.inlined_types=new Set([]);</script><script type="text/javascript" async
                          src="../implementors/chrono/trait.SubsecRound.js">
                  </script></section>
     <section id='search' class="content hidden"></section>

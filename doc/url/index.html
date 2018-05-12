@@ -10,10 +10,11 @@
     <title>url - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>url</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>url</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/url/lib.rs.html#9-2479' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>rust-url is an implementation of the <a href="http://url.spec.whatwg.org/">URL Standard</a>
+               </span><a class='srclink' href='../src/url/lib.rs.html#9-2479' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>rust-url is an implementation of the <a href="http://url.spec.whatwg.org/">URL Standard</a>
 for the <a href="http://rust-lang.org/">Rust</a> programming language.</p>
 <h1 id="url-parsing-and-data-structures" class="section-header"><a href="#url-parsing-and-data-structures">URL parsing and data structures</a></h1>
 <p>First, URL parsing may fail for various reasons and therefore returns a <code>Result</code>.</p>
@@ -85,7 +84,7 @@ for the <a href="http://rust-lang.org/">Rust</a> programming language.</p>
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">issue_list_url</span>.<span class="ident">host</span>() <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="string">&quot;github.com&quot;</span>)));
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">issue_list_url</span>.<span class="ident">port</span>() <span class="op">==</span> <span class="prelude-val">None</span>);
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">issue_list_url</span>.<span class="ident">path</span>() <span class="op">==</span> <span class="string">&quot;/rust-lang/rust/issues&quot;</span>);
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">issue_list_url</span>.<span class="ident">path_segments</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>()) <span class="op">==</span>
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">issue_list_url</span>.<span class="ident">path_segments</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>()) <span class="op">==</span>
         <span class="prelude-val">Some</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;rust-lang&quot;</span>, <span class="string">&quot;rust&quot;</span>, <span class="string">&quot;issues&quot;</span>]));
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">issue_list_url</span>.<span class="ident">query</span>() <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="string">&quot;labels=E-easy&amp;state=open&quot;</span>));
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">issue_list_url</span>.<span class="ident">fragment</span>() <span class="op">==</span> <span class="prelude-val">None</span>);

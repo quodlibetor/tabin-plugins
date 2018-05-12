@@ -10,10 +10,11 @@
     <title>reqwest::mime - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>reqwest</a>::<wbr><a class="mod" href=''>mime</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>reqwest</a>::<wbr><a class="mod" href=''>mime</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/mime/lib.rs.html#1-857' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><h1 id="mime" class="section-header"><a href="#mime">Mime</a></h1>
+               </span><a class='srclink' href='../../src/mime/lib.rs.html#1-857' title='goto source code'>[src]</a></span></h1><div class='docblock'><h1 id="mime" class="section-header"><a href="#mime">Mime</a></h1>
 <p>Mime is now Media Type, technically, but <code>Mime</code> is more immediately
 understandable, so the main type here is <code>Mime</code>.</p>
 <h2 id="what-is-mime" class="section-header"><a href="#what-is-mime">What is Mime?</a></h2>
@@ -74,8 +73,8 @@ understandable, so the main type here is <code>Mime</code>.</p>
 <span class="kw">let</span> <span class="ident">mime</span> <span class="op">=</span> <span class="ident">mime</span>::<span class="ident">TEXT_PLAIN</span>;
 <span class="kw">match</span> (<span class="ident">mime</span>.<span class="ident">type_</span>(), <span class="ident">mime</span>.<span class="ident">subtype</span>()) {
     (<span class="ident">mime</span>::<span class="ident">TEXT</span>, <span class="ident">mime</span>::<span class="ident">PLAIN</span>) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;plain text!&quot;</span>),
-    (<span class="ident">mime</span>::<span class="ident">TEXT</span>, _) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;structured text&quot;</span>),
-    _ <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;not text&quot;</span>),
+    (<span class="ident">mime</span>::<span class="ident">TEXT</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;structured text&quot;</span>),
+    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;not text&quot;</span>),
 }</pre>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
