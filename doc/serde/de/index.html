@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/serde/de/mod.rs.html#9-2090' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Generic data structure deserialization framework.</p>
+               </span><a class='srclink' href='../../src/serde/de/mod.rs.html#9-2146' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Generic data structure deserialization framework.</p>
 <p>The two most important traits in this module are <a href="../trait.Deserialize.html"><code>Deserialize</code></a> and
 <a href="../trait.Deserializer.html"><code>Deserializer</code></a>.</p>
 <ul>
@@ -96,8 +96,8 @@ One example is <code>OsStr</code>.</p>
 <li><strong>Primitive types</strong>:
 <ul>
 <li>bool</li>
-<li>i8, i16, i32, i64, isize</li>
-<li>u8, u16, u32, u64, usize</li>
+<li>i8, i16, i32, i64, i128, isize</li>
+<li>u8, u16, u32, u64, u128, usize</li>
 <li>f32, f64</li>
 <li>char</li>
 </ul>
@@ -162,7 +162,7 @@ One example is <code>OsStr</code>.</p>
 <li>Path</li>
 <li>PathBuf</li>
 <li>Range&lt;T&gt;</li>
-<li>num::NonZero* (unstable)</li>
+<li>num::NonZero*</li>
 </ul>
 </li>
 <li><strong>Net types</strong>:
