@@ -34,7 +34,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Module synom</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'><a href='../index.html'>syn</a></p><script>window.sidebarCurrent = {name: 'synom', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
+        <p class='location'>Module synom</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'><a href='../index.html'>syn</a></p><script>window.sidebarCurrent = {name: 'synom', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/syn/synom.rs.html#9-261' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Parsing interface for parsing a token stream into a syntax tree node.</p>
+               </span><a class='srclink' href='../../src/syn/synom.rs.html#9-356' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Parsing interface for parsing a token stream into a syntax tree node.</p>
 <p>Parsing in Syn is built on parser functions that take in a <a href="../buffer/index.html"><code>Cursor</code></a> and
 produce a <a href="type.PResult.html"><code>PResult&lt;T&gt;</code></a> where <code>T</code> is some syntax tree node. <code>Cursor</code> is a
 cheaply copyable cursor over a range of tokens in a token stream, and
@@ -129,6 +129,7 @@ example is provided for each one.</p>
 <li><a href="../macro.call.html"><code>call!</code></a></li>
 <li><a href="../macro.cond.html"><code>cond!</code></a></li>
 <li><a href="../macro.cond_reduce.html"><code>cond_reduce!</code></a></li>
+<li><a href="../macro.custom_keyword.html"><code>custom_keyword!</code></a></li>
 <li><a href="../macro.do_parse.html"><code>do_parse!</code></a></li>
 <li><a href="../macro.epsilon.html"><code>epsilon!</code></a></li>
 <li><a href="../macro.input_end.html"><code>input_end!</code></a></li>
@@ -146,7 +147,16 @@ example is provided for each one.</p>
 <li><a href="../macro.value.html"><code>value!</code></a></li>
 </ul>
 <p><em>This module is available if Syn is built with the <code>&quot;parsing&quot;</code> feature.</em></p>
-</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="ext/index.html"
+                                  title='mod syn::synom::ext'>ext</a></td>
+                           <td class='docblock-short'>
+                                <p>Extension traits that are made available within the <code>call!</code> parser.</p>
+
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.ParseError.html"

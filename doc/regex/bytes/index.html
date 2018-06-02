@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/regex/lib.rs.html#639-645' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Match regular expressions on arbitrary bytes.</p>
+               </span><a class='srclink' href='../../src/regex/lib.rs.html#631-637' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Match regular expressions on arbitrary bytes.</p>
 <p>This module provides a nearly identical API to the one found in the
 top-level of this crate. There are two important differences:</p>
 <ol>
@@ -123,8 +123,7 @@ determine whether a byte is a word byte or not.</li>
 <li>Hexadecimal notation can be used to specify arbitrary bytes instead of
 Unicode codepoints. For example, in ASCII compatible mode, <code>\xFF</code> matches the
 literal byte <code>\xFF</code>, while in Unicode mode, <code>\xFF</code> is a Unicode codepoint that
-matches its UTF-8 encoding of <code>\xC3\xBF</code>. Similarly for octal notation when
-enabled.</li>
+matches its UTF-8 encoding of <code>\xC3\xBF</code>. Similarly for octal notation.</li>
 <li><code>.</code> matches any <em>byte</em> except for <code>\n</code> instead of any Unicode scalar value.
 When the <code>s</code> flag is enabled, <code>.</code> matches any byte.</li>
 </ol>

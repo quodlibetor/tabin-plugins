@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/serde/de/mod.rs.html#507-546' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait Deserialize&lt;'de&gt;: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> {
+               </span><a class='srclink' href='../../src/serde/de/mod.rs.html#522-561' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait Deserialize&lt;'de&gt;: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> {
     fn <a href='#tymethod.deserialize' class='fnname'>deserialize</a>&lt;D&gt;(deserializer: D) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, D::<a class="type" href="../../serde/trait.Deserializer.html#associatedtype.Error" title="type serde::Deserializer::Error">Error</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D: <a class="trait" href="../../serde/trait.Deserializer.html" title="trait serde::Deserializer">Deserializer</a>&lt;'de&gt;</span>;
 }</pre></div><div class='docblock'><p>A <strong>data structure</strong> that can be deserialized from any data format supported
 by Serde.</p>
@@ -77,6 +77,10 @@ some type in your program. See the <a href="https://serde.rs/impl-deserialize.ht
 they expose. For example the <code>linked-hash-map</code> crate provides a
 <code>LinkedHashMap&lt;K, V&gt;</code> type that is deserializable by Serde because the crate
 provides an implementation of <code>Deserialize</code> for it.</p>
+<h1 id="lifetime" class="section-header"><a href="#lifetime">Lifetime</a></h1>
+<p>The <code>'de</code> lifetime of this trait is the lifetime of data that may be
+borrowed by <code>Self</code> when deserialized. See the page <a href="https://serde.rs/lifetimes.html">Understanding
+deserializer lifetimes</a> for a more detailed explanation of these lifetimes.</p>
 </div>
             <h2 id='required-methods' class='small-section-header'>
               Required Methods<a href='#required-methods' class='anchor'></a>
