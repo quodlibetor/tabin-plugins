@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/tokio/executor/current_thread/mod.rs.html#1-761' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Execute many tasks concurrently on the current thread.</p>
+               </span><a class='srclink' href='../../../src/tokio/executor/current_thread/mod.rs.html#1-835' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Execute many tasks concurrently on the current thread.</p>
 <p><a href="struct.CurrentThread.html"><code>CurrentThread</code></a> is an executor that keeps tasks on the same thread that
 they were spawned from. This allows it to execute futures that are not
 <code>Send</code>.</p>
@@ -155,7 +155,15 @@ task completes, it is dropped.</p>
                            <td><a class="struct" href="struct.Entered.html"
                                   title='struct tokio::executor::current_thread::Entered'>Entered</a></td>
                            <td class='docblock-short'>
-                                <p>A <code>CurrentThread</code> instance bound to a supplied execution conext.</p>
+                                <p>A <code>CurrentThread</code> instance bound to a supplied execution context.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Handle.html"
+                                  title='struct tokio::executor::current_thread::Handle'>Handle</a></td>
+                           <td class='docblock-short'>
+                                <p>Handle to spawn a future on the corresponding <code>CurrentThread</code> instance</p>
 
                            </td>
                        </tr>

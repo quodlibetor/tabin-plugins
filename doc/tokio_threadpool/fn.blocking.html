@@ -96,7 +96,7 @@ decryption.</li>
 is to use a thread pool dedicated to performing these operations. This not
 ideal as it requires bidirectional message passing as well as a channel to
 communicate which adds a level of buffering.</p>
-<p>Instead, <code>blocking</code> hands off the responsiblity of processing the work queue
+<p>Instead, <code>blocking</code> hands off the responsibility of processing the work queue
 to another thread. This hand off is light compared to a channel and does not
 require buffering.</p>
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>

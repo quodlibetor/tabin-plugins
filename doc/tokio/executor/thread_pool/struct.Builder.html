@@ -60,7 +60,7 @@
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../../../src/tokio_threadpool/builder.rs.html#59-72' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust struct'>pub struct Builder { /* fields omitted */ }</pre></div><div class='docblock'><p>Builds a thread pool with custom configuration values.</p>
-<p>Methods can be chanined in order to set the configuration values. The thread
+<p>Methods can be chained in order to set the configuration values. The thread
 pool is constructed by calling <a href="#method.build"><code>build</code></a>.</p>
 <p>New instances of <code>Builder</code> are obtained via <a href="#method.new"><code>Builder::new</code></a>.</p>
 <p>See function level documentation for details on the various configuration
@@ -218,7 +218,7 @@ instance that is used by the worker to put itself to sleep.</p>
         <span class="kw">let</span> <span class="ident">park</span> <span class="op">=</span> <span class="ident">DefaultPark</span>::<span class="ident">new</span>();
 
         <span class="comment">// Decorate the `park` instance, allowing us to customize work</span>
-        <span class="comment">// that happens when a worker therad goes to sleep.</span>
+        <span class="comment">// that happens when a worker thread goes to sleep.</span>
         <span class="ident">decorate</span>(<span class="ident">park</span>)
     })
     .<span class="ident">build</span>();</pre>

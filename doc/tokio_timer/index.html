@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/tokio_timer/lib.rs.html#1-41' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Utilities for scheduling work to happen after a period of time.</p>
+               </span><a class='srclink' href='../src/tokio_timer/lib.rs.html#1-49' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Utilities for scheduling work to happen after a period of time.</p>
 <p>This crate provides a number of utilities for working with periods of time:</p>
 <ul>
 <li>
@@ -79,6 +79,14 @@ instant in time, erroring if the future takes too long.</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
 <table><tr><td><code>pub use self::timer::<a class="struct" href="../tokio_timer/timer/struct.Timer.html" title="struct tokio_timer::timer::Timer">Timer</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="clock/index.html"
+                                  title='mod tokio_timer::clock'>clock</a></td>
+                           <td class='docblock-short'>
+                                <p>A configurable source of time.</p>
+
+                           </td>
+                       </tr>
                        <tr class=' module-item'>
                            <td><a class="mod" href="timer/index.html"
                                   title='mod tokio_timer::timer'>timer</a></td>
@@ -129,6 +137,14 @@ instant in time, erroring if the future takes too long.</p>
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.sleep.html"
+                                  title='fn tokio_timer::sleep'>sleep</a></td>
+                           <td class='docblock-short'>
+                                <p>Create a Future that completes in <code>duration</code> from now.</p>
+
+                           </td>
+                       </tr>
                        <tr class=' module-item'>
                            <td><a class="fn" href="fn.with_default.html"
                                   title='fn tokio_timer::with_default'>with_default</a></td>
