@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/chrono/format/strftime.rs.html#4-441' title='goto source code'>[src]</a></span></h1><div class='docblock'><p><code>strftime</code>/<code>strptime</code>-inspired date and time formatting syntax.</p>
+               </span><a class='srclink' href='../../../src/chrono/format/strftime.rs.html#4-455' title='goto source code'>[src]</a></span></h1><div class='docblock'><p><code>strftime</code>/<code>strptime</code>-inspired date and time formatting syntax.</p>
 <h2 id="specifiers" class="section-header"><a href="#specifiers">Specifiers</a></h2>
 <p>The following specifiers are available both to formatting and parsing.</p>
 <table><thead><tr><th> Spec. </th><th> Example  </th><th> Description                                                                </th></tr></thead><tbody>
@@ -121,6 +121,7 @@
 <tr><td> <code>%Z</code>  </td><td> <code>ACST</code>   </td><td> <em>Formatting only:</em> Local time zone name.                                   </td></tr>
 <tr><td> <code>%z</code>  </td><td> <code>+0930</code>  </td><td> Offset from the local time to UTC (with UTC being <code>+0000</code>).                </td></tr>
 <tr><td> <code>%:z</code> </td><td> <code>+09:30</code> </td><td> Same to <code>%z</code> but with a colon.                                             </td></tr>
+<tr><td> <code>%#z</code> </td><td> <code>+09</code>    </td><td> <em>Parsing only:</em> Same to <code>%z</code> but allows minutes to be missing or present.  </td></tr>
 <tr><td>       </td><td>          </td><td>                                                                            </td></tr>
 <tr><td>       </td><td>          </td><td> <strong>DATE &amp; TIME SPECIFIERS:</strong>                                                </td></tr>
 <tr><td><code>%c</code></td><td><code>Sun Jul 8 00:34:60 2001</code></td><td><code>ctime</code> date &amp; time format. Same to <code>%a %b %e %T %Y</code> sans <code>\n</code>.</td></tr>

@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/tokio_fs/lib.rs.html#1-64' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Asynchronous filesystem manipulation operations (and stdin, stdout, stderr).</p>
+               </span><a class='srclink' href='../src/tokio_fs/lib.rs.html#1-68' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Asynchronous filesystem manipulation operations (and stdin, stdout, stderr).</p>
 <p>This module contains basic methods and types for manipulating the contents
 of the local filesystem from within the context of the Tokio runtime.</p>
 <p>Tasks running on the Tokio runtime are expected to be asynchronous, i.e.,
@@ -75,11 +75,19 @@ allows the runtime to compensate.</p>
                            <td><a class="mod" href="file/index.html"
                                   title='mod tokio_fs::file'>file</a></td>
                            <td class='docblock-short'>
-                                <p>Types for working with <a href="struct.File.html"><code>File</code></a>.</p>
+                                <p>Types for working with <a href="file/struct.File.html"><code>File</code></a>.</p>
 
                            </td>
                        </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.OpenOptions.html"
+                                  title='struct tokio_fs::OpenOptions'>OpenOptions</a></td>
+                           <td class='docblock-short'>
+                                <p>Options and flags which can be used to configure how a file is opened.</p>
+
+                           </td>
+                       </tr>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.Stderr.html"
                                   title='struct tokio_fs::Stderr'>Stderr</a></td>
