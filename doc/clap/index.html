@@ -280,7 +280,7 @@ git = &quot;https://github.com/kbknapp/clap-rs.git&quot;
 <li><code>suggestions</code>: Turns on the <code>Did you mean '--myoption'?</code> feature for when users make typos. (builds dependency <code>strsim</code>)</li>
 <li><code>color</code>: Turns on colored error messages. This feature only works on non-Windows OSs. (builds dependency <code>ansi-term</code> and <code>atty</code>)</li>
 <li><code>wrap_help</code>: Wraps the help at the actual terminal width when
-available, instead of 120 chracters. (builds dependency <code>textwrap</code>
+available, instead of 120 characters. (builds dependency <code>textwrap</code>
 with feature <code>term_size</code>)</li>
 </ul>
 <p>To disable these, add this to your <code>Cargo.toml</code>:</p>
@@ -331,12 +331,12 @@ me. I'm all about giving credit where credit is due :)</p>
 $ cargo test --features &quot;yaml unstable&quot;
 </code></pre>
 <p>Alternatively, if you have <a href="https://github.com/casey/just"><code>just</code></a> installed you can run the
-prebuilt recipies. <em>Not</em> using <code>just</code> is perfectly fine as well, it simply bundles commands
+prebuilt recipes. <em>Not</em> using <code>just</code> is perfectly fine as well, it simply bundles commands
 automatically.</p>
 <p>For example, to test the code, as above simply run:</p>
 <pre><code class="language-text">$ just run-tests
 </code></pre>
-<p>From here on, I will lis the appropriate <code>cargo</code> command as well as the <code>just</code> command.</p>
+<p>From here on, I will list the appropriate <code>cargo</code> command as well as the <code>just</code> command.</p>
 <p>Sometimes it's helpful to only run a subset of the tests, which can be done via:</p>
 <pre><code class="language-text">$ cargo test --test &lt;test_name&gt;
 
@@ -402,7 +402,7 @@ breaking changes and previous versions of Rust.</p>
 <p><code>clap</code> will pin the minimum required version of Rust to the CI builds. Bumping the minimum
 version of Rust is considered a minor breaking change, meaning <em>at a minimum</em> the minor version
 of <code>clap</code> will be bumped.</p>
-<p>In order to keep from being suprised of breaking changes, it is <strong>highly</strong> recommended to use
+<p>In order to keep from being surprised by breaking changes, it is <strong>highly</strong> recommended to use
 the <code>~major.minor.patch</code> style in your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies] clap = &quot;~2.27.0&quot;
 </code></pre>

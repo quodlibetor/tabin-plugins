@@ -115,7 +115,7 @@ the use of <code>--</code>. To skip more than one, see the second example.</p>
 of the <code>--</code> operator is OK (but not required if all arguments will be specified anyways).</p>
 <p>For example, imagine a CLI which has three positional arguments <code>[foo] [bar] [baz]...</code> where
 <code>baz</code> accepts multiple values (similar to man <code>ARGS...</code> style training arguments).</p>
-<p>With this setting the following invocations are posisble:</p>
+<p>With this setting the following invocations are possible:</p>
 <ul>
 <li><code>$ prog foo bar baz1 baz2 baz3</code></li>
 <li><code>$ prog foo -- baz1 baz2 baz3</code></li>
@@ -169,7 +169,7 @@ of the <code>--</code> operator is OK (but not required if all arguments will be
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">m</span>.<span class="ident">value_of</span>(<span class="string">&quot;foo&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">&quot;foo&quot;</span>));
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">m</span>.<span class="ident">value_of</span>(<span class="string">&quot;bar&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">&quot;bar&quot;</span>));
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">m</span>.<span class="ident">values_of</span>(<span class="string">&quot;baz&quot;</span>).<span class="ident">unwrap</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>(), <span class="kw-2">&amp;</span>[<span class="string">&quot;baz1&quot;</span>, <span class="string">&quot;baz2&quot;</span>, <span class="string">&quot;baz3&quot;</span>]);</pre>
-<p>Now nofice if we don't specifiy <code>foo</code> or <code>baz</code> but use the <code>--</code> operator.</p>
+<p>Now notice if we don't specify <code>foo</code> or <code>baz</code> but use the <code>--</code> operator.</p>
 
 <pre class="rust rust-example-rendered">
 <span class="comment">// Assume there is an external subcommand named &quot;subcmd&quot;</span>
@@ -211,7 +211,7 @@ One should check for such cases manually and inform the user appropriately.</p>
     },
     <span class="kw">_</span> <span class="op">=&gt;</span> {},
 }</pre>
-</div><span id="variant.ArgsNegateSubcommands" class="variant small-section-header"><a href="#variant.ArgsNegateSubcommands" class="anchor field"></a><span id='ArgsNegateSubcommands.v' class='invisible'><code>ArgsNegateSubcommands</code></span></span><div class='docblock'><p>Specifies that use of a valid <a href="./struct.Arg.html">argument</a> negates [subcomands] being used after. By default
+</div><span id="variant.ArgsNegateSubcommands" class="variant small-section-header"><a href="#variant.ArgsNegateSubcommands" class="anchor field"></a><span id='ArgsNegateSubcommands.v' class='invisible'><code>ArgsNegateSubcommands</code></span></span><div class='docblock'><p>Specifies that use of a valid <a href="./struct.Arg.html">argument</a> negates <a href="./struct.SubCommand.html">subcommands</a> being used after. By default
 <code>clap</code> allows arguments between subcommands such as
 <code>&lt;cmd&gt; [cmd_args] &lt;cmd2&gt; [cmd2_args] &lt;cmd3&gt; [cmd3_args]</code>. This setting disables that
 functionality and says that arguments can only follow the <em>final</em> subcommand. For instance
@@ -237,7 +237,7 @@ ensure that some argument is always present.</p>
 </div><span id="variant.ColoredHelp" class="variant small-section-header"><a href="#variant.ColoredHelp" class="anchor field"></a><span id='ColoredHelp.v' class='invisible'><code>ColoredHelp</code></span></span><div class='docblock'><p>Uses colorized help messages.</p>
 <p><strong>NOTE:</strong> Must be compiled with the <code>color</code> cargo feature</p>
 <h1 id="platform-specific-1" class="section-header"><a href="#platform-specific-1">Platform Specific</a></h1>
-<p>This setting only applies to Unix, Linux, and OSX (i.e. non-Windows platforms)</p>
+<p>This setting only applies to Unix, Linux, and macOS (i.e. non-Windows platforms)</p>
 <h1 id="examples-7" class="section-header"><a href="#examples-7">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="ident">App</span>::<span class="ident">new</span>(<span class="string">&quot;myprog&quot;</span>)
@@ -247,7 +247,7 @@ ensure that some argument is always present.</p>
 <p><strong>NOTE:</strong> This is the default behavior of <code>clap</code>.</p>
 <p><strong>NOTE:</strong> Must be compiled with the <code>color</code> cargo feature.</p>
 <h1 id="platform-specific-2" class="section-header"><a href="#platform-specific-2">Platform Specific</a></h1>
-<p>This setting only applies to Unix, Linux, and OSX (i.e. non-Windows platforms).</p>
+<p>This setting only applies to Unix, Linux, and macOS (i.e. non-Windows platforms).</p>
 <h1 id="examples-8" class="section-header"><a href="#examples-8">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="ident">App</span>::<span class="ident">new</span>(<span class="string">&quot;myprog&quot;</span>)
@@ -256,7 +256,7 @@ ensure that some argument is always present.</p>
 </div><span id="variant.ColorAlways" class="variant small-section-header"><a href="#variant.ColorAlways" class="anchor field"></a><span id='ColorAlways.v' class='invisible'><code>ColorAlways</code></span></span><div class='docblock'><p>Enables colored output regardless of whether or not the output is going to a terminal/TTY.</p>
 <p><strong>NOTE:</strong> Must be compiled with the <code>color</code> cargo feature.</p>
 <h1 id="platform-specific-3" class="section-header"><a href="#platform-specific-3">Platform Specific</a></h1>
-<p>This setting only applies to Unix, Linux, and OSX (i.e. non-Windows platforms).</p>
+<p>This setting only applies to Unix, Linux, and macOS (i.e. non-Windows platforms).</p>
 <h1 id="examples-9" class="section-header"><a href="#examples-9">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="ident">App</span>::<span class="ident">new</span>(<span class="string">&quot;myprog&quot;</span>)
@@ -265,7 +265,7 @@ ensure that some argument is always present.</p>
 </div><span id="variant.ColorNever" class="variant small-section-header"><a href="#variant.ColorNever" class="anchor field"></a><span id='ColorNever.v' class='invisible'><code>ColorNever</code></span></span><div class='docblock'><p>Disables colored output no matter if the output is going to a terminal/TTY, or not.</p>
 <p><strong>NOTE:</strong> Must be compiled with the <code>color</code> cargo feature</p>
 <h1 id="platform-specific-4" class="section-header"><a href="#platform-specific-4">Platform Specific</a></h1>
-<p>This setting only applies to Unix, Linux, and OSX (i.e. non-Windows platforms)</p>
+<p>This setting only applies to Unix, Linux, and macOS (i.e. non-Windows platforms)</p>
 <h1 id="examples-10" class="section-header"><a href="#examples-10">Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="ident">App</span>::<span class="ident">new</span>(<span class="string">&quot;myprog&quot;</span>)
@@ -293,7 +293,7 @@ when making changes.</p>
 <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">App</span>::<span class="ident">new</span>(<span class="string">&quot;myprog&quot;</span>)
     .<span class="ident">version</span>(<span class="string">&quot;v1.1&quot;</span>)
     .<span class="ident">setting</span>(<span class="ident">AppSettings</span>::<span class="ident">DisableHelpSubcommand</span>)
-    <span class="comment">// Normally, creating a subcommand causes a `help` subcommand to automaticaly</span>
+    <span class="comment">// Normally, creating a subcommand causes a `help` subcommand to automatically</span>
     <span class="comment">// be generated as well</span>
     .<span class="ident">subcommand</span>(<span class="ident">SubCommand</span>::<span class="ident">with_name</span>(<span class="string">&quot;test&quot;</span>))
     .<span class="ident">get_matches_from_safe</span>(<span class="macro">vec</span><span class="macro">!</span>[
