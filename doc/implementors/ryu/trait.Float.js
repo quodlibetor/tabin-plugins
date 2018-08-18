@@ -1,5 +1,5 @@
 (function() {var implementors = {};
-implementors["unreachable"] = [];
+implementors["ryu"] = [];
 
             if (window.register_implementors) {
                 window.register_implementors(implementors);
