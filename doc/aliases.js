@@ -104,6 +104,7 @@ ALIASES['structopt'] = {};
 ALIASES['structopt_derive'] = {};
 ALIASES['syn'] = {};
 ALIASES['syn'] = {};
+ALIASES['syn'] = {};
 ALIASES['tabin_plugins'] = {};
 ALIASES['termcolor'] = {};
 ALIASES['textwrap'] = {};
