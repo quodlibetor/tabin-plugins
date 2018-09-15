@@ -21,11 +21,10 @@ another future which completes successfully.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Collect.html"
-                                  title='struct tokio::prelude::future::Collect'>Collect</a></td>
+                           <td><a class="struct" href="struct.Done.html"
+                                  title='struct tokio::prelude::future::Done'>Done</a></td>
                            <td class='docblock-short'>
-                                <p>A future which takes a list of futures and resolves with a vector of the
-completed values.</p>
+                                <p>A future representing a value that is immediately ready.</p>
 
                            </td>
                        </tr>
@@ -42,14 +41,6 @@ completed values.</p>
                                   title='struct tokio::prelude::future::ExecuteError'>ExecuteError</a></td>
                            <td class='docblock-short'>
                                 <p>Errors returned from the <code>Spawn::spawn</code> function.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Failed.html"
-                                  title='struct tokio::prelude::future::Failed'>Failed</a></td>
-                           <td class='docblock-short'>
-                                <p>A future representing a value that is immediately ready.</p>
 
                            </td>
                        </tr>
@@ -137,6 +128,15 @@ complete.</p>
                            <td class='docblock-short'>
                                 <p>Future for the <code>join5</code> combinator, waiting for five futures to
 complete.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.JoinAll.html"
+                                  title='struct tokio::prelude::future::JoinAll'>JoinAll</a></td>
+                           <td class='docblock-short'>
+                                <p>A future which takes a list of futures and resolves with a vector of the
+completed values.</p>
 
                            </td>
                        </tr>
@@ -359,6 +359,15 @@ finishes.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class="fn" href="fn.finished.html"
+                                  title='fn tokio::prelude::future::finished'>finished</a></td>
+                           <td class='docblock-short'>
+                                <p>Creates a &quot;leaf future&quot; from an immediate value of a finished and
+successful computation.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="fn" href="fn.lazy.html"
                                   title='fn tokio::prelude::future::lazy'>lazy</a></td>
                            <td class='docblock-short'>
@@ -372,15 +381,6 @@ by the closure provided.</p>
                                   title='fn tokio::prelude::future::loop_fn'>loop_fn</a></td>
                            <td class='docblock-short'>
                                 <p>Creates a new future implementing a tail-recursive loop.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.ok.html"
-                                  title='fn tokio::prelude::future::ok'>ok</a></td>
-                           <td class='docblock-short'>
-                                <p>Creates a &quot;leaf future&quot; from an immediate value of a finished and
-successful computation.</p>
 
                            </td>
                        </tr>
