@@ -90,7 +90,7 @@ the <a href="#method.reserve"><code>reserve</code></a> method.</p>
 <span class="kw">use</span> <span class="ident">tokio_timer</span>::<span class="ident">timer</span>::<span class="ident">Handle</span>;
 
 <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">Handle</span>::<span class="ident">default</span>();
-<span class="kw">let</span> <span class="ident">deplay_queue</span>: <span class="ident">DelayQueue</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">DelayQueue</span>::<span class="ident">with_capacity_and_handle</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">handle</span>);</pre>
+<span class="kw">let</span> <span class="ident">delay_queue</span>: <span class="ident">DelayQueue</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">DelayQueue</span>::<span class="ident">with_capacity_and_handle</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">handle</span>);</pre>
 </div><h4 id='method.with_capacity' class="method"><span id='with_capacity.v' class='invisible'><table class='table-display'><tbody><tr><td><code>pub fn <a href='#method.with_capacity' class='fnname'>with_capacity</a>(capacity: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="struct" href="../../tokio/timer/struct.DelayQueue.html" title="struct tokio::timer::DelayQueue">DelayQueue</a>&lt;T&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/tokio_timer/delay_queue.rs.html#269-271' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Create a new, empty, <code>DelayQueue</code> with the specified capacity.</p>
 <p>The queue will be able to hold at least <code>capacity</code> elements without
 reallocating. If <code>capacity</code> is 0, the queue will not allocate for
@@ -115,7 +115,7 @@ of a <code>Duration</code>.</p>
 reached, then <code>value</code> is immediately made available to poll.</p>
 <p>The return value represents the insertion and is used at an argument to
 <a href="#method.remove"><code>remove</code></a> and <a href="#method.reset"><code>reset</code></a>. Note that <a href="struct.Key.html"><code>Key</code></a> is token and is reused once
-<code>value</code> is removed from the queue eitheer by calling <a href="#method.poll"><code>poll</code></a> after
+<code>value</code> is removed from the queue either by calling <a href="#method.poll"><code>poll</code></a> after
 <code>when</code> is reached or by calling <a href="#method.remove"><code>remove</code></a>. At this point, the caller
 must take care to not use the returned <a href="struct.Key.html"><code>Key</code></a> again as it may reference
 a different item in the queue.</p>
@@ -145,7 +145,7 @@ instead of an <code>Instant</code>.</p>
 reached, then <code>value</code> is immediately made available to poll.</p>
 <p>The return value represents the insertion and is used at an argument to
 <a href="#method.remove"><code>remove</code></a> and <a href="#method.reset"><code>reset</code></a>. Note that <a href="struct.Key.html"><code>Key</code></a> is token and is reused once
-<code>value</code> is removed from the queue eitheer by calling <a href="#method.poll"><code>poll</code></a> after
+<code>value</code> is removed from the queue either by calling <a href="#method.poll"><code>poll</code></a> after
 <code>when</code> is reached or by calling <a href="#method.remove"><code>remove</code></a>. At this point, the caller
 must take care to not use the returned <a href="struct.Key.html"><code>Key</code></a> again as it may reference
 a different item in the queue.</p>
@@ -208,7 +208,7 @@ not contained by the queue.</p>
 
 <span class="ident">delay_queue</span>.<span class="ident">reset_at</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>, <span class="ident">Instant</span>::<span class="ident">now</span>() <span class="op">+</span> <span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">10</span>));
 
-<span class="comment">// &quot;foo&quot;is now scheduledto be returned in 10 seconds</span></pre>
+<span class="comment">// &quot;foo&quot;is now scheduled to be returned in 10 seconds</span></pre>
 </div><h4 id='method.reset' class="method"><span id='reset.v' class='invisible'><table class='table-display'><tbody><tr><td><code>pub fn <a href='#method.reset' class='fnname'>reset</a>(&amp;mut self, key: &amp;<a class="struct" href="../../tokio/timer/delay_queue/struct.Key.html" title="struct tokio::timer::delay_queue::Key">Key</a>, timeout: <a class="struct" href="https://doc.rust-lang.org/nightly/core/time/struct.Duration.html" title="struct core::time::Duration">Duration</a>)</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/tokio_timer/delay_queue.rs.html#547-549' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Sets the delay of the item associated with <code>key</code> to expire after
 <code>timeout</code>.</p>
 <p>This function is identical to <code>reset_at</code> but takes a <code>Duration</code> instead
@@ -233,7 +233,7 @@ duration or if <code>key</code> is not contained by the queue.</p>
 
 <span class="ident">delay_queue</span>.<span class="ident">reset</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>, <span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">10</span>));
 
-<span class="comment">// &quot;foo&quot;is now scheduledto be returned in 10 seconds</span></pre>
+<span class="comment">// &quot;foo&quot;is now scheduled to be returned in 10 seconds</span></pre>
 </div><h4 id='method.clear' class="method"><span id='clear.v' class='invisible'><table class='table-display'><tbody><tr><td><code>pub fn <a href='#method.clear' class='fnname'>clear</a>(&amp;mut self)</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/tokio_timer/delay_queue.rs.html#578-583' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Clears the queue, removing all items.</p>
 <p>After calling <code>clear</code>, <a href="#method.poll"><code>poll</code></a> will return <code>Ok(Ready(None))</code>.</p>
 <p>Note that this method has no effect on the allocated capacity.</p>

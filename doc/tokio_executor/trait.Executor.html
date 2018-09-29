@@ -49,7 +49,7 @@ gracefully shutdown.</p>
 future may run on the current thread or another thread at the discretion
 of the <code>Executor</code> implementation.</p>
 <h1 id="panics" class="section-header"><a href="#panics">Panics</a></h1>
-<p>Implementors are encouraged to avoid panics. However, a panic is
+<p>Implementers are encouraged to avoid panics. However, a panic is
 permitted and the caller should check the implementation specific
 documentation for more details on possible panics.</p>
 <h1 id="examples-1" class="section-header"><a href="#examples-1">Examples</a></h1>
@@ -72,7 +72,7 @@ succeed, but may fail. If <code>status</code> returns <code>Err</code>, a call t
 <p>This allows a caller to avoid creating the task if the call to <code>spawn</code>
 has a high likelihood of failing.</p>
 <h1 id="panics-1" class="section-header"><a href="#panics-1">Panics</a></h1>
-<p>This function must not panic. Implementors must ensure that panics do
+<p>This function must not panic. Implementers must ensure that panics do
 not happen.</p>
 <h1 id="examples-2" class="section-header"><a href="#examples-2">Examples</a></h1>
 <pre class="rust rust-example-rendered">
