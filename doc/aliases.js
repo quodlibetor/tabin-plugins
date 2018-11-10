@@ -25,6 +25,7 @@ ALIASES['crc'] = {};
 ALIASES['crossbeam_deque'] = {};
 ALIASES['crossbeam_epoch'] = {};
 ALIASES['crossbeam_utils'] = {};
+ALIASES['crossbeam_utils'] = {};
 ALIASES['derive_more'] = {};
 ALIASES['dtoa'] = {};
 ALIASES['either'] = {};
