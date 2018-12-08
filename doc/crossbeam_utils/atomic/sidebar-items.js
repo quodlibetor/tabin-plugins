@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["AtomicConsume","Trait which allows reading from an atomic type with \"consume\" ordering."]]});
+initSidebarItems({"trait":[["AtomicConsume","Trait which allows reading from primitive atomic types with \"consume\" ordering."]]});
