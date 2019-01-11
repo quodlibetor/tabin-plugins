@@ -3,8 +3,8 @@
 //! The `Process` struct can load everything about a running process, and
 //! provides some aggregate data about them.
 
-mod stat;
 mod cmd_line;
+mod stat;
 
 use std::fmt;
 
@@ -12,8 +12,8 @@ use super::Result;
 
 use linux::{Jiffies, Ratio, PAGESIZE};
 
-pub use self::stat::{Stat, State};
 pub use self::cmd_line::CmdLine;
+pub use self::stat::{Stat, State};
 
 /// Information about a running process
 #[derive(Clone, Debug, Default)]

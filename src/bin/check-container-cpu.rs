@@ -12,19 +12,20 @@ use std::thread::sleep;
 use std::time::Duration;
 use structopt::StructOpt;
 
-use tabin_plugins::Status;
 use tabin_plugins::linux::{Jiffies, Ratio};
 use tabin_plugins::procfs::{Calculations, LoadProcsError, ProcField, ProcFsError, RunningProcs};
-use tabin_plugins::sys::fs::cgroup::cpuacct::Stat as CGroupStat;
 use tabin_plugins::sys::fs::cgroup::cpu::shares;
+use tabin_plugins::sys::fs::cgroup::cpuacct::Stat as CGroupStat;
+use tabin_plugins::Status;
 
 /// Check the cpu usage of the currently-running container.
 ///
 /// This must be run from inside the container to be checked.
 #[derive(Deserialize, StructOpt, Debug)]
-#[structopt(name = "check-container-cpu (part of tabin-plugins)",
-            raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
-            after_help = "About usage percentages:
+#[structopt(
+    name = "check-container-cpu (part of tabin-plugins)",
+    raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+    after_help = "About usage percentages:
 
     If you don't specify '--shares-per-cpu', percentages should be specified
     relative to a single CPU's usage. So if you have a process that you want to
@@ -61,24 +62,44 @@ use tabin_plugins::sys::fs::cgroup::cpu::shares;
         * args: --shares-per-cpu 1024 --crit 90
           shares granted: 102
           percent of one CPU to alert at: 9
-")]
+"
+)]
 struct Args {
-    #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "80")]
+    #[structopt(
+        short = "w",
+        long = "warn",
+        help = "Percent to warn at",
+        default_value = "80"
+    )]
     warn: f64,
-    #[structopt(short = "c", long = "crit", help = "Percent to go critical at",
-                default_value = "80")]
+    #[structopt(
+        short = "c",
+        long = "crit",
+        help = "Percent to go critical at",
+        default_value = "80"
+    )]
     crit: f64,
-    #[structopt(long = "shares-per-cpu",
-                help = "The number of CPU shares given to a cgroup when \
-                        it has exactly one CPU allocated to it.")]
+    #[structopt(
+        long = "shares-per-cpu",
+        help = "The number of CPU shares given to a cgroup when \
+                it has exactly one CPU allocated to it."
+    )]
     shares_per_cpu: Option<u32>,
 
-    #[structopt(short = "s", long = "sample", name = "seconds",
-                help = "Seconds to take sample over", default_value = "5")]
+    #[structopt(
+        short = "s",
+        long = "sample",
+        name = "seconds",
+        help = "Seconds to take sample over",
+        default_value = "5"
+    )]
     sample: u64,
-    #[structopt(long = "show-hogs", name = "count",
-                help = "Show <count> most cpu-intensive processes in this container.",
-                default_value = "0")]
+    #[structopt(
+        long = "show-hogs",
+        name = "count",
+        help = "Show <count> most cpu-intensive processes in this container.",
+        default_value = "0"
+    )]
     show_hogs: usize,
 }
 
@@ -190,9 +211,9 @@ fn load_procs(load_errors: &mut Vec<ProcFsError>) -> RunningProcs {
 mod unit {
     use structopt::StructOpt;
 
-    use tabin_plugins::procfs::Calculations; //, RunningProcs};
-    use tabin_plugins::linux::Jiffies;
     use super::{find_median_jiffies_used, Args};
+    use tabin_plugins::linux::Jiffies;
+    use tabin_plugins::procfs::Calculations; //, RunningProcs};
 
     #[test]
     fn opts_parse() {
@@ -224,12 +245,10 @@ mod unit {
     #[test]
     fn median_jiffies_works_with_single_cpu() {
         let start = vec![start()];
-        let end = vec![
-            Calculations {
-                user: Jiffies::new(110),
-                ..start[0]
-            },
-        ];
+        let end = vec![Calculations {
+            user: Jiffies::new(110),
+            ..start[0]
+        }];
 
         let median = find_median_jiffies_used(&start, &end);
 

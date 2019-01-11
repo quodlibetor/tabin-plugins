@@ -8,14 +8,14 @@ extern crate structopt;
 
 extern crate tabin_plugins;
 
-use std::fmt;
 use std::cmp::max;
+use std::fmt;
 use structopt::StructOpt;
 
-use tabin_plugins::Status;
-use tabin_plugins::sys::fs::cgroup::memory::{limit_in_bytes, Stat};
 use tabin_plugins::linux::{bytes_to_human_size, pages_to_human_size};
 use tabin_plugins::procfs::{LoadProcsError, MemInfo, ProcFsError, RunningProcs};
+use tabin_plugins::sys::fs::cgroup::memory::{limit_in_bytes, Stat};
+use tabin_plugins::Status;
 
 /// Check the RAM usage of the currently-running container.
 ///
@@ -25,22 +25,39 @@ use tabin_plugins::procfs::{LoadProcsError, MemInfo, ProcFsError, RunningProcs};
 /// if there is no limit set (or the limit is greater than the total memory
 /// available on the system) this checks against the total system memory.
 #[derive(Deserialize, StructOpt, Debug)]
-#[structopt(name = "check-container-ram (part of tabin-plugins)",
-            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
+#[structopt(
+    name = "check-container-ram (part of tabin-plugins)",
+    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+)]
 struct Args {
-    #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "85")]
+    #[structopt(
+        short = "w",
+        long = "warn",
+        help = "Percent to warn at",
+        default_value = "85"
+    )]
     warn: f64,
-    #[structopt(short = "c", long = "crit", help = "Percent to go critical at",
-                default_value = "95")]
+    #[structopt(
+        short = "c",
+        long = "crit",
+        help = "Percent to go critical at",
+        default_value = "95"
+    )]
     crit: f64,
 
-    #[structopt(long = "invalid-limit", default_value = "ok",
-                help = "Status to consider this check if the CGroup limit is greater than \
-                        the system ram")]
+    #[structopt(
+        long = "invalid-limit",
+        default_value = "ok",
+        help = "Status to consider this check if the CGroup limit is greater than \
+                the system ram"
+    )]
     invalid_limit: Status,
-    #[structopt(long = "show-hogs", name = "count",
-                help = "Show <count> most ram-intensive processes in this container.",
-                default_value = "0")]
+    #[structopt(
+        long = "show-hogs",
+        name = "count",
+        help = "Show <count> most ram-intensive processes in this container.",
+        default_value = "0"
+    )]
     show_hogs: usize,
 }
 
@@ -156,9 +173,9 @@ fn main() {
 #[cfg(test)]
 mod unit {
 
+    use super::Args;
     use structopt::StructOpt;
     use tabin_plugins::Status;
-    use super::Args;
 
     #[test]
     fn usage_is_valid() {

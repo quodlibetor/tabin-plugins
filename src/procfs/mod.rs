@@ -4,17 +4,17 @@
 //! function.
 
 use std::collections::{hash_map, HashMap};
+use std::fmt;
 use std::fs::{self, File};
 use std::io::{self, Read};
+use std::num;
 use std::ops::{Div, Sub};
 use std::result::Result as StdResult;
 use std::str::{FromStr, Split};
-use std::fmt;
-use std::num;
 
+use nix::unistd::Pid;
 use regex::Regex;
 use std::slice;
-use nix::unistd::Pid;
 
 use linux::Jiffies;
 use procfs::pid::ProcessCpuUsage;
@@ -132,7 +132,8 @@ impl<'a> ProcessCpuUsages<'a> {
     /// See the `ProcField` docs for details
     pub fn sort_by_field(&mut self, field: ProcField) {
         match field {
-            ProcField::TotalCpu => self.0
+            ProcField::TotalCpu => self
+                .0
                 .sort_by(|l, r| r.total.partial_cmp(&l.total).unwrap()),
         }
     }
@@ -190,7 +191,8 @@ impl RunningProcs {
             Err(LoadProcsError {
                 procs: RunningProcs(procs),
                 errors,
-            }.into())
+            }
+            .into())
         }
     }
 
@@ -370,13 +372,12 @@ impl Calculations {
     fn from_line(line: &str) -> Result<Calculations> {
         assert!(line.starts_with("cpu"));
 
-        let usages = try!(
-            line.split(' ')
-                .skip(1)
-                .filter(|part| part.len() > 0)
-                .map(|part| part.parse())
-                .collect::<StdResult<Vec<u64>, _>>()
-        );
+        let usages = try!(line
+            .split(' ')
+            .skip(1)
+            .filter(|part| part.len() > 0)
+            .map(|part| part.parse())
+            .collect::<StdResult<Vec<u64>, _>>());
         Ok(Calculations {
             user: Jiffies::new(usages[0]),
             nice: Jiffies::new(usages[1]),
@@ -456,13 +457,11 @@ impl FromStr for Calculations {
     /// Parse the entire /proc/stat file into a single `Calculations` object
     /// for total CPU
     fn from_str(contents: &str) -> Result<Calculations> {
-        let mut calcs = try!(
-            contents
-                .lines()
-                .take(1)
-                .map(Self::from_line)
-                .collect::<StdResult<Vec<_>, _>>()
-        );
+        let mut calcs = try!(contents
+            .lines()
+            .take(1)
+            .map(Self::from_line)
+            .collect::<StdResult<Vec<_>, _>>());
         Ok(calcs.remove(0))
     }
 }
@@ -723,12 +722,11 @@ impl FromStr for LoadAvg {
 
     fn from_str(contents: &str) -> Result<LoadAvg> {
         let pat = Regex::new(r"[ ,]").unwrap();
-        let fields = try!(
-            pat.split(contents)
-                .take(3)
-                .map(|load| load.parse())
-                .collect::<StdResult<Vec<f64>, _>>()
-        );
+        let fields = try!(pat
+            .split(contents)
+            .take(3)
+            .map(|load| load.parse())
+            .collect::<StdResult<Vec<f64>, _>>());
         Ok(LoadAvg {
             one: fields[0],
             five: fields[1],
@@ -781,9 +779,10 @@ fn mount_from_line(line: &str) -> Result<Mount> {
         mntops: try!(parts.next().map_or(
             Err(InsufficientData("Missing mnt ops from mount".to_owned(),)),
             Ok,
-        )).split(',')
-            .map(|part| part.to_owned())
-            .collect::<Vec<_>>(),
+        ))
+        .split(',')
+        .map(|part| part.to_owned())
+        .collect::<Vec<_>>(),
         freq: parts.next().map(|v| v.parse().unwrap()),
         passno: parts.next().map(|v| v.parse().unwrap()),
     })
@@ -815,8 +814,8 @@ impl Mount {
 
 #[cfg(test)]
 mod unit {
-    use super::*;
     use super::mount_from_line;
+    use super::*;
     use std::str::FromStr;
 
     use linux::Jiffies;
@@ -915,7 +914,8 @@ btime 143
                 "MemFree: 280\n",
                 "Meaningless: 777\n",
                 "Cached: 200\n"
-            )).unwrap(),
+            ))
+            .unwrap(),
             MemInfo {
                 total: Some(500),
                 available: Some(20),
@@ -1066,7 +1066,8 @@ btime 143
             "guest",
             "idle",
             "iowait",
-        ].iter()
+        ]
+        .iter()
         {
             if let Err(e) = src.parse::<WorkSource>() {
                 panic!("Error parsing worksource for '{}': {}", src, e);

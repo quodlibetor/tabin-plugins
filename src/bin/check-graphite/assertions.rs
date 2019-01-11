@@ -276,7 +276,7 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                             "Expect assertion to start with 'critical' \
                              or 'warning', not '{}'",
                             word
-                        )))
+                        )));
                     }
                 };
                 if let Some(next) = it.next() {
@@ -298,22 +298,24 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                 point_assertion = Some(try!(parse_ratio(&mut it, word)));
                 state = AssertionState::Open;
             }
-            AssertionState::Open => if word == "in" {
-                state = AssertionState::Series
-            } else if word == "is" || word == "are" {
-                if it.peek() == Some(&"not") {
-                    negated = NegOp::Yes;
-                    it.next();
+            AssertionState::Open => {
+                if word == "in" {
+                    state = AssertionState::Series
+                } else if word == "is" || word == "are" {
+                    if it.peek() == Some(&"not") {
+                        negated = NegOp::Yes;
+                        it.next();
+                    }
+                    state = AssertionState::Operator
+                } else {
+                    return Err(ParseError::SyntaxError(format!(
+                        "Expected 'in' or 'is'/'are' \
+                         (series spec or operator), \
+                         found '{}'",
+                        word
+                    )));
                 }
-                state = AssertionState::Operator
-            } else {
-                return Err(ParseError::SyntaxError(format!(
-                    "Expected 'in' or 'is'/'are' \
-                     (series spec or operator), \
-                     found '{}'",
-                    word
-                )));
-            },
+            }
             AssertionState::Series => {
                 if let PointAssertion::Ratio(r) = try!(parse_ratio(&mut it, word)) {
                     series_ratio = r;
@@ -326,32 +328,36 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                 }
                 state = AssertionState::Open;
             }
-            AssertionState::Operator => if word == "be" {
-            } else {
-                if let Some(word) = ["<", "<=", ">", ">=", "==", "!="]
-                    .iter()
-                    .find(|&&op| op == word)
-                {
-                    operator = Some(word);
-                    state = AssertionState::Threshold;
+            AssertionState::Operator => {
+                if word == "be" {
                 } else {
-                    return Err(ParseError::InvalidOperator(format!(
-                        "Expected a comparison \
-                         operator (e.g. >=), \
-                         not '{}'",
-                        word.to_owned()
+                    if let Some(word) = ["<", "<=", ">", ">=", "==", "!="]
+                        .iter()
+                        .find(|&&op| op == word)
+                    {
+                        operator = Some(word);
+                        state = AssertionState::Threshold;
+                    } else {
+                        return Err(ParseError::InvalidOperator(format!(
+                            "Expected a comparison \
+                             operator (e.g. >=), \
+                             not '{}'",
+                            word.to_owned()
+                        )));
+                    }
+                }
+            }
+            AssertionState::Threshold => {
+                if let Ok(thresh) = word.parse::<f64>() {
+                    threshold = Some(thresh)
+                } else {
+                    return Err(ParseError::InvalidThreshold(format!(
+                        "Couldn't parse float from \
+                         '{}'",
+                        word
                     )));
                 }
-            },
-            AssertionState::Threshold => if let Ok(thresh) = word.parse::<f64>() {
-                threshold = Some(thresh)
-            } else {
-                return Err(ParseError::InvalidThreshold(format!(
-                    "Couldn't parse float from \
-                     '{}'",
-                    word
-                )));
-            },
+            }
         }
     }
 
@@ -430,12 +436,12 @@ where
                     "Expected 'most recent' \
                      found 'most {}'",
                     word
-                )))
+                )));
             }
             None => {
                 return Err(ParseError::SyntaxError(
                     "Expected 'most recent' found trailing 'most'".to_owned(),
-                ))
+                ));
             }
         }
         match it.next() {
@@ -445,14 +451,14 @@ where
                     "Expected 'most recent point' found \
                      'most recent {}'",
                     word
-                )))
+                )));
             }
             None => {
                 return Err(ParseError::SyntaxError(
                     "Expected 'most recent point' found \
                      trailing 'most recent'"
                         .to_owned(),
-                ))
+                ));
             }
         }
     } else {
@@ -517,8 +523,8 @@ fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f
 mod test {
     use tabin_plugins::Status;
 
-    use super::*;
     use super::PointAssertion::*;
+    use super::*;
     use test::{deser, valid_data_from_json_two_sets};
 
     #[test]
@@ -536,7 +542,8 @@ mod test {
             point_assertion: Ratio(0.0),
             series_ratio: 0.0,
             failure_status: Status::Critical,
-        }.check(&valid_data_from_json_two_sets());
+        }
+        .check(&valid_data_from_json_two_sets());
         if let Status::Critical = result {
             // expected
         } else {
@@ -553,7 +560,8 @@ mod test {
             point_assertion: Ratio(1.0),
             series_ratio: 0.0,
             failure_status: Status::Critical,
-        }.check(&valid_data_from_json_two_sets());
+        }
+        .check(&valid_data_from_json_two_sets());
         if let Status::Ok = result {
             // expected
         } else {
@@ -633,7 +641,8 @@ mod test {
         let assertion = parse_assertion(
             "critical if any point in at least 20% of series is not \
              >= 5.5",
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!(assertion.point_assertion, Ratio(0.0));
         assert_eq!(assertion.series_ratio, 0.2_f64);
     }
@@ -791,7 +800,8 @@ mod test {
         let assertion = parse_assertion(
             "critical if at least 80% of points in at least 90% of \
              series are not >= 5.5",
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!(assertion.point_assertion, Ratio(0.8));
         assert_eq!(assertion.series_ratio, 0.9_f64);
     }

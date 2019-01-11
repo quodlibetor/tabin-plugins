@@ -14,16 +14,16 @@ extern crate structopt;
 
 extern crate tabin_plugins;
 
-use std::collections::HashSet;
 use std::cmp::max;
+use std::collections::HashSet;
 use std::fmt;
 
-use structopt::StructOpt;
-use regex::Regex;
 use nix::sys::statvfs::vfs;
-use tabin_plugins::Status;
-use tabin_plugins::procfs::Mount;
+use regex::Regex;
+use structopt::StructOpt;
 use tabin_plugins::linux::bytes_to_human_size;
+use tabin_plugins::procfs::Mount;
+use tabin_plugins::Status;
 
 /// Check all mounted file systems for disk usage.
 ///
@@ -31,42 +31,78 @@ use tabin_plugins::linux::bytes_to_human_size;
 /// 3% higher than `df`, even though AFAICT we're both just calling statvfs a bunch
 /// of times.
 #[derive(StructOpt, Deserialize, Debug)]
-#[structopt(name = "check-disk (part of tabin-plugins)",
-            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
+#[structopt(
+    name = "check-disk (part of tabin-plugins)",
+    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+)]
 struct Args {
-    #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "80")]
+    #[structopt(
+        short = "w",
+        long = "warn",
+        help = "Percent to warn at",
+        default_value = "80"
+    )]
     warn: f64,
-    #[structopt(short = "c", long = "crit", help = "Percent to go critical at",
-                default_value = "90")]
+    #[structopt(
+        short = "c",
+        long = "crit",
+        help = "Percent to go critical at",
+        default_value = "90"
+    )]
     crit: f64,
-    #[structopt(short = "W", long = "warn-inodes", help = "Percent of inode usage to warn at",
-                default_value = "80")]
+    #[structopt(
+        short = "W",
+        long = "warn-inodes",
+        help = "Percent of inode usage to warn at",
+        default_value = "80"
+    )]
     warn_inodes: f64,
-    #[structopt(short = "C", long = "crit-inodes",
-                help = "Percent of inode usage to go critical at", default_value = "90")]
+    #[structopt(
+        short = "C",
+        long = "crit-inodes",
+        help = "Percent of inode usage to go critical at",
+        default_value = "90"
+    )]
     crit_inodes: f64,
 
-    #[structopt(long = "pattern", name = "regex",
-                help = "Only check filesystems that match this regex")]
+    #[structopt(
+        long = "pattern",
+        name = "regex",
+        help = "Only check filesystems that match this regex"
+    )]
     pattern: Option<String>,
-    #[structopt(long = "exclude-pattern", name = "exclude-regex",
-                help = "Only check filesystems that match this regex")]
+    #[structopt(
+        long = "exclude-pattern",
+        name = "exclude-regex",
+        help = "Only check filesystems that match this regex"
+    )]
     exclude_pattern: Option<String>,
-    #[structopt(long = "type", name = "fs-type",
-                help = "Only check filesystems that are of this type, e.g. \
-                        ext4 or tmpfs. See 'man 8 mount' for more examples.")]
+    #[structopt(
+        long = "type",
+        name = "fs-type",
+        help = "Only check filesystems that are of this type, e.g. \
+                ext4 or tmpfs. See 'man 8 mount' for more examples."
+    )]
     fs_type: Option<String>,
-    #[structopt(long = "exclude-type", name = "exclude-fs-type",
-                help = "Do not check filesystems that are of this type.")]
+    #[structopt(
+        long = "exclude-type",
+        name = "exclude-fs-type",
+        help = "Do not check filesystems that are of this type."
+    )]
     exclude_type: Option<String>,
-    #[structopt(long = "info",
-                help = "Print information of all known filesystems. \
-                        Similar to df.")]
+    #[structopt(
+        long = "info",
+        help = "Print information of all known filesystems. \
+                Similar to df."
+    )]
     info: bool,
     // df defaults to ignoring innaccessible filesystems, so we should too
-    #[structopt(long = "inaccessible-status", name = "STATUS",
-                help = "If any filesystems are inaccessible print a warning and exit with STATUS. \
-                        Choices: [critical, warning, ok]")]
+    #[structopt(
+        long = "inaccessible-status",
+        name = "STATUS",
+        help = "If any filesystems are inaccessible print a warning and exit with STATUS. \
+                Choices: [critical, warning, ok]"
+    )]
     inaccessible_status: Option<Status>,
 }
 
@@ -157,7 +193,8 @@ fn maybe_regex(pattern: &Option<String>) -> DiskResult<Option<Regex>> {
             Err(e) => {
                 return Err(ErrorMsg {
                     msg: format!("Unable to filter disks like {:?}: {}", pattern, e),
-                }.into())
+                }
+                .into());
             }
         };
         Ok(Some(re))
@@ -180,13 +217,20 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
     let include_regex = try!(maybe_regex(&args.pattern));
     let exclude_regex = try!(maybe_regex(&args.exclude_pattern));
     let mut error_count = 0;
-    let ms = mounts.into_iter()
-        .filter(|mount|
-                include_regex.as_ref().map(|re| re.is_match(&mount.file)).unwrap_or(true)
-        )
-        .filter(|mount|
-                exclude_regex.as_ref().map(|re| !re.is_match(&mount.file)).unwrap_or(true)
-        )
+    let ms = mounts
+        .into_iter()
+        .filter(|mount| {
+            include_regex
+                .as_ref()
+                .map(|re| re.is_match(&mount.file))
+                .unwrap_or(true)
+        })
+        .filter(|mount| {
+            exclude_regex
+                .as_ref()
+                .map(|re| !re.is_match(&mount.file))
+                .unwrap_or(true)
+        })
         .filter_map(|mount| {
             let stat = match vfs::Statvfs::for_path(mount.file.as_bytes()) {
                 Ok(stat) => stat,
@@ -220,12 +264,18 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
                 Some(ms)
             }
         })
-        .filter(|ms|
-                args.fs_type.as_ref().map(|vfstype| ms.mount.vfstype == *vfstype).unwrap_or(true)
-        )
-        .filter(|ms|
-                args.exclude_type.as_ref().map(|vfstype| ms.mount.vfstype != *vfstype).unwrap_or(true)
-        )
+        .filter(|ms| {
+            args.fs_type
+                .as_ref()
+                .map(|vfstype| ms.mount.vfstype == *vfstype)
+                .unwrap_or(true)
+        })
+        .filter(|ms| {
+            args.exclude_type
+                .as_ref()
+                .map(|vfstype| ms.mount.vfstype != *vfstype)
+                .unwrap_or(true)
+        })
         .collect::<Vec<_>>();
     if error_count == 0 {
         Ok(ms)

@@ -29,14 +29,14 @@ extern crate regex;
 extern crate serde_derive;
 extern crate serde_json;
 
-use std::process;
 use std::fmt;
+use std::process;
 use std::str::FromStr;
 
 pub mod linux;
 pub mod procfs;
-pub mod sys;
 pub mod scripts;
+pub mod sys;
 
 /// All errors are TabinErrors
 #[derive(Debug)]

@@ -8,23 +8,37 @@ extern crate tabin_plugins;
 use structopt::StructOpt;
 
 use tabin_plugins::linux::pages_to_human_size;
-use tabin_plugins::Status;
 use tabin_plugins::procfs::{LoadProcsError, MemInfo, ProcFsError, RunningProcs};
+use tabin_plugins::Status;
 
 /// Check the ram usage of the current computer
 #[derive(Deserialize, StructOpt, Debug)]
-#[structopt(name = "check-ram (part of tabin-plugins)",
-            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
+#[structopt(
+    name = "check-ram (part of tabin-plugins)",
+    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+)]
 struct Args {
-    #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "85")]
+    #[structopt(
+        short = "w",
+        long = "warn",
+        help = "Percent to warn at",
+        default_value = "85"
+    )]
     warn: f64,
-    #[structopt(short = "c", long = "crit", help = "Percent to go critical at",
-                default_value = "95")]
+    #[structopt(
+        short = "c",
+        long = "crit",
+        help = "Percent to go critical at",
+        default_value = "95"
+    )]
     crit: f64,
 
-    #[structopt(long = "show-hogs", name = "count",
-                help = "Show <count> most ram-intensive processes in this computer.",
-                default_value = "0")]
+    #[structopt(
+        long = "show-hogs",
+        name = "count",
+        help = "Show <count> most ram-intensive processes in this computer.",
+        default_value = "0"
+    )]
     show_hogs: usize,
 }
 
@@ -76,16 +90,18 @@ fn main() {
 
 fn compare_status(crit: f64, warn: f64, mem: &MemInfo) -> Status {
     match mem.percent_used() {
-        Ok(percent) => if percent > crit {
-            println!("CRITICAL [check-ram]: {:.1}% > {}%", percent, crit);
-            Status::Critical
-        } else if percent > warn {
-            println!("WARNING [check-ram]: {:.1}% > {}%", percent, warn);
-            Status::Warning
-        } else {
-            println!("OK [check-ram]: {:.1}% < {}%", percent, warn);
-            Status::Ok
-        },
+        Ok(percent) => {
+            if percent > crit {
+                println!("CRITICAL [check-ram]: {:.1}% > {}%", percent, crit);
+                Status::Critical
+            } else if percent > warn {
+                println!("WARNING [check-ram]: {:.1}% > {}%", percent, warn);
+                Status::Warning
+            } else {
+                println!("OK [check-ram]: {:.1}% < {}%", percent, warn);
+                Status::Ok
+            }
+        }
         Err(e) => {
             println!("UNKNOWN [check-ram]: UNEXPECTED ERROR {:?}", e);
             Status::Unknown
@@ -96,8 +112,8 @@ fn compare_status(crit: f64, warn: f64, mem: &MemInfo) -> Status {
 #[cfg(test)]
 mod test {
     use super::compare_status;
-    use tabin_plugins::Status;
     use tabin_plugins::procfs::MemInfo;
+    use tabin_plugins::Status;
 
     #[test]
     fn alerts_when_told_to() {

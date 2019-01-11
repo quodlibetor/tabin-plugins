@@ -1,6 +1,6 @@
-use std::io::Read;
 use std::fmt;
 use std::fs::File;
+use std::io::Read;
 
 use procfs::Result;
 
@@ -20,7 +20,8 @@ impl CmdLine {
         let mut s = String::new();
         try!(f.read_to_string(&mut s));
         Ok(CmdLine {
-            raw: s.split('\0')
+            raw: s
+                .split('\0')
                 .map(String::from)
                 .filter(|arg| !arg.is_empty())
                 .collect(),

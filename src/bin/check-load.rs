@@ -12,8 +12,8 @@ extern crate structopt;
 extern crate tabin_plugins;
 
 use structopt::StructOpt;
-use tabin_plugins::Status;
 use tabin_plugins::procfs::{Calculations, LoadAvg};
+use tabin_plugins::Status;
 
 /// Check the load average of the system
 ///
@@ -21,20 +21,36 @@ use tabin_plugins::procfs::{Calculations, LoadAvg};
 /// due to IO or CPU constraints. The numbers used to check are the load averaged
 /// over 1, 5 and 15 minutes, respectively
 #[derive(Deserialize, Debug, StructOpt)]
-#[structopt(name = "check-load (part of tabin-plugins)",
-            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
+#[structopt(
+    name = "check-load (part of tabin-plugins)",
+    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+)]
 struct Args {
-    #[structopt(short = "w", long = "warn", help = "Averages to warn at",
-                default_value = "5,3.5,2.5")]
+    #[structopt(
+        short = "w",
+        long = "warn",
+        help = "Averages to warn at",
+        default_value = "5,3.5,2.5"
+    )]
     warn: LoadAvg,
-    #[structopt(short = "c", long = "crit", help = "Averages to go critical at",
-                default_value = "10,5,3")]
+    #[structopt(
+        short = "c",
+        long = "crit",
+        help = "Averages to go critical at",
+        default_value = "10,5,3"
+    )]
     crit: LoadAvg,
-    #[structopt(long = "per-cpu",
-                help = "Divide the load average by the number of processors on the \
-                        system.")]
+    #[structopt(
+        long = "per-cpu",
+        help = "Divide the load average by the number of processors on the \
+                system."
+    )]
     per_cpu: bool,
-    #[structopt(short = "v", long = "verbose", help = "print info even if everything is okay")]
+    #[structopt(
+        short = "v",
+        long = "verbose",
+        help = "print info even if everything is okay"
+    )]
     verbose: bool,
 }
 

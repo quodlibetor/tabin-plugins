@@ -98,24 +98,22 @@ mod test {
     }
 
     pub(crate) fn valid_data_from_json_two_sets() -> Vec<GraphiteData> {
-        vec![
-            GraphiteData {
-                points: vec![
-                    DataPoint {
-                        val: Some(1_f64),
-                        time: dt(11150),
-                    },
-                    DataPoint {
-                        val: None,
-                        time: dt(11160),
-                    },
-                    DataPoint {
-                        val: Some(3_f64),
-                        time: dt(11170),
-                    },
-                ],
-                target: "test.path.some-data".to_owned(),
-            },
-        ]
+        vec![GraphiteData {
+            points: vec![
+                DataPoint {
+                    val: Some(1_f64),
+                    time: dt(11150),
+                },
+                DataPoint {
+                    val: None,
+                    time: dt(11160),
+                },
+                DataPoint {
+                    val: Some(3_f64),
+                    time: dt(11170),
+                },
+            ],
+            target: "test.path.some-data".to_owned(),
+        }]
     }
 }

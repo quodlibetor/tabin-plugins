@@ -8,21 +8,23 @@ extern crate structopt;
 
 extern crate tabin_plugins;
 
-use std::fmt::Display;
 use std::cmp::PartialOrd;
+use std::fmt::Display;
 use std::thread::sleep;
 use std::time::Duration;
 use structopt::StructOpt;
 
+use tabin_plugins::procfs::{
+    Calculations, LoadProcsError, ProcField, ProcFsError, RunningProcs, WorkSource,
+};
 use tabin_plugins::Status;
-use tabin_plugins::procfs::{Calculations, LoadProcsError, ProcField, ProcFsError, RunningProcs,
-                            WorkSource};
 
 /// Check cpu usage of the current computer
 #[derive(Deserialize, StructOpt, Debug)]
-#[structopt(name = "check-cpu  (part of tabin-plugins)",
-            raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
-            after_help = "CPU Work Types:
+#[structopt(
+    name = "check-cpu  (part of tabin-plugins)",
+    raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+    after_help = "CPU Work Types:
 
     Specifying one of the CPU kinds via `--type` checks that kind of
     utilization. The default is to check total utilization. Specifying this
@@ -37,30 +39,57 @@ use tabin_plugins::procfs::{Calculations, LoadProcsError, ProcField, ProcFsError
     --type=<usage>           Some of:
                                 active activeplusiowait activeminusnice
                                 user nice system irq softirq steal guest
-                                idle iowait [default: active]")]
+                                idle iowait [default: active]"
+)]
 struct Args {
-    #[structopt(short = "w", long = "warn", help = "Percent to warn at", default_value = "80")]
+    #[structopt(
+        short = "w",
+        long = "warn",
+        help = "Percent to warn at",
+        default_value = "80"
+    )]
     warn: f64,
-    #[structopt(short = "c", long = "crit", help = "Percent to go critical at",
-                default_value = "80")]
+    #[structopt(
+        short = "c",
+        long = "crit",
+        help = "Percent to go critical at",
+        default_value = "80"
+    )]
     crit: f64,
-    #[structopt(short = "s", long = "sample", name = "seconds",
-                help = "Seconds to take sample over", default_value = "5")]
+    #[structopt(
+        short = "s",
+        long = "sample",
+        name = "seconds",
+        help = "Seconds to take sample over",
+        default_value = "5"
+    )]
     sample: u64,
-    #[structopt(long = "show-hogs", name = "count",
-                help = "Show <count> most cpu-intensive processes in this container.",
-                default_value = "0")]
+    #[structopt(
+        long = "show-hogs",
+        name = "count",
+        help = "Show <count> most cpu-intensive processes in this container.",
+        default_value = "0"
+    )]
     show_hogs: usize,
 
-    #[structopt(long = "per-cpu",
-                help = "Gauge values per-cpu instead of across the entire machine")]
+    #[structopt(
+        long = "per-cpu",
+        help = "Gauge values per-cpu instead of across the entire machine"
+    )]
     per_cpu: bool,
-    #[structopt(long = "cpu-count", default_value = "1",
-                help = "If --per-cpu is specified, this is how many
-                             CPUs need to be at a threshold to trigger.")]
+    #[structopt(
+        long = "cpu-count",
+        default_value = "1",
+        help = "If --per-cpu is specified, this is how many
+                             CPUs need to be at a threshold to trigger."
+    )]
     cpu_count: u32,
 
-    #[structopt(long = "type", default_value = "active", help = "See 'CPU Work Types, below")]
+    #[structopt(
+        long = "type",
+        default_value = "active",
+        help = "See 'CPU Work Types, below"
+    )]
     work_type: Vec<WorkSource>,
 }
 
@@ -91,7 +120,7 @@ fn print_errors_and_status<T: Display, V: PartialOrd<V> + Display>(
 /// The *cstat parameters, if present, mean that in addition to performing the
 /// standard checks we check the currently-running container against the same
 /// thresholds.
-fn do_comparison<'a>(args: &Args, start: &'a Calculations, end: &'a Calculations) -> Status {
+fn do_comparison(args: &Args, start: &Calculations, end: &Calculations) -> Status {
     let mut exit_status = Status::Ok;
 
     for flag in &args.work_type {
@@ -212,9 +241,9 @@ mod unit {
 
     use structopt::StructOpt;
 
-    use tabin_plugins::Status;
-    use tabin_plugins::procfs::{Calculations, WorkSource};
     use tabin_plugins::linux::Jiffies;
+    use tabin_plugins::procfs::{Calculations, WorkSource};
+    use tabin_plugins::Status;
 
     #[test]
     fn validate_docstring() {
@@ -329,7 +358,8 @@ mod unit {
                 "active",
                 "--type",
                 "steal",
-            ].into_iter(),
+            ]
+            .into_iter(),
         );
 
         assert_eq!(do_comparison(&args, &start, &end), Status::Critical);
@@ -339,13 +369,11 @@ mod unit {
     #[test]
     fn does_alert_per_cpu() {
         let start = vec![start()];
-        let end = vec![
-            Calculations {
-                user: Jiffies::new(110),
-                idle: Jiffies::new(110),
-                ..start[0]
-            },
-        ];
+        let end = vec![Calculations {
+            user: Jiffies::new(110),
+            idle: Jiffies::new(110),
+            ..start[0]
+        }];
         let args: super::Args = Args::from_iter(
             [
                 "check-cpu",
@@ -355,7 +383,8 @@ mod unit {
                 "active",
                 "--type",
                 "steal",
-            ].into_iter(),
+            ]
+            .into_iter(),
         );
         assert_eq!(args.work_type, vec![WorkSource::Active, WorkSource::Steal]);
         let statuses = determine_status_per_cpu(&args, &start, &end);

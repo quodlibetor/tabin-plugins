@@ -120,7 +120,8 @@ impl Args {
     }
 
     fn from_args(args: clap::ArgMatches) -> Args {
-        let assertions = args.values_of("ASSERTION")
+        let assertions = args
+            .values_of("ASSERTION")
             .unwrap()
             .map(|assertion_str| match Assertion::from_str(assertion_str) {
                 Ok(a) => a,
@@ -146,7 +147,8 @@ impl Args {
             retries: value_t!(args.value_of("retries"), u8).unwrap_or(4),
             graphite_error: Status::from_str(
                 args.value_of("GRAPHITE_ERROR_STATUS").unwrap_or("unknown"),
-            ).unwrap(),
+            )
+            .unwrap(),
             no_data: Status::from_str(args.value_of("NO_DATA_STATUS").unwrap_or("warning"))
                 .unwrap(),
             print_url: args.is_present("print-url"),
@@ -180,16 +182,14 @@ mod test {
             Args {
                 url: "https://graphite.example.com".into(),
                 path: "*".into(),
-                assertions: vec![
-                    Assertion {
-                        operator: ">".into(),
-                        op_is_negated: NegOp::No,
-                        threshold: 0.0,
-                        point_assertion: PointAssertion::Ratio(0.0),
-                        series_ratio: 0.0,
-                        failure_status: Status::Critical,
-                    },
-                ],
+                assertions: vec![Assertion {
+                    operator: ">".into(),
+                    op_is_negated: NegOp::No,
+                    threshold: 0.0,
+                    point_assertion: PointAssertion::Ratio(0.0),
+                    series_ratio: 0.0,
+                    failure_status: Status::Critical,
+                },],
                 window: 10,
                 start_at: 0,
                 retries: 4,
@@ -219,16 +219,14 @@ mod test {
             Args {
                 url: "https://graphite.example.com".into(),
                 path: "*".into(),
-                assertions: vec![
-                    Assertion {
-                        operator: ">".into(),
-                        op_is_negated: NegOp::No,
-                        threshold: 0.0,
-                        point_assertion: PointAssertion::Ratio(0.0),
-                        series_ratio: 0.0,
-                        failure_status: Status::Critical,
-                    },
-                ],
+                assertions: vec![Assertion {
+                    operator: ">".into(),
+                    op_is_negated: NegOp::No,
+                    threshold: 0.0,
+                    point_assertion: PointAssertion::Ratio(0.0),
+                    series_ratio: 0.0,
+                    failure_status: Status::Critical,
+                },],
                 window: 25,
                 start_at: 20,
                 retries: 7,
