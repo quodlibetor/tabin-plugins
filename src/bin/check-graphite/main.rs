@@ -19,8 +19,8 @@ mod graphite;
 use std::cmp::max;
 use tabin_plugins::Status;
 
-use args::Args;
-use graphite::{fetch_data, GraphiteResponse};
+use crate::args::Args;
+use crate::graphite::{fetch_data, GraphiteResponse};
 
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
@@ -86,7 +86,7 @@ mod test {
     use chrono::naive::NaiveDateTime;
     use serde_json;
 
-    use graphite::{DataPoint, GraphiteData};
+    use crate::graphite::{DataPoint, GraphiteData};
 
     pub(crate) fn deser(s: &str) -> Vec<GraphiteData> {
         let result = serde_json::from_str(s);

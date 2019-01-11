@@ -302,7 +302,7 @@ fn get_graphite(
 mod test {
     use super::*;
 
-    use test::deser;
+    use crate::test::deser;
 
     fn json_three_sets_of_graphite_data() -> &'static str {
         r#"

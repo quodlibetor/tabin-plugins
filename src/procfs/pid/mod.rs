@@ -10,7 +10,7 @@ use std::fmt;
 
 use super::Result;
 
-use linux::{Jiffies, Ratio, PAGESIZE};
+use crate::linux::{Jiffies, Ratio, PAGESIZE};
 
 pub use self::cmd_line::CmdLine;
 pub use self::stat::{Stat, State};
@@ -27,8 +27,8 @@ pub struct Process {
 impl Process {
     pub fn from_pid<P: fmt::Display + Copy>(p: P) -> Result<Process> {
         Ok(Process {
-            stat: try!(Stat::from_pid(p)),
-            cmdline: try!(CmdLine::from_pid(p)),
+            stat: Stat::from_pid(p)?,
+            cmdline: CmdLine::from_pid(p)?,
         })
     }
 

@@ -214,8 +214,8 @@ fn maybe_regex(pattern: &Option<String>) -> DiskResult<Option<Regex>> {
 /// * Applies the `pattern` and `type` filters
 fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
     let mut devices = HashSet::new();
-    let include_regex = try!(maybe_regex(&args.pattern));
-    let exclude_regex = try!(maybe_regex(&args.exclude_pattern));
+    let include_regex = maybe_regex(&args.pattern)?;
+    let exclude_regex = maybe_regex(&args.exclude_pattern)?;
     let mut error_count = 0;
     let ms = mounts
         .into_iter()

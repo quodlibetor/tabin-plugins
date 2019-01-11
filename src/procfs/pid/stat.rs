@@ -5,8 +5,8 @@ use std::str::FromStr;
 
 use nix::unistd::Pid;
 
-use linux::Jiffies;
-use procfs::{ParseStatError, ParseStateError, ProcFsError, Result};
+use crate::linux::Jiffies;
+use crate::procfs::{ParseStatError, ParseStateError, ProcFsError, Result};
 
 /// The status of a `Process`
 ///
@@ -45,9 +45,9 @@ pub struct Stat {
 impl Stat {
     pub fn from_pid<P: fmt::Display>(pid: P) -> Result<Stat> {
         let path_str = format!("/proc/{}/stat", pid);
-        let mut f = try!(File::open(&path_str));
+        let mut f = File::open(&path_str)?;
         let mut s = String::new();
-        try!(f.read_to_string(&mut s));
+        f.read_to_string(&mut s)?;
         s.parse()
     }
 }

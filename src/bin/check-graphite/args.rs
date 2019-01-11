@@ -3,7 +3,7 @@ use std::str::FromStr;
 use clap;
 use tabin_plugins::Status;
 
-use assertions::Assertion;
+use crate::assertions::Assertion;
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct Args {
@@ -159,7 +159,7 @@ impl Args {
 #[cfg(test)]
 mod test {
     use super::*;
-    use assertions::*;
+    use crate::assertions::*;
 
     #[test]
     fn all_examples_are_accurate() {

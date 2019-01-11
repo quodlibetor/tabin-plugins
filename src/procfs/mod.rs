@@ -16,8 +16,8 @@ use nix::unistd::Pid;
 use regex::Regex;
 use std::slice;
 
-use linux::Jiffies;
-use procfs::pid::ProcessCpuUsage;
+use crate::linux::Jiffies;
+use crate::procfs::pid::ProcessCpuUsage;
 
 pub mod pid;
 
@@ -162,7 +162,7 @@ impl RunningProcs {
         let mut procs = ProcMap::new();
         let mut errors = vec![];
         let is_digit = Regex::new(r"^[0-9]+$").unwrap();
-        for entry in try!(fs::read_dir("/proc")) {
+        for entry in fs::read_dir("/proc")? {
             if entry.is_err() {
                 continue;
             }
@@ -337,16 +337,16 @@ pub struct Calculations {
 impl Calculations {
     /// Read /proc/stat and return its contents as a string
     fn read_procstat() -> Result<String> {
-        let mut fh = try!(File::open("/proc/stat"));
+        let mut fh = File::open("/proc/stat")?;
         let mut contents = String::new();
-        try!(fh.read_to_string(&mut contents));
+        fh.read_to_string(&mut contents)?;
         Ok(contents)
     }
 
     /// Build a new `Calculations` for *total* CPU jiffies from the /proc/stat
     /// pseudofile. See `load_per_cpu` for per-cpu metrics.
     pub fn load() -> Result<Calculations> {
-        let contents = try!(Self::read_procstat());
+        let contents = Self::read_procstat()?;
         Self::from_str(&contents)
     }
 
@@ -372,12 +372,12 @@ impl Calculations {
     fn from_line(line: &str) -> Result<Calculations> {
         assert!(line.starts_with("cpu"));
 
-        let usages = try!(line
+        let usages = line
             .split(' ')
             .skip(1)
             .filter(|part| part.len() > 0)
             .map(|part| part.parse())
-            .collect::<StdResult<Vec<u64>, _>>());
+            .collect::<StdResult<Vec<u64>, _>>()?;
         Ok(Calculations {
             user: Jiffies::new(usages[0]),
             nice: Jiffies::new(usages[1]),
@@ -457,11 +457,11 @@ impl FromStr for Calculations {
     /// Parse the entire /proc/stat file into a single `Calculations` object
     /// for total CPU
     fn from_str(contents: &str) -> Result<Calculations> {
-        let mut calcs = try!(contents
+        let mut calcs = contents
             .lines()
             .take(1)
             .map(Self::from_line)
-            .collect::<StdResult<Vec<_>, _>>());
+            .collect::<StdResult<Vec<_>, _>>()?;
         Ok(calcs.remove(0))
     }
 }
@@ -595,7 +595,7 @@ impl MemInfo {
 
     /// The inverse of `MemInfo::percent_free`
     pub fn percent_used(&self) -> Result<f64> {
-        let free = try!(self.percent_free());
+        let free = self.percent_free()?;
         Ok(100f64 - free)
     }
 }
@@ -697,9 +697,9 @@ pub struct LoadAvg {
 impl LoadAvg {
     /// Load from the /proc/loadavg file
     pub fn load() -> Result<LoadAvg> {
-        let mut fh = try!(File::open("/proc/loadavg"));
+        let mut fh = File::open("/proc/loadavg")?;
         let mut contents = String::new();
-        try!(fh.read_to_string(&mut contents));
+        fh.read_to_string(&mut contents)?;
         Self::from_str(&contents)
     }
 }
@@ -722,11 +722,11 @@ impl FromStr for LoadAvg {
 
     fn from_str(contents: &str) -> Result<LoadAvg> {
         let pat = Regex::new(r"[ ,]").unwrap();
-        let fields = try!(pat
+        let fields = pat
             .split(contents)
             .take(3)
             .map(|load| load.parse())
-            .collect::<StdResult<Vec<f64>, _>>());
+            .collect::<StdResult<Vec<f64>, _>>()?;
         Ok(LoadAvg {
             one: fields[0],
             five: fields[1],
@@ -737,11 +737,7 @@ impl FromStr for LoadAvg {
 
 impl fmt::Display for LoadAvg {
     fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
-        try!(write!(
-            f,
-            "{:.1} {:.1} {:.1}",
-            self.one, self.five, self.fifteen
-        ));
+        write!(f, "{:.1} {:.1} {:.1}", self.one, self.five, self.fifteen)?;
         Ok(())
     }
 }
@@ -773,16 +769,18 @@ fn mount_from_line(line: &str) -> Result<Mount> {
     use self::ProcFsError::InsufficientData;
     let mut parts = line.split(' ');
     Ok(Mount {
-        spec: try!(next(&mut parts)),
-        file: try!(next(&mut parts)),
-        vfstype: try!(next(&mut parts)),
-        mntops: try!(parts.next().map_or(
-            Err(InsufficientData("Missing mnt ops from mount".to_owned(),)),
-            Ok,
-        ))
-        .split(',')
-        .map(|part| part.to_owned())
-        .collect::<Vec<_>>(),
+        spec: next(&mut parts)?,
+        file: next(&mut parts)?,
+        vfstype: next(&mut parts)?,
+        mntops: parts
+            .next()
+            .map_or(
+                Err(InsufficientData("Missing mnt ops from mount".to_owned())),
+                Ok,
+            )?
+            .split(',')
+            .map(|part| part.to_owned())
+            .collect::<Vec<_>>(),
         freq: parts.next().map(|v| v.parse().unwrap()),
         passno: parts.next().map(|v| v.parse().unwrap()),
     })
@@ -790,9 +788,9 @@ fn mount_from_line(line: &str) -> Result<Mount> {
 
 impl Mount {
     fn read_mounts() -> Result<String> {
-        let mut fh = try!(File::open("/proc/mounts"));
+        let mut fh = File::open("/proc/mounts")?;
         let mut contents = String::new();
-        try!(fh.read_to_string(&mut contents));
+        fh.read_to_string(&mut contents)?;
         Ok(contents)
     }
 
@@ -804,7 +802,7 @@ impl Mount {
     }
 
     pub fn load_all() -> Result<Vec<Mount>> {
-        let mounts = try!(Mount::read_mounts());
+        let mounts = Mount::read_mounts()?;
         Mount::parse_str(&mounts)
     }
 }
@@ -818,7 +816,7 @@ mod unit {
     use super::*;
     use std::str::FromStr;
 
-    use linux::Jiffies;
+    use crate::linux::Jiffies;
 
     #[test]
     #[cfg_attr(rustfmt, rustfmt_skip)]

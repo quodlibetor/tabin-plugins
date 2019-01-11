@@ -2,7 +2,7 @@ use std::fmt;
 use std::fs::File;
 use std::io::Read;
 
-use procfs::Result;
+use crate::procfs::Result;
 
 /// The visibule command line for a process
 #[derive(Clone, Debug, Default)]
@@ -16,9 +16,9 @@ pub struct CmdLine {
 impl CmdLine {
     pub fn from_pid<P: fmt::Display>(pid: P) -> Result<CmdLine> {
         let path_str = format!("/proc/{}/cmdline", pid);
-        let mut f = try!(File::open(&path_str));
+        let mut f = File::open(&path_str)?;
         let mut s = String::new();
-        try!(f.read_to_string(&mut s));
+        f.read_to_string(&mut s)?;
         Ok(CmdLine {
             raw: s
                 .split('\0')

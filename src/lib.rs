@@ -93,7 +93,7 @@ impl FromStr for Status {
 
     /// Primarily useful to construct from argv
     fn from_str(s: &str) -> TabinResult<Status> {
-        use Status::{Critical, Unknown, Warning};
+        use crate::Status::{Critical, Unknown, Warning};
         match s {
             "ok" => Ok(Status::Ok),
             "warning" => Ok(Warning),
@@ -109,7 +109,7 @@ impl FromStr for Status {
 
 impl fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use Status::*;
+        use crate::Status::*;
         let msg = match *self {
             Ok => "OK",
             Unknown => "UNKNOWN",
@@ -122,7 +122,7 @@ impl fmt::Display for Status {
 
 #[test]
 fn comparison_is_as_expected() {
-    use Status::*;
+    use crate::Status::*;
     assert!(Ok < Critical);
     assert!(Ok < Warning);
     assert_eq!(std::cmp::max(Warning, Critical), Critical)

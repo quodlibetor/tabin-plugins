@@ -4,7 +4,7 @@ use std::str::FromStr;
 use itertools::Itertools;
 use tabin_plugins::Status;
 
-use graphite::{FilteredGraphiteData, GraphiteData};
+use crate::graphite::{FilteredGraphiteData, GraphiteData};
 
 /// The primary property of
 #[derive(Debug, PartialEq)]
@@ -295,7 +295,7 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                 state = AssertionState::Points;
             }
             AssertionState::Points => {
-                point_assertion = Some(try!(parse_ratio(&mut it, word)));
+                point_assertion = Some(parse_ratio(&mut it, word)?);
                 state = AssertionState::Open;
             }
             AssertionState::Open => {
@@ -317,7 +317,7 @@ fn parse_assertion(assertion: &str) -> Result<Assertion, ParseError> {
                 }
             }
             AssertionState::Series => {
-                if let PointAssertion::Ratio(r) = try!(parse_ratio(&mut it, word)) {
+                if let PointAssertion::Ratio(r) = parse_ratio(&mut it, word)? {
                     series_ratio = r;
                 } else {
                     return Err(ParseError::SyntaxError(
@@ -525,7 +525,7 @@ mod test {
 
     use super::PointAssertion::*;
     use super::*;
-    use test::{deser, valid_data_from_json_two_sets};
+    use crate::test::{deser, valid_data_from_json_two_sets};
 
     #[test]
     fn operator_string_to_func_returns_a_good_filter() {
