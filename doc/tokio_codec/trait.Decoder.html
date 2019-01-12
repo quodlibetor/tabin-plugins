@@ -49,7 +49,7 @@ most circumstances.</p>
 it needs to read some more bytes before calling this method again.</p>
 <p>Note that the bytes provided may be empty. If a previous call to
 <code>decode</code> consumed all the bytes in the buffer then <code>decode</code> will be
-called again until it returns <code>None</code>, indicating that more bytes need to
+called again until it returns <code>Ok(None)</code>, indicating that more bytes need to
 be read.</p>
 <p>Finally, if the bytes in the buffer are malformed then an error is
 returned indicating why. This informs <code>Framed</code> that the stream is now
