@@ -1,7 +1,5 @@
 //! Check running processes
 
-#![allow(unused_variables, dead_code)]
-
 use std::collections::HashSet;
 use std::str::FromStr;
 
@@ -285,23 +283,17 @@ fn filter_procs<'m>(
 ) -> Vec<(&'m Pid, &'m Process)> {
     let me = getpid();
     let parent = getppid();
-    let mut maybe: Box<Iterator<Item = (&Pid, &Process)>> = Box::new(
-        procs
-            .iter()
-            .filter(|&(ref pid, ref process)| **pid != me && **pid != parent),
-    );
-    if !states.is_empty() {
-        maybe =
-            Box::new(maybe.filter(|&(ref pid, ref process)| states.contains(&process.stat.state)));
-    }
-    if let Some(re) = re {
-        return Box::new(
-            maybe.filter(|&(ref pid, ref process)| re.is_match(&process.useful_cmdline())),
-        )
-        .collect();
-    } else {
-        return maybe.collect();
-    }
+
+    procs
+        .iter()
+        .filter(|&(pid, _process)| *pid != me && *pid != parent)
+        .filter(|&(_pid, process)| states.is_empty() || states.contains(&process.stat.state))
+        .filter(|&(_pid, process)| {
+            re.as_ref()
+                .map(|re| re.is_match(&process.useful_cmdline()))
+                .unwrap_or(true)
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -386,13 +378,14 @@ mod unit {
         procs[2].cmdline.raw.push("example".into());
 
         procs[3].stat.state = State::Stopped;
-        let proc_map = vec_to_procmap(procs);
+        let proc_map = vec_to_procmap(procs.clone());
 
         let filtered = filter_procs(regex("exa"), &[], &proc_map);
         assert_eq!(filtered.len(), 1);
 
         let filtered = filter_procs(regex("exa"), &[State::Zombie, State::Stopped], &proc_map);
         assert_eq!(filtered.len(), 1);
+        assert_eq!(filtered[0].1, &procs[2]);
 
         let filtered = filter_procs(regex("exa"), &[State::Stopped], &proc_map);
         assert_eq!(filtered.len(), 0);

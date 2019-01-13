@@ -14,7 +14,7 @@ use crate::procfs::{ParseStatError, ParseStateError, ProcFsError, Result};
 ///
 /// This represents much of the information in `/proc/[pid]/stat`, and is
 /// commonly access via a [`Process`](../struct.Process.html)
-#[derive(Clone, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Stat {
     /// The process ID
     pub pid: Pid,

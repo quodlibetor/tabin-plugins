@@ -6,7 +6,6 @@
 mod cmd_line;
 mod stat;
 
-use serde::Deserialize;
 use std::fmt;
 
 use crate::linux::{Jiffies, Ratio, PAGESIZE};
@@ -16,7 +15,7 @@ pub use self::cmd_line::CmdLine;
 pub use self::stat::{Stat, State};
 
 /// Information about a running process
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, PartialEq, Eq, Debug, Default)]
 pub struct Process {
     /// The stat info for a process
     pub stat: Stat,

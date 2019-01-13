@@ -5,7 +5,7 @@ use std::io::Read;
 use crate::procfs::Result;
 
 /// The visibule command line for a process
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, PartialEq, Eq, Debug, Default)]
 pub struct CmdLine {
     /// The raw parts of the command line
     ///
