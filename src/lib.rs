@@ -15,6 +15,8 @@
 //! * Some way of easily standardizing command-line args
 //! * Much of the code is hideous, and should not be
 
+#![deny(unused_imports, dead_code, missing_debug_implementations)]
+
 #[macro_use]
 extern crate lazy_static;
 

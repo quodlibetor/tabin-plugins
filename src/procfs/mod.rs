@@ -121,8 +121,10 @@ pub type Result<T> = StdResult<T, ProcFsError>;
 /// A collection of `ProcessCpuUsage`s
 ///
 /// This is basically the value of the `RunningProcs::currently_running()` map.
+#[derive(Debug)]
 pub struct ProcessCpuUsages<'a>(Vec<ProcessCpuUsage<'a>>);
 
+#[derive(Debug)]
 pub enum ProcField {
     /// Total (system + user) CPU usage
     TotalCpu,

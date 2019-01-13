@@ -299,7 +299,6 @@ fn get_graphite(
 }
 
 #[cfg(test)]
-#[allow(non_snake_case)]
 mod test {
     use super::*;
 

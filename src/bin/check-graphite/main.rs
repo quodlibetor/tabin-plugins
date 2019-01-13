@@ -69,7 +69,6 @@ fn bail_if_no_data(response: &mut GraphiteResponse, path: &str, no_data_status: 
 }
 
 #[cfg(test)]
-#[allow(non_snake_case)]
 mod test {
     // A couple helper methods for tests in other modules
 
