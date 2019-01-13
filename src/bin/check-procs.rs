@@ -1,14 +1,5 @@
 //! Check running processes
 
-#![allow(unused_variables, dead_code)]
-
-extern crate nix;
-extern crate regex;
-#[macro_use]
-extern crate structopt;
-
-extern crate tabin_plugins;
-
 use std::collections::HashSet;
 use std::str::FromStr;
 
@@ -25,9 +16,10 @@ use tabin_plugins::Status;
 ///
 /// Optionally, kill unwanted processes.
 #[derive(StructOpt, Debug)]
-#[structopt(name = "check-procs (part of tabin-plugins)",
-            raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
-            after_help = "Examples:
+#[structopt(
+    name = "check-procs (part of tabin-plugins)",
+    raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+    after_help = "Examples:
 
     Ensure at least two nginx processes are running:
 
@@ -46,40 +38,57 @@ use tabin_plugins::Status;
     Ensure that there are at least three (running or waiting) (cassandra or
     postgres) processes:
 
-        check-procs --crit-under 3 --state=running --state=waiting 'cassandra|postgres'")]
+        check-procs --crit-under 3 --state=running --state=waiting 'cassandra|postgres'"
+)]
 struct Args {
     #[structopt(help = "Regex that command and its arguments must match")]
     pattern: Option<Regex>,
-    #[structopt(long = "crit-under", name = "N",
-                help = "Error if there are fewer than <N> procs matching <pattern>")]
+    #[structopt(
+        long = "crit-under",
+        name = "N",
+        help = "Error if there are fewer than <N> procs matching <pattern>"
+    )]
     crit_under: Option<usize>,
-    #[structopt(long = "crit-over", name = "M",
-                help = "Error if there are more than <M> procs matching <pattern>")]
+    #[structopt(
+        long = "crit-over",
+        name = "M",
+        help = "Error if there are more than <M> procs matching <pattern>"
+    )]
     crit_over: Option<usize>,
 
-    #[structopt(long = "state",
-                help = "Filter to only processes in these states. \
-                        If passed multiple times, processes matching any state are included.\n\
-                        Choices: running sleeping uninterruptible-sleep waiting stopped zombie")]
+    #[structopt(
+        long = "state",
+        help = "Filter to only processes in these states. \
+                If passed multiple times, processes matching any state are included.\n\
+                Choices: running sleeping uninterruptible-sleep waiting stopped zombie"
+    )]
     states: Vec<State>,
 
-    #[structopt(long = "allow-unparseable-procs",
-                help = "In combination with --crit-over M this will not alert if any \
-                        processes cannot be parsed")]
+    #[structopt(
+        long = "allow-unparseable-procs",
+        help = "In combination with --crit-over M this will not alert if any \
+                processes cannot be parsed"
+    )]
     allow_unparseable_procs: bool,
 
-    #[structopt(long = "kill-matching", name = "SIGNAL",
-                help = "If *any* processes match, then kill them with the provided signal \
-                        which can be either an integer or a name like KILL or SIGTERM. \
-                        This option does not affect the exit status, all matches are always \
-                        killed, and if --crit-under/over are violated then then this will \
-                        still exit critical.")]
+    #[structopt(
+        long = "kill-matching",
+        name = "SIGNAL",
+        help = "If *any* processes match, then kill them with the provided signal \
+                which can be either an integer or a name like KILL or SIGTERM. \
+                This option does not affect the exit status, all matches are always \
+                killed, and if --crit-under/over are violated then then this will \
+                still exit critical."
+    )]
     kill_matching: Option<Signal>,
 
-    #[structopt(long = "kill-parents-of-matching", name = "PARENT_SIGNAL",
-                help = "If *any* processes match, then kill their parents with the provided \
-                        signal which can be either an integer or a name like KILL or SIGTERM. \
-                        This has the same exit status behavior as kill-matching.")]
+    #[structopt(
+        long = "kill-parents-of-matching",
+        name = "PARENT_SIGNAL",
+        help = "If *any* processes match, then kill their parents with the provided \
+                signal which can be either an integer or a name like KILL or SIGTERM. \
+                This has the same exit status behavior as kill-matching."
+    )]
     kill_matching_parents: Option<Signal>,
 }
 
@@ -92,8 +101,11 @@ impl FromStr for Signal {
     fn from_str(s: &str) -> Result<Signal, String> {
         let sig: Result<i32, _> = s.parse();
         match sig {
-            Ok(integer) => Ok(Signal(NixSignal::from_c_int(integer)
-                .map_err(|_| format!("Not a valid signal integer: {}", s))?)),
+            Ok(integer) => {
+                Ok(Signal(NixSignal::from_c_int(integer).map_err(|_| {
+                    format!("Not a valid signal integer: {}", s)
+                })?))
+            }
             Err(_) => Ok(Signal(match s {
                 "SIGHUP" | "HUP" => NixSignal::SIGHUP,
                 "SIGINT" | "INT" => NixSignal::SIGINT,
@@ -271,22 +283,17 @@ fn filter_procs<'m>(
 ) -> Vec<(&'m Pid, &'m Process)> {
     let me = getpid();
     let parent = getppid();
-    let mut maybe: Box<Iterator<Item = (&Pid, &Process)>> = Box::new(
-        procs
-            .iter()
-            .filter(|&(ref pid, ref process)| **pid != me && **pid != parent),
-    );
-    if !states.is_empty() {
-        maybe =
-            Box::new(maybe.filter(|&(ref pid, ref process)| states.contains(&process.stat.state)));
-    }
-    if let Some(re) = re {
-        return Box::new(
-            maybe.filter(|&(ref pid, ref process)| re.is_match(&process.useful_cmdline())),
-        ).collect();
-    } else {
-        return maybe.collect();
-    }
+
+    procs
+        .iter()
+        .filter(|&(pid, _process)| *pid != me && *pid != parent)
+        .filter(|&(_pid, process)| states.is_empty() || states.contains(&process.stat.state))
+        .filter(|&(_pid, process)| {
+            re.as_ref()
+                .map(|re| re.is_match(&process.useful_cmdline()))
+                .unwrap_or(true)
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -371,13 +378,14 @@ mod unit {
         procs[2].cmdline.raw.push("example".into());
 
         procs[3].stat.state = State::Stopped;
-        let proc_map = vec_to_procmap(procs);
+        let proc_map = vec_to_procmap(procs.clone());
 
         let filtered = filter_procs(regex("exa"), &[], &proc_map);
         assert_eq!(filtered.len(), 1);
 
         let filtered = filter_procs(regex("exa"), &[State::Zombie, State::Stopped], &proc_map);
         assert_eq!(filtered.len(), 1);
+        assert_eq!(filtered[0].1, &procs[2]);
 
         let filtered = filter_procs(regex("exa"), &[State::Stopped], &proc_map);
         assert_eq!(filtered.len(), 0);

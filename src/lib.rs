@@ -15,28 +15,21 @@
 //! * Some way of easily standardizing command-line args
 //! * Much of the code is hideous, and should not be
 
-#[macro_use]
-extern crate derive_more;
+#![deny(unused_imports, dead_code, missing_debug_implementations)]
+
 #[macro_use]
 extern crate lazy_static;
-#[macro_use]
-extern crate scan_fmt;
 
-extern crate libc;
-extern crate nix;
-extern crate regex;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
-
-use std::process;
 use std::fmt;
+use std::process;
 use std::str::FromStr;
+
+use serde::Deserialize;
 
 pub mod linux;
 pub mod procfs;
-pub mod sys;
 pub mod scripts;
+pub mod sys;
 
 /// All errors are TabinErrors
 #[derive(Debug)]
@@ -93,7 +86,7 @@ impl FromStr for Status {
 
     /// Primarily useful to construct from argv
     fn from_str(s: &str) -> TabinResult<Status> {
-        use Status::{Critical, Unknown, Warning};
+        use crate::Status::{Critical, Unknown, Warning};
         match s {
             "ok" => Ok(Status::Ok),
             "warning" => Ok(Warning),
@@ -109,7 +102,7 @@ impl FromStr for Status {
 
 impl fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use Status::*;
+        use crate::Status::*;
         let msg = match *self {
             Ok => "OK",
             Unknown => "UNKNOWN",
@@ -122,7 +115,7 @@ impl fmt::Display for Status {
 
 #[test]
 fn comparison_is_as_expected() {
-    use Status::*;
+    use crate::Status::*;
     assert!(Ok < Critical);
     assert!(Ok < Warning);
     assert_eq!(std::cmp::max(Warning, Critical), Critical)

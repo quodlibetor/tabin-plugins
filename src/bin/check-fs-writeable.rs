@@ -1,18 +1,14 @@
 //! Check that we can write to disk
 
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate structopt;
-
 use std::fs;
-use std::io::Write;
 use std::io::ErrorKind;
-use std::thread;
+use std::io::Write;
 use std::path::Path;
 use std::process;
 use std::sync::mpsc::channel;
+use std::thread;
 
+use serde::Deserialize;
 use structopt::StructOpt;
 
 /// Check that we can write to a filesystem by writing a byte to a file.
@@ -20,8 +16,10 @@ use structopt::StructOpt;
 /// Does not try to create the directory, or do anything else. Just writes a
 /// single byte to a file, errors if it cannot, and then deletes the file.
 #[derive(StructOpt, Deserialize)]
-#[structopt(name = "check-fs-writeable (part of tabin-plugins)",
-            raw(setting = "structopt::clap::AppSettings::ColoredHelp"))]
+#[structopt(
+    name = "check-fs-writeable (part of tabin-plugins)",
+    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+)]
 struct Args {
     #[structopt(help = "The file to write to")]
     filename: String,
@@ -56,22 +54,27 @@ fn check_file_writeable(filename: String) -> Result<String, String> {
                     tx.send(Err(format!(
                         "CRITICAL: directory {} does not exist.",
                         dir.display()
-                    ))).unwrap();
+                    )))
+                    .unwrap();
                 }
-                _ => tx.send(Err(format!(
-                    "CRITICAL: unexpected error writing to {}: {}",
-                    path.display(),
-                    e
-                ))).unwrap(),
+                _ => tx
+                    .send(Err(format!(
+                        "CRITICAL: unexpected error writing to {}: {}",
+                        path.display(),
+                        e
+                    )))
+                    .unwrap(),
             },
             Ok(mut f) => {
                 f.write_all(b"t").unwrap();
                 match f.flush() {
                     Ok(()) => {}
-                    Err(_) => tx.send(Err(format!(
-                        "CRITICAL: Couldn't flush bytes to {}",
-                        path.display()
-                    ))).unwrap(),
+                    Err(_) => tx
+                        .send(Err(format!(
+                            "CRITICAL: Couldn't flush bytes to {}",
+                            path.display()
+                        )))
+                        .unwrap(),
                 }
                 fs::remove_file(&path).unwrap();
             }

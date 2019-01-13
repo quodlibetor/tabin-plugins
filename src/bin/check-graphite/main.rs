@@ -1,26 +1,16 @@
-extern crate chrono;
-#[macro_use]
-extern crate clap;
-extern crate itertools;
 #[macro_use]
 extern crate lazy_static;
-extern crate reqwest;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
-extern crate tabin_plugins;
-extern crate url;
+
+use std::cmp::max;
+
+use tabin_plugins::Status;
+
+use crate::args::Args;
+use crate::graphite::{fetch_data, GraphiteResponse};
 
 mod args;
 mod assertions;
 mod graphite;
-
-use std::cmp::max;
-use tabin_plugins::Status;
-
-use args::Args;
-use graphite::{fetch_data, GraphiteResponse};
 
 #[cfg_attr(test, allow(dead_code))]
 fn main() {
@@ -79,14 +69,13 @@ fn bail_if_no_data(response: &mut GraphiteResponse, path: &str, no_data_status: 
 }
 
 #[cfg(test)]
-#[allow(non_snake_case)]
 mod test {
     // A couple helper methods for tests in other modules
 
     use chrono::naive::NaiveDateTime;
     use serde_json;
 
-    use graphite::{DataPoint, GraphiteData};
+    use crate::graphite::{DataPoint, GraphiteData};
 
     pub(crate) fn deser(s: &str) -> Vec<GraphiteData> {
         let result = serde_json::from_str(s);
@@ -98,24 +87,22 @@ mod test {
     }
 
     pub(crate) fn valid_data_from_json_two_sets() -> Vec<GraphiteData> {
-        vec![
-            GraphiteData {
-                points: vec![
-                    DataPoint {
-                        val: Some(1_f64),
-                        time: dt(11150),
-                    },
-                    DataPoint {
-                        val: None,
-                        time: dt(11160),
-                    },
-                    DataPoint {
-                        val: Some(3_f64),
-                        time: dt(11170),
-                    },
-                ],
-                target: "test.path.some-data".to_owned(),
-            },
-        ]
+        vec![GraphiteData {
+            points: vec![
+                DataPoint {
+                    val: Some(1_f64),
+                    time: dt(11150),
+                },
+                DataPoint {
+                    val: None,
+                    time: dt(11160),
+                },
+                DataPoint {
+                    val: Some(3_f64),
+                    time: dt(11170),
+                },
+            ],
+            target: "test.path.some-data".to_owned(),
+        }]
     }
 }

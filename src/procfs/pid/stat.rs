@@ -1,18 +1,20 @@
-use std::fs::File;
 use std::fmt;
+use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
 
 use nix::unistd::Pid;
+use scan_fmt::scan_fmt;
+use serde::Deserialize;
 
-use procfs::{ParseStatError, ParseStateError, ProcFsError, Result};
-use linux::Jiffies;
+use crate::linux::Jiffies;
+use crate::procfs::{ParseStatError, ParseStateError, ProcFsError, Result};
 
 /// The status of a `Process`
 ///
 /// This represents much of the information in `/proc/[pid]/stat`, and is
 /// commonly access via a [`Process`](../struct.Process.html)
-#[derive(Clone, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Stat {
     /// The process ID
     pub pid: Pid,
@@ -45,9 +47,9 @@ pub struct Stat {
 impl Stat {
     pub fn from_pid<P: fmt::Display>(pid: P) -> Result<Stat> {
         let path_str = format!("/proc/{}/stat", pid);
-        let mut f = try!(File::open(&path_str));
+        let mut f = File::open(&path_str)?;
         let mut s = String::new();
-        try!(f.read_to_string(&mut s));
+        f.read_to_string(&mut s)?;
         s.parse()
     }
 }
@@ -91,7 +93,8 @@ fn field<T>(val: Option<T>, field_name: &'static str, row: &str, position: u8) -
                 line: row,
                 field_name,
                 position,
-            }.into());
+            }
+            .into());
         }
     }
 }
@@ -218,7 +221,8 @@ impl FromStr for State {
             "Z" | "zombie" => Ok(Zombie),
             _ => Err(ParseStateError {
                 state: s.to_string(),
-            }.into()),
+            }
+            .into()),
         }
     }
 }
@@ -240,8 +244,9 @@ mod test {
                 "122 (statsd /app/connection) S 103 103 181 0 -1 304 0626 0 \
                  0 0 605 198 0 0 20 0 10 0 71025 1230417920 11878 18848888888888888888 \
                  1 1 0 0 0 0 0 4096 16898 0 0 0 17 11 0 0 0 0 0 0 0 0 0 0 0 0 0",
-            ].iter()
-                .enumerate()
+            ]
+            .iter()
+            .enumerate()
             {
                 s.parse::<Stat>().unwrap_or_else(|e| match e {
                     ProcFsError::ParseStatError(e) => panic!("line {}: {}", i, e),

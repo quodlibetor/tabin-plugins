@@ -4,9 +4,9 @@ use std::fs::File;
 use std::io::{self, Read};
 
 fn read_file(path: &str) -> Result<String, io::Error> {
-    let mut fh = try!(File::open(path));
+    let mut fh = File::open(path)?;
     let mut contents = String::new();
-    try!(fh.read_to_string(&mut contents));
+    fh.read_to_string(&mut contents)?;
     Ok(contents)
 }
 
@@ -23,11 +23,11 @@ pub mod fs {
             //! https://kernel.googlesource.com/pub/scm/linux/kernel/git/glommer/memcg/+/cpu_stat/Documentation/cgroups/cpu.txt
             use std::io;
 
-            use sys::read_file;
+            use crate::sys::read_file;
 
             /// The number of CPU shares this cgroup has got
             pub fn shares() -> Result<u32, io::Error> {
-                let contents = try!(read_file("/sys/fs/cgroup/cpu/cpu.shares"));
+                let contents = read_file("/sys/fs/cgroup/cpu/cpu.shares")?;
                 Ok(contents.trim().parse().unwrap())
             }
         }
@@ -40,8 +40,8 @@ pub mod fs {
             //! https://www.kernel.org/doc/Documentation/cgroups/cpuacct.txt
             use std::io;
 
-            use linux::UserHz;
-            use sys::read_file;
+            use crate::linux::UserHz;
+            use crate::sys::read_file;
 
             /// Similar to /proc/stat, but shows toatal CPU usage by the cgroup
             #[derive(Debug)]
@@ -53,7 +53,7 @@ pub mod fs {
             impl Stat {
                 /// Create a new `Stat` with values for the cgroup fs
                 pub fn load() -> Result<Stat, io::Error> {
-                    let contents = try!(read_file("/sys/fs/cgroup/cpuacct/cpuacct.stat"));
+                    let contents = read_file("/sys/fs/cgroup/cpuacct/cpuacct.stat")?;
                     let mut lines = contents.lines();
                     let user = lines.next().unwrap().split(' ').nth(1).unwrap();
                     let sys = lines.next().unwrap().split(' ').nth(1).unwrap();
@@ -80,13 +80,13 @@ pub mod fs {
             use std::collections::{HashMap, HashSet};
             use std::io;
 
-            use sys::read_file;
+            use crate::sys::read_file;
 
             /// The memory limit for this cgroup
             ///
             /// If it's not set, it seems to be u64::max
             pub fn limit_in_bytes() -> Result<usize, io::Error> {
-                let contents = try!(read_file("/sys/fs/cgroup/memory/memory.limit_in_bytes"));
+                let contents = read_file("/sys/fs/cgroup/memory/memory.limit_in_bytes")?;
                 let bytes = contents.trim().parse().unwrap();
                 Ok(bytes)
             }
@@ -112,7 +112,7 @@ pub mod fs {
             impl Stat {
                 /// Read information from the filesystem and create a new `Stat`
                 pub fn load() -> Result<Stat, io::Error> {
-                    let contents = try!(read_file("/sys/fs/cgroup/memory/memory.stat"));
+                    let contents = read_file("/sys/fs/cgroup/memory/memory.stat")?;
                     let mut fields: HashMap<String, usize> = HashMap::new();
                     let needed: HashSet<_> = ["cache", "rss", "rss_huge", "swap"]
                         .iter()

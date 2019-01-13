@@ -4,13 +4,14 @@ use std::fmt;
 use std::ops;
 use std::time::Duration;
 
-use libc::{_SC_CLK_TCK, _SC_PAGESIZE};
+use lazy_static::lazy_static;
 use libc::sysconf;
+use libc::{_SC_CLK_TCK, _SC_PAGESIZE};
 
-lazy_static!(
+lazy_static! {
     pub static ref USER_HZ: u64 = unsafe { sysconf(_SC_CLK_TCK) } as u64;
     pub static ref PAGESIZE: u64 = unsafe { sysconf(_SC_PAGESIZE) } as u64;
-);
+}
 
 pub fn pages_to_human_size(pages: u64) -> String {
     let bytes = pages * (*PAGESIZE);

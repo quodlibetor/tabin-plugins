@@ -5,17 +5,18 @@
 //!
 //! The two top-level items in here
 
-use std::time::Duration;
-use std::thread::sleep;
 use std::error::Error;
 use std::fmt;
 use std::io::{self, Read};
+use std::thread::sleep;
+use std::time::Duration;
 
-use chrono::naive::NaiveDateTime;
 use chrono::naive::serde::ts_seconds::deserialize as from_ts_seconds;
+use chrono::naive::NaiveDateTime;
+use reqwest::{self, Error as ReqwestError};
+use serde::Deserialize;
 use serde_json;
-use reqwest;
-use reqwest::Error as ReqwestError;
+
 use tabin_plugins::Status;
 
 /// The result of `fetch_data`
@@ -32,7 +33,8 @@ impl GraphiteResponse {
             gd.points
                 .iter()
                 .filter(|point| !point.val.is_none())
-                .count() > 0
+                .count()
+                > 0
         })
     }
 }
@@ -97,11 +99,13 @@ impl<'a> FilteredGraphiteData<'a> {
     /// This only includes the original points that actually have data
     pub fn percent_matched(&self) -> f64 {
         (self.len() as f64
-            / self.original
+            / self
+                .original
                 .points
                 .iter()
                 .filter(|point| point.val.is_some())
-                .count() as f64) * 100.0
+                .count() as f64)
+            * 100.0
     }
 }
 
@@ -274,30 +278,31 @@ fn get_graphite(
             result: data,
             url: result.url().clone(),
         }),
-        Err(e) => if e.is_syntax() || e.is_data() {
-            Err(GraphiteError::JsonError(format!(
-                "{}: Graphite returned invalid json:\n\
-                 {}\n=========================\n\
-                 The full url queried was: {}",
-                graphite_error,
-                s,
-                result.url()
-            )))
-        } else {
-            Err(GraphiteError::JsonError(format!(
-                "{}: {}",
-                graphite_error, e
-            )))
-        },
+        Err(e) => {
+            if e.is_syntax() || e.is_data() {
+                Err(GraphiteError::JsonError(format!(
+                    "{}: Graphite returned invalid json:\n\
+                     {}\n=========================\n\
+                     The full url queried was: {}",
+                    graphite_error,
+                    s,
+                    result.url()
+                )))
+            } else {
+                Err(GraphiteError::JsonError(format!(
+                    "{}: {}",
+                    graphite_error, e
+                )))
+            }
+        }
     }
 }
 
 #[cfg(test)]
-#[allow(non_snake_case)]
 mod test {
     use super::*;
 
-    use test::deser;
+    use crate::test::deser;
 
     fn json_three_sets_of_graphite_data() -> &'static str {
         r#"
@@ -329,21 +334,17 @@ mod test {
                     target: "test.path.no-data".into(),
                 },
                 GraphiteData {
-                    points: vec![
-                        DataPoint {
-                            val: None,
-                            time: NaiveDateTime::from_timestamp(10, 0),
-                        },
-                    ],
+                    points: vec![DataPoint {
+                        val: None,
+                        time: NaiveDateTime::from_timestamp(10, 0),
+                    },],
                     target: "test.path.null-data".into(),
                 },
                 GraphiteData {
-                    points: vec![
-                        DataPoint {
-                            val: Some(1.0),
-                            time: NaiveDateTime::from_timestamp(50, 0),
-                        },
-                    ],
+                    points: vec![DataPoint {
+                        val: Some(1.0),
+                        time: NaiveDateTime::from_timestamp(50, 0),
+                    },],
                     target: "test.path.some-data".into(),
                 },
             ]
