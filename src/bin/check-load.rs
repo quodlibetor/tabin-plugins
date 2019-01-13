@@ -4,14 +4,9 @@
 //! due to IO or CPU constraints. The numbers used to check are the load averaged
 //! over 1, 5 and 15 minutes, respectively
 
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate structopt;
-
-extern crate tabin_plugins;
-
+use serde::Deserialize;
 use structopt::StructOpt;
+
 use tabin_plugins::procfs::{Calculations, LoadAvg};
 use tabin_plugins::Status;
 

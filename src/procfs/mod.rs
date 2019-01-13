@@ -10,11 +10,13 @@ use std::io::{self, Read};
 use std::num;
 use std::ops::{Div, Sub};
 use std::result::Result as StdResult;
+use std::slice;
 use std::str::{FromStr, Split};
 
+use derive_more::From;
 use nix::unistd::Pid;
 use regex::Regex;
-use std::slice;
+use serde::Deserialize;
 
 use crate::linux::Jiffies;
 use crate::procfs::pid::ProcessCpuUsage;

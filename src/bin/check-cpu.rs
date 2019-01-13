@@ -1,17 +1,11 @@
 //! Check CPU usage
 
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate structopt;
-
-extern crate tabin_plugins;
-
 use std::cmp::PartialOrd;
 use std::fmt::Display;
 use std::thread::sleep;
 use std::time::Duration;
+
+use serde::Deserialize;
 use structopt::StructOpt;
 
 use tabin_plugins::procfs::{

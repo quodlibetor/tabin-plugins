@@ -16,22 +16,13 @@
 //! * Much of the code is hideous, and should not be
 
 #[macro_use]
-extern crate derive_more;
-#[macro_use]
 extern crate lazy_static;
-#[macro_use]
-extern crate scan_fmt;
-
-extern crate libc;
-extern crate nix;
-extern crate regex;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
 
 use std::fmt;
 use std::process;
 use std::str::FromStr;
+
+use serde::Deserialize;
 
 pub mod linux;
 pub mod procfs;

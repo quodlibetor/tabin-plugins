@@ -1,15 +1,9 @@
 //! Check CPU usage of the currently-running container
 
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate structopt;
-
-extern crate tabin_plugins;
-
 use std::thread::sleep;
 use std::time::Duration;
+
+use serde::Deserialize;
 use structopt::StructOpt;
 
 use tabin_plugins::linux::{Jiffies, Ratio};

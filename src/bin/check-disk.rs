@@ -1,26 +1,16 @@
 //! Check Disk usage
 
-#[macro_use]
-extern crate derive_more;
-extern crate env_logger;
-#[macro_use]
-extern crate log;
-extern crate nix;
-extern crate regex;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate structopt;
-
-extern crate tabin_plugins;
-
 use std::cmp::max;
 use std::collections::HashSet;
 use std::fmt;
 
+use derive_more::From;
+use log::debug;
 use nix::sys::statvfs::vfs;
 use regex::Regex;
+use serde::Deserialize;
 use structopt::StructOpt;
+
 use tabin_plugins::linux::bytes_to_human_size;
 use tabin_plugins::procfs::Mount;
 use tabin_plugins::Status;

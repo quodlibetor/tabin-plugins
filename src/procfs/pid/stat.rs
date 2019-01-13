@@ -4,6 +4,8 @@ use std::io::Read;
 use std::str::FromStr;
 
 use nix::unistd::Pid;
+use scan_fmt::scan_fmt;
+use serde::Deserialize;
 
 use crate::linux::Jiffies;
 use crate::procfs::{ParseStatError, ParseStateError, ProcFsError, Result};

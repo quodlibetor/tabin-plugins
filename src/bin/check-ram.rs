@@ -1,10 +1,4 @@
-#[macro_use]
-extern crate serde_derive;
-
-#[macro_use]
-extern crate structopt;
-extern crate tabin_plugins;
-
+use serde::Deserialize;
 use structopt::StructOpt;
 
 use tabin_plugins::linux::pages_to_human_size;

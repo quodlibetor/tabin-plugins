@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
-use clap;
+use clap::{self, value_t};
+
 use tabin_plugins::Status;
 
 use crate::assertions::Assertion;

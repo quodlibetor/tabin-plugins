@@ -2,13 +2,6 @@
 
 #![allow(unused_variables, dead_code)]
 
-extern crate nix;
-extern crate regex;
-#[macro_use]
-extern crate structopt;
-
-extern crate tabin_plugins;
-
 use std::collections::HashSet;
 use std::str::FromStr;
 

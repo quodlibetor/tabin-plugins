@@ -1,15 +1,9 @@
 //! Check RAM usage of the currently-running container
 
-#[macro_use]
-extern crate serde_derive;
-
-#[macro_use]
-extern crate structopt;
-
-extern crate tabin_plugins;
-
 use std::cmp::max;
 use std::fmt;
+
+use serde::Deserialize;
 use structopt::StructOpt;
 
 use tabin_plugins::linux::{bytes_to_human_size, pages_to_human_size};

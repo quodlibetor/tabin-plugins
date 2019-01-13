@@ -4,6 +4,7 @@ use std::fmt;
 use std::ops;
 use std::time::Duration;
 
+use lazy_static::lazy_static;
 use libc::sysconf;
 use libc::{_SC_CLK_TCK, _SC_PAGESIZE};
 

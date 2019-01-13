@@ -13,9 +13,10 @@ use std::time::Duration;
 
 use chrono::naive::serde::ts_seconds::deserialize as from_ts_seconds;
 use chrono::naive::NaiveDateTime;
-use reqwest;
-use reqwest::Error as ReqwestError;
+use reqwest::{self, Error as ReqwestError};
+use serde::Deserialize;
 use serde_json;
+
 use tabin_plugins::Status;
 
 /// The result of `fetch_data`

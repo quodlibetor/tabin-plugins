@@ -1,10 +1,5 @@
 //! Check that we can write to disk
 
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate structopt;
-
 use std::fs;
 use std::io::ErrorKind;
 use std::io::Write;
@@ -13,6 +8,7 @@ use std::process;
 use std::sync::mpsc::channel;
 use std::thread;
 
+use serde::Deserialize;
 use structopt::StructOpt;
 
 /// Check that we can write to a filesystem by writing a byte to a file.

@@ -6,11 +6,11 @@
 mod cmd_line;
 mod stat;
 
+use serde::Deserialize;
 use std::fmt;
 
-use super::Result;
-
 use crate::linux::{Jiffies, Ratio, PAGESIZE};
+use crate::procfs::Result;
 
 pub use self::cmd_line::CmdLine;
 pub use self::stat::{Stat, State};
