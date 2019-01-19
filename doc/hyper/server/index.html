@@ -3,95 +3,18 @@
 them off to a <code>Service</code>.</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
 <table><tr><td><code>pub use self::conn::<a class="struct" href="../../hyper/server/conn/struct.Connection.html" title="struct hyper::server::conn::Connection">Connection</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="mod" href="conn/index.html"
-                                  title='mod hyper::server::conn'>conn</a></td>
-                           <td class='docblock-short'>
-                                <p>Lower-level Server connection API.</p>
-
-                           </td>
-                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.AddrIncoming.html"
-                                  title='struct hyper::server::AddrIncoming'>AddrIncoming</a></td>
-                           <td class='docblock-short'>
-                                <p>A stream of connections from binding to an address.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Http.html"
-                                  title='struct hyper::server::Http'>Http</a></td>
-                           <td class='docblock-short'>
-                                <p>A configuration of the HTTP protocol.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Request.html"
-                                  title='struct hyper::server::Request'>Request</a></td>
-                           <td class='docblock-short'>
-                                <p>An HTTP Request</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Response.html"
-                                  title='struct hyper::server::Response'>Response</a></td>
-                           <td class='docblock-short'>
-                                <p>An HTTP Response</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Serve.html"
-                                  title='struct hyper::server::Serve'>Serve</a></td>
-                           <td class='docblock-short'>
-                                <p>A stream mapping incoming IOs to new services.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Server.html"
-                                  title='struct hyper::server::Server'>Server</a></td>
-                           <td class='docblock-short'>
-                                <p>An instance of a server created through <code>Http::bind</code>.</p>
-
-                           </td>
-                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.NewService.html"
-                                  title='trait hyper::server::NewService'>NewService</a></td>
-                           <td class='docblock-short'>
-                                <p>Creates new <code>Service</code> values.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.Service.html"
-                                  title='trait hyper::server::Service'>Service</a></td>
-                           <td class='docblock-short'>
-                                <p>An asynchronous function from <code>Request</code> to a <code>Response</code>.</p>
-
-                           </td>
-                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.const_service.html"
-                                  title='fn hyper::server::const_service'>const_service</a></td>
-                           <td class='docblock-short'>
-                                <p>Create a <code>NewService</code> by sharing references of `service.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.service_fn.html"
-                                  title='fn hyper::server::service_fn'>service_fn</a></td>
-                           <td class='docblock-short'>
-                                <p>Create a <code>Service</code> from a function.</p>
-
-                           </td>
-                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "hyper";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>
+<table><tr class='module-item'><td><a class="mod" href="conn/index.html" title='hyper::server::conn mod'>conn</a></td><td class='docblock-short'><p>Lower-level Server connection API.</p>
+</td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.AddrIncoming.html" title='hyper::server::AddrIncoming struct'>AddrIncoming</a></td><td class='docblock-short'><p>A stream of connections from binding to an address.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Http.html" title='hyper::server::Http struct'>Http</a></td><td class='docblock-short'><p>A configuration of the HTTP protocol.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Request.html" title='hyper::server::Request struct'>Request</a></td><td class='docblock-short'><p>An HTTP Request</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Response.html" title='hyper::server::Response struct'>Response</a></td><td class='docblock-short'><p>An HTTP Response</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Serve.html" title='hyper::server::Serve struct'>Serve</a></td><td class='docblock-short'><p>A stream mapping incoming IOs to new services.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Server.html" title='hyper::server::Server struct'>Server</a></td><td class='docblock-short'><p>An instance of a server created through <code>Http::bind</code>.</p>
+</td></tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table><tr class='module-item'><td><a class="trait" href="trait.NewService.html" title='hyper::server::NewService trait'>NewService</a></td><td class='docblock-short'><p>Creates new <code>Service</code> values.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.Service.html" title='hyper::server::Service trait'>Service</a></td><td class='docblock-short'><p>An asynchronous function from <code>Request</code> to a <code>Response</code>.</p>
+</td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table><tr class='module-item'><td><a class="fn" href="fn.const_service.html" title='hyper::server::const_service fn'>const_service</a></td><td class='docblock-short'><p>Create a <code>NewService</code> by sharing references of `service.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.service_fn.html" title='hyper::server::service_fn fn'>service_fn</a></td><td class='docblock-short'><p>Create a <code>Service</code> from a function.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "hyper";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

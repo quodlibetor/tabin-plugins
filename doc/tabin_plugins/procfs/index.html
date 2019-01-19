@@ -2,129 +2,17 @@
 <p>Each file gets a struct to represent its data, with an associated <code>load</code>
 function.</p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="mod" href="pid/index.html"
-                                  title='mod tabin_plugins::procfs::pid'>pid</a></td>
-                           <td class='docblock-short'>
-                                <p>Data structures related to the <code>/proc/&lt;pid&gt;/*</code> files</p>
-
-                           </td>
-                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Calculations.html"
-                                  title='struct tabin_plugins::procfs::Calculations'>Calculations</a></td>
-                           <td class='docblock-short'>
-                                <p>The number of calculations that have occured on this computer in a time
+<table><tr class='module-item'><td><a class="mod" href="pid/index.html" title='tabin_plugins::procfs::pid mod'>pid</a></td><td class='docblock-short'><p>Data structures related to the <code>/proc/&lt;pid&gt;/*</code> files</p>
+</td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.Calculations.html" title='tabin_plugins::procfs::Calculations struct'>Calculations</a></td><td class='docblock-short'><p>The number of calculations that have occured on this computer in a time
 period</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.InvalidWorkSource.html"
-                                  title='struct tabin_plugins::procfs::InvalidWorkSource'>InvalidWorkSource</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.LoadAvg.html"
-                                  title='struct tabin_plugins::procfs::LoadAvg'>LoadAvg</a></td>
-                           <td class='docblock-short'>
-                                <p>The load average of the system</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.LoadProcsError.html"
-                                  title='struct tabin_plugins::procfs::LoadProcsError'>LoadProcsError</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.MemInfo.html"
-                                  title='struct tabin_plugins::procfs::MemInfo'>MemInfo</a></td>
-                           <td class='docblock-short'>
-                                <p>A struct that represents overall memory usage on the system.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Mount.html"
-                                  title='struct tabin_plugins::procfs::Mount'>Mount</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.ParseStatError.html"
-                                  title='struct tabin_plugins::procfs::ParseStatError'>ParseStatError</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.ParseStateError.html"
-                                  title='struct tabin_plugins::procfs::ParseStateError'>ParseStateError</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.ProcessCpuUsages.html"
-                                  title='struct tabin_plugins::procfs::ProcessCpuUsages'>ProcessCpuUsages</a></td>
-                           <td class='docblock-short'>
-                                <p>A collection of <code>ProcessCpuUsage</code>s</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.RunningProcs.html"
-                                  title='struct tabin_plugins::procfs::RunningProcs'>RunningProcs</a></td>
-                           <td class='docblock-short'>
-                                <p>All the processes that are running</p>
-
-                           </td>
-                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.ProcField.html"
-                                  title='enum tabin_plugins::procfs::ProcField'>ProcField</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.ProcFsError.html"
-                                  title='enum tabin_plugins::procfs::ProcFsError'>ProcFsError</a></td>
-                           <td class='docblock-short'>
-                                <p>ProcFs errors</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.WorkSource.html"
-                                  title='enum tabin_plugins::procfs::WorkSource'>WorkSource</a></td>
-                           <td class='docblock-short'>
-                                <p>A kind of CPU usage</p>
-
-                           </td>
-                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.ProcMap.html"
-                                  title='type tabin_plugins::procfs::ProcMap'>ProcMap</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.Result.html"
-                                  title='type tabin_plugins::procfs::Result'>Result</a></td>
-                           <td class='docblock-short'>
-                                <p>All the results are results with <code>ProcFsError</code>s</p>
-
-                           </td>
-                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "tabin_plugins";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.InvalidWorkSource.html" title='tabin_plugins::procfs::InvalidWorkSource struct'>InvalidWorkSource</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.LoadAvg.html" title='tabin_plugins::procfs::LoadAvg struct'>LoadAvg</a></td><td class='docblock-short'><p>The load average of the system</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.LoadProcsError.html" title='tabin_plugins::procfs::LoadProcsError struct'>LoadProcsError</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.MemInfo.html" title='tabin_plugins::procfs::MemInfo struct'>MemInfo</a></td><td class='docblock-short'><p>A struct that represents overall memory usage on the system.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Mount.html" title='tabin_plugins::procfs::Mount struct'>Mount</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.ParseStatError.html" title='tabin_plugins::procfs::ParseStatError struct'>ParseStatError</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.ParseStateError.html" title='tabin_plugins::procfs::ParseStateError struct'>ParseStateError</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.ProcessCpuUsages.html" title='tabin_plugins::procfs::ProcessCpuUsages struct'>ProcessCpuUsages</a></td><td class='docblock-short'><p>A collection of <code>ProcessCpuUsage</code>s</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.RunningProcs.html" title='tabin_plugins::procfs::RunningProcs struct'>RunningProcs</a></td><td class='docblock-short'><p>All the processes that are running</p>
+</td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr class='module-item'><td><a class="enum" href="enum.ProcField.html" title='tabin_plugins::procfs::ProcField enum'>ProcField</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.ProcFsError.html" title='tabin_plugins::procfs::ProcFsError enum'>ProcFsError</a></td><td class='docblock-short'><p>ProcFs errors</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.WorkSource.html" title='tabin_plugins::procfs::WorkSource enum'>WorkSource</a></td><td class='docblock-short'><p>A kind of CPU usage</p>
+</td></tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table><tr class='module-item'><td><a class="type" href="type.ProcMap.html" title='tabin_plugins::procfs::ProcMap type'>ProcMap</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.Result.html" title='tabin_plugins::procfs::Result type'>Result</a></td><td class='docblock-short'><p>All the results are results with <code>ProcFsError</code>s</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "tabin_plugins";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

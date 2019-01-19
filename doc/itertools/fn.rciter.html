@@ -6,7 +6,7 @@ itself, at the cost of runtime borrow checking which may have a performance
 penalty.</p>
 <p>Iterator element type is <code>Self::Item</code>.</p>
 
-<pre class="rust rust-example-rendered">
+<div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">itertools</span>::<span class="ident">rciter</span>;
 <span class="kw">use</span> <span class="ident">itertools</span>::<span class="ident">zip</span>;
 
@@ -22,7 +22,7 @@ penalty.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">z</span>.<span class="ident">next</span>(), <span class="prelude-val">Some</span>((<span class="number">4</span>, <span class="number">5</span>)));
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">next</span>(), <span class="prelude-val">Some</span>(<span class="number">6</span>));
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">z</span>.<span class="ident">next</span>(), <span class="prelude-val">Some</span>((<span class="number">7</span>, <span class="number">8</span>)));
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">z</span>.<span class="ident">next</span>(), <span class="prelude-val">None</span>);</pre>
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">z</span>.<span class="ident">next</span>(), <span class="prelude-val">None</span>);</pre></div>
 <p><strong>Panics</strong> in iterator methods if a borrow error is encountered in the
 iterator methods. It can only happen if the <code>RcIter</code> is reentered in
 <code>.next()</code>, i.e. if it somehow participates in an “iterator knot”

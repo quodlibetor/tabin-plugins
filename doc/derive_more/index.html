@@ -10,7 +10,7 @@ It does this by allowing you to derive lots of commonly used traits for both str
 <h2 id="example-code" class="section-header"><a href="#example-code">Example code</a></h2>
 <p>By using this library the following code just works:</p>
 
-<pre class="rust rust-example-rendered">
+<div class="example-wrap"><pre class="rust rust-example-rendered">
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">From</span>, <span class="ident">Add</span>)]</span>
 <span class="kw">struct</span> <span class="ident">MyInt</span>(<span class="ident">i32</span>);
@@ -35,7 +35,7 @@ It does this by allowing you to derive lots of commonly used traits for both str
     <span class="macro">assert_eq</span><span class="macro">!</span>((<span class="number">5</span>, <span class="number">6</span>), <span class="ident">Point2D</span> { <span class="ident">x</span>: <span class="number">5</span>, <span class="ident">y</span>: <span class="number">6</span> }.<span class="ident">into</span>());
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Point2D</span> { <span class="ident">x</span>: <span class="number">5</span>, <span class="ident">y</span>: <span class="number">6</span> }, <span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">5</span>, <span class="number">6</span>));
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">MyEnum</span>::<span class="ident">Int</span>(<span class="number">15</span>), (<span class="ident">MyEnum</span>::<span class="ident">Int</span>(<span class="number">8</span>) <span class="op">+</span> <span class="number">7</span>.<span class="ident">into</span>()).<span class="ident">unwrap</span>())
-}</pre>
+}</pre></div>
 <h2 id="the-newly-derivable-traits" class="section-header"><a href="#the-newly-derivable-traits">The newly derivable traits</a></h2>
 <p>Obviously not all traits should be derived to the same code, because they are different
 traits after all.
@@ -79,7 +79,7 @@ derive_more = &quot;0.6.0&quot;
 </code></pre>
 <p>And this to the top of your Rust file:</p>
 
-<pre class="rust rust-example-rendered">
+<div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">derive_more</span>;</pre>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">derive_more</span>;</pre></div>
 </div></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "derive_more";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
