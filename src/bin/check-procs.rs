@@ -3,6 +3,8 @@
 use std::collections::HashSet;
 use std::str::FromStr;
 
+use log::LevelFilter::{Debug, Trace, Warn};
+use log::{debug, trace};
 use nix::sys::signal::{kill, Signal as NixSignal};
 use nix::unistd::{getpid, getppid, Pid};
 use regex::Regex;
@@ -11,6 +13,8 @@ use structopt::StructOpt;
 use tabin_plugins::procfs::pid::{Process, State};
 use tabin_plugins::procfs::{LoadProcsError, ProcFsError, ProcMap, RunningProcs};
 use tabin_plugins::Status;
+
+const LOG_VAR: &str = "TABIN_LOG";
 
 /// Check that an expected number of processes are running.
 ///
@@ -90,6 +94,10 @@ struct Args {
                 This has the same exit status behavior as kill-matching."
     )]
     kill_matching_parents: Option<Signal>,
+
+    /// print debug logs, use multiple times to make it more verbose
+    #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
+    verbose: u8,
 }
 
 /// Our own signal wrapper so that we can implement a forgiving FromStr for `nix::sys::Signal`
@@ -143,6 +151,14 @@ fn parse_args() -> Args {
 
 fn main() {
     let args = parse_args();
+    env_logger::Builder::from_env(LOG_VAR)
+        .filter_level(match args.verbose {
+            0 => Warn,
+            1 => Debug,
+            _ => Trace,
+        })
+        .init();
+
     let should_die = if let Some(_) = args.crit_over {
         !args.allow_unparseable_procs
     } else {
@@ -284,13 +300,20 @@ fn filter_procs<'m>(
     let me = getpid();
     let parent = getppid();
 
+    debug!("filtering for procs that match: {:?} {:?}", re, states);
+
     procs
         .iter()
         .filter(|&(pid, _process)| *pid != me && *pid != parent)
         .filter(|&(_pid, process)| states.is_empty() || states.contains(&process.stat.state))
         .filter(|&(_pid, process)| {
             re.as_ref()
-                .map(|re| re.is_match(&process.useful_cmdline()))
+                .map(|re| {
+                    let cmdline = process.useful_cmdline();
+                    let is_match = re.is_match(&cmdline);
+                    trace!("is_match={} process={}", is_match, cmdline);
+                    is_match
+                })
                 .unwrap_or(true)
         })
         .collect()
