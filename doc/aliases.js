@@ -145,7 +145,6 @@ ALIASES['unicode_normalization'] = {};
 ALIASES['unicode_segmentation'] = {};
 ALIASES['unicode_width'] = {};
 ALIASES['unicode_xid'] = {};
-ALIASES['unreachable'] = {};
 ALIASES['url'] = {};
 ALIASES['utf8_ranges'] = {};
 ALIASES['uuid'] = {};
