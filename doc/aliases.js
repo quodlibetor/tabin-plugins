@@ -125,6 +125,7 @@ ALIASES["tokio_tcp"] = {};
 ALIASES["tokio_threadpool"] = {};
 ALIASES["tokio_timer"] = {};
 ALIASES["tokio_tls"] = {};
+ALIASES["tokio_trace_core"] = {};
 ALIASES["tokio_udp"] = {};
 ALIASES["tokio_uds"] = {};
 ALIASES["try_lock"] = {};
