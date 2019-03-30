@@ -1,6 +1,6 @@
 var N = null;var sourcesIndex = {};
 sourcesIndex["adler32"] = {"name":"","dirs":[],"files":["lib.rs"]};
-sourcesIndex["aho_corasick"] = {"name":"","dirs":[],"files":["autiter.rs","full.rs","lib.rs"]};
+sourcesIndex["aho_corasick"] = {"name":"","dirs":[],"files":["ahocorasick.rs","automaton.rs","buffer.rs","classes.rs","dfa.rs","error.rs","lib.rs","nfa.rs","prefilter.rs","state_id.rs"]};
 sourcesIndex["ansi_term"] = {"name":"","dirs":[],"files":["ansi.rs","debug.rs","difference.rs","display.rs","lib.rs","style.rs","windows.rs","write.rs"]};
 sourcesIndex["arrayvec"] = {"name":"","dirs":[],"files":["array.rs","array_string.rs","char.rs","errors.rs","lib.rs","maybe_uninit_nodrop.rs","range.rs"]};
 sourcesIndex["atty"] = {"name":"","dirs":[],"files":["lib.rs"]};
@@ -85,7 +85,7 @@ sourcesIndex["rand_jitter"] = {"name":"","dirs":[],"files":["dummy_log.rs","erro
 sourcesIndex["rand_os"] = {"name":"","dirs":[],"files":["dummy_log.rs","lib.rs","linux_android.rs","random_device.rs"]};
 sourcesIndex["rand_pcg"] = {"name":"","dirs":[],"files":["lib.rs","pcg128.rs","pcg64.rs"]};
 sourcesIndex["rand_xorshift"] = {"name":"","dirs":[],"files":["lib.rs"]};
-sourcesIndex["regex"] = {"name":"","dirs":[{"name":"literal","dirs":[{"name":"teddy_avx2","dirs":[],"files":["fallback.rs","mod.rs"]},{"name":"teddy_ssse3","dirs":[],"files":["fallback.rs","mod.rs"]}],"files":["mod.rs"]}],"files":["backtrack.rs","compile.rs","dfa.rs","error.rs","exec.rs","expand.rs","freqs.rs","input.rs","lib.rs","pikevm.rs","prog.rs","re_builder.rs","re_bytes.rs","re_set.rs","re_trait.rs","re_unicode.rs","sparse.rs","utf8.rs"]};
+sourcesIndex["regex"] = {"name":"","dirs":[{"name":"literal","dirs":[{"name":"teddy_avx2","dirs":[],"files":["imp.rs","mod.rs"]},{"name":"teddy_ssse3","dirs":[],"files":["imp.rs","mod.rs"]}],"files":["mod.rs"]},{"name":"vector","dirs":[],"files":["avx2.rs","mod.rs","ssse3.rs"]}],"files":["backtrack.rs","compile.rs","dfa.rs","error.rs","exec.rs","expand.rs","freqs.rs","input.rs","lib.rs","pikevm.rs","prog.rs","re_builder.rs","re_bytes.rs","re_set.rs","re_trait.rs","re_unicode.rs","sparse.rs","utf8.rs"]};
 sourcesIndex["regex_syntax"] = {"name":"","dirs":[{"name":"ast","dirs":[],"files":["mod.rs","parse.rs","print.rs","visitor.rs"]},{"name":"hir","dirs":[{"name":"literal","dirs":[],"files":["mod.rs"]}],"files":["interval.rs","mod.rs","print.rs","translate.rs","visitor.rs"]},{"name":"unicode_tables","dirs":[],"files":["age.rs","case_folding_simple.rs","general_category.rs","grapheme_cluster_break.rs","mod.rs","perl_word.rs","property_bool.rs","property_names.rs","property_values.rs","script.rs","script_extension.rs","sentence_break.rs","word_break.rs"]}],"files":["either.rs","error.rs","lib.rs","parser.rs","unicode.rs"]};
 sourcesIndex["relay"] = {"name":"","dirs":[],"files":["lib.rs"]};
 sourcesIndex["reqwest"] = {"name":"","dirs":[{"name":"async_impl","dirs":[],"files":["body.rs","client.rs","decoder.rs","mod.rs","request.rs","response.rs"]}],"files":["body.rs","client.rs","connect.rs","error.rs","into_url.rs","lib.rs","multipart.rs","multipart_.rs","proxy.rs","redirect.rs","request.rs","response.rs","tls.rs","wait.rs"]};
