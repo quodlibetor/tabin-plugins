@@ -46,7 +46,6 @@ ALIASES["itertools"] = {};
 ALIASES["itoa"] = {};
 ALIASES["language_tags"] = {};
 ALIASES["lazy_static"] = {};
-ALIASES["lazycell"] = {};
 ALIASES["libc"] = {};
 ALIASES["libflate"] = {};
 ALIASES["lock_api"] = {};
