@@ -1,18 +1,10 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `structopt` crate."><meta name="keywords" content="rust, rustlang, rust-lang, structopt"><title>structopt - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../structopt/index.html'><img src='../rust-logo.png' alt='logo' width='100'></a><p class='location'>Crate structopt</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all structopt's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'structopt', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/structopt/lib.rs.html#9-572' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>structopt</a></span></h1><div class='docblock'><p>This crate defines the <code>StructOpt</code> trait and its custom derive.</p>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `structopt` crate."><meta name="keywords" content="rust, rustlang, rust-lang, structopt"><title>structopt - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../structopt/index.html'><img src='../rust-logo.png' alt='logo' width='100'></a><p class='location'>Crate structopt</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all structopt's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'structopt', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/structopt/lib.rs.html#9-545' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>structopt</a></span></h1><div class='docblock'><p>This crate defines the <code>StructOpt</code> trait and its custom derive.</p>
 <h2 id="features" class="section-header"><a href="#features">Features</a></h2>
 <p>If you want to disable all the <code>clap</code> features (colors,
 suggestions, ..) add <code>default-features = false</code> to the <code>structopt</code>
 dependency:</p>
 <pre><code class="language-toml">[dependencies]
 structopt = { version = &quot;0.2&quot;, default-features = false }
-</code></pre>
-<p>Support for <a href="https://github.com/rust-cli/paw"><code>paw</code></a> (the
-<code>Command line argument paw-rser abstraction for main</code>) is disabled
-by default, but can be enabled in the <code>structopt</code> dependency
-with the feature <code>paw</code>:</p>
-<pre><code class="language-toml">[dependencies]
-structopt = { version = &quot;0.2&quot;, features = [ &quot;paw&quot; ] }
-paw = &quot;1.0&quot;
 </code></pre>
 <h2 id="how-to-derivestructopt" class="section-header"><a href="#how-to-derivestructopt">How to <code>derive(StructOpt)</code></a></h2>
 <p>First, let's look at an example:</p>
@@ -62,12 +54,8 @@ to the crate name given by Cargo.</li>
 <li><code>author</code>: Defaults to the crate author name given by Cargo.</li>
 <li><code>about</code>: Defaults to the crate description given by Cargo.</li>
 </ul>
-<p>This approach also works for booleans and numbers which can be
-used as values of the attributes for corresponding <code>clap::App</code>
-methods (e.g. for <code>fn function(self, bool)</code> and so on).</p>
-<p>Methods from <code>clap::App</code> that don't take an atomic literal
-argument (<code>&amp;str</code>, <code>bool</code> or numbers) can be called by wrapping
-them in <code>raw()</code>, e.g. to activate colored help text:</p>
+<p>Methods from <code>clap::App</code> that don't take an <code>&amp;str</code> can be called by
+wrapping them in <code>raw()</code>, e.g. to activate colored help text:</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
@@ -83,28 +71,22 @@ them in <code>raw()</code>, e.g. to activate colored help text:</p>
     <span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">short</span> <span class="op">=</span> <span class="string">&quot;d&quot;</span>)]</span>
     <span class="ident">debug</span>: <span class="ident">bool</span>,
 }</pre></div>
-<p>Then, each field of the struct not marked as a subcommand
-corresponds to a <code>clap::Arg</code>. As with the struct attributes, every
-method of <code>clap::Arg</code> in the form of <code>fn function_name(self, &amp;str)</code>, <code>fn function_name(self, bool)</code> or <code>fn function_name(self, usize)</code> can be used through specifying it as an attribute with a
-literal value. The <code>name</code> attribute can be used to customize the
-<code>Arg::with_name()</code> call (defaults to the field name in
-kebab-case). For functions that do not take an atomic literal as
-argument, the attribute can be wrapped in <code>raw()</code>, e. g.
-<code>raw(aliases = r#&quot;&amp;[&quot;alias&quot;]&quot;#, possible_values = r#&quot;&amp;[&quot;fast&quot;, &quot;slow&quot;]&quot;#)</code>.</p>
+<p>Then, each field of the struct not marked as a subcommand corresponds
+to a <code>clap::Arg</code>. As with the struct attributes, every method of
+<code>clap::Arg</code> in the form of <code>fn function_name(self, &amp;str)</code> can be used
+through specifying it as an attribute. The <code>name</code> attribute can be used
+to customize the <code>Arg::with_name()</code> call (defaults to the field name in
+kebab-case).
+For functions that do not take a <code>&amp;str</code> as argument, the attribute can be
+wrapped in <code>raw()</code>, e. g. <code>raw(aliases = r#&quot;&amp;[&quot;alias&quot;]&quot;#, next_line_help = &quot;true&quot;)</code>.</p>
 <p>The type of the field gives the kind of argument:</p>
 <table><thead><tr><th>Type                         </th><th> Effect                                            </th><th> Added method call to <code>clap::Arg</code></th></tr></thead><tbody>
 <tr><td><code>bool</code>                       </td><td> <code>true</code> if the flag is present                     </td><td> <code>.takes_value(false).multiple(false)</code></td></tr>
 <tr><td><code>Option&lt;T: FromStr&gt;</code>         </td><td> optional positional argument or option            </td><td> <code>.takes_value(true).multiple(false)</code></td></tr>
 <tr><td><code>Option&lt;Option&lt;T: FromStr&gt;&gt;</code> </td><td> optional option with optional value               </td><td> <code>.takes_value(true).multiple(false).min_values(0).max_values(1)</code></td></tr>
 <tr><td><code>Vec&lt;T: FromStr&gt;</code>            </td><td> list of options or the other positional arguments </td><td> <code>.takes_value(true).multiple(true)</code></td></tr>
-<tr><td><code>Option&lt;Vec&lt;T: FromStr&gt;</code>     </td><td> optional list of options                          </td><td> <code>.takes_values(true).multiple(true).min_values(0)</code></td></tr>
 <tr><td><code>T: FromStr</code>                 </td><td> required option or positional argument            </td><td> <code>.takes_value(true).multiple(false).required(!has_default)</code></td></tr>
 </tbody></table>
-<p>Note that <code>Option&lt;Option&lt;T&gt;&gt;</code> allows to express options like
-<code>[--opt=[val]]</code> which can have three values: <code>None</code> if <code>--opt</code> was
-not mentioned, <code>Some(None)</code> if it was mentioned, but didn't have
-value (<code>--opt</code>) and <code>Some(Some(val))</code> for <code>--opt=val</code> case.
-Similar reasoning also applies to <code>Option&lt;Vec&lt;T&gt;&gt;</code>.</p>
 <p>The <code>FromStr</code> trait is used to convert the argument to the given
 type, and the <code>Arg::validator</code> method is set to a method using
 <code>to_string()</code> (<code>FromStr::Err</code> must implement <code>std::fmt::Display</code>).
