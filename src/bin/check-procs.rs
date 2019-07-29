@@ -3,6 +3,8 @@
 use std::collections::HashSet;
 use std::str::FromStr;
 
+use log::LevelFilter::{Debug, Trace, Warn};
+use log::{debug, trace};
 use nix::sys::signal::{kill, Signal as NixSignal};
 use nix::unistd::{getpid, getppid, Pid};
 use regex::Regex;
@@ -11,6 +13,8 @@ use structopt::StructOpt;
 use tabin_plugins::procfs::pid::{Process, State};
 use tabin_plugins::procfs::{LoadProcsError, ProcFsError, ProcMap, RunningProcs};
 use tabin_plugins::Status;
+
+const LOG_VAR: &str = "TABIN_LOG";
 
 /// Check that an expected number of processes are running.
 ///
@@ -90,6 +94,10 @@ struct Args {
                 This has the same exit status behavior as kill-matching."
     )]
     kill_matching_parents: Option<Signal>,
+
+    /// print debug logs, use multiple times to make it more verbose
+    #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
+    verbose: u8,
 }
 
 /// Our own signal wrapper so that we can implement a forgiving FromStr for `nix::sys::Signal`
@@ -143,61 +151,56 @@ fn parse_args() -> Args {
 
 fn main() {
     let args = parse_args();
+    env_logger::Builder::from_env(LOG_VAR)
+        .filter_level(match args.verbose {
+            0 => Warn,
+            1 => Debug,
+            _ => Trace,
+        })
+        .init();
+
     let should_die = if let Some(_) = args.crit_over {
         !args.allow_unparseable_procs
     } else {
         false
     };
     let procs = load_procs(should_die);
-    let re = args.pattern.as_ref().map(|r| r.to_string());
+    let re_ = args.pattern.as_ref().map(|s| s.to_string());
+    let re = || re_.as_ref().map(|s| &**s).unwrap_or("<ANYTHING>");
 
-    let matches = filter_procs(args.pattern, &args.states, &procs.0);
+    let matches = filter_procs(&args.pattern, &args.states, &procs.0);
 
     let mut status = Status::Ok;
     if let Some(crit_over) = args.crit_over {
         if matches.len() > crit_over {
             status = Status::Critical;
-            println!(
-                "CRITICAL: there are {} process that match {:?} (greater than {})",
-                matches.len(),
-                re,
-                crit_over
-            );
         }
     };
     if let Some(crit_under) = args.crit_under {
         if matches.len() < crit_under {
             status = Status::Critical;
-            println!(
-                "CRITICAL: there are {} process that match {:?} (less than {})",
-                matches.len(),
-                re,
-                crit_under
-            );
         }
     }
 
-    if status == Status::Ok {
-        match (args.crit_over, args.crit_under) {
-            (Some(o), Some(u)) => println!(
-                "OKAY: There are {} matching procs (between {} and {})",
-                matches.len(),
-                o,
-                u
-            ),
-            (Some(o), None) => println!(
-                "OKAY: There are {} matching procs (less than {})",
-                matches.len(),
-                o
-            ),
-            (None, Some(u)) => println!(
-                "OKAY: There are {} matching procs (greater than {})",
-                matches.len(),
-                u
-            ),
-            (None, None) => unreachable!(),
-        }
+    print!("{}: there are {} procs ", status, matches.len());
+    if args.pattern.is_some() {
+        print!("that match '{}' ", re());
     }
+    if !args.states.is_empty() {
+        print!("with any state in {:?} ", args.states);
+    }
+    let prefix = if status == Status::Critical {
+        "not "
+    } else {
+        ""
+    };
+    match (args.crit_over, args.crit_under) {
+        (Some(over), Some(under)) => println!("({}between {} and {})", prefix, over, under),
+        (Some(crit_over), None) => println!("({}less or equal to {})", prefix, crit_over),
+        (None, Some(crit_under)) => println!("({}greater or equal to {})", prefix, crit_under),
+        (None, None) => unreachable!("unexpected got no over under"),
+    }
+
     if matches.len() > 0 {
         println!("INFO: Matching processes:");
         for process in matches.iter().take(20) {
@@ -277,12 +280,14 @@ fn load_procs(die_on_any_errors: bool) -> RunningProcs {
 /// * Does match the regex, if it is present
 /// * Does match *any* of the states
 fn filter_procs<'m>(
-    re: Option<Regex>,
+    re: &Option<Regex>,
     states: &[State],
     procs: &'m ProcMap,
 ) -> Vec<(&'m Pid, &'m Process)> {
     let me = getpid();
     let parent = getppid();
+
+    debug!("filtering for procs that match: {:?} {:?}", re, states);
 
     procs
         .iter()
@@ -290,7 +295,12 @@ fn filter_procs<'m>(
         .filter(|&(_pid, process)| states.is_empty() || states.contains(&process.stat.state))
         .filter(|&(_pid, process)| {
             re.as_ref()
-                .map(|re| re.is_match(&process.useful_cmdline()))
+                .map(|re| {
+                    let cmdline = process.useful_cmdline();
+                    let is_match = re.is_match(&cmdline);
+                    trace!("is_match={} process={}", is_match, cmdline);
+                    is_match
+                })
                 .unwrap_or(true)
         })
         .collect()
@@ -344,7 +354,7 @@ mod unit {
             .raw
             .append(&mut vec!["hello".into(), "jar".into()]);
         let proc_map = vec_to_procmap(procs);
-        let filtered = filter_procs(regex("llo.*ar"), &[], &proc_map);
+        let filtered = filter_procs(&regex("llo.*ar"), &[], &proc_map);
         assert_eq!(filtered.len(), 1);
     }
 
@@ -353,7 +363,7 @@ mod unit {
         let mut procs = vec![Process::default(); 5];
         procs[2].stat.state = State::Zombie;
         let proc_map = vec_to_procmap(procs);
-        let filtered = filter_procs(None, &[State::Zombie], &proc_map);
+        let filtered = filter_procs(&None, &[State::Zombie], &proc_map);
         assert_eq!(filtered.len(), 1);
     }
 
@@ -364,10 +374,10 @@ mod unit {
         procs[3].stat.state = State::Stopped;
         let proc_map = vec_to_procmap(procs);
 
-        let filtered = filter_procs(None, &[State::Zombie], &proc_map);
+        let filtered = filter_procs(&None, &[State::Zombie], &proc_map);
         assert_eq!(filtered.len(), 1);
 
-        let filtered = filter_procs(None, &[State::Zombie, State::Stopped], &proc_map);
+        let filtered = filter_procs(&None, &[State::Zombie, State::Stopped], &proc_map);
         assert_eq!(filtered.len(), 2);
     }
 
@@ -380,14 +390,14 @@ mod unit {
         procs[3].stat.state = State::Stopped;
         let proc_map = vec_to_procmap(procs.clone());
 
-        let filtered = filter_procs(regex("exa"), &[], &proc_map);
+        let filtered = filter_procs(&regex("exa"), &[], &proc_map);
         assert_eq!(filtered.len(), 1);
 
-        let filtered = filter_procs(regex("exa"), &[State::Zombie, State::Stopped], &proc_map);
+        let filtered = filter_procs(&regex("exa"), &[State::Zombie, State::Stopped], &proc_map);
         assert_eq!(filtered.len(), 1);
         assert_eq!(filtered[0].1, &procs[2]);
 
-        let filtered = filter_procs(regex("exa"), &[State::Stopped], &proc_map);
+        let filtered = filter_procs(&regex("exa"), &[State::Stopped], &proc_map);
         assert_eq!(filtered.len(), 0);
     }
 
