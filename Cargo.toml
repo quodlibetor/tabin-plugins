@@ -14,7 +14,7 @@ edition = "2018"
 [dependencies]
 bitflags = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
-derive_more = "0.8"
+derive_more = "0.99"
 env_logger = "0.5.9"
 itertools = "0.7"
 lazy_static = "0.2"
