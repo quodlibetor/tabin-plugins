@@ -201,6 +201,18 @@ pub enum State {
     Stopped,
     /// `Z`: No parent process has reaped this
     Zombie,
+    /// `X`: Dead
+    Dead,
+    /// `P`: Parked
+    Parked,
+    /// `N`: NoLoad, a process that does not contribute to the load average
+    NoLoad,
+    /// `I`: Idle, an uninterruptable task which does not contribute to load
+    ///
+    /// Combination of `D` and `N`
+    ///
+    /// https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=80ed87c8a9ca0cad7ca66cf3bbdfb17559a66dcf
+    Idle,
 }
 
 impl FromStr for State {
@@ -219,6 +231,10 @@ impl FromStr for State {
             "W" | "waiting" => Ok(Waiting),
             "T" | "stopped" => Ok(Stopped),
             "Z" | "zombie" => Ok(Zombie),
+            "X" | "x" | "dead" => Ok(Dead),
+            "P" | "parked" => Ok(Parked),
+            "N" | "noload" => Ok(NoLoad),
+            "I" | "idle" => Ok(Idle),
             _ => Err(ParseStateError {
                 state: s.to_string(),
             }
