@@ -211,12 +211,12 @@ mod unit {
 
     #[test]
     fn opts_parse() {
-        let args: Args = Args::from_iter(["arg0", "--crit", "480", "--warn", "20"].into_iter());
+        let args: Args = Args::from_iter(["arg0", "--crit", "480", "--warn", "20"].iter());
         assert_eq!(args.crit, 480.0);
         assert_eq!(args.shares_per_cpu, None);
 
         let args: Args =
-            Args::from_iter(["arg0", "--crit", "480", "--shares-per-cpu", "100"].into_iter());
+            Args::from_iter(["arg0", "--crit", "480", "--shares-per-cpu", "100"].iter());
         assert_eq!(args.crit, 480.0);
         assert_eq!(args.shares_per_cpu, Some(100));
     }

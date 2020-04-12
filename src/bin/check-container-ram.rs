@@ -174,10 +174,10 @@ mod unit {
     #[test]
     fn usage_is_valid() {
         let argv: [&str; 0] = [];
-        let args = Args::from_iter(argv.into_iter());
+        let args = Args::from_iter(argv.iter());
         assert_eq!(args.crit, 95.0);
         assert_eq!(args.invalid_limit, Status::Ok);
-        let args: Args = Args::from_iter(["arg0", "--crit", "80", "--warn", "20"].into_iter());
+        let args: Args = Args::from_iter(["arg0", "--crit", "80", "--warn", "20"].iter());
         assert_eq!(args.crit, 80.0);
     }
 }

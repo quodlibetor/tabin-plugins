@@ -316,26 +316,25 @@ mod unit {
 
     #[test]
     fn validate_argparse() {
-        let args = Args::from_iter(["c-p", "some.*proc", "--crit-under=1"].into_iter());
+        let args = Args::from_iter(["c-p", "some.*proc", "--crit-under=1"].iter());
         assert_eq!(args.crit_under, Some(1));
     }
 
     #[test]
     fn validate_parse_zombies() {
-        let args = Args::from_iter(["c-p", "some.*proc", "--state=zombie"].into_iter());
+        let args = Args::from_iter(["c-p", "some.*proc", "--state=zombie"].iter());
         assert_eq!(args.states, [State::Zombie]);
-        let args =
-            Args::from_iter(["c-p", "some.*proc", "--state=zombie", "--state", "S"].into_iter());
+        let args = Args::from_iter(["c-p", "some.*proc", "--state=zombie", "--state", "S"].iter());
         assert_eq!(args.states, [State::Zombie, State::Sleeping]);
     }
 
     #[test]
     fn validate_parse_zombies_and_pattern() {
-        let args = Args::from_iter(["c-p", "--state", "zombie", "--", "some.*proc"].into_iter());
+        let args = Args::from_iter(["c-p", "--state", "zombie", "--", "some.*proc"].iter());
         assert_eq!(args.states, [State::Zombie]);
-        let args = Args::from_iter(["c-p", "--state=zombie", "some.*proc"].into_iter());
+        let args = Args::from_iter(["c-p", "--state=zombie", "some.*proc"].iter());
         assert_eq!(args.states, [State::Zombie]);
-        let args = Args::from_iter(["c-p", "so.*proc", "--state", "zombie", "waiting"].into_iter());
+        let args = Args::from_iter(["c-p", "so.*proc", "--state", "zombie", "waiting"].iter());
         assert_eq!(args.states, [State::Zombie, State::Waiting]);
     }
 

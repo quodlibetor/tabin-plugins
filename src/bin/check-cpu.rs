@@ -241,17 +241,17 @@ mod unit {
 
     #[test]
     fn validate_docstring() {
-        let _: Args = Args::from_iter(["arg0", "--per-cpu"].into_iter());
-        let args: Args = Args::from_iter(["arg0", "--per-cpu", "--cpu-count", "2"].into_iter());
+        let _: Args = Args::from_iter(["arg0", "--per-cpu"].iter());
+        let args: Args = Args::from_iter(["arg0", "--per-cpu", "--cpu-count", "2"].iter());
         assert_eq!(args.per_cpu, true);
-        let args: Args = Args::from_iter(["arg0", "--show-hogs", "5"].into_iter());
+        let args: Args = Args::from_iter(["arg0", "--show-hogs", "5"].iter());
         assert_eq!(args.per_cpu, false);
         assert_eq!(args.show_hogs, 5);
     }
 
     #[test]
     fn validate_allows_multiple_worksources() {
-        Args::from_iter(["check-cpu", "--type", "active", "--type", "steal"].into_iter());
+        Args::from_iter(["check-cpu", "--type", "active", "--type", "steal"].iter());
     }
 
     fn begintime() -> Calculations {
@@ -353,7 +353,7 @@ mod unit {
                 "--type",
                 "steal",
             ]
-            .into_iter(),
+            .iter(),
         );
 
         assert_eq!(do_comparison(&args, &start, &end), Status::Critical);
@@ -378,7 +378,7 @@ mod unit {
                 "--type",
                 "steal",
             ]
-            .into_iter(),
+            .iter(),
         );
         assert_eq!(args.work_type, vec![WorkSource::Active, WorkSource::Steal]);
         let statuses = determine_status_per_cpu(&args, &start, &end);
@@ -418,7 +418,7 @@ mod unit {
                 "2",
             ]
         };
-        let args: super::Args = Args::from_iter(argv().into_iter());
+        let args: super::Args = Args::from_iter(argv().iter());
         let statuses = determine_status_per_cpu(&args, &start, &end);
         assert_eq!(statuses, vec![Status::Critical, Status::Ok, Status::Ok]);
         assert_eq!(determine_exit(&args, &statuses), Status::Ok);
@@ -428,7 +428,7 @@ mod unit {
             idle: Jiffies::new(110),
             ..start[0]
         };
-        let args: super::Args = Args::from_iter(argv().into_iter());
+        let args: super::Args = Args::from_iter(argv().iter());
         let statuses = determine_status_per_cpu(&args, &start, &end);
         assert_eq!(
             statuses,

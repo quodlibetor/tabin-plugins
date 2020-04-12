@@ -105,6 +105,6 @@ mod test {
 
     #[test]
     fn can_parse_args() {
-        Args::from_iter(["arg0", "/tmp"].into_iter());
+        Args::from_iter(["arg0", "/tmp"].iter());
     }
 }

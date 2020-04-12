@@ -180,5 +180,4 @@ mod test {
             Status::Critical
         );
     }
-
 }

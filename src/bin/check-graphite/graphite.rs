@@ -52,7 +52,7 @@ pub struct GraphiteData {
 impl GraphiteData {
     /// References to the points that exist and do not satisfy the comparator
     // comparator is a box closure, which is not allows in map_or
-    pub(crate) fn invalid_points(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
+    pub(crate) fn invalid_points(&self, comparator: &Box<dyn Fn(f64) -> bool>) -> Vec<&DataPoint> {
         self.points
             .iter()
             .filter(|p| p.val.map_or(false, |v| comparator(v)))
@@ -64,7 +64,7 @@ impl GraphiteData {
     pub(crate) fn last_invalid_points(
         &self,
         n: usize,
-        comparator: &Box<Fn(f64) -> bool>,
+        comparator: &Box<dyn Fn(f64) -> bool>,
     ) -> Vec<&DataPoint> {
         self.points
             .iter()

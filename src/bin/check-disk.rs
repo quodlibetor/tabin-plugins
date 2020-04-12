@@ -359,9 +359,9 @@ mod unit {
 
     #[test]
     fn validate_docstring() {
-        let args: Args = Args::from_iter(["arg0", "--crit", "5"].into_iter());
+        let args: Args = Args::from_iter(["arg0", "--crit", "5"].iter());
         assert_eq!(args.crit, 5.0);
-        let args: Args = Args::from_iter(["arg0", "--pattern", "hello"].into_iter());
+        let args: Args = Args::from_iter(["arg0", "--pattern", "hello"].iter());
         assert_eq!(args.pattern.unwrap(), "hello");
     }
 
