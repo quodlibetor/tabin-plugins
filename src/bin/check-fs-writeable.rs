@@ -18,7 +18,7 @@ use structopt::StructOpt;
 #[derive(StructOpt, Deserialize)]
 #[structopt(
     name = "check-fs-writeable (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+    setting = structopt::clap::AppSettings::ColoredHelp,
 )]
 struct Args {
     #[structopt(help = "The file to write to")]

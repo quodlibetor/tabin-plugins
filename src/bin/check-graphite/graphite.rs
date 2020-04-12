@@ -12,7 +12,7 @@ use std::time::Duration;
 
 use chrono::naive::serde::ts_seconds::deserialize as from_ts_seconds;
 use chrono::naive::NaiveDateTime;
-use reqwest::{self, Error as ReqwestError};
+use reqwest::{self, blocking, Error as ReqwestError};
 use serde::Deserialize;
 use serde_json;
 
@@ -262,7 +262,7 @@ fn get_graphite(
         "{}/render?target={}&format=json&from=-{}min&until=-{}min",
         url, target, window, start_at
     );
-    let c = reqwest::Client::builder()
+    let c = blocking::Client::builder()
         .timeout(Duration::from_secs(10))
         .build()
         .unwrap();

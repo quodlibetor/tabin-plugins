@@ -1,6 +1,7 @@
 //! Check running processes
 
 use std::collections::HashSet;
+use std::convert::TryFrom;
 use std::str::FromStr;
 
 use log::LevelFilter::{Debug, Trace, Warn};
@@ -22,7 +23,7 @@ const LOG_VAR: &str = "TABIN_LOG";
 #[derive(StructOpt, Debug)]
 #[structopt(
     name = "check-procs (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+    setting = structopt::clap::AppSettings::ColoredHelp,
     after_help = "Examples:
 
     Ensure at least two nginx processes are running:
@@ -110,7 +111,7 @@ impl FromStr for Signal {
         let sig: Result<i32, _> = s.parse();
         match sig {
             Ok(integer) => {
-                Ok(Signal(NixSignal::from_c_int(integer).map_err(|_| {
+                Ok(Signal(NixSignal::try_from(integer).map_err(|_| {
                     format!("Not a valid signal integer: {}", s)
                 })?))
             }

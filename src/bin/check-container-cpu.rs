@@ -18,7 +18,7 @@ use tabin_plugins::Status;
 #[derive(Deserialize, StructOpt, Debug)]
 #[structopt(
     name = "check-container-cpu (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+    setting = structopt::clap::AppSettings::ColoredHelp,
     after_help = "About usage percentages:
 
     If you don't specify '--shares-per-cpu', percentages should be specified

@@ -17,7 +17,7 @@ use tabin_plugins::Status;
 #[derive(Deserialize, StructOpt, Debug)]
 #[structopt(
     name = "check-cpu  (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+    setting = structopt::clap::AppSettings::ColoredHelp,
     after_help = "CPU Work Types:
 
     Specifying one of the CPU kinds via `--type` checks that kind of

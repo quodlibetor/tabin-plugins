@@ -4,7 +4,7 @@ use std::io::Read;
 use std::str::FromStr;
 
 use nix::unistd::Pid;
-use scan_fmt::scan_fmt;
+use scan_fmt::scan_fmt_some;
 use serde::Deserialize;
 
 use crate::linux::Jiffies;
@@ -127,7 +127,7 @@ impl FromStr for Stat {
             starttime,
             vsize,
             rss,
-        ) = scan_fmt!(
+        ) = scan_fmt_some!(
             s,
             "{d} {/\\((.*)\\) /}{} {} {} {} {} {} {d} {d} {d} {d} {d} {d} {d} {} {} \
              {} {} {} 0 {d} {d} {}",
