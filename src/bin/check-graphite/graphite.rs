@@ -5,7 +5,6 @@
 //!
 //! The two top-level items in here
 
-use std::error::Error;
 use std::fmt;
 use std::io::{self, Read};
 use std::thread::sleep;
@@ -196,7 +195,7 @@ impl From<ReqwestError> for GraphiteError {
 
 impl From<io::Error> for GraphiteError {
     fn from(e: io::Error) -> Self {
-        GraphiteError::IoError(e.description().to_owned())
+        GraphiteError::IoError(e.to_string())
     }
 }
 

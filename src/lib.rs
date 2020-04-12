@@ -17,9 +17,6 @@
 
 #![deny(unused_imports, dead_code, missing_debug_implementations)]
 
-#[macro_use]
-extern crate lazy_static;
-
 use std::fmt;
 use std::process;
 use std::str::FromStr;
