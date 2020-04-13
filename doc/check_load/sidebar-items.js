@@ -1,1 +1,1 @@
-initSidebarItems({});
+initSidebarItems({"fn":[["do_check",""],["main",""]],"struct":[["Args","Check the load average of the system"]]});

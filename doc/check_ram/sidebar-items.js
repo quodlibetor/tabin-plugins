@@ -1,1 +1,1 @@
-initSidebarItems({});
+initSidebarItems({"fn":[["compare_status",""],["main",""]],"struct":[["Args","Check the ram usage of the current computer"]]});

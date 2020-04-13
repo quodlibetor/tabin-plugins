@@ -1,1 +1,1 @@
-initSidebarItems({});
+initSidebarItems({"fn":[["check_file_writeable",""],["main",""]],"struct":[["Args","Check that we can write to a filesystem by writing a byte to a file."]]});

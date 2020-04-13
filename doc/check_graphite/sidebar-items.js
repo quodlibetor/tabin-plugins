@@ -1,1 +1,1 @@
-initSidebarItems({});
+initSidebarItems({"fn":[["bail_if_no_data","Check if we have any graphite data"],["main",""]],"mod":[["args",""],["assertions",""],["graphite","Interact with graphite"]]});

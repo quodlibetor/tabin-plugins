@@ -1,1 +1,1 @@
-initSidebarItems({});
+initSidebarItems({"constant":[["LOG_VAR",""]],"fn":[["filter_procs","Filter to processes that match the condition"],["load_procs","Load currently running procs, and die if there is a surprising error"],["main",""],["parse_args",""]],"struct":[["Args","Check that an expected number of processes are running."],["Signal","Our own signal wrapper so that we can implement a forgiving FromStr for `nix::sys::Signal`"]]});

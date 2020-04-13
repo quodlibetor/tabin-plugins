@@ -1,1 +1,1 @@
-initSidebarItems({});
+initSidebarItems({"fn":[["find_median_jiffies_used",""],["load_procs","Load currently running procs, and die if there is a surprising error"],["main",""]],"struct":[["Args","Check the cpu usage of the currently-running container."]]});

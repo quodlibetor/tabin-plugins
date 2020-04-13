@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["scan",""]]});
+initSidebarItems({"fn":[["scan",""]],"struct":[["ScanError",""]]});

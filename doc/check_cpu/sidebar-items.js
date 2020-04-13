@@ -1,1 +1,1 @@
-initSidebarItems({});
+initSidebarItems({"fn":[["determine_exit",""],["determine_status_per_cpu",""],["do_comparison","Check if we have exceeded the warn or critical limits"],["load_procs","Load currently running procs, and die if there is a surprising error"],["main",""],["print_errors_and_status",""]],"struct":[["Args","Check cpu usage of the current computer"]]});
