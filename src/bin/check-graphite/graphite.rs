@@ -5,7 +5,6 @@
 //!
 //! The two top-level items in here
 
-use std::error::Error;
 use std::fmt;
 use std::io::{self, Read};
 use std::thread::sleep;
@@ -13,7 +12,7 @@ use std::time::Duration;
 
 use chrono::naive::serde::ts_seconds::deserialize as from_ts_seconds;
 use chrono::naive::NaiveDateTime;
-use reqwest::{self, Error as ReqwestError};
+use reqwest::{self, blocking, Error as ReqwestError};
 use serde::Deserialize;
 use serde_json;
 
@@ -52,7 +51,7 @@ pub struct GraphiteData {
 impl GraphiteData {
     /// References to the points that exist and do not satisfy the comparator
     // comparator is a box closure, which is not allows in map_or
-    pub(crate) fn invalid_points(&self, comparator: &Box<Fn(f64) -> bool>) -> Vec<&DataPoint> {
+    pub(crate) fn invalid_points(&self, comparator: &Box<dyn Fn(f64) -> bool>) -> Vec<&DataPoint> {
         self.points
             .iter()
             .filter(|p| p.val.map_or(false, |v| comparator(v)))
@@ -64,7 +63,7 @@ impl GraphiteData {
     pub(crate) fn last_invalid_points(
         &self,
         n: usize,
-        comparator: &Box<Fn(f64) -> bool>,
+        comparator: &Box<dyn Fn(f64) -> bool>,
     ) -> Vec<&DataPoint> {
         self.points
             .iter()
@@ -196,7 +195,7 @@ impl From<ReqwestError> for GraphiteError {
 
 impl From<io::Error> for GraphiteError {
     fn from(e: io::Error) -> Self {
-        GraphiteError::IoError(e.description().to_owned())
+        GraphiteError::IoError(e.to_string())
     }
 }
 
@@ -263,7 +262,7 @@ fn get_graphite(
         "{}/render?target={}&format=json&from=-{}min&until=-{}min",
         url, target, window, start_at
     );
-    let c = reqwest::Client::builder()
+    let c = blocking::Client::builder()
         .timeout(Duration::from_secs(10))
         .build()
         .unwrap();

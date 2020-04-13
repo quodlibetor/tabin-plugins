@@ -18,7 +18,7 @@ use tabin_plugins::Status;
 #[derive(Deserialize, Debug, StructOpt)]
 #[structopt(
     name = "check-load (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+    setting = structopt::clap::AppSettings::ColoredHelp,
 )]
 struct Args {
     #[structopt(
@@ -180,5 +180,4 @@ mod test {
             Status::Critical
         );
     }
-
 }

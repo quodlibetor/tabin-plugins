@@ -18,7 +18,7 @@ use tabin_plugins::Status;
 #[derive(Deserialize, StructOpt, Debug)]
 #[structopt(
     name = "check-container-cpu (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+    setting = structopt::clap::AppSettings::ColoredHelp,
     after_help = "About usage percentages:
 
     If you don't specify '--shares-per-cpu', percentages should be specified
@@ -211,12 +211,12 @@ mod unit {
 
     #[test]
     fn opts_parse() {
-        let args: Args = Args::from_iter(["arg0", "--crit", "480", "--warn", "20"].into_iter());
+        let args: Args = Args::from_iter(["arg0", "--crit", "480", "--warn", "20"].iter());
         assert_eq!(args.crit, 480.0);
         assert_eq!(args.shares_per_cpu, None);
 
         let args: Args =
-            Args::from_iter(["arg0", "--crit", "480", "--shares-per-cpu", "100"].into_iter());
+            Args::from_iter(["arg0", "--crit", "480", "--shares-per-cpu", "100"].iter());
         assert_eq!(args.crit, 480.0);
         assert_eq!(args.shares_per_cpu, Some(100));
     }

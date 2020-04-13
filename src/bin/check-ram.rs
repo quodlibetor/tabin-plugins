@@ -9,7 +9,7 @@ use tabin_plugins::Status;
 #[derive(Deserialize, StructOpt, Debug)]
 #[structopt(
     name = "check-ram (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+    setting = structopt::clap::AppSettings::ColoredHelp,
 )]
 struct Args {
     #[structopt(

@@ -18,7 +18,7 @@ use structopt::StructOpt;
 #[derive(StructOpt, Deserialize)]
 #[structopt(
     name = "check-fs-writeable (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+    setting = structopt::clap::AppSettings::ColoredHelp,
 )]
 struct Args {
     #[structopt(help = "The file to write to")]
@@ -105,6 +105,6 @@ mod test {
 
     #[test]
     fn can_parse_args() {
-        Args::from_iter(["arg0", "/tmp"].into_iter());
+        Args::from_iter(["arg0", "/tmp"].iter());
     }
 }

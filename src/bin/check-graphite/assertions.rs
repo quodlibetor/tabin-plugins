@@ -72,7 +72,7 @@ impl Assertion {
                     points: series.last_invalid_points(count, &comparator),
                 })
                 .filter(|ref invalid| !invalid.is_empty())
-                .collect::<Vec<(FilteredGraphiteData)>>(),
+                .collect::<Vec<FilteredGraphiteData>>(),
         };
 
         let nostr = if op_is_negated == NegOp::Yes {
@@ -501,8 +501,8 @@ where
 /// float 0.1, since we are always interpreting as f64 then we'll get the
 /// "wrong" values and compare them to each other. That said, we should
 /// probably use an epsilon in here.
-fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<Fn(f64) -> bool> {
-    let comp: Box<Fn(f64) -> bool> = match op {
+fn operator_string_to_func(op: &str, op_is_negated: NegOp, val: f64) -> Box<dyn Fn(f64) -> bool> {
+    let comp: Box<dyn Fn(f64) -> bool> = match op {
         "<" => Box::new(move |i: f64| i < val),
         "<=" => Box::new(move |i: f64| i <= val),
         ">" => Box::new(move |i: f64| i > val),

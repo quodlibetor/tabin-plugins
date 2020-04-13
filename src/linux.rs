@@ -53,8 +53,7 @@ fn bytes_to_human_size_produces_shortest() {
 
     reprs
         .iter()
-        .map(|&(raw, repr): &(u64, &str)| assert_eq!(bytes_to_human_size(raw), repr))
-        .collect::<Vec<_>>();
+        .for_each(|&(raw, repr): &(u64, &str)| assert_eq!(bytes_to_human_size(raw), repr));
 }
 
 /// A value that is in USER_HZ units

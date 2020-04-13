@@ -6,7 +6,7 @@ use std::fmt;
 
 use derive_more::From;
 use log::debug;
-use nix::sys::statvfs::vfs;
+use nix::sys::statvfs::{statvfs, Statvfs};
 use regex::Regex;
 use serde::Deserialize;
 use structopt::StructOpt;
@@ -23,7 +23,7 @@ use tabin_plugins::Status;
 #[derive(StructOpt, Deserialize, Debug)]
 #[structopt(
     name = "check-disk (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+    setting = structopt::clap::AppSettings::ColoredHelp,
 )]
 struct Args {
     #[structopt(
@@ -169,7 +169,7 @@ type DiskResult<T> = Result<T, Error>;
 #[derive(Debug)]
 struct MountStat {
     mount: Mount,
-    stat: vfs::Statvfs,
+    stat: Statvfs,
 }
 
 fn percent(part: u64, whole: u64) -> f64 {
@@ -222,7 +222,7 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
                 .unwrap_or(true)
         })
         .filter_map(|mount| {
-            let stat = match vfs::Statvfs::for_path(mount.file.as_bytes()) {
+            let stat = match statvfs(mount.file.as_bytes()) {
                 Ok(stat) => stat,
                 Err(e) => {
                     error_count += 1;
@@ -230,7 +230,7 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
                     return None;
                 }
             };
-            if stat.f_blocks > 0 && !mount.file.starts_with("/proc") {
+            if stat.blocks() > 0 && !mount.file.starts_with("/proc") {
                 Some(MountStat {
                     mount: mount,
                     stat: stat,
@@ -280,14 +280,14 @@ fn filter(mounts: Vec<Mount>, args: &Args) -> DiskResult<Vec<MountStat>> {
 fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
     let mut status = Status::Ok;
     for ms in mountstats {
-        let pcnt = percent(ms.stat.f_bavail, ms.stat.f_blocks);
+        let pcnt = percent(ms.stat.blocks_available().into(), ms.stat.blocks().into());
         if pcnt > args.crit {
             status = Status::Critical;
             println!(
                 "CRITICAL: {} has {:.1}% of its {}B used (> {:.1}%)",
                 ms.mount.file,
                 pcnt,
-                bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
+                bytes_to_human_size(ms.stat.blocks() as u64 * ms.stat.fragment_size()),
                 args.crit
             )
         } else if pcnt > args.warn {
@@ -296,19 +296,19 @@ fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
                 "WARNING: {} has {:.1}% of its {}B used (> {:.1}%)",
                 ms.mount.file,
                 pcnt,
-                bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
+                bytes_to_human_size(ms.stat.blocks() as u64 * ms.stat.fragment_size()),
                 args.warn
             )
         }
 
-        let ipcnt = percent(ms.stat.f_favail, ms.stat.f_files);
+        let ipcnt = percent(ms.stat.blocks_available().into(), ms.stat.files().into());
         if ipcnt > args.crit_inodes {
             status = Status::Critical;
             println!(
                 "CRITICAL: {} has {:.1}% of its {} inodes used (> {:.1}%)",
                 ms.mount.file,
                 ipcnt,
-                bytes_to_human_size(ms.stat.f_files),
+                bytes_to_human_size(ms.stat.files() as u64),
                 args.crit_inodes
             );
         } else if ipcnt > args.warn_inodes {
@@ -317,7 +317,7 @@ fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
                 "WARNING: {} has {:.1}% of its {} inodes used (> {:.1}%)",
                 ms.mount.file,
                 ipcnt,
-                bytes_to_human_size(ms.stat.f_files),
+                bytes_to_human_size(ms.stat.files() as u64),
                 args.warn_inodes
             );
         }
@@ -340,10 +340,10 @@ fn do_check(mountstats: &[MountStat], args: &Args) -> Status {
             println!(
                 "{:<15} {:>7} {:>5.1}% {:>7} {:>5.1}% {:<20}",
                 ms.mount.spec,
-                bytes_to_human_size(ms.stat.f_blocks * ms.stat.f_frsize),
-                percent(ms.stat.f_bavail, ms.stat.f_blocks),
-                bytes_to_human_size(ms.stat.f_files),
-                percent(ms.stat.f_favail, ms.stat.f_files),
+                bytes_to_human_size(ms.stat.blocks() as u64 * ms.stat.fragment_size()),
+                percent(ms.stat.blocks_available().into(), ms.stat.blocks().into()),
+                bytes_to_human_size(ms.stat.files() as u64),
+                percent(ms.stat.files_available().into(), ms.stat.files().into()),
                 ms.mount.file
             );
         }
@@ -359,9 +359,9 @@ mod unit {
 
     #[test]
     fn validate_docstring() {
-        let args: Args = Args::from_iter(["arg0", "--crit", "5"].into_iter());
+        let args: Args = Args::from_iter(["arg0", "--crit", "5"].iter());
         assert_eq!(args.crit, 5.0);
-        let args: Args = Args::from_iter(["arg0", "--pattern", "hello"].into_iter());
+        let args: Args = Args::from_iter(["arg0", "--pattern", "hello"].iter());
         assert_eq!(args.pattern.unwrap(), "hello");
     }
 

@@ -21,7 +21,7 @@ use tabin_plugins::Status;
 #[derive(Deserialize, StructOpt, Debug)]
 #[structopt(
     name = "check-container-ram (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp")
+    setting = structopt::clap::AppSettings::ColoredHelp,
 )]
 struct Args {
     #[structopt(
@@ -174,10 +174,10 @@ mod unit {
     #[test]
     fn usage_is_valid() {
         let argv: [&str; 0] = [];
-        let args = Args::from_iter(argv.into_iter());
+        let args = Args::from_iter(argv.iter());
         assert_eq!(args.crit, 95.0);
         assert_eq!(args.invalid_limit, Status::Ok);
-        let args: Args = Args::from_iter(["arg0", "--crit", "80", "--warn", "20"].into_iter());
+        let args: Args = Args::from_iter(["arg0", "--crit", "80", "--warn", "20"].iter());
         assert_eq!(args.crit, 80.0);
     }
 }

@@ -1,6 +1,7 @@
 //! Check running processes
 
 use std::collections::HashSet;
+use std::convert::TryFrom;
 use std::str::FromStr;
 
 use log::LevelFilter::{Debug, Trace, Warn};
@@ -22,7 +23,7 @@ const LOG_VAR: &str = "TABIN_LOG";
 #[derive(StructOpt, Debug)]
 #[structopt(
     name = "check-procs (part of tabin-plugins)",
-    raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+    setting = structopt::clap::AppSettings::ColoredHelp,
     after_help = "Examples:
 
     Ensure at least two nginx processes are running:
@@ -110,7 +111,7 @@ impl FromStr for Signal {
         let sig: Result<i32, _> = s.parse();
         match sig {
             Ok(integer) => {
-                Ok(Signal(NixSignal::from_c_int(integer).map_err(|_| {
+                Ok(Signal(NixSignal::try_from(integer).map_err(|_| {
                     format!("Not a valid signal integer: {}", s)
                 })?))
             }
@@ -316,26 +317,25 @@ mod unit {
 
     #[test]
     fn validate_argparse() {
-        let args = Args::from_iter(["c-p", "some.*proc", "--crit-under=1"].into_iter());
+        let args = Args::from_iter(["c-p", "some.*proc", "--crit-under=1"].iter());
         assert_eq!(args.crit_under, Some(1));
     }
 
     #[test]
     fn validate_parse_zombies() {
-        let args = Args::from_iter(["c-p", "some.*proc", "--state=zombie"].into_iter());
+        let args = Args::from_iter(["c-p", "some.*proc", "--state=zombie"].iter());
         assert_eq!(args.states, [State::Zombie]);
-        let args =
-            Args::from_iter(["c-p", "some.*proc", "--state=zombie", "--state", "S"].into_iter());
+        let args = Args::from_iter(["c-p", "some.*proc", "--state=zombie", "--state", "S"].iter());
         assert_eq!(args.states, [State::Zombie, State::Sleeping]);
     }
 
     #[test]
     fn validate_parse_zombies_and_pattern() {
-        let args = Args::from_iter(["c-p", "--state", "zombie", "--", "some.*proc"].into_iter());
+        let args = Args::from_iter(["c-p", "--state", "zombie", "--", "some.*proc"].iter());
         assert_eq!(args.states, [State::Zombie]);
-        let args = Args::from_iter(["c-p", "--state=zombie", "some.*proc"].into_iter());
+        let args = Args::from_iter(["c-p", "--state=zombie", "some.*proc"].iter());
         assert_eq!(args.states, [State::Zombie]);
-        let args = Args::from_iter(["c-p", "so.*proc", "--state", "zombie", "waiting"].into_iter());
+        let args = Args::from_iter(["c-p", "so.*proc", "--state", "zombie", "waiting"].iter());
         assert_eq!(args.states, [State::Zombie, State::Waiting]);
     }
 
