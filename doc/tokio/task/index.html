@@ -158,7 +158,8 @@ to execute. For example:</p>
 <table><tr class='module-item'><td><a class="struct" href="struct.JoinError.html" title='tokio::task::JoinError struct'>JoinError</a></td><td class='docblock-short'><p>Task failed to execute to completion.</p>
 </td></tr><tr class='module-item'><td><a class="struct" href="struct.JoinHandle.html" title='tokio::task::JoinHandle struct'>JoinHandle</a></td><td class='docblock-short'><p>An owned permission to join on a task (await its termination).</p>
 </td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table><tr class='module-item'><td><a class="fn" href="fn.block_in_place.html" title='tokio::task::block_in_place fn'>block_in_place</a></td><td class='docblock-short'><p>Runs the provided blocking function without blocking the executor.</p>
+<table><tr class='module-item'><td><a class="fn" href="fn.block_in_place.html" title='tokio::task::block_in_place fn'>block_in_place</a></td><td class='docblock-short'><p>Runs the provided blocking function on the current thread without
+blocking the executor.</p>
 </td></tr><tr class='module-item'><td><a class="fn" href="fn.spawn.html" title='tokio::task::spawn fn'>spawn</a></td><td class='docblock-short'><p>Spawns a new asynchronous task, returning a
 <a href="super::JoinHandle"><code>JoinHandle</code></a> for it.</p>
 </td></tr><tr class='module-item'><td><a class="fn" href="fn.spawn_blocking.html" title='tokio::task::spawn_blocking fn'>spawn_blocking</a></td><td class='docblock-short'><p>Runs the provided closure on a thread where blocking is acceptable.</p>
