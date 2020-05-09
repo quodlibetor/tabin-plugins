@@ -58,6 +58,7 @@ ALIASES["nix"] = {};
 ALIASES["num_cpus"] = {};
 ALIASES["num_integer"] = {};
 ALIASES["num_traits"] = {};
+ALIASES["once_cell"] = {};
 ALIASES["openssl"] = {};
 ALIASES["openssl_probe"] = {};
 ALIASES["openssl_sys"] = {};
