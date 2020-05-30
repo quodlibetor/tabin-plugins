@@ -83,6 +83,7 @@ ALIASES["serde_json"] = {};
 ALIASES["serde_urlencoded"] = {};
 ALIASES["slab"] = {};
 ALIASES["smallvec"] = {};
+ALIASES["socket2"] = {};
 ALIASES["strsim"] = {};
 ALIASES["structopt"] = {};
 ALIASES["structopt_derive"] = {};
