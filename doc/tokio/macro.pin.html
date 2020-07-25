@@ -6,7 +6,7 @@
     )<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> { ... };
 }</pre></div>
 </div><div class='docblock'><p>Pins a value on the stack.</p>
-<p>Calls to <code>async fn</code> return anonymous <a href="https://doc.rust-lang.org/std/future/trait.Future.html"><code>Future</code></a> values that are <code>!Unpin</code>.
+<p>Calls to <code>async fn</code> return anonymous <a href="trait@std::future::Future"><code>Future</code></a> values that are <code>!Unpin</code>.
 These values must be pinned before they can be polled. Calling <code>.await</code> will
 handle this, but consumes the future. If it is required to call <code>.await</code> on
 a <code>&amp;mut _</code> reference, the caller is responsible for pinning the future.</p>

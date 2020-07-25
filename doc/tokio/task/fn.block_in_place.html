@@ -9,7 +9,7 @@ and blocking code</a> section for more information.</p>
 <p>Although this function avoids starving other independently spawned
 tasks, any other code running concurrently in the same task will be
 suspended during the call to <code>block_in_place</code>. This can happen e.g. when
-using the <a href="../macro.join.html"><code>join!</code></a> macro. To avoid this issue, use <a href="fn@crate::task::spawn_blocking"><code>spawn_blocking</code></a>
+using the <a href="macro@join"><code>join!</code></a> macro. To avoid this issue, use <a href="fn@crate::task::spawn_blocking"><code>spawn_blocking</code></a>
 instead.</p>
 <p>Note that this function can only be used on the <a href="fn@crate::runtime::Builder::threaded_scheduler">threaded scheduler</a>.</p>
 <p>Code running behind <code>block_in_place</code> cannot be cancelled. When you shut
