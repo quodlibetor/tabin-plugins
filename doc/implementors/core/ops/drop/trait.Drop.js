@@ -1,5 +1,5 @@
 (function() {var implementors = {};
-implementors["base64"] = [{"text":"impl&lt;'a, W:&nbsp;Write&gt; Drop for EncoderWriter&lt;'a, W&gt;","synthetic":false,"types":[]}];
+implementors["base64"] = [{"text":"impl&lt;W:&nbsp;Write&gt; Drop for EncoderWriter&lt;W&gt;","synthetic":false,"types":[]}];
 implementors["bytes"] = [{"text":"impl Drop for Bytes","synthetic":false,"types":[]},{"text":"impl Drop for BytesMut","synthetic":false,"types":[]}];
 implementors["futures_channel"] = [{"text":"impl&lt;T&gt; Drop for Receiver&lt;T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;T&gt; Drop for UnboundedReceiver&lt;T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;T&gt; Drop for Sender&lt;T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;T&gt; Drop for Receiver&lt;T&gt;","synthetic":false,"types":[]}];
 implementors["futures_task"] = [{"text":"impl&lt;T, '_&gt; Drop for LocalFutureObj&lt;'_, T&gt;","synthetic":false,"types":[]}];
