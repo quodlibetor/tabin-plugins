@@ -13,7 +13,7 @@ implementors["http"] = [{"text":"impl&lt;T&gt; Default for HeaderMap&lt;T&gt;","
 implementors["http_body"] = [{"text":"impl Default for SizeHint","synthetic":false,"types":[]}];
 implementors["hyper"] = [{"text":"impl Default for Body","synthetic":false,"types":[]},{"text":"impl Default for Client&lt;HttpConnector, Body&gt;","synthetic":false,"types":[]},{"text":"impl Default for Builder","synthetic":false,"types":[]}];
 implementors["hyper_tls"] = [{"text":"impl&lt;T:&nbsp;Default&gt; Default for HttpsConnector&lt;T&gt;","synthetic":false,"types":[]}];
-implementors["idna"] = [{"text":"impl Default for Config","synthetic":false,"types":[]}];
+implementors["idna"] = [{"text":"impl Default for Idna","synthetic":false,"types":[]},{"text":"impl Default for Config","synthetic":false,"types":[]},{"text":"impl Default for Errors","synthetic":false,"types":[]}];
 implementors["indexmap"] = [{"text":"impl&lt;K, V, S&gt; Default for IndexMap&lt;K, V, S&gt; <span class=\"where fmt-newline\">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: Default,&nbsp;</span>","synthetic":false,"types":[]},{"text":"impl&lt;T, S&gt; Default for IndexSet&lt;T, S&gt; <span class=\"where fmt-newline\">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: Default,&nbsp;</span>","synthetic":false,"types":[]}];
 implementors["ipnet"] = [{"text":"impl Default for IpNet","synthetic":false,"types":[]},{"text":"impl Default for Ipv4Net","synthetic":false,"types":[]},{"text":"impl Default for Ipv6Net","synthetic":false,"types":[]}];
 implementors["itoa"] = [{"text":"impl Default for Buffer","synthetic":false,"types":[]}];

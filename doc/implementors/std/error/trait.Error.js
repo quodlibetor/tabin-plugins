@@ -12,6 +12,7 @@ implementors["httparse"] = [{"text":"impl Error for Error","synthetic":false,"ty
 implementors["httpdate"] = [{"text":"impl Error for Error","synthetic":false,"types":[]}];
 implementors["humantime"] = [{"text":"impl Error for Error","synthetic":false,"types":[]},{"text":"impl Error for Error","synthetic":false,"types":[]}];
 implementors["hyper"] = [{"text":"impl Error for InvalidNameError","synthetic":false,"types":[]},{"text":"impl Error for Error","synthetic":false,"types":[]}];
+implementors["idna"] = [{"text":"impl Error for Errors","synthetic":false,"types":[]}];
 implementors["ipnet"] = [{"text":"impl Error for PrefixLenError","synthetic":false,"types":[]},{"text":"impl Error for AddrParseError","synthetic":false,"types":[]}];
 implementors["log"] = [{"text":"impl Error for SetLoggerError","synthetic":false,"types":[]},{"text":"impl Error for ParseLevelError","synthetic":false,"types":[]}];
 implementors["mime"] = [{"text":"impl Error for FromStrError","synthetic":false,"types":[]}];
